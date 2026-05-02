@@ -567,3 +567,31 @@ export async function adminCreateUser(data: { username: string; email: string; p
 export async function adminDeleteUser(id: string) {
   return request<{ success: boolean }>(`/admin/users/${id}`, { method: 'DELETE' })
 }
+
+// ── File contents ─────────────────────────────────────────────────────────────
+
+export async function getFileContents(owner: string, repo: string, path: string, ref?: string) {
+  const refPart = ref ?? 'HEAD'
+  return request<{ content: string; path: string }>(`/repos/${owner}/${repo}/blob/${refPart}/${path}`)
+}
+
+export async function updateFile(owner: string, repo: string, path: string, content: string, message: string) {
+  return request<{ message: string }>(`/repos/${owner}/${repo}/contents/${path}`, {
+    method: 'PUT',
+    body: JSON.stringify({ content, message }),
+  })
+}
+
+export async function createFile(owner: string, repo: string, path: string, content: string, message: string) {
+  return request<{ message: string }>(`/repos/${owner}/${repo}/contents/${path}`, {
+    method: 'POST',
+    body: JSON.stringify({ content, message }),
+  })
+}
+
+export async function deleteFile(owner: string, repo: string, path: string, message: string) {
+  return request<{ message: string }>(`/repos/${owner}/${repo}/contents/${path}`, {
+    method: 'DELETE',
+    body: JSON.stringify({ message }),
+  })
+}
