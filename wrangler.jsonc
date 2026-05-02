@@ -6,6 +6,12 @@
   "vars": {
     "NODE_ENV": "production"
   },
+  "observability": {
+    "logs": {
+      "enabled": false,
+      "invocation_logs": true
+    }
+  },
   "r2_buckets": [
     {
       "binding": "bucket",
