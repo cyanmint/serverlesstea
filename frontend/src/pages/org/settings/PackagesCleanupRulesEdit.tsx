@@ -5,7 +5,7 @@ export default function OrgCleanupEdit() {
   return (
     <div className="page">
       <h2>{org} – Settings – Edit Cleanup Rule</h2>
-      <p>This feature is coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Package Registry.</p>
     </div>
   )
 }

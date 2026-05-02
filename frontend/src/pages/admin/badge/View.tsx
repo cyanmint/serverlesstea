@@ -10,7 +10,7 @@ export default function AdminBadgeView() {
   return (
     <div className="page">
       <h2>Badge</h2>
-      <p>Admin feature – coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Badges.</p>
     </div>
   )
 }

@@ -8,7 +8,7 @@ export default function RepoSettingsActions() {
       <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
         <h2>Actions Settings</h2>
-        <p>This feature is coming soon.</p>
+        <p style={{ color: 'var(--text-muted)' }}>This deployment does not support CI/CD Actions.</p>
       </div>
     </div>
   )

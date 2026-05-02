@@ -2,7 +2,7 @@ export default function ProjectsView() {
   return (
     <div className="page">
       <h2>Project</h2>
-      <p>Projects feature coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Projects.</p>
     </div>
   )
 }

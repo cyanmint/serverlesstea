@@ -10,7 +10,7 @@ export default function AdminAuthNew() {
   return (
     <div className="page">
       <h2>New Authentication Source</h2>
-      <p>Admin feature – coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support External Authentication Sources.</p>
     </div>
   )
 }

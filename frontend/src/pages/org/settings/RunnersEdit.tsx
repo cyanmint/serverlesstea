@@ -5,7 +5,7 @@ export default function OrgRunnersEdit() {
   return (
     <div className="page">
       <h2>{org} – Settings – Edit Runner</h2>
-      <p>This feature is coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Runners.</p>
     </div>
   )
 }

@@ -114,4 +114,60 @@ router.delete('/users/:id', adminCheck, async (c) => {
   return c.json({ success: true })
 })
 
+router.get('/repos', adminCheck, async (c) => {
+  const user = c.get('user' as never) as JWTPayload
+  if (!user['isAdmin']) return c.json({ error: 'Forbidden' }, 403)
+  const db = c.env.database
+  const repos = await db.prepare(`
+    SELECT r.id, r.name, r.description, r.is_private, r.default_branch, r.created_at,
+           u.username AS owner_username
+    FROM repositories r JOIN users u ON r.owner_id = u.id
+    ORDER BY r.created_at DESC
+  `).all()
+  return c.json({ repos: repos.results })
+})
+
+router.get('/orgs', adminCheck, async (c) => {
+  const user = c.get('user' as never) as JWTPayload
+  if (!user['isAdmin']) return c.json({ error: 'Forbidden' }, 403)
+  const db = c.env.database
+  const orgs = await db.prepare(`
+    SELECT o.id, o.name, o.display_name, o.description, o.visibility, o.created_at,
+           COUNT(m.user_id) AS member_count
+    FROM organizations o
+    LEFT JOIN org_members m ON o.id = m.org_id
+    GROUP BY o.id ORDER BY o.created_at DESC
+  `).all()
+  return c.json({ orgs: orgs.results })
+})
+
+router.get('/stats', adminCheck, async (c) => {
+  const user = c.get('user' as never) as JWTPayload
+  if (!user['isAdmin']) return c.json({ error: 'Forbidden' }, 403)
+  const db = c.env.database
+  const [userCount, repoCount, orgCount, issueCount] = await Promise.all([
+    db.prepare('SELECT COUNT(*) AS n FROM users').first<{ n: number }>(),
+    db.prepare('SELECT COUNT(*) AS n FROM repositories').first<{ n: number }>(),
+    db.prepare('SELECT COUNT(*) AS n FROM organizations').first<{ n: number }>(),
+    db.prepare('SELECT COUNT(*) AS n FROM issues').first<{ n: number }>(),
+  ])
+  return c.json({
+    users: userCount?.n ?? 0,
+    repos: repoCount?.n ?? 0,
+    orgs: orgCount?.n ?? 0,
+    issues: issueCount?.n ?? 0,
+  })
+})
+
+router.get('/user/:id', adminCheck, async (c) => {
+  const user = c.get('user' as never) as JWTPayload
+  if (!user['isAdmin']) return c.json({ error: 'Forbidden' }, 403)
+  const { id } = c.req.param()
+  const db = c.env.database
+  const u = await db.prepare('SELECT id, username, email, display_name, bio, is_admin, created_at FROM users WHERE id = ?').bind(id).first()
+  if (!u) return c.json({ error: 'User not found' }, 404)
+  const repos = await db.prepare('SELECT id, name, is_private, created_at FROM repositories WHERE owner_id = ? ORDER BY created_at DESC').bind(id).all()
+  return c.json({ user: u, repos: repos.results })
+})
+
 export default router

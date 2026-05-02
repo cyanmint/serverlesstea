@@ -5,8 +5,8 @@ export default function Twofa() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    alert('Two-factor authentication is not yet supported in this version.')
-  }
+    console.error('Two-factor authentication is not available in this deployment.')
+}
 
   return (
     <div className="page-centered">

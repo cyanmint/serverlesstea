@@ -2,7 +2,7 @@ export default function SettingsPackages() {
   return (
     <div className="page">
       <h2>Packages</h2>
-      <p>This settings section is not yet available.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Package Registry.</p>
     </div>
   )
 }

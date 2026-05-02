@@ -3,7 +3,7 @@ export default function SignupOpenidRegister() {
     <div className="page-centered">
       <div className="form-card">
         <h2>Register via OpenID</h2>
-        <p>OpenID registration is not yet supported in this version.</p>
+        <p>OpenID registration is not available in this deployment.</p>
       </div>
     </div>
   )

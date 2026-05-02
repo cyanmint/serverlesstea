@@ -8,7 +8,7 @@ export default function MigratePage() {
       <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
         <h2>Migrate Repository</h2>
-        <p>This feature is coming soon.</p>
+        <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Repository Migration.</p>
       </div>
     </div>
   )

@@ -8,7 +8,7 @@ export default function RepoSettingsTags() {
       <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
         <h2>Tags</h2>
-        <p>This feature is coming soon.</p>
+        <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Tag Protection.</p>
       </div>
     </div>
   )

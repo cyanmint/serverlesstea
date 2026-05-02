@@ -8,7 +8,7 @@ export default function RepoRunnerEdit() {
       <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
         <h2>Edit Runner</h2>
-        <p>This feature is coming soon.</p>
+        <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Runners.</p>
       </div>
     </div>
   )

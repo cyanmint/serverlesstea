@@ -3,7 +3,7 @@ export default function SignupOpenidConnect() {
     <div className="page-centered">
       <div className="form-card">
         <h2>Connect OpenID Account</h2>
-        <p>OpenID Connect account linking is not yet supported in this version.</p>
+        <p>OpenID Connect account linking is not available in this deployment.</p>
       </div>
     </div>
   )

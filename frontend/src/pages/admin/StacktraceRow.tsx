@@ -10,7 +10,7 @@ export default function AdminStacktraceRow() {
   return (
     <div className="page">
       <h2>Stacktrace Row</h2>
-      <p>Admin feature – coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Stacktrace.</p>
     </div>
   )
 }

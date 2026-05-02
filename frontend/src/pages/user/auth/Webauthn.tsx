@@ -3,7 +3,7 @@ export default function Webauthn() {
     <div className="page-centered">
       <div className="form-card">
         <h2>WebAuthn Authentication</h2>
-        <p>WebAuthn / hardware security key authentication is not yet supported in this version.</p>
+        <p>WebAuthn / hardware security key authentication is not available in this deployment.</p>
       </div>
     </div>
   )

@@ -5,8 +5,8 @@ export default function TwofaScratch() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    alert('Scratch code authentication is not yet supported in this version.')
-  }
+    console.error('Scratch code authentication is not available in this deployment.')
+}
 
   return (
     <div className="page-centered">

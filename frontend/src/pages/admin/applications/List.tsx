@@ -10,7 +10,7 @@ export default function AdminApplicationsList() {
   return (
     <div className="page">
       <h2>OAuth2 Applications</h2>
-      <p>Admin feature – coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support OAuth Applications.</p>
     </div>
   )
 }

@@ -8,7 +8,7 @@ export default function GithookEdit() {
       <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
         <h2>Edit Git Hook</h2>
-        <p>This feature is coming soon.</p>
+        <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Git Hooks.</p>
       </div>
     </div>
   )

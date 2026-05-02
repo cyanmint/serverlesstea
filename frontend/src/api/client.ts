@@ -595,3 +595,28 @@ export async function deleteFile(owner: string, repo: string, path: string, mess
     body: JSON.stringify({ message }),
   })
 }
+
+// Admin extras
+export interface AdminStats { users: number; repos: number; orgs: number; issues: number }
+export async function adminGetStats() {
+  return request<AdminStats>('/admin/stats')
+}
+export async function adminListRepos() {
+  return request<{ repos: Array<{ id: string; name: string; description: string | null; is_private: number; default_branch: string; created_at: string; owner_username: string }> }>('/admin/repos')
+}
+export async function adminListOrgs() {
+  return request<{ orgs: Array<{ id: string; name: string; display_name: string | null; description: string | null; visibility: string; created_at: string; member_count: number }> }>('/admin/orgs')
+}
+export async function adminGetUser(id: string) {
+  return request<{ user: { id: string; username: string; email: string; display_name: string | null; bio: string | null; is_admin: number; created_at: string }; repos: Array<{ id: string; name: string; is_private: number; created_at: string }> }>(`/admin/user/${id}`)
+}
+
+export async function listMyOrgs() {
+  return request<{ orgs: Array<{ id: string; name: string; display_name: string | null; description: string | null; visibility: string; created_at: string; role: string }> }>('/orgs/user/memberships')
+}
+export async function searchOrgs(q?: string) {
+  return request<{ orgs: Array<{ id: string; name: string; display_name: string | null; description: string | null; visibility: string; created_at: string }> }>(`/orgs${q ? `?q=${encodeURIComponent(q)}` : ''}`)
+}
+export async function searchUsers(q?: string, page?: number) {
+  return listUsers({ q, page })
+}

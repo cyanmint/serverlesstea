@@ -8,7 +8,7 @@ export default function RepoSecrets() {
       <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
         <h2>Secrets</h2>
-        <p>This feature is coming soon.</p>
+        <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Action Secrets.</p>
       </div>
     </div>
   )

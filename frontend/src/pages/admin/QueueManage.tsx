@@ -10,7 +10,7 @@ export default function AdminQueueManage() {
   return (
     <div className="page">
       <h2>Queue Manage</h2>
-      <p>Admin feature – coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Task Queue.</p>
     </div>
   )
 }

@@ -5,7 +5,7 @@ export default function OrgProjectsList() {
   return (
     <div className="page">
       <h2>{org} – Projects</h2>
-      <p>This feature is coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Projects.</p>
     </div>
   )
 }

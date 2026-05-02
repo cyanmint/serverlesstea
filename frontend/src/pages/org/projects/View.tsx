@@ -5,7 +5,7 @@ export default function OrgProjectsView() {
   return (
     <div className="page">
       <h2>{org} – Project</h2>
-      <p>This feature is coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Projects.</p>
     </div>
   )
 }

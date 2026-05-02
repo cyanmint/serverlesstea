@@ -5,7 +5,7 @@ export default function OrgWorktime() {
   return (
     <div className="page">
       <h2>{org} – Work Time</h2>
-      <p>This feature is coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Work Time Tracking.</p>
     </div>
   )
 }

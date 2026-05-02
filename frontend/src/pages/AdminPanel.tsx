@@ -35,7 +35,7 @@ export default function AdminPanel() {
       await adminUpdateUser(user.id, { is_admin: user.is_admin === 0 })
       setUsers((prev) => prev.map((u) => u.id === user.id ? { ...u, is_admin: u.is_admin === 0 ? 1 : 0 } : u))
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Failed')
+      setError(err instanceof Error ? err.message : 'Failed')
     }
   }
 

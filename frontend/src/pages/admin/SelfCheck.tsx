@@ -10,7 +10,7 @@ export default function AdminSelfCheck() {
   return (
     <div className="page">
       <h2>Self Check</h2>
-      <p>Admin feature – coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Self-Check.</p>
     </div>
   )
 }

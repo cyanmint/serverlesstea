@@ -10,7 +10,7 @@ export default function AdminSmtp() {
   return (
     <div className="page">
       <h2>SMTP Authentication</h2>
-      <p>Admin feature – coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support SMTP Authentication.</p>
     </div>
   )
 }

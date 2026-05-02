@@ -2,7 +2,7 @@ export default function PackageList() {
   return (
     <div className="page">
       <h2>Packages</h2>
-      <p>Package list coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Package Registry.</p>
     </div>
   )
 }

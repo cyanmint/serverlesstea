@@ -8,7 +8,7 @@ export default function RepoSettingsBranches() {
       <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
         <h2>Protected Branches</h2>
-        <p>This feature is coming soon.</p>
+        <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Branch Protection.</p>
       </div>
     </div>
   )

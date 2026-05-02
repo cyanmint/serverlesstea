@@ -2,7 +2,7 @@ export default function SharedPackageView() {
   return (
     <div className="page">
       <h2>Package</h2>
-      <p>Package view coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Package Registry.</p>
     </div>
   )
 }

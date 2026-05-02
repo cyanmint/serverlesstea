@@ -5,7 +5,7 @@ export default function OrgHooks() {
   return (
     <div className="page">
       <h2>{org} – Settings – Webhooks</h2>
-      <p>This feature is coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Webhooks.</p>
     </div>
   )
 }

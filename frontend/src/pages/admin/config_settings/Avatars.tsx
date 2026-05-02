@@ -10,7 +10,7 @@ export default function AdminAvatarsConfig() {
   return (
     <div className="page">
       <h2>Avatars Configuration</h2>
-      <p>Admin feature – coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Avatar Storage Configuration.</p>
     </div>
   )
 }

@@ -8,7 +8,7 @@ export default function EditorPatch() {
       <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
         <h2>Apply Patch</h2>
-        <p>This feature is coming soon.</p>
+        <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Patch Editor.</p>
       </div>
     </div>
   )

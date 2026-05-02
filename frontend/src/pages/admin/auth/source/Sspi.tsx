@@ -10,7 +10,7 @@ export default function AdminSspi() {
   return (
     <div className="page">
       <h2>SSPI Authentication</h2>
-      <p>Admin feature – coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support SSPI Authentication.</p>
     </div>
   )
 }

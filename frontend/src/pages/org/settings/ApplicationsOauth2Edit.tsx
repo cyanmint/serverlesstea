@@ -5,7 +5,7 @@ export default function OrgOauth2Edit() {
   return (
     <div className="page">
       <h2>{org} – Settings – Edit OAuth2 Application</h2>
-      <p>This feature is coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support OAuth.</p>
     </div>
   )
 }

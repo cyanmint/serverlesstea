@@ -10,7 +10,7 @@ export default function AdminHookNew() {
   return (
     <div className="page">
       <h2>New System Webhook</h2>
-      <p>Admin feature – coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Webhooks.</p>
     </div>
   )
 }

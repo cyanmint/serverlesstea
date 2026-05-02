@@ -10,7 +10,7 @@ export default function AdminConfigSettings() {
   return (
     <div className="page">
       <h2>Configuration Settings</h2>
-      <p>Admin feature – coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Advanced Configuration.</p>
     </div>
   )
 }

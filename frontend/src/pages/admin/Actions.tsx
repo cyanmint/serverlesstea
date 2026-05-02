@@ -10,7 +10,7 @@ export default function AdminActions() {
   return (
     <div className="page">
       <h2>Admin Actions</h2>
-      <p>Admin feature – coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support CI/CD Actions.</p>
     </div>
   )
 }

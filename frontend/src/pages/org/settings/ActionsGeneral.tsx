@@ -5,7 +5,7 @@ export default function OrgActionsGeneral() {
   return (
     <div className="page">
       <h2>{org} – Settings – Actions General</h2>
-      <p>This feature is coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support CI/CD Actions.</p>
     </div>
   )
 }

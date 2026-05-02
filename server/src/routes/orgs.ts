@@ -223,4 +223,30 @@ router.post('/:orgname/teams/:teamname/members', authMiddleware, zValidator('jso
   return c.json({ success: true }, 201)
 })
 
+// List orgs the current authenticated user belongs to
+router.get('/user/memberships', authMiddleware, async (c) => {
+  const user = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const orgs = await db.prepare(`
+    SELECT o.id, o.name, o.display_name, o.description, o.visibility, o.created_at, m.role
+    FROM org_members m JOIN organizations o ON m.org_id = o.id
+    WHERE m.user_id = ?
+    ORDER BY o.name
+  `).bind(user.sub).all()
+  return c.json({ orgs: orgs.results })
+})
+
+// Search public orgs
+router.get('/', async (c) => {
+  const q = c.req.query('q') ?? ''
+  const db = c.env.database
+  const orgs = await db.prepare(`
+    SELECT id, name, display_name, description, visibility, created_at
+    FROM organizations
+    WHERE visibility = 'public' AND (name LIKE ? OR display_name LIKE ?)
+    ORDER BY name LIMIT 50
+  `).bind(`%${q}%`, `%${q}%`).all()
+  return c.json({ orgs: orgs.results })
+})
+
 export default router

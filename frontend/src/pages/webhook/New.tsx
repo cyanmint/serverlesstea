@@ -6,8 +6,8 @@ export default function WebhookNew() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    alert('Webhook creation is not yet supported in this version.')
-  }
+    console.error('Webhook creation is not available in this deployment.')
+}
 
   return (
     <div className="page">

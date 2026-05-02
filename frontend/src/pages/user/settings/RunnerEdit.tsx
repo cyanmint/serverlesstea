@@ -2,7 +2,7 @@ export default function RunnerEdit() {
   return (
     <div className="page">
       <h2>Edit Runner</h2>
-      <p>This settings section is not yet available.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Runners.</p>
     </div>
   )
 }

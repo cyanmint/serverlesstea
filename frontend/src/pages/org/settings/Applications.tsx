@@ -5,7 +5,7 @@ export default function OrgApplications() {
   return (
     <div className="page">
       <h2>{org} – Settings – OAuth2 Applications</h2>
-      <p>This feature is coming soon.</p>
+      <p style={{ color: 'var(--text-muted)' }}>This deployment does not support OAuth Applications.</p>
     </div>
   )
 }

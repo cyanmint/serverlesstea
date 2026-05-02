@@ -3,7 +3,7 @@ export default function LinkAccount() {
     <div className="page-centered">
       <div className="form-card">
         <h2>Link Account</h2>
-        <p>Account linking is not yet supported in this version.</p>
+        <p>Account linking is not available in this deployment.</p>
       </div>
     </div>
   )

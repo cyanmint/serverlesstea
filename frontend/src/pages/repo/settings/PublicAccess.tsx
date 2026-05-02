@@ -8,7 +8,7 @@ export default function PublicAccess() {
       <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
         <h2>Public Access</h2>
-        <p>This feature is coming soon.</p>
+        <p style={{ color: 'var(--text-muted)' }}>This deployment does not support Public Access.</p>
       </div>
     </div>
   )
