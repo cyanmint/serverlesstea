@@ -42,8 +42,14 @@ router.post('/register', zValidator('json', registerSchema), async (c) => {
     .bind(id, username, email, passwordHash)
     .run()
 
-  const token = await signToken({ sub: id, username, email }, c.env.JWT_SECRET)
-  const refreshToken = await signRefreshToken({ sub: id, username, email, type: 'refresh' }, c.env.JWT_SECRET)
+  let token: string
+  let refreshToken: string
+  try {
+    token = await signToken({ sub: id, username, email }, c.env.JWT_SECRET)
+    refreshToken = await signRefreshToken({ sub: id, username, email, type: 'refresh' }, c.env.JWT_SECRET)
+  } catch {
+    return c.json({ error: 'Authentication service is misconfigured' }, 500)
+  }
 
   try {
     await sendWelcomeEmail(c.env, email, username)
@@ -72,14 +78,20 @@ router.post('/login', zValidator('json', loginSchema), async (c) => {
     return c.json({ error: 'Invalid credentials' }, 401)
   }
 
-  const token = await signToken(
-    { sub: user.id, username: user.username, email: user.email, isAdmin: user.is_admin === 1 },
-    c.env.JWT_SECRET
-  )
-  const refreshToken = await signRefreshToken(
-    { sub: user.id, username: user.username, email: user.email, type: 'refresh' },
-    c.env.JWT_SECRET
-  )
+  let token: string
+  let refreshToken: string
+  try {
+    token = await signToken(
+      { sub: user.id, username: user.username, email: user.email, isAdmin: user.is_admin === 1 },
+      c.env.JWT_SECRET
+    )
+    refreshToken = await signRefreshToken(
+      { sub: user.id, username: user.username, email: user.email, type: 'refresh' },
+      c.env.JWT_SECRET
+    )
+  } catch {
+    return c.json({ error: 'Authentication service is misconfigured' }, 500)
+  }
 
   return c.json({
     token,
@@ -94,20 +106,28 @@ router.post('/refresh', async (c) => {
     return c.json({ error: 'Missing refresh token' }, 400)
   }
 
+  let payload
   try {
-    const payload = await verifyToken(body.refreshToken, c.env.JWT_SECRET)
-    if (payload['type'] !== 'refresh') {
-      return c.json({ error: 'Invalid token type' }, 401)
-    }
-
-    const token = await signToken(
-      { sub: payload.sub, username: payload['username'], email: payload['email'] },
-      c.env.JWT_SECRET
-    )
-    return c.json({ token })
+    payload = await verifyToken(body.refreshToken, c.env.JWT_SECRET)
   } catch {
     return c.json({ error: 'Invalid refresh token' }, 401)
   }
+
+  if (payload['type'] !== 'refresh') {
+    return c.json({ error: 'Invalid token type' }, 401)
+  }
+
+  let token: string
+  try {
+    token = await signToken(
+      { sub: payload.sub, username: payload['username'], email: payload['email'] },
+      c.env.JWT_SECRET
+    )
+  } catch {
+    return c.json({ error: 'Authentication service is misconfigured' }, 500)
+  }
+
+  return c.json({ token })
 })
 
 export default router
