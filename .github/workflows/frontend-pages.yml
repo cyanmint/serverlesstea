@@ -36,9 +36,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Resolve worker URL
+        id: worker-url
+        env:
+          WORKER_URL_SECRET: ${{ secrets.WORKER_URL }}
+          CF_WORKER_NAME: ${{ secrets.CF_WORKER_NAME }}
+          BUCKET_ACCOUNT_ID: ${{ secrets.BUCKET_ACCOUNT_ID }}
+        run: |
+          if [ -n "$WORKER_URL_SECRET" ]; then
+            echo "url=$WORKER_URL_SECRET" >> "$GITHUB_OUTPUT"
+          elif [ -n "$CF_WORKER_NAME" ] && [ -n "$BUCKET_ACCOUNT_ID" ]; then
+            echo "url=https://${CF_WORKER_NAME}.${BUCKET_ACCOUNT_ID}.workers.dev" >> "$GITHUB_OUTPUT"
+          else
+            echo "url=" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Build frontend
         env:
-          WORKER_URL: ${{ secrets.WORKER_URL }}
+          VITE_API_URL: ${{ steps.worker-url.outputs.url }}
         run: npm run build:frontend
 
       - name: Upload Pages artifact
