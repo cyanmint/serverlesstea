@@ -13,6 +13,9 @@ on:
       - ".github/workflows/backend-ci.yml"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   api-server:
     runs-on: ubuntu-latest
