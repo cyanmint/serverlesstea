@@ -1,7 +1,7 @@
 {
   "name": "git-devel",
   "main": "server/src/index.ts",
-  "compatibility_date": "2024-09-23",
+  "compatibility_date": "2026-04-01",
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
     "NODE_ENV": "production"
@@ -15,7 +15,8 @@
   "d1_databases": [
     {
       "binding": "database",
-      "database_name": "git-devel"
+      "database_name": "git-devel",
+      "database_id": "58a35a6e-1407-478d-a634-3b1ce8f0fe12"
     }
   ],
   "send_email": [
