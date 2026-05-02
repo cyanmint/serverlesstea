@@ -29,15 +29,21 @@ function tomlEscape(value) {
 }
 
 const config = readConfig()
+const bucketAccountId = pick(
+  process.env.CF_ACCOUNT_ID,
+  process.env.CLOUDFLARE_ACCOUNT_ID,
+  process.env.BUCKET_ACCOUNT_ID
+)
+const endpointFromAccountId = bucketAccountId ? `https://${bucketAccountId}.r2.cloudflarestorage.com` : ''
 
 const values = {
   workerName: pick(process.env.CF_WORKER_NAME, 'serverlesstea-server-ci'),
-  d1DatabaseName: pick(process.env.CF_D1_DATABASE_NAME, 'serverlesstea-ci'),
-  d1DatabaseId: pick(process.env.CF_D1_DATABASE_ID, 'ci-d1-database-id'),
-  r2BucketName: pick(config.r2?.bucketName, process.env.CF_R2_BUCKET_NAME, 'serverlesstea-ci-git'),
+  d1DatabaseName: pick(process.env.CF_D1_DATABASE_NAME, process.env.DB_NAME, 'serverlesstea-ci'),
+  d1DatabaseId: pick(process.env.CF_D1_DATABASE_ID, process.env.DB_NAME, 'ci-d1-database-id'),
+  r2BucketName: pick(config.r2?.bucketName, process.env.CF_R2_BUCKET_NAME, process.env.BUCKET_NAME, 'serverlesstea-ci-git'),
   jwtSecret: pick(process.env.JWT_SECRET, 'ci-jwt-secret'),
-  r2AccessToken: pick(config.r2?.accessToken, process.env.R2_ACCESS_TOKEN, 'ci-r2-access-token'),
-  r2Endpoint: pick(config.r2?.endpoint, process.env.CF_R2_ENDPOINT, ''),
+  r2AccessToken: pick(config.r2?.accessToken, process.env.R2_ACCESS_TOKEN, process.env.BUCKET_TOKEN, 'ci-r2-access-token'),
+  r2Endpoint: pick(config.r2?.endpoint, process.env.CF_R2_ENDPOINT, process.env.BUCKET_ENDPOINT, endpointFromAccountId),
 }
 
 let output = fs.readFileSync(templatePath, 'utf8')

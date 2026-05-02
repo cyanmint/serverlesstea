@@ -44,6 +44,10 @@ jobs:
           CF_R2_ENDPOINT: ${{ secrets.CF_R2_ENDPOINT }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           R2_ACCESS_TOKEN: ${{ secrets.R2_ACCESS_TOKEN }}
+          BUCKET_ENDPOINT: ${{ secrets.BUCKET_ENDPOINT }}
+          BUCKET_ACCOUNT_ID: ${{ secrets.BUCKET_ACCOUNT_ID }}
+          BUCKET_TOKEN: ${{ secrets.BUCKET_TOKEN }}
+          DB_NAME: ${{ secrets.DB_NAME }}
         run: npm run generate:wrangler-config
 
       - name: Build
@@ -52,6 +56,10 @@ jobs:
 
       - name: Test
         working-directory: server
+        env:
+          BUCKET_ENDPOINT: ${{ secrets.BUCKET_ENDPOINT }}
+          BUCKET_ACCOUNT_ID: ${{ secrets.BUCKET_ACCOUNT_ID }}
+          BUCKET_TOKEN: ${{ secrets.BUCKET_TOKEN }}
         run: npm test
 
       - name: Upload Server test report
@@ -83,3 +91,46 @@ jobs:
           name: Server Tests
           path: reports/server/test-report.junit.xml
           reporter: java-junit
+
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    needs:
+      - server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Generate deploy Wrangler config from secrets
+        working-directory: server
+        env:
+          CF_WORKER_NAME: ${{ secrets.CF_WORKER_NAME }}
+          CF_D1_DATABASE_NAME: ${{ secrets.CF_D1_DATABASE_NAME }}
+          CF_D1_DATABASE_ID: ${{ secrets.CF_D1_DATABASE_ID }}
+          CF_R2_BUCKET_NAME: ${{ secrets.CF_R2_BUCKET_NAME }}
+          CF_R2_ENDPOINT: ${{ secrets.CF_R2_ENDPOINT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          R2_ACCESS_TOKEN: ${{ secrets.R2_ACCESS_TOKEN }}
+          BUCKET_ENDPOINT: ${{ secrets.BUCKET_ENDPOINT }}
+          BUCKET_ACCOUNT_ID: ${{ secrets.BUCKET_ACCOUNT_ID }}
+          BUCKET_TOKEN: ${{ secrets.BUCKET_TOKEN }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+        run: npm run generate:wrangler-config
+
+      - name: Deploy worker
+        working-directory: server
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.BUCKET_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.BUCKET_ACCOUNT_ID }}
+        run: npm run deploy
