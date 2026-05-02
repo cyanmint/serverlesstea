@@ -5,6 +5,7 @@ import userRoutes from './routes/users'
 import repoRoutes from './routes/repos'
 import adminRoutes from './routes/admin'
 import internalRoutes from './routes/internal'
+import { handleGitRequest } from './git/http'
 
 export interface Env {
   DB: D1Database
@@ -22,6 +23,7 @@ app.route('/api/users', userRoutes)
 app.route('/api/repos', repoRoutes)
 app.route('/api/admin', adminRoutes)
 app.route('/api/internal', internalRoutes)
+app.all('/git/*', async (c) => handleGitRequest(c.req.raw, c.env))
 
 app.get('/', (c) => c.json({ service: 'serverlesstea-api', status: 'ok' }))
 
