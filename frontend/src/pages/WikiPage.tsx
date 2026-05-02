@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom'
 import RepoHeader from '../components/RepoHeader'
 
-interface WikiPage {
+interface WikiPageEntry {
   name: string
   subURL: string
   updated_at: string
@@ -15,8 +15,8 @@ export default function WikiPage() {
   }>()
 
   // Wiki backend not yet implemented — renders Gitea-mirrored UI structure
-  const pages: WikiPage[] = []
-  const currentPage: WikiPage | null = null
+  const pages: WikiPageEntry[] = []
+  const currentPage = null as WikiPageEntry | null
   const content: string | null = null
 
   const repoBase = `/${username}/${repo}`

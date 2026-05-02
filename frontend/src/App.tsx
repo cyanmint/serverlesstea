@@ -16,6 +16,9 @@ import RepoSettings from './pages/RepoSettings'
 import AdminPanel from './pages/AdminPanel'
 import UserSettings from './pages/UserSettings'
 import CreateRepo from './pages/CreateRepo'
+import ExploreRepos from './pages/explore/Repos'
+import NotFound from './pages/status/NotFound'
+import ServerError from './pages/status/ServerError'
 
 // Encode a router pathname into a query string:  / → ?   /login → ?login
 function pathToQuery(pathname: string): string {
@@ -67,7 +70,6 @@ export default function App() {
           {/* Global pages */}
           <Route path="/" element={<Home />} />
           <Route path="/explore" element={<Navigate to="/" replace />} />
-          <Route path="/explore/repos" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/new" element={<CreateRepo />} />
@@ -104,6 +106,14 @@ export default function App() {
 
           {/* Settings */}
           <Route path="/:username/:repo/settings" element={<RepoSettings />} />
+
+          {/* Explore */}
+          <Route path="/explore/repos" element={<ExploreRepos />} />
+
+          {/* Status pages */}
+          <Route path="/404" element={<NotFound />} />
+          <Route path="/500" element={<ServerError />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </MemoryRouter>

@@ -1560,3 +1560,35 @@ a:hover {
 .data-table tr:hover td {
   background-color: var(--bg-tertiary);
 }
+
+/* Status pages */
+.status-page-error {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+.status-page-error-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+/* Explore pages */
+.explore.repositories { padding: 1rem 0; }
+
+/* Flash messages */
+.flash-message { margin: 0.5rem 0; border-radius: 4px; padding: 0.75rem 1rem; }
+.flash-error { background: #fef2f2; border: 1px solid #fca5a5; color: #dc2626; }
+.flash-warning { background: #fffbeb; border: 1px solid #fcd34d; color: #d97706; }
+.flash-info { background: #eff6ff; border: 1px solid #93c5fd; color: #2563eb; }
+.flash-success { background: #f0fdf4; border: 1px solid #86efac; color: #16a34a; }
+
+/* Pagination */
+.page.buttons { display: flex; justify-content: center; margin: 1rem 0; }
+.ui.pagination.menu { display: flex; list-style: none; gap: 0.25rem; }
+.ui.pagination.menu .item { padding: 0.5rem 0.75rem; cursor: pointer; border-radius: 4px; border: 1px solid var(--border-color); }
+.ui.pagination.menu .item.active { background: var(--primary); color: white; }
+.ui.pagination.menu .item.disabled { opacity: 0.5; cursor: default; }
+
+/* Stub pages */
+.page-content { padding: 1rem; }
