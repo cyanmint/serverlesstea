@@ -12,22 +12,27 @@ export default function Navbar() {
 
   return (
     <nav className="navbar">
-      <div className="navbar-brand">
-        <Link to="/">🍵 serverlesstea</Link>
+      <div className="navbar-left">
+        <div className="navbar-brand">
+          <Link to="/">🍵 serverlesstea</Link>
+        </div>
+        <div className="navbar-explore">
+          <Link to="/explore/repos" className="navbar-explore-link">Explore</Link>
+        </div>
       </div>
       <div className="navbar-links">
         {user ? (
           <>
-            <Link to={`/${user.username}`}>{user.username}</Link>
-            <Link to="/new" className="btn btn-sm btn-primary">+ New</Link>
-            <Link to="/settings">Settings</Link>
-            {user.isAdmin && <Link to="/admin">Admin</Link>}
+            <Link to="/new" className="btn btn-sm btn-primary navbar-new-btn">＋ New</Link>
+            <Link to={`/${user.username}`} className="navbar-username">{user.username}</Link>
+            <Link to="/settings" className="navbar-link">Settings</Link>
+            {user.isAdmin && <Link to="/admin" className="navbar-link">Admin</Link>}
             <button className="btn btn-sm" onClick={handleLogout}>Logout</button>
           </>
         ) : (
           <>
-            <Link to="/login">Login</Link>
-            <Link to="/register">Register</Link>
+            <Link to="/login" className="navbar-link">Sign in</Link>
+            <Link to="/register" className="btn btn-sm btn-primary">Register</Link>
           </>
         )}
       </div>

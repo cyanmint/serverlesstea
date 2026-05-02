@@ -98,7 +98,7 @@ export async function getBlob(owner: string, repo: string, ref: string, path: st
 }
 
 export async function getCommits(owner: string, repo: string, ref: string) {
-  return request<{ commits: Array<{ oid: string; message: string; author: { name: string; email: string; timestamp: number } }> }>(`/repos/${owner}/${repo}/commits/${ref}`)
+  return request<{ commits: Array<{ oid: string; message: string; author: { name: string; email: string; timestamp: number }; committer: { name: string; email: string; timestamp: number } }> }>(`/repos/${owner}/${repo}/commits/${ref}`)
 }
 
 export async function getDiff(owner: string, repo: string, sha: string) {
