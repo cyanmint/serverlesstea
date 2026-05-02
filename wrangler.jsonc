@@ -5,5 +5,19 @@
   "compatibility_flags": ["nodejs_compat"],
   "vars": {
     "NODE_ENV": "production"
-  }
+  },
+  "r2_buckets": [
+    {
+      "binding": "bucket",
+      "bucket_name": "gitdevel"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "database",
+      "database_name": "git-devel",
+      // Replace with your actual D1 database ID from the Cloudflare dashboard
+      "database_id": ""
+    }
+  ]
 }
