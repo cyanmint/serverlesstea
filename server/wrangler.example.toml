@@ -1,0 +1,18 @@
+name = "your-worker-name"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "your-d1-database-name"
+database_id = "your-d1-database-id"
+
+[[r2_buckets]]
+binding = "GIT_BUCKET"
+bucket_name = "your-r2-bucket-name"
+
+[vars]
+JWT_SECRET = "replace-with-a-secret-value"
+R2_ACCESS_TOKEN = "replace-with-r2-access-token-if-needed"
+NODE_ENV = "production"

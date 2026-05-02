@@ -11,6 +11,7 @@ export interface Env {
   DB: D1Database
   GIT_BUCKET: R2Bucket
   JWT_SECRET: string
+  R2_ACCESS_TOKEN?: string
   NODE_ENV?: string
 }
 
@@ -25,6 +26,6 @@ app.route('/api/admin', adminRoutes)
 app.route('/api/internal', internalRoutes)
 app.all('/git/*', async (c) => handleGitRequest(c.req.raw, c.env))
 
-app.get('/', (c) => c.json({ service: 'serverlesstea-api', status: 'ok' }))
+app.get('/', (c) => c.json({ service: 'serverlesstea-server', status: 'ok' }))
 
 export default app

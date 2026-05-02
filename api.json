@@ -1,0 +1,160 @@
+{
+  "version": 1,
+  "endpoints": [
+    {
+      "name": "register",
+      "method": "POST",
+      "path": "/api/auth/register",
+      "requiredBy": "frontend/src/api/client.ts",
+      "sample": {
+        "body": {
+          "username": "alice",
+          "email": "alice@example.com",
+          "password": "password123"
+        }
+      }
+    },
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/auth/login",
+      "requiredBy": "frontend/src/api/client.ts",
+      "sample": {
+        "body": {
+          "email": "alice@example.com",
+          "password": "password123"
+        }
+      }
+    },
+    {
+      "name": "refreshToken",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "requiredBy": "frontend/src/api/client.ts",
+      "sample": {
+        "body": {
+          "refreshToken": "token-placeholder"
+        }
+      }
+    },
+    {
+      "name": "listRepos",
+      "method": "GET",
+      "path": "/api/repos",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "createRepo",
+      "method": "POST",
+      "path": "/api/repos",
+      "requiredBy": "frontend/src/api/client.ts",
+      "sample": {
+        "body": {
+          "name": "demo",
+          "description": "demo repository",
+          "is_private": false
+        }
+      }
+    },
+    {
+      "name": "getRepo",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "deleteRepo",
+      "method": "DELETE",
+      "path": "/api/repos/{owner}/{repo}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getRepoTree",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/tree/{ref}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getBlob",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/blob/{ref}/{path}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getCommits",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/commits/{ref}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getDiff",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/diff/{sha}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getUser",
+      "method": "GET",
+      "path": "/api/users/{username}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "updateUser",
+      "method": "PUT",
+      "path": "/api/users/{username}",
+      "requiredBy": "frontend/src/api/client.ts",
+      "sample": {
+        "body": {
+          "display_name": "Alice"
+        }
+      }
+    },
+    {
+      "name": "adminListUsers",
+      "method": "GET",
+      "path": "/api/admin/users",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "adminUpdateUser",
+      "method": "PUT",
+      "path": "/api/admin/users/{id}",
+      "requiredBy": "frontend/src/api/client.ts",
+      "sample": {
+        "body": {
+          "display_name": "Admin",
+          "is_admin": true
+        }
+      }
+    },
+    {
+      "name": "gitInfoRefsUploadPack",
+      "method": "GET",
+      "path": "/git/{owner}/{repo}.git/info/refs?service=git-upload-pack",
+      "requiredBy": "git-client"
+    },
+    {
+      "name": "gitInfoRefsReceivePack",
+      "method": "GET",
+      "path": "/git/{owner}/{repo}.git/info/refs?service=git-receive-pack",
+      "requiredBy": "git-client"
+    },
+    {
+      "name": "gitUploadPack",
+      "method": "POST",
+      "path": "/git/{owner}/{repo}.git/git-upload-pack",
+      "requiredBy": "git-client"
+    },
+    {
+      "name": "gitReceivePack",
+      "method": "POST",
+      "path": "/git/{owner}/{repo}.git/git-receive-pack",
+      "requiredBy": "git-client"
+    }
+  ],
+  "stubResponseMarkers": [
+    "not implemented",
+    "todo",
+    "stub"
+  ]
+}
