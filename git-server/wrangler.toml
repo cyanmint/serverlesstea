@@ -1,0 +1,10 @@
+name = "serverlesstea-git"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[[r2_buckets]]
+binding = "GIT_BUCKET"
+bucket_name = "serverlesstea-git"
+
+[vars]
+API_BASE_URL = "https://serverlesstea-api.workers.dev"
