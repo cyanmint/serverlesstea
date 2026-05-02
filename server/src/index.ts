@@ -14,6 +14,8 @@ export interface Env {
   R2_ACCESS_TOKEN?: string
   R2_ENDPOINT?: string
   NODE_ENV?: string
+  SEND_EMAIL?: SendEmail
+  EMAIL_FROM?: string
 }
 
 const app = new Hono<{ Bindings: Env }>()

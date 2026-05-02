@@ -3,6 +3,7 @@ import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import { hashPassword, verifyPassword } from '../auth/password'
 import { signToken, signRefreshToken, verifyToken } from '../auth/jwt'
+import { sendWelcomeEmail } from '../email'
 import { Env } from '../index'
 
 const router = new Hono<{ Bindings: Env }>()
@@ -43,6 +44,12 @@ router.post('/register', zValidator('json', registerSchema), async (c) => {
 
   const token = await signToken({ sub: id, username, email }, c.env.JWT_SECRET)
   const refreshToken = await signRefreshToken({ sub: id, username, email, type: 'refresh' }, c.env.JWT_SECRET)
+
+  try {
+    await sendWelcomeEmail(c.env, email, username)
+  } catch {
+    // email failure must not block registration
+  }
 
   return c.json({ token, refreshToken, user: { id, username, email } }, 201)
 })

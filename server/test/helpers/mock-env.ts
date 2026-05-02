@@ -298,11 +298,21 @@ class MockStatement {
   }
 }
 
+export class MockSendEmail {
+  sent: Array<{ from: string; to: string; raw: string }> = []
+
+  async send(message: { from: string; to: string; raw: string }) {
+    this.sent.push({ from: message.from, to: message.to, raw: message.raw })
+  }
+}
+
 export function createMockEnv() {
   return {
     database: new MockD1() as unknown as D1Database,
     bucket: new MockR2Bucket() as unknown as R2Bucket,
     JWT_SECRET: 'test-secret',
     R2_ACCESS_TOKEN: 'test-r2-token',
+    SEND_EMAIL: new MockSendEmail() as unknown as SendEmail,
+    EMAIL_FROM: 'no-reply@test.example',
   }
 }

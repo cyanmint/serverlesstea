@@ -19,5 +19,10 @@
       // Replace with your actual D1 database ID from the Cloudflare dashboard
       "database_id": ""
     }
+  ],
+  "send_email": [
+    {
+      "name": "SEND_EMAIL"
+    }
   ]
 }
