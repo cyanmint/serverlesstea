@@ -19,6 +19,7 @@ export default function Navbar() {
         {user ? (
           <>
             <Link to={`/${user.username}`}>{user.username}</Link>
+            <Link to="/new" className="btn btn-sm btn-primary">+ New</Link>
             <Link to="/settings">Settings</Link>
             {user.isAdmin && <Link to="/admin">Admin</Link>}
             <button className="btn btn-sm" onClick={handleLogout}>Logout</button>

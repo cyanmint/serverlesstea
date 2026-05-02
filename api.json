@@ -93,6 +93,12 @@
       "requiredBy": "frontend/src/api/client.ts"
     },
     {
+      "name": "getMe",
+      "method": "GET",
+      "path": "/api/users/me",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
       "name": "getUser",
       "method": "GET",
       "path": "/api/users/{username}",

@@ -71,7 +71,7 @@ export function getCurrentUser(): { id: string; username: string; email: string;
 }
 
 export async function listRepos() {
-  return request<{ repos: Array<{ id: string; name: string; description: string | null; default_branch: string; created_at: string; owner_username: string }> }>('/repos')
+  return request<{ repos: Array<{ id: string; name: string; description: string | null; is_private: number; default_branch: string; created_at: string; owner_username: string }> }>('/repos')
 }
 
 export async function getRepo(owner: string, repo: string) {
@@ -103,6 +103,10 @@ export async function getCommits(owner: string, repo: string, ref: string) {
 
 export async function getDiff(owner: string, repo: string, sha: string) {
   return request<{ diff: Array<{ path: string; type: string }> }>(`/repos/${owner}/${repo}/diff/${sha}`)
+}
+
+export async function getMe() {
+  return request<{ user: { id: string; username: string; email: string; display_name: string | null; bio: string | null; isAdmin: boolean; created_at: string }; repos: Array<{ id: string; name: string; description: string | null; is_private: number; default_branch: string; created_at: string }> }>('/users/me')
 }
 
 export async function getUser(username: string) {

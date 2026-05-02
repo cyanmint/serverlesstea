@@ -4,22 +4,49 @@ import { z } from 'zod'
 import { authMiddleware } from '../middleware/auth'
 import { Env } from '../index'
 import { listFiles, readBlob, listCommits, getCommitDiff } from '../git/introspect'
+import { verifyToken } from '../auth/jwt'
 import type { JWTPayload } from 'jose'
 
 const router = new Hono<{ Bindings: Env }>()
 
 router.get('/', async (c) => {
   const db = c.env.database
-  const repos = await db
-    .prepare(`
-      SELECT r.id, r.name, r.description, r.default_branch, r.created_at,
-             u.username as owner_username, u.display_name as owner_display_name
-      FROM repositories r
-      JOIN users u ON r.owner_id = u.id
-      WHERE r.is_private = 0
-      ORDER BY r.created_at DESC
-    `)
-    .all()
+
+  // Check for authenticated user to also return their private repos
+  let userId: string | null = null
+  const authHeader = c.req.header('Authorization')
+  if (authHeader?.startsWith('Bearer ')) {
+    try {
+      const payload = await verifyToken(authHeader.slice(7), c.env.JWT_SECRET)
+      userId = payload.sub as string
+    } catch {
+      // invalid token — treat as anonymous
+    }
+  }
+
+  const repos = userId
+    ? await db
+        .prepare(`
+          SELECT r.id, r.name, r.description, r.is_private, r.default_branch, r.created_at,
+                 u.username as owner_username, u.display_name as owner_display_name
+          FROM repositories r
+          JOIN users u ON r.owner_id = u.id
+          WHERE r.is_private = 0 OR r.owner_id = ?
+          ORDER BY r.created_at DESC
+        `)
+        .bind(userId)
+        .all()
+    : await db
+        .prepare(`
+          SELECT r.id, r.name, r.description, r.is_private, r.default_branch, r.created_at,
+                 u.username as owner_username, u.display_name as owner_display_name
+          FROM repositories r
+          JOIN users u ON r.owner_id = u.id
+          WHERE r.is_private = 0
+          ORDER BY r.created_at DESC
+        `)
+        .all()
+
   return c.json({ repos: repos.results })
 })
 
@@ -75,7 +102,24 @@ router.get('/:owner/:repo', async (c) => {
   }
 
   if (result.is_private) {
-    return c.json({ error: 'Repository not found' }, 404)
+    // Check if the requester is the owner or an admin
+    const authHeader = c.req.header('Authorization')
+    let allowed = false
+    if (authHeader?.startsWith('Bearer ')) {
+      try {
+        const payload = await verifyToken(authHeader.slice(7), c.env.JWT_SECRET)
+        const ownerRow = await db
+          .prepare('SELECT id FROM users WHERE username = ?')
+          .bind(owner)
+          .first<{ id: string }>()
+        allowed = payload.sub === ownerRow?.id || payload['isAdmin'] === true
+      } catch {
+        // invalid token
+      }
+    }
+    if (!allowed) {
+      return c.json({ error: 'Repository not found' }, 404)
+    }
   }
 
   return c.json({ repo: result })

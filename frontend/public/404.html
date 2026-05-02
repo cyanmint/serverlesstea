@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>serverlesstea</title>
+    <script>
+      // Single Page App redirect for GitHub Pages.
+      // Encodes the full path into the query string so index.html can restore it.
+      var base = '/serverlesstea';
+      var loc = window.location;
+      var path = loc.pathname.slice(base.length) || '/';
+      loc.replace(
+        loc.protocol + '//' + loc.hostname + (loc.port ? ':' + loc.port : '') +
+        base + '/?r=' + encodeURIComponent(path + loc.search) + loc.hash
+      );
+    </script>
+  </head>
+  <body></body>
+</html>

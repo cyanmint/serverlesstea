@@ -10,6 +10,7 @@ import FileViewer from './pages/FileViewer'
 import CommitHistory from './pages/CommitHistory'
 import AdminPanel from './pages/AdminPanel'
 import UserSettings from './pages/UserSettings'
+import CreateRepo from './pages/CreateRepo'
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/new" element={<CreateRepo />} />
           <Route path="/settings" element={<UserSettings />} />
           <Route path="/admin" element={<AdminPanel />} />
           <Route path="/:username" element={<UserProfile />} />

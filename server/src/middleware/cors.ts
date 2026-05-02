@@ -1,11 +1,19 @@
 import { MiddlewareHandler } from 'hono'
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type,Authorization',
+}
+
 export const cors: MiddlewareHandler = async (c, next) => {
-  await next()
-  c.header('Access-Control-Allow-Origin', '*')
-  c.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
-  c.header('Access-Control-Allow-Headers', 'Content-Type,Authorization')
   if (c.req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: c.res.headers })
+    return new Response(null, { status: 204, headers: CORS_HEADERS })
+  }
+
+  await next()
+
+  for (const [key, value] of Object.entries(CORS_HEADERS)) {
+    c.header(key, value)
   }
 }
