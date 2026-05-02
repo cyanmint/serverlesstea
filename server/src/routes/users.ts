@@ -8,6 +8,24 @@ import { verifyToken } from '../auth/jwt'
 
 const router = new Hono<{ Bindings: Env }>()
 
+router.get('/', async (c) => {
+  const db = c.env.database
+  const { page = '1', limit = '20', q = '' } = c.req.query()
+  const offset = (parseInt(page) - 1) * parseInt(limit)
+
+  let query = 'SELECT id, username, display_name, bio, created_at FROM users'
+  const bindings: unknown[] = []
+  if (q) {
+    query += ' WHERE username LIKE ? OR display_name LIKE ?'
+    bindings.push(`%${q}%`, `%${q}%`)
+  }
+  query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?'
+  bindings.push(parseInt(limit), offset)
+
+  const users = await db.prepare(query).bind(...bindings).all()
+  return c.json({ users: users.results })
+})
+
 router.get('/me', authMiddleware, async (c) => {
   const currentUser = c.get('user' as never) as JWTPayload
   const db = c.env.database

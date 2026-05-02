@@ -5,6 +5,8 @@ import { hashPassword, verifyPassword } from '../auth/password'
 import { signToken, signRefreshToken, verifyToken } from '../auth/jwt'
 import { sendWelcomeEmail } from '../email'
 import { Env } from '../index'
+import { authMiddleware } from '../middleware/auth'
+import type { JWTPayload } from 'jose'
 
 const router = new Hono<{ Bindings: Env }>()
 
@@ -128,6 +130,29 @@ router.post('/refresh', async (c) => {
   }
 
   return c.json({ token })
+})
+
+const changePasswordSchema = z.object({
+  old_password: z.string(),
+  new_password: z.string().min(8),
+})
+
+router.post('/change-password', authMiddleware, zValidator('json', changePasswordSchema), async (c) => {
+  const user = c.get('user' as never) as JWTPayload
+  const { old_password, new_password } = c.req.valid('json')
+  const db = c.env.database
+
+  const userRow = await db.prepare('SELECT id, password_hash FROM users WHERE id = ?')
+    .bind(user.sub).first<{ id: string; password_hash: string }>()
+  if (!userRow) return c.json({ error: 'User not found' }, 404)
+
+  const valid = await verifyPassword(old_password, userRow.password_hash)
+  if (!valid) return c.json({ error: 'Invalid current password' }, 401)
+
+  const newHash = await hashPassword(new_password)
+  await db.prepare("UPDATE users SET password_hash = ?, updated_at = datetime('now') WHERE id = ?")
+    .bind(newHash, user.sub).run()
+  return c.json({ success: true })
 })
 
 export default router

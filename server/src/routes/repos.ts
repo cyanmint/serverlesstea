@@ -191,4 +191,95 @@ router.get('/:owner/:repo/diff/:sha', async (c) => {
   }
 })
 
+const updateRepoSchema = z.object({
+  name: z.string().min(1).max(100).regex(/^[a-zA-Z0-9_.-]+$/).optional(),
+  description: z.string().max(500).nullable().optional(),
+  is_private: z.boolean().optional(),
+  default_branch: z.string().max(100).optional(),
+})
+
+router.patch('/:owner/:repo', authMiddleware, zValidator('json', updateRepoSchema), async (c) => {
+  const { owner, repo } = c.req.param()
+  const user = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+
+  const result = await db.prepare(`
+    SELECT r.id, r.owner_id FROM repositories r
+    JOIN users u ON r.owner_id = u.id WHERE u.username = ? AND r.name = ?
+  `).bind(owner, repo).first<{ id: string; owner_id: string }>()
+  if (!result) return c.json({ error: 'Repository not found' }, 404)
+  if (result.owner_id !== user.sub && !user['isAdmin']) return c.json({ error: 'Forbidden' }, 403)
+
+  const { name, description, is_private, default_branch } = c.req.valid('json')
+  const updates: string[] = ["updated_at = datetime('now')"]
+  const bindings: unknown[] = []
+  if (name !== undefined) { updates.push('name = ?'); bindings.push(name) }
+  if (description !== undefined) { updates.push('description = ?'); bindings.push(description) }
+  if (is_private !== undefined) { updates.push('is_private = ?'); bindings.push(is_private ? 1 : 0) }
+  if (default_branch !== undefined) { updates.push('default_branch = ?'); bindings.push(default_branch) }
+  bindings.push(result.id)
+  await db.prepare(`UPDATE repositories SET ${updates.join(', ')} WHERE id = ?`).bind(...bindings).run()
+  return c.json({ success: true })
+})
+
+router.get('/:owner/:repo/collaborators', async (c) => {
+  const { owner, repo } = c.req.param()
+  const db = c.env.database
+
+  const repoRow = await db.prepare(`
+    SELECT r.id FROM repositories r
+    JOIN users u ON r.owner_id = u.id WHERE u.username = ? AND r.name = ?
+  `).bind(owner, repo).first<{ id: string }>()
+  if (!repoRow) return c.json({ error: 'Repository not found' }, 404)
+
+  const collabs = await db.prepare(`
+    SELECT u.id as user_id, u.username, rc.role
+    FROM repo_collaborators rc JOIN users u ON rc.user_id = u.id
+    WHERE rc.repo_id = ?
+  `).bind(repoRow.id).all()
+  return c.json({ collaborators: collabs.results })
+})
+
+const addCollabSchema = z.object({ role: z.enum(['read', 'write', 'admin']).optional().default('read') })
+
+router.put('/:owner/:repo/collaborators/:username', authMiddleware, zValidator('json', addCollabSchema), async (c) => {
+  const { owner, repo, username } = c.req.param()
+  const user = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+
+  const repoRow = await db.prepare(`
+    SELECT r.id, r.owner_id FROM repositories r
+    JOIN users u ON r.owner_id = u.id WHERE u.username = ? AND r.name = ?
+  `).bind(owner, repo).first<{ id: string; owner_id: string }>()
+  if (!repoRow) return c.json({ error: 'Repository not found' }, 404)
+  if (repoRow.owner_id !== user.sub && !user['isAdmin']) return c.json({ error: 'Forbidden' }, 403)
+
+  const targetUser = await db.prepare('SELECT id FROM users WHERE username = ?').bind(username).first<{ id: string }>()
+  if (!targetUser) return c.json({ error: 'User not found' }, 404)
+
+  const { role } = c.req.valid('json')
+  await db.prepare('INSERT OR REPLACE INTO repo_collaborators (repo_id, user_id, role) VALUES (?, ?, ?)')
+    .bind(repoRow.id, targetUser.id, role).run()
+  return c.json({ success: true })
+})
+
+router.delete('/:owner/:repo/collaborators/:username', authMiddleware, async (c) => {
+  const { owner, repo, username } = c.req.param()
+  const user = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+
+  const repoRow = await db.prepare(`
+    SELECT r.id, r.owner_id FROM repositories r
+    JOIN users u ON r.owner_id = u.id WHERE u.username = ? AND r.name = ?
+  `).bind(owner, repo).first<{ id: string; owner_id: string }>()
+  if (!repoRow) return c.json({ error: 'Repository not found' }, 404)
+  if (repoRow.owner_id !== user.sub && !user['isAdmin']) return c.json({ error: 'Forbidden' }, 403)
+
+  const targetUser = await db.prepare('SELECT id FROM users WHERE username = ?').bind(username).first<{ id: string }>()
+  if (!targetUser) return c.json({ error: 'User not found' }, 404)
+
+  await db.prepare('DELETE FROM repo_collaborators WHERE repo_id = ? AND user_id = ?').bind(repoRow.id, targetUser.id).run()
+  return c.json({ success: true })
+})
+
 export default router
