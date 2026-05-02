@@ -1,0 +1,38 @@
+{
+  "name": "serverlesstea",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "vite --config frontend/vite.config.ts",
+    "dev:server": "wrangler dev",
+    "build": "npm run build:server && npm run build:frontend",
+    "build:server": "tsc --noEmit -p server/tsconfig.json",
+    "build:frontend": "vite build --config frontend/vite.config.ts",
+    "type-check": "npm run type-check:server && npm run type-check:frontend",
+    "type-check:server": "tsc --noEmit -p server/tsconfig.json",
+    "type-check:frontend": "tsc --noEmit -p frontend/tsconfig.json",
+    "generate:wrangler-config": "node ./server/scripts/generate-wrangler-config.mjs",
+    "test": "vitest run --root server --reporter=default --reporter=junit --outputFile=./server/test-report.junit.xml",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.2.0",
+    "hono": "^4.0.0",
+    "isomorphic-git": "^1.25.0",
+    "jose": "^5.2.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0",
+    "vitest": "^4.1.5",
+    "wrangler": "^3.0.0"
+  }
+}

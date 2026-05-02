@@ -20,7 +20,7 @@ const loginSchema = z.object({
 
 router.post('/register', zValidator('json', registerSchema), async (c) => {
   const { username, email, password } = c.req.valid('json')
-  const db = c.env.DB
+  const db = c.env.database
 
   const existing = await db
     .prepare('SELECT id FROM users WHERE username = ? OR email = ?')
@@ -49,7 +49,7 @@ router.post('/register', zValidator('json', registerSchema), async (c) => {
 
 router.post('/login', zValidator('json', loginSchema), async (c) => {
   const { email, password } = c.req.valid('json')
-  const db = c.env.DB
+  const db = c.env.database
 
   const user = await db
     .prepare('SELECT id, username, email, password_hash, is_admin FROM users WHERE email = ?')

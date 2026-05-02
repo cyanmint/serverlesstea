@@ -296,7 +296,7 @@ describe('api endpoints', () => {
   })
 
   function env() {
-    return { DB: db as unknown as D1Database, GIT_BUCKET: mockBucket as unknown as R2Bucket, JWT_SECRET: 'test-secret' }
+    return { database: db as unknown as D1Database, bucket: mockBucket as unknown as R2Bucket, JWT_SECRET: 'test-secret' }
   }
 
   async function registerAndLogin() {

@@ -15,7 +15,7 @@ router.get('/users', adminCheck, async (c) => {
     return c.json({ error: 'Forbidden' }, 403)
   }
 
-  const db = c.env.DB
+  const db = c.env.database
   const users = await db
     .prepare('SELECT id, username, email, display_name, bio, is_admin, created_at FROM users ORDER BY created_at DESC')
     .all()
@@ -37,7 +37,7 @@ router.put('/users/:id', adminCheck, zValidator('json', updateUserSchema), async
 
   const { id } = c.req.param()
   const { display_name, bio, is_admin } = c.req.valid('json')
-  const db = c.env.DB
+  const db = c.env.database
 
   const target = await db.prepare('SELECT id FROM users WHERE id = ?').bind(id).first()
   if (!target) {

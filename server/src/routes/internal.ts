@@ -13,7 +13,7 @@ router.get('/check-access', async (c) => {
     return c.json({ error: 'Missing owner or repo' }, 400)
   }
 
-  const result = await authorizeGitAccess(c.env.DB, authHeader, owner, repoName, action)
+  const result = await authorizeGitAccess(c.env.database, authHeader, owner, repoName, action)
   if (!result.allowed) {
     if (result.status === 404) return c.json({ error: 'Repository not found' }, 404)
     if (result.status === 401) return c.json({ error: 'Unauthorized' }, 401)

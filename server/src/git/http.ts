@@ -25,7 +25,7 @@ export async function handleGitRequest(request: Request, env: Env): Promise<Resp
     }
 
     const action = service === 'git-receive-pack' ? 'write' : 'read'
-    const access = await authorizeGitAccess(env.DB, authHeader, owner, repo, action)
+    const access = await authorizeGitAccess(env.database, authHeader, owner, repo, action)
     if (!access.allowed) {
       if (access.status === 401) {
         return new Response('Unauthorized', {
@@ -38,11 +38,11 @@ export async function handleGitRequest(request: Request, env: Env): Promise<Resp
       })
     }
 
-    return handleInfoRefs(request, env.GIT_BUCKET, owner, repo)
+    return handleInfoRefs(request, env.bucket, owner, repo)
   }
 
   if (request.method === 'POST' && path === '/git-upload-pack') {
-    const access = await authorizeGitAccess(env.DB, authHeader, owner, repo, 'read')
+    const access = await authorizeGitAccess(env.database, authHeader, owner, repo, 'read')
     if (!access.allowed) {
       if (access.status === 401) {
         return new Response('Unauthorized', {
@@ -59,7 +59,7 @@ export async function handleGitRequest(request: Request, env: Env): Promise<Resp
   }
 
   if (request.method === 'POST' && path === '/git-receive-pack') {
-    const access = await authorizeGitAccess(env.DB, authHeader, owner, repo, 'write')
+    const access = await authorizeGitAccess(env.database, authHeader, owner, repo, 'write')
     if (!access.allowed) {
       if (access.status === 401) {
         return new Response('Unauthorized', {
@@ -72,7 +72,7 @@ export async function handleGitRequest(request: Request, env: Env): Promise<Resp
       })
     }
 
-    return handleReceivePack(request, env.GIT_BUCKET, owner, repo)
+    return handleReceivePack(request, env.bucket, owner, repo)
   }
 
   return new Response('Not Found', { status: 404 })

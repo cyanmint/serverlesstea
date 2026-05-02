@@ -9,7 +9,7 @@ import type { JWTPayload } from 'jose'
 const router = new Hono<{ Bindings: Env }>()
 
 router.get('/', async (c) => {
-  const db = c.env.DB
+  const db = c.env.database
   const repos = await db
     .prepare(`
       SELECT r.id, r.name, r.description, r.default_branch, r.created_at,
@@ -32,7 +32,7 @@ const createRepoSchema = z.object({
 router.post('/', authMiddleware, zValidator('json', createRepoSchema), async (c) => {
   const user = c.get('user' as never) as JWTPayload
   const { name, description, is_private } = c.req.valid('json')
-  const db = c.env.DB
+  const db = c.env.database
 
   const existing = await db
     .prepare('SELECT id FROM repositories WHERE owner_id = ? AND name = ?')
@@ -54,7 +54,7 @@ router.post('/', authMiddleware, zValidator('json', createRepoSchema), async (c)
 
 router.get('/:owner/:repo', async (c) => {
   const { owner, repo } = c.req.param()
-  const db = c.env.DB
+  const db = c.env.database
 
   const result = await db
     .prepare(`
@@ -84,7 +84,7 @@ router.get('/:owner/:repo', async (c) => {
 router.delete('/:owner/:repo', authMiddleware, async (c) => {
   const { owner, repo } = c.req.param()
   const user = c.get('user' as never) as JWTPayload
-  const db = c.env.DB
+  const db = c.env.database
 
   const result = await db
     .prepare(`
@@ -110,7 +110,7 @@ router.delete('/:owner/:repo', authMiddleware, async (c) => {
 router.get('/:owner/:repo/tree/:ref', async (c) => {
   const { owner, repo, ref } = c.req.param()
   try {
-    const files = await listFiles(owner, repo, ref, c.env.GIT_BUCKET)
+    const files = await listFiles(owner, repo, ref, c.env.bucket)
     return c.json({ files })
   } catch (e) {
     return c.json({ error: String(e) }, 500)
@@ -120,7 +120,7 @@ router.get('/:owner/:repo/tree/:ref', async (c) => {
 router.get('/:owner/:repo/blob/:ref/:path{.*}', async (c) => {
   const { owner, repo, ref, path } = c.req.param()
   try {
-    const content = await readBlob(owner, repo, ref, path, c.env.GIT_BUCKET)
+    const content = await readBlob(owner, repo, ref, path, c.env.bucket)
     return c.json({ content, path })
   } catch (e) {
     return c.json({ error: String(e) }, 404)
@@ -130,7 +130,7 @@ router.get('/:owner/:repo/blob/:ref/:path{.*}', async (c) => {
 router.get('/:owner/:repo/commits/:ref', async (c) => {
   const { owner, repo, ref } = c.req.param()
   try {
-    const commits = await listCommits(owner, repo, ref, c.env.GIT_BUCKET)
+    const commits = await listCommits(owner, repo, ref, c.env.bucket)
     return c.json({ commits })
   } catch (e) {
     return c.json({ error: String(e) }, 500)
@@ -140,7 +140,7 @@ router.get('/:owner/:repo/commits/:ref', async (c) => {
 router.get('/:owner/:repo/diff/:sha', async (c) => {
   const { owner, repo, sha } = c.req.param()
   try {
-    const diff = await getCommitDiff(owner, repo, sha, c.env.GIT_BUCKET)
+    const diff = await getCommitDiff(owner, repo, sha, c.env.bucket)
     return c.json({ diff })
   } catch (e) {
     return c.json({ error: String(e) }, 500)

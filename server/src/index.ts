@@ -8,8 +8,8 @@ import internalRoutes from './routes/internal'
 import { handleGitRequest } from './git/http'
 
 export interface Env {
-  DB: D1Database
-  GIT_BUCKET: R2Bucket
+  database: D1Database
+  bucket: R2Bucket
   JWT_SECRET: string
   R2_ACCESS_TOKEN?: string
   R2_ENDPOINT?: string

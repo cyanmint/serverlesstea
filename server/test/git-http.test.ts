@@ -130,8 +130,8 @@ describe('git smart-http on api server', () => {
 
   function env() {
     return {
-      DB: db as unknown as D1Database,
-      GIT_BUCKET: bucket as unknown as R2Bucket,
+      database: db as unknown as D1Database,
+      bucket: bucket as unknown as R2Bucket,
       JWT_SECRET: 'test-secret',
     }
   }

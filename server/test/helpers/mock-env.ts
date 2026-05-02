@@ -300,8 +300,8 @@ class MockStatement {
 
 export function createMockEnv() {
   return {
-    DB: new MockD1() as unknown as D1Database,
-    GIT_BUCKET: new MockR2Bucket() as unknown as R2Bucket,
+    database: new MockD1() as unknown as D1Database,
+    bucket: new MockR2Bucket() as unknown as R2Bucket,
     JWT_SECRET: 'test-secret',
     R2_ACCESS_TOKEN: 'test-r2-token',
   }

@@ -5,15 +5,17 @@ import { createRequire } from 'node:module'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
-const serverDir = path.resolve(__dirname, '..')
-const templatePath = path.join(serverDir, 'wrangler.example.toml')
-const outputPath = path.join(serverDir, 'wrangler.toml')
-const configPath = path.join(serverDir, 'config.js')
+const repoRoot = path.resolve(__dirname, '..', '..')
+const templatePath = path.join(repoRoot, 'wrangler.example.toml')
+const outputPath = path.join(repoRoot, 'wrangler.toml')
+const rootConfigPath = path.join(repoRoot, 'config.js')
+const legacyConfigPath = path.join(repoRoot, 'server', 'config.js')
 
 function readConfig() {
-  if (!fs.existsSync(configPath)) return {}
+  const targetPath = fs.existsSync(rootConfigPath) ? rootConfigPath : legacyConfigPath
+  if (!fs.existsSync(targetPath)) return {}
   const require = createRequire(import.meta.url)
-  const loaded = require(configPath)
+  const loaded = require(targetPath)
   return loaded && typeof loaded === 'object' ? loaded : {}
 }
 

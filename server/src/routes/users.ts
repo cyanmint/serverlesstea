@@ -9,7 +9,7 @@ const router = new Hono<{ Bindings: Env }>()
 
 router.get('/:username', async (c) => {
   const { username } = c.req.param()
-  const db = c.env.DB
+  const db = c.env.database
 
   const user = await db
     .prepare('SELECT id, username, display_name, bio, created_at FROM users WHERE username = ?')
@@ -36,7 +36,7 @@ const updateSchema = z.object({
 router.put('/:username', authMiddleware, zValidator('json', updateSchema), async (c) => {
   const { username } = c.req.param()
   const currentUser = c.get('user' as never) as JWTPayload
-  const db = c.env.DB
+  const db = c.env.database
 
   const target = await db
     .prepare('SELECT id FROM users WHERE username = ?')
