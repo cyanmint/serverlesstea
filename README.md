@@ -27,6 +27,8 @@ Default worker bindings are:
 - D1: `database`
 - R2: `bucket`
 
+Default frontend API domain is read from environment secret `WORKER_URL` (or `VITE_API_URL` if explicitly set).
+
 ## Local commands
 - `npm run build` builds backend and frontend from project root.
 - `npm test` runs backend tests.

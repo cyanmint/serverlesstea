@@ -37,6 +37,8 @@ jobs:
         run: npm ci
 
       - name: Build frontend
+        env:
+          WORKER_URL: ${{ secrets.WORKER_URL }}
         run: npm run build:frontend
 
       - name: Upload Pages artifact
