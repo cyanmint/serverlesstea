@@ -11,8 +11,7 @@
     "type-check": "npm run type-check:server && npm run type-check:frontend",
     "type-check:server": "tsc --noEmit -p server/tsconfig.json",
     "type-check:frontend": "tsc --noEmit -p frontend/tsconfig.json",
-    "generate:wrangler-config": "node ./server/scripts/generate-wrangler-config.mjs",
-    "setup": "npm run generate:wrangler-config",
+    "setup": "npm i",
     "test": "cd server && vitest run --reporter=default --reporter=junit --outputFile=./test-report.junit.xml",
     "deploy": "wrangler deploy"
   },
