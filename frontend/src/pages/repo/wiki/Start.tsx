@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import RepoHeader from '../../../components/RepoHeader'
 
 export default function WikiStart() {
@@ -7,8 +7,12 @@ export default function WikiStart() {
     <div className="repo-page">
       <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
-        <h2>Initialize Wiki</h2>
-        <p>This feature is coming soon.</p>
+        <div className="empty-placeholder">
+          <span style={{ fontSize: '3rem' }}>📖</span>
+          <h2>This repository has no wiki yet</h2>
+          <p>A wiki allows you to write documentation for your project.</p>
+          <Link to={`/${username}/${repo}/wiki/_new`} className="btn btn-primary">Create the first page</Link>
+        </div>
       </div>
     </div>
   )
