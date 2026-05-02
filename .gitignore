@@ -145,5 +145,5 @@ vite.config.ts.timestamp-*
 .wrangler/
 dist/
 **/test-report.junit.xml
-**/wrangler.toml
+# wrangler.toml is committed to the repo as a default config; generate:wrangler-config overwrites it at deploy time
 /server/config.js

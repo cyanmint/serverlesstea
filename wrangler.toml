@@ -1,0 +1,16 @@
+name = "serverlesstea-server"
+main = "server/src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "database"
+database_name = "serverlesstea-db"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+[[r2_buckets]]
+binding = "bucket"
+bucket_name = "serverlesstea-git"
+
+[vars]
+NODE_ENV = "production"

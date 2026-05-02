@@ -12,6 +12,7 @@
     "type-check:server": "tsc --noEmit -p server/tsconfig.json",
     "type-check:frontend": "tsc --noEmit -p frontend/tsconfig.json",
     "generate:wrangler-config": "node ./server/scripts/generate-wrangler-config.mjs",
+    "setup": "npm run generate:wrangler-config",
     "test": "cd server && vitest run --reporter=default --reporter=junit --outputFile=./test-report.junit.xml",
     "deploy": "wrangler deploy"
   },
