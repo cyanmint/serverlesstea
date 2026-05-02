@@ -1,0 +1,117 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - "api-server/**"
+      - "git-server/**"
+      - ".github/workflows/backend-ci.yml"
+  pull_request:
+    paths:
+      - "api-server/**"
+      - "git-server/**"
+      - ".github/workflows/backend-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  api-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: api-server/package-lock.json
+
+      - name: Install dependencies
+        working-directory: api-server
+        run: npm ci
+
+      - name: Build
+        working-directory: api-server
+        run: npm run build
+
+      - name: Test
+        working-directory: api-server
+        run: npm test
+
+      - name: Upload API test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-server-test-report
+          path: api-server/test-report.junit.xml
+          if-no-files-found: error
+
+  git-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: git-server/package-lock.json
+
+      - name: Install dependencies
+        working-directory: git-server
+        run: npm ci
+
+      - name: Build
+        working-directory: git-server
+        run: npm run build
+
+      - name: Test
+        working-directory: git-server
+        run: npm test
+
+      - name: Upload Git test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: git-server-test-report
+          path: git-server/test-report.junit.xml
+          if-no-files-found: error
+
+  test-report:
+    if: always()
+    needs:
+      - api-server
+      - git-server
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      contents: read
+    steps:
+      - name: Download API report artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: api-server-test-report
+          path: reports/api-server
+
+      - name: Download Git report artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: git-server-test-report
+          path: reports/git-server
+
+      - name: Publish API test report
+        uses: dorny/test-reporter@v1
+        with:
+          name: API Server Tests
+          path: reports/api-server/test-report.junit.xml
+          reporter: java-junit
+
+      - name: Publish Git Server test report
+        uses: dorny/test-reporter@v1
+        with:
+          name: Git Server Tests
+          path: reports/git-server/test-report.junit.xml
+          reporter: java-junit
