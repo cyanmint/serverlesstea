@@ -1,6 +1,9 @@
 import { SignJWT, jwtVerify, type JWTPayload } from 'jose'
 
 function getKey(secret: string): Uint8Array {
+  if (!secret) {
+    throw new Error('JWT_SECRET is not configured. Set it as a Worker secret with: wrangler secret put JWT_SECRET')
+  }
   return new TextEncoder().encode(secret)
 }
 

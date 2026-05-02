@@ -13,6 +13,7 @@
     "type-check:frontend": "tsc --noEmit -p frontend/tsconfig.json",
     "setup": "npm i",
     "deploy": "wrangler deploy",
+    "migrate": "wrangler d1 execute git-devel --remote --file=server/schema.sql",
     "test": "cd server && vitest run --reporter=default --reporter=junit --outputFile=./test-report.junit.xml"
   },
   "dependencies": {
