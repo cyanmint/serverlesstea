@@ -41,7 +41,7 @@ const endpointFromAccountId = bucketAccountId ? `https://${bucketAccountId}.r2.c
 const values = {
   workerName: pick(process.env.CF_WORKER_NAME, 'serverlesstea-server-ci'),
   d1DatabaseName: pick(process.env.CF_D1_DATABASE_NAME, process.env.DB_NAME, 'serverlesstea-ci'),
-  d1DatabaseId: pick(process.env.CF_D1_DATABASE_ID, process.env.DB_NAME, 'ci-d1-database-id'),
+  d1DatabaseId: pick(process.env.CF_D1_DATABASE_ID),
   r2BucketName: pick(config.r2?.bucketName, process.env.CF_R2_BUCKET_NAME, process.env.BUCKET_NAME, 'serverlesstea-ci-git'),
   jwtSecret: pick(process.env.JWT_SECRET, 'ci-jwt-secret'),
   r2AccessToken: pick(config.r2?.accessToken, process.env.R2_ACCESS_TOKEN, process.env.BUCKET_TOKEN, 'ci-r2-access-token'),
@@ -50,12 +50,18 @@ const values = {
 
 let output = fs.readFileSync(templatePath, 'utf8')
 output = output.replaceAll('your-worker-name', tomlEscape(values.workerName))
-output = output.replaceAll('your-d1-database-name', tomlEscape(values.d1DatabaseName))
-output = output.replaceAll('your-d1-database-id', tomlEscape(values.d1DatabaseId))
 output = output.replaceAll('your-r2-bucket-name', tomlEscape(values.r2BucketName))
 output = output.replaceAll('replace-with-a-secret-value', tomlEscape(values.jwtSecret))
 output = output.replaceAll('replace-with-r2-access-token-if-needed', tomlEscape(values.r2AccessToken))
 output = output.replaceAll('replace-with-r2-endpoint-if-needed', tomlEscape(values.r2Endpoint))
+
+if (values.d1DatabaseId) {
+  output = output.replaceAll('your-d1-database-name', tomlEscape(values.d1DatabaseName))
+  output = output.replaceAll('your-d1-database-id', tomlEscape(values.d1DatabaseId))
+} else {
+  // Remove the [[d1_databases]] section when no valid database ID is provided
+  output = output.replace(/\[\[d1_databases\]\]\n(?:.*\n)*?\n/, '')
+}
 
 fs.writeFileSync(outputPath, output)
 console.log(`Generated ${outputPath}`)
