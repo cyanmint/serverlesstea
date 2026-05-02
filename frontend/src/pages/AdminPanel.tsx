@@ -28,7 +28,7 @@ export default function AdminPanel() {
       .then((data) => setUsers(data.users))
       .catch((err: unknown) => setError(err instanceof Error ? err.message : 'Error'))
       .finally(() => setLoading(false))
-  }, [])
+  }, [currentUser, navigate])
 
   async function toggleAdmin(user: User) {
     try {
