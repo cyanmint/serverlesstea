@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="4" failures="0" errors="0" time="0.030273739">
+    <testsuite name="test/git-protocol.test.ts" timestamp="2026-05-02T08:42:50.887Z" hostname="runnervmeorf1" tests="4" failures="0" errors="0" skipped="0" time="0.030273739">
+        <testcase classname="test/git-protocol.test.ts" name="git smart-http worker &gt; serves info/refs for upload-pack when read access is granted" time="0.024061316">
+        </testcase>
+        <testcase classname="test/git-protocol.test.ts" name="git smart-http worker &gt; requires authentication for receive-pack advertisement" time="0.000902277">
+        </testcase>
+        <testcase classname="test/git-protocol.test.ts" name="git smart-http worker &gt; blocks upload-pack when read permission is denied" time="0.002239493">
+        </testcase>
+        <testcase classname="test/git-protocol.test.ts" name="git smart-http worker &gt; accepts receive-pack and updates refs when write access is granted" time="0.001746329">
+        </testcase>
+    </testsuite>
+</testsuites>
