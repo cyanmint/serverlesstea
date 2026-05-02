@@ -2,11 +2,7 @@ name: Frontend Pages Deploy
 
 on:
   push:
-    branches: ["main"]
-    paths:
-      - "frontend/**"
-      - ".github/workflows/frontend-pages.yml"
-  pull_request:
+    branches: ["default", "copilot/**"]
     paths:
       - "frontend/**"
       - ".github/workflows/frontend-pages.yml"
