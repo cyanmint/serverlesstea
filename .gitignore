@@ -146,3 +146,4 @@ vite.config.ts.timestamp-*
 dist/
 **/test-report.junit.xml
 **/wrangler.toml
+/server/config.js

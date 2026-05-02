@@ -12,6 +12,7 @@ export interface Env {
   GIT_BUCKET: R2Bucket
   JWT_SECRET: string
   R2_ACCESS_TOKEN?: string
+  R2_ENDPOINT?: string
   NODE_ENV?: string
 }
 

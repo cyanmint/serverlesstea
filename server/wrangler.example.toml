@@ -15,4 +15,5 @@ bucket_name = "your-r2-bucket-name"
 [vars]
 JWT_SECRET = "replace-with-a-secret-value"
 R2_ACCESS_TOKEN = "replace-with-r2-access-token-if-needed"
+R2_ENDPOINT = "replace-with-r2-endpoint-if-needed"
 NODE_ENV = "production"
