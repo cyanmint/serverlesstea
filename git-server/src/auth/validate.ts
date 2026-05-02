@@ -1,27 +1,28 @@
 export interface AuthResult {
-  valid: boolean
-  userId?: string
-  username?: string
+  allowed: boolean
+  status: number
 }
 
-export async function validateBasicAuth(request: Request, apiBaseUrl: string): Promise<AuthResult> {
+export async function validateGitAccess(
+  request: Request,
+  apiBaseUrl: string,
+  owner: string,
+  repo: string,
+  action: 'read' | 'write'
+): Promise<AuthResult> {
   const authHeader = request.headers.get('Authorization')
-  if (!authHeader || !authHeader.startsWith('Basic ')) {
-    return { valid: false }
-  }
 
   try {
-    const response = await fetch(`${apiBaseUrl}/api/internal/check-access`, {
-      headers: { Authorization: authHeader },
+    const response = await fetch(`${apiBaseUrl}/api/internal/check-access?owner=${encodeURIComponent(owner)}&repo=${encodeURIComponent(repo)}&action=${action}`, {
+      headers: authHeader ? { Authorization: authHeader } : {},
     })
 
-    if (!response.ok) {
-      return { valid: false }
+    if (response.ok) {
+      return { allowed: true, status: 200 }
     }
 
-    const data = await response.json() as { valid: boolean; userId: string; username: string }
-    return data
+    return { allowed: false, status: response.status }
   } catch {
-    return { valid: false }
+    return { allowed: false, status: 503 }
   }
 }
