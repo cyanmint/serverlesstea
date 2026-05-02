@@ -1,10 +1,16 @@
-export default function Ldap() {
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getCurrentUser } from '../../../../api/client'
+
+export default function AdminLdap() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!getCurrentUser()?.isAdmin) navigate('/')
+  }, [navigate])
   return (
-    <div className="ldap-container">
-      {/* Auto-converted from admin/auth/source/ldap.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>LDAP Authentication</h2>
+      <p>Admin feature – coming soon.</p>
     </div>
   )
 }

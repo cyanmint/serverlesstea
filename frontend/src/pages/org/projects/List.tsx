@@ -1,10 +1,11 @@
-export default function List() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgProjectsList() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="list-container">
-      {/* Auto-converted from org/projects/list.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Projects</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

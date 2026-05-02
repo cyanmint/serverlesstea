@@ -1,10 +1,16 @@
-export default function View() {
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getCurrentUser } from '../../../api/client'
+
+export default function AdminBadgeView() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!getCurrentUser()?.isAdmin) navigate('/')
+  }, [navigate])
   return (
-    <div className="view-container">
-      {/* Auto-converted from admin/badge/view.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Badge</h2>
+      <p>Admin feature – coming soon.</p>
     </div>
   )
 }

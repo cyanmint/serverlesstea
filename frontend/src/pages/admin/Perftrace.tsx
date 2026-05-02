@@ -1,10 +1,16 @@
-export default function Perftrace() {
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getCurrentUser } from '../../api/client'
+
+export default function AdminPerftrace() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!getCurrentUser()?.isAdmin) navigate('/')
+  }, [navigate])
   return (
-    <div className="perftrace-container">
-      {/* Auto-converted from admin/perftrace.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Performance Trace</h2>
+      <p>Admin feature – coming soon.</p>
     </div>
   )
 }

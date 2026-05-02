@@ -1,10 +1,8 @@
 export default function FormFields() {
   return (
-    <div className="form-fields-container">
-      {/* Auto-converted from devtest/form-fields.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Form Fields</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

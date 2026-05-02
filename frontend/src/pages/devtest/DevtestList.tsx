@@ -1,10 +1,8 @@
 export default function DevtestList() {
   return (
-    <div className="devtest-list-container">
-      {/* Auto-converted from devtest/devtest-list.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Devtest List</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

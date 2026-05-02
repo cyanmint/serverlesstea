@@ -1,10 +1,8 @@
-export default function Chef() {
+export default function PkgMetaChef() {
   return (
-    <div className="chef-container">
-      {/* Auto-converted from package/metadata/chef.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Chef Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

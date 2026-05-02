@@ -1,9 +1,9 @@
 export default function SigninOpenid() {
   return (
-    <div className="signin_openid-container">
-      {/* Auto-converted from user/auth/signin_openid.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
+    <div className="page-centered">
+      <div className="form-card">
+        <h2>Sign in with OpenID</h2>
+        <p>OpenID authentication is not yet supported in this version.</p>
       </div>
     </div>
   )

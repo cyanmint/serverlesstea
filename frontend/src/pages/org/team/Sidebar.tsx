@@ -1,10 +1,11 @@
-export default function Sidebar() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgTeamSidebar() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="sidebar-container">
-      {/* Auto-converted from org/team/sidebar.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Team Sidebar</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

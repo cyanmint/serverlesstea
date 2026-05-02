@@ -1,10 +1,8 @@
-export default function Packages() {
+export default function SettingsPackages() {
   return (
-    <div className="packages-container">
-      {/* Auto-converted from user/settings/packages.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Packages</h2>
+      <p>This settings section is not yet available.</p>
     </div>
   )
 }

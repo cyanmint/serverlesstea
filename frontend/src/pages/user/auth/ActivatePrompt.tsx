@@ -1,9 +1,10 @@
 export default function ActivatePrompt() {
   return (
-    <div className="activate_prompt-container">
-      {/* Auto-converted from user/auth/activate_prompt.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
+    <div className="page-centered">
+      <div className="form-card">
+        <h2>Activation Email Sent</h2>
+        <p>An activation email has been sent to your address.</p>
+        <p>Please follow the instructions in the email to activate your account.</p>
       </div>
     </div>
   )

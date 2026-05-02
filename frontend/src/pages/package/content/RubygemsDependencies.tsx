@@ -1,10 +1,8 @@
-export default function RubygemsDependencies() {
+export default function PkgRubygemsDependencies() {
   return (
-    <div className="rubygems_dependencies-container">
-      {/* Auto-converted from package/content/rubygems_dependencies.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>RubygemsDependencies Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

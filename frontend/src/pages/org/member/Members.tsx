@@ -1,10 +1,11 @@
-export default function Members() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgMembers() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="members-container">
-      {/* Auto-converted from org/member/members.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h1>{org} – Members</h1>
+      <p>No members to display.</p>
     </div>
   )
 }

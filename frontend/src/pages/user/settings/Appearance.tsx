@@ -1,10 +1,8 @@
 export default function Appearance() {
   return (
-    <div className="appearance-container">
-      {/* Auto-converted from user/settings/appearance.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Appearance</h2>
+      <p>This settings section is not yet available.</p>
     </div>
   )
 }

@@ -1,9 +1,9 @@
 export default function Webauthn() {
   return (
-    <div className="webauthn-container">
-      {/* Auto-converted from user/auth/webauthn.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
+    <div className="page-centered">
+      <div className="form-card">
+        <h2>WebAuthn Authentication</h2>
+        <p>WebAuthn / hardware security key authentication is not yet supported in this version.</p>
       </div>
     </div>
   )

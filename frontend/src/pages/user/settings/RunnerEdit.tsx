@@ -1,10 +1,8 @@
 export default function RunnerEdit() {
   return (
-    <div className="runner_edit-container">
-      {/* Auto-converted from user/settings/runner_edit.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Edit Runner</h2>
+      <p>This settings section is not yet available.</p>
     </div>
   )
 }

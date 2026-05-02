@@ -1,10 +1,8 @@
 export default function RepoActionView() {
   return (
-    <div className="repo-action-view-container">
-      {/* Auto-converted from devtest/repo-action-view.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Repo Action View</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

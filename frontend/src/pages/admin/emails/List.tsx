@@ -1,10 +1,16 @@
-export default function List() {
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getCurrentUser } from '../../../api/client'
+
+export default function AdminEmailsList() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!getCurrentUser()?.isAdmin) navigate('/')
+  }, [navigate])
   return (
-    <div className="list-container">
-      {/* Auto-converted from admin/emails/list.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Email Queue</h2>
+      <p>Admin feature – coming soon.</p>
     </div>
   )
 }

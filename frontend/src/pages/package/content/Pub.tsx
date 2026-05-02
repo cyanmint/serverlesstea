@@ -1,10 +1,8 @@
-export default function Pub() {
+export default function PkgPub() {
   return (
-    <div className="pub-container">
-      {/* Auto-converted from package/content/pub.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Pub Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

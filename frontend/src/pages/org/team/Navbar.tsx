@@ -1,10 +1,11 @@
-export default function Navbar() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgTeamNavbar() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="navbar-container">
-      {/* Auto-converted from org/team/navbar.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Team Navigation</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

@@ -1,10 +1,11 @@
-export default function Teams() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgTeams() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="teams-container">
-      {/* Auto-converted from org/team/teams.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Teams</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

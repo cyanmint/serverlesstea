@@ -1,10 +1,11 @@
-export default function PackagesCleanupRulesPreview() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgCleanupPreview() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="packages_cleanup_rules_preview-container">
-      {/* Auto-converted from org/settings/packages_cleanup_rules_preview.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Settings – Cleanup Rules Preview</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

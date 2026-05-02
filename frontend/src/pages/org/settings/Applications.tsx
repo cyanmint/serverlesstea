@@ -1,10 +1,11 @@
-export default function Applications() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgApplications() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="applications-container">
-      {/* Auto-converted from org/settings/applications.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Settings – OAuth2 Applications</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

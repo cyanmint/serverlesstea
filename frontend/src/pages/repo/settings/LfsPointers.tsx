@@ -1,9 +1,14 @@
+import { useParams } from 'react-router-dom'
+import RepoHeader from '../../../components/RepoHeader'
+
 export default function LfsPointers() {
+  const { username, repo } = useParams<{ username: string; repo: string }>()
   return (
-    <div className="lfs_pointers-container">
-      {/* Auto-converted from repo/settings/lfs_pointers.tmpl */}
+    <div className="repo-page">
+      <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
-        {/* Template content rendered here */}
+        <h2>LFS Pointers</h2>
+        <p>This feature is coming soon.</p>
       </div>
     </div>
   )

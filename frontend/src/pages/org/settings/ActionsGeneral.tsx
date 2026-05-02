@@ -1,10 +1,11 @@
-export default function ActionsGeneral() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgActionsGeneral() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="actions_general-container">
-      {/* Auto-converted from org/settings/actions_general.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Settings – Actions General</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

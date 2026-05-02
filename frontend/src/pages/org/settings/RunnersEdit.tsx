@@ -1,10 +1,11 @@
-export default function RunnersEdit() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgRunnersEdit() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="runners_edit-container">
-      {/* Auto-converted from org/settings/runners_edit.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Settings – Edit Runner</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

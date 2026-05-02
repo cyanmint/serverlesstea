@@ -1,10 +1,8 @@
-export default function Maven() {
+export default function PkgMetaMaven() {
   return (
-    <div className="maven-container">
-      {/* Auto-converted from package/metadata/maven.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Maven Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

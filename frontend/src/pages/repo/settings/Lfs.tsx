@@ -1,9 +1,14 @@
-export default function Lfs() {
+import { useParams } from 'react-router-dom'
+import RepoHeader from '../../../components/RepoHeader'
+
+export default function RepoLfs() {
+  const { username, repo } = useParams<{ username: string; repo: string }>()
   return (
-    <div className="lfs-container">
-      {/* Auto-converted from repo/settings/lfs.tmpl */}
+    <div className="repo-page">
+      <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
-        {/* Template content rendered here */}
+        <h2>Git LFS</h2>
+        <p>This feature is coming soon.</p>
       </div>
     </div>
   )

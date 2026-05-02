@@ -1,10 +1,8 @@
 export default function ApplicationsOauth2List() {
   return (
-    <div className="applications_oauth2_list-container">
-      {/* Auto-converted from user/settings/applications_oauth2_list.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>OAuth2 Applications List</h2>
+      <p>This settings section is not yet available.</p>
     </div>
   )
 }

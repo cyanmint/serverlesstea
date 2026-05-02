@@ -1,10 +1,8 @@
-export default function Heatmap() {
+export default function UserHeatmap() {
   return (
-    <div className="heatmap-container">
-      {/* Auto-converted from user/heatmap.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Activity Heatmap</h2>
+      <p>Activity heatmap coming soon.</p>
     </div>
   )
 }

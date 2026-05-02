@@ -1,10 +1,11 @@
-export default function View() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgProjectsView() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="view-container">
-      {/* Auto-converted from org/projects/view.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Project</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

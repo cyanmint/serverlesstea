@@ -1,10 +1,8 @@
-export default function Actions() {
+export default function SettingsActions() {
   return (
-    <div className="actions-container">
-      {/* Auto-converted from user/settings/actions.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Actions Settings</h2>
+      <p>This settings section is not yet available.</p>
     </div>
   )
 }

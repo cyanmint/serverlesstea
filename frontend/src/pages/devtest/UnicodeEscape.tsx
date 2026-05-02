@@ -1,10 +1,8 @@
 export default function UnicodeEscape() {
   return (
-    <div className="unicode-escape-container">
-      {/* Auto-converted from devtest/unicode-escape.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Unicode Escape</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

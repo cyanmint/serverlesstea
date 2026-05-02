@@ -1,10 +1,8 @@
-export default function Notifications() {
+export default function SettingsNotifications() {
   return (
-    <div className="notifications-container">
-      {/* Auto-converted from user/settings/notifications.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Notification Settings</h2>
+      <p>This settings section is not yet available.</p>
     </div>
   )
 }

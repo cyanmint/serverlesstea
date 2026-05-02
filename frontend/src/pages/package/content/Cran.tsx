@@ -1,10 +1,8 @@
-export default function Cran() {
+export default function PkgCran() {
   return (
-    <div className="cran-container">
-      {/* Auto-converted from package/content/cran.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Cran Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

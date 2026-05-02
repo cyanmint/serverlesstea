@@ -1,10 +1,8 @@
-export default function Chef() {
+export default function PkgChef() {
   return (
-    <div className="chef-container">
-      {/* Auto-converted from package/content/chef.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Chef Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

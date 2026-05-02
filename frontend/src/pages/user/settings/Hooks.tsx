@@ -1,10 +1,8 @@
 export default function Hooks() {
   return (
-    <div className="hooks-container">
-      {/* Auto-converted from user/settings/hooks.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Webhooks</h2>
+      <p>This settings section is not yet available.</p>
     </div>
   )
 }

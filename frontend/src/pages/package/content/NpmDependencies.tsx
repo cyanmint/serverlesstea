@@ -1,10 +1,8 @@
-export default function NpmDependencies() {
+export default function PkgNpmDependencies() {
   return (
-    <div className="npm_dependencies-container">
-      {/* Auto-converted from package/content/npm_dependencies.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>NpmDependencies Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

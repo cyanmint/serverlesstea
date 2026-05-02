@@ -1,10 +1,8 @@
-export default function Preview() {
+export default function CleanupRulesPreview() {
   return (
-    <div className="preview-container">
-      {/* Auto-converted from package/shared/cleanup_rules/preview.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Preview Cleanup Rules</h2>
+      <p>Cleanup rules coming soon.</p>
     </div>
   )
 }

@@ -1,10 +1,8 @@
 export default function BadgeCommitSign() {
   return (
-    <div className="badge-commit-sign-container">
-      {/* Auto-converted from devtest/badge-commit-sign.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Badge Commit Sign</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

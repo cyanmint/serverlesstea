@@ -1,9 +1,14 @@
+import { useParams } from 'react-router-dom'
+import RepoHeader from '../../../components/RepoHeader'
+
 export default function MilestoneIssues() {
+  const { username, repo } = useParams<{ username: string; repo: string }>()
   return (
-    <div className="milestone_issues-container">
-      {/* Auto-converted from repo/issue/milestone_issues.tmpl */}
+    <div className="repo-page">
+      <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
-        {/* Template content rendered here */}
+        <h2>Milestone Issues</h2>
+        <p>This feature is coming soon.</p>
       </div>
     </div>
   )

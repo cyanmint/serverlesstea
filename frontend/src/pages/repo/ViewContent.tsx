@@ -1,10 +1,1 @@
-export default function ViewContent() {
-  return (
-    <div className="view_content-container">
-      {/* Auto-converted from repo/view_content.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
-    </div>
-  )
-}
+export { default } from '../FileViewer'

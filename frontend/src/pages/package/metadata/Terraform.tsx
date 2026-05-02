@@ -1,10 +1,8 @@
-export default function Terraform() {
+export default function PkgMetaTerraform() {
   return (
-    <div className="terraform-container">
-      {/* Auto-converted from package/metadata/terraform.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Terraform Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

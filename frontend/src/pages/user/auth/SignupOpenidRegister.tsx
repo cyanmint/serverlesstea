@@ -1,9 +1,9 @@
 export default function SignupOpenidRegister() {
   return (
-    <div className="signup_openid_register-container">
-      {/* Auto-converted from user/auth/signup_openid_register.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
+    <div className="page-centered">
+      <div className="form-card">
+        <h2>Register via OpenID</h2>
+        <p>OpenID registration is not yet supported in this version.</p>
       </div>
     </div>
   )

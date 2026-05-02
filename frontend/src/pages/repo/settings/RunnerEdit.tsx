@@ -1,9 +1,14 @@
-export default function RunnerEdit() {
+import { useParams } from 'react-router-dom'
+import RepoHeader from '../../../components/RepoHeader'
+
+export default function RepoRunnerEdit() {
+  const { username, repo } = useParams<{ username: string; repo: string }>()
   return (
-    <div className="runner_edit-container">
-      {/* Auto-converted from repo/settings/runner_edit.tmpl */}
+    <div className="repo-page">
+      <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
-        {/* Template content rendered here */}
+        <h2>Edit Runner</h2>
+        <p>This feature is coming soon.</p>
       </div>
     </div>
   )

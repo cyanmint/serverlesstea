@@ -1,10 +1,8 @@
-export default function Maven() {
+export default function PkgMaven() {
   return (
-    <div className="maven-container">
-      {/* Auto-converted from package/content/maven.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Maven Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

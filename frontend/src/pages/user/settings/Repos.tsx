@@ -1,10 +1,8 @@
-export default function Repos() {
+export default function SettingsRepos() {
   return (
-    <div className="repos-container">
-      {/* Auto-converted from user/settings/repos.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Repositories</h2>
+      <p>This settings section is not yet available.</p>
     </div>
   )
 }

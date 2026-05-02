@@ -1,10 +1,10 @@
-export default function Header() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgHeader() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="header-container">
-      {/* Auto-converted from org/header.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="org-header">
+      <h2>{org}</h2>
     </div>
   )
 }

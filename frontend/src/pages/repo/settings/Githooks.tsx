@@ -1,9 +1,14 @@
+import { useParams } from 'react-router-dom'
+import RepoHeader from '../../../components/RepoHeader'
+
 export default function Githooks() {
+  const { username, repo } = useParams<{ username: string; repo: string }>()
   return (
-    <div className="githooks-container">
-      {/* Auto-converted from repo/settings/githooks.tmpl */}
+    <div className="repo-page">
+      <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
-        {/* Template content rendered here */}
+        <h2>Git Hooks</h2>
+        <p>This feature is coming soon.</p>
       </div>
     </div>
   )

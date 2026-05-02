@@ -1,10 +1,11 @@
-export default function New() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgTeamNew() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="new-container">
-      {/* Auto-converted from org/team/new.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – New Team</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

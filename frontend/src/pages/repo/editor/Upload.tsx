@@ -1,9 +1,14 @@
-export default function Upload() {
+import { useParams } from 'react-router-dom'
+import RepoHeader from '../../../components/RepoHeader'
+
+export default function EditorUpload() {
+  const { username, repo } = useParams<{ username: string; repo: string }>()
   return (
-    <div className="upload-container">
-      {/* Auto-converted from repo/editor/upload.tmpl */}
+    <div className="repo-page">
+      <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
-        {/* Template content rendered here */}
+        <h2>Upload Files</h2>
+        <p>This feature is coming soon.</p>
       </div>
     </div>
   )

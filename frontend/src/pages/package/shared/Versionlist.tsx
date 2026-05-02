@@ -1,10 +1,8 @@
 export default function Versionlist() {
   return (
-    <div className="versionlist-container">
-      {/* Auto-converted from package/shared/versionlist.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Package Versions</h2>
+      <p>Package versions coming soon.</p>
     </div>
   )
 }

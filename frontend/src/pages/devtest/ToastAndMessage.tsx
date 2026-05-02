@@ -1,10 +1,8 @@
 export default function ToastAndMessage() {
   return (
-    <div className="toast-and-message-container">
-      {/* Auto-converted from devtest/toast-and-message.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Toast and Message</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

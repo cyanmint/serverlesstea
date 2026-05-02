@@ -1,10 +1,8 @@
-export default function New() {
+export default function ProjectsNew() {
   return (
-    <div className="new-container">
-      {/* Auto-converted from projects/new.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>New Project</h2>
+      <p>Projects feature coming soon.</p>
     </div>
   )
 }

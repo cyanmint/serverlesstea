@@ -1,10 +1,8 @@
-export default function Cargo() {
+export default function SharedCargo() {
   return (
-    <div className="cargo-container">
-      {/* Auto-converted from package/shared/cargo.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Cargo</h2>
+      <p>Cargo package details coming soon.</p>
     </div>
   )
 }

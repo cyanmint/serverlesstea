@@ -1,10 +1,8 @@
-export default function Npm() {
+export default function PkgMetaNpm() {
   return (
-    <div className="npm-container">
-      {/* Auto-converted from package/metadata/npm.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Npm Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

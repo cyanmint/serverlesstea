@@ -1,10 +1,1 @@
-export default function LayoutFooter() {
-  return (
-    <div className="layout_footer-container">
-      {/* Auto-converted from org/settings/layout_footer.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
-    </div>
-  )
-}
+export default function OrgSettingsLayoutFooter() { return null }

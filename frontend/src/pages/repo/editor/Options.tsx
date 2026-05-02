@@ -1,10 +1,1 @@
-export default function Options() {
-  return (
-    <div className="options-container">
-      {/* Auto-converted from repo/editor/options.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
-    </div>
-  )
-}
+export default function EditorOptions() { return null }

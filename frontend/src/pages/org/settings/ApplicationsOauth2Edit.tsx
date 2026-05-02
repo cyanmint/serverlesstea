@@ -1,10 +1,11 @@
-export default function ApplicationsOauth2Edit() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgOauth2Edit() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="applications_oauth2_edit-container">
-      {/* Auto-converted from org/settings/applications_oauth2_edit.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Settings – Edit OAuth2 Application</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

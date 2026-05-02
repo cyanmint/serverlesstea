@@ -1,10 +1,8 @@
 export default function TmplerrSub() {
   return (
-    <div className="tmplerr-sub-container">
-      {/* Auto-converted from devtest/tmplerr-sub.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Template Error Sub</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

@@ -1,10 +1,8 @@
-export default function Webauthn() {
+export default function WebauthnSettings() {
   return (
-    <div className="webauthn-container">
-      {/* Auto-converted from user/settings/security/webauthn.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Security Keys (WebAuthn)</h2>
+      <p>WebAuthn management coming soon.</p>
     </div>
   )
 }

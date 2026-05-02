@@ -1,10 +1,8 @@
 export default function SeverityColors() {
   return (
-    <div className="severity-colors-container">
-      {/* Auto-converted from devtest/severity-colors.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Severity Colors</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

@@ -1,10 +1,8 @@
-export default function Organization() {
+export default function SettingsOrganization() {
   return (
-    <div className="organization-container">
-      {/* Auto-converted from user/settings/organization.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Organizations</h2>
+      <p>This settings section is not yet available.</p>
     </div>
   )
 }

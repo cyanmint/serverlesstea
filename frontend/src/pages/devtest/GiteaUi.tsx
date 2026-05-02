@@ -1,10 +1,8 @@
 export default function GiteaUi() {
   return (
-    <div className="gitea-ui-container">
-      {/* Auto-converted from devtest/gitea-ui.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Gitea UI</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

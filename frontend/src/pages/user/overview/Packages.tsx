@@ -1,10 +1,8 @@
-export default function Packages() {
+export default function OverviewPackages() {
   return (
-    <div className="packages-container">
-      {/* Auto-converted from user/overview/packages.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Packages</h2>
+      <p>No packages published yet.</p>
     </div>
   )
 }

@@ -1,10 +1,8 @@
-export default function Vagrant() {
+export default function PkgMetaVagrant() {
   return (
-    <div className="vagrant-container">
-      {/* Auto-converted from package/metadata/vagrant.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Vagrant Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

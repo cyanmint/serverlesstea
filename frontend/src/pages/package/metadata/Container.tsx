@@ -1,10 +1,8 @@
-export default function Container() {
+export default function PkgMetaContainer() {
   return (
-    <div className="container-container">
-      {/* Auto-converted from package/metadata/container.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Container Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

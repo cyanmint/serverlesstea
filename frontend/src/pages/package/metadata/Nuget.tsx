@@ -1,10 +1,8 @@
-export default function Nuget() {
+export default function PkgMetaNuget() {
   return (
-    <div className="nuget-container">
-      {/* Auto-converted from package/metadata/nuget.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Nuget Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

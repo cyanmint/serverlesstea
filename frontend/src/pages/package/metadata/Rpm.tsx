@@ -1,10 +1,8 @@
-export default function Rpm() {
+export default function PkgMetaRpm() {
   return (
-    <div className="rpm-container">
-      {/* Auto-converted from package/metadata/rpm.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Rpm Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

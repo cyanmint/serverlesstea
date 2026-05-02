@@ -1,10 +1,8 @@
-export default function List() {
+export default function CleanupRulesList() {
   return (
-    <div className="list-container">
-      {/* Auto-converted from package/shared/cleanup_rules/list.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Cleanup Rules</h2>
+      <p>Cleanup rules coming soon.</p>
     </div>
   )
 }

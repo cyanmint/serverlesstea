@@ -1,10 +1,8 @@
 export default function KeysPrincipal() {
   return (
-    <div className="keys_principal-container">
-      {/* Auto-converted from user/settings/keys_principal.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>SSH Principal Keys</h2>
+      <p>This settings section is not yet available.</p>
     </div>
   )
 }

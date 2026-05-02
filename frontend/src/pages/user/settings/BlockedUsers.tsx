@@ -1,10 +1,8 @@
 export default function BlockedUsers() {
   return (
-    <div className="blocked_users-container">
-      {/* Auto-converted from user/settings/blocked_users.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Blocked Users</h2>
+      <p>This settings section is not yet available.</p>
     </div>
   )
 }

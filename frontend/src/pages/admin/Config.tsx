@@ -1,10 +1,16 @@
-export default function Config() {
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getCurrentUser } from '../../api/client'
+
+export default function AdminConfig() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!getCurrentUser()?.isAdmin) navigate('/')
+  }, [navigate])
   return (
-    <div className="config-container">
-      {/* Auto-converted from admin/config.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Site Configuration</h2>
+      <p>Admin feature – coming soon.</p>
     </div>
   )
 }

@@ -1,10 +1,8 @@
-export default function Label() {
+export default function DevtestLabel() {
   return (
-    <div className="label-container">
-      {/* Auto-converted from devtest/label.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Label</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

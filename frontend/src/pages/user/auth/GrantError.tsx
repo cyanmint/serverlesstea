@@ -1,9 +1,9 @@
 export default function GrantError() {
   return (
-    <div className="grant_error-container">
-      {/* Auto-converted from user/auth/grant_error.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
+    <div className="page-centered">
+      <div className="form-card">
+        <h2>Authorization Error</h2>
+        <p className="alert alert-error">The OAuth2 authorization request failed.</p>
       </div>
     </div>
   )

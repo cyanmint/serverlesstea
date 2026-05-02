@@ -1,9 +1,14 @@
-export default function ActionsGeneral() {
+import { useParams } from 'react-router-dom'
+import RepoHeader from '../../../components/RepoHeader'
+
+export default function RepoActionsGeneral() {
+  const { username, repo } = useParams<{ username: string; repo: string }>()
   return (
-    <div className="actions_general-container">
-      {/* Auto-converted from repo/settings/actions_general.tmpl */}
+    <div className="repo-page">
+      <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
-        {/* Template content rendered here */}
+        <h2>Actions General</h2>
+        <p>This feature is coming soon.</p>
       </div>
     </div>
   )

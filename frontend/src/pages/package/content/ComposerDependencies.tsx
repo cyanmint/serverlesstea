@@ -1,10 +1,8 @@
-export default function ComposerDependencies() {
+export default function PkgComposerDependencies() {
   return (
-    <div className="composer_dependencies-container">
-      {/* Auto-converted from package/content/composer_dependencies.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>ComposerDependencies Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

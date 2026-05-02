@@ -1,10 +1,8 @@
 export default function GlobalButton() {
   return (
-    <div className="global-button-container">
-      {/* Auto-converted from devtest/global-button.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Global Button</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

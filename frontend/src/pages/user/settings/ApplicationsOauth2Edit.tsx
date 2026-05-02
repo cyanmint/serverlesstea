@@ -1,10 +1,8 @@
 export default function ApplicationsOauth2Edit() {
   return (
-    <div className="applications_oauth2_edit-container">
-      {/* Auto-converted from user/settings/applications_oauth2_edit.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Edit OAuth2 Application</h2>
+      <p>This settings section is not yet available.</p>
     </div>
   )
 }

@@ -1,10 +1,8 @@
 export default function GrantsOauth2() {
   return (
-    <div className="grants_oauth2-container">
-      {/* Auto-converted from user/settings/grants_oauth2.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>OAuth2 Grants</h2>
+      <p>This settings section is not yet available.</p>
     </div>
   )
 }

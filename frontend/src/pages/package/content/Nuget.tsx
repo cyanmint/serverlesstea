@@ -1,10 +1,8 @@
-export default function Nuget() {
+export default function PkgNuget() {
   return (
-    <div className="nuget-container">
-      {/* Auto-converted from package/content/nuget.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Nuget Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

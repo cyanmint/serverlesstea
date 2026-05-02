@@ -1,10 +1,8 @@
 export default function DevtestHeader() {
   return (
-    <div className="devtest-header-container">
-      {/* Auto-converted from devtest/devtest-header.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Devtest Header</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

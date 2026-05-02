@@ -1,10 +1,16 @@
-export default function Oauth2Edit() {
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getCurrentUser } from '../../../api/client'
+
+export default function AdminOauth2Edit() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!getCurrentUser()?.isAdmin) navigate('/')
+  }, [navigate])
   return (
-    <div className="oauth2_edit-container">
-      {/* Auto-converted from admin/applications/oauth2_edit.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Edit OAuth2 Application</h2>
+      <p>Admin feature – coming soon.</p>
     </div>
   )
 }

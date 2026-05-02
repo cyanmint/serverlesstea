@@ -1,10 +1,8 @@
-export default function Pypi() {
+export default function PkgMetaPypi() {
   return (
-    <div className="pypi-container">
-      {/* Auto-converted from package/metadata/pypi.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Pypi Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

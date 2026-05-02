@@ -1,10 +1,8 @@
-export default function Openid() {
+export default function OpenidSettings() {
   return (
-    <div className="openid-container">
-      {/* Auto-converted from user/settings/security/openid.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>OpenID Connect</h2>
+      <p>OpenID Connect settings coming soon.</p>
     </div>
   )
 }

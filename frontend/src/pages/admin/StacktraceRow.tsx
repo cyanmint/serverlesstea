@@ -1,10 +1,16 @@
-export default function StacktraceRow() {
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getCurrentUser } from '../../api/client'
+
+export default function AdminStacktraceRow() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!getCurrentUser()?.isAdmin) navigate('/')
+  }, [navigate])
   return (
-    <div className="stacktrace-row-container">
-      {/* Auto-converted from admin/stacktrace-row.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Stacktrace Row</h2>
+      <p>Admin feature – coming soon.</p>
     </div>
   )
 }

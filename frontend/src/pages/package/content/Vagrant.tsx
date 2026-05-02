@@ -1,10 +1,8 @@
-export default function Vagrant() {
+export default function PkgVagrant() {
   return (
-    <div className="vagrant-container">
-      {/* Auto-converted from package/content/vagrant.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Vagrant Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

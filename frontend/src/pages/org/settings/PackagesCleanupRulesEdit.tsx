@@ -1,10 +1,11 @@
-export default function PackagesCleanupRulesEdit() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgCleanupEdit() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="packages_cleanup_rules_edit-container">
-      {/* Auto-converted from org/settings/packages_cleanup_rules_edit.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Settings – Edit Cleanup Rule</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

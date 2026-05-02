@@ -1,10 +1,11 @@
-export default function OptionsDangerzone() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgOptionsDangerzone() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="options_dangerzone-container">
-      {/* Auto-converted from org/settings/options_dangerzone.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Settings – Danger Zone</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

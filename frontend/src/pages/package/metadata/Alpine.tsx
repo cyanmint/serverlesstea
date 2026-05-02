@@ -1,10 +1,8 @@
-export default function Alpine() {
+export default function PkgMetaAlpine() {
   return (
-    <div className="alpine-container">
-      {/* Auto-converted from package/metadata/alpine.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Alpine Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

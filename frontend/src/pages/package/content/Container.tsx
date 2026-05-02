@@ -1,10 +1,8 @@
-export default function Container() {
+export default function PkgContainer() {
   return (
-    <div className="container-container">
-      {/* Auto-converted from package/content/container.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Container Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

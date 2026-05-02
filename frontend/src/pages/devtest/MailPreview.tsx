@@ -1,10 +1,8 @@
 export default function MailPreview() {
   return (
-    <div className="mail-preview-container">
-      {/* Auto-converted from devtest/mail-preview.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Mail Preview</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

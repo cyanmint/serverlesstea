@@ -1,10 +1,11 @@
-export default function Labels() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgLabels() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="labels-container">
-      {/* Auto-converted from org/settings/labels.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Settings – Labels</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

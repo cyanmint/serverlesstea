@@ -1,10 +1,1 @@
-export default function Navbar() {
-  return (
-    <div className="navbar-container">
-      {/* Auto-converted from repo/settings/navbar.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
-    </div>
-  )
-}
+export default function RepoSettingsNavbar() { return null }

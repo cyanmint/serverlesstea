@@ -1,9 +1,10 @@
 export default function Activate() {
   return (
-    <div className="activate-container">
-      {/* Auto-converted from user/auth/activate.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
+    <div className="page-centered">
+      <div className="form-card">
+        <h2>Activate Your Account</h2>
+        <p>Check your email for an activation link.</p>
+        <p>If you did not receive an email, check your spam folder or contact support.</p>
       </div>
     </div>
   )

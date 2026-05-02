@@ -1,10 +1,16 @@
-export default function HookNew() {
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getCurrentUser } from '../../api/client'
+
+export default function AdminHookNew() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!getCurrentUser()?.isAdmin) navigate('/')
+  }, [navigate])
   return (
-    <div className="hook_new-container">
-      {/* Auto-converted from admin/hook_new.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>New System Webhook</h2>
+      <p>Admin feature – coming soon.</p>
     </div>
   )
 }

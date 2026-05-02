@@ -1,10 +1,8 @@
-export default function Composer() {
+export default function PkgComposer() {
   return (
-    <div className="composer-container">
-      {/* Auto-converted from package/content/composer.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Composer Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

@@ -1,10 +1,8 @@
-export default function Npm() {
+export default function PkgNpm() {
   return (
-    <div className="npm-container">
-      {/* Auto-converted from package/content/npm.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Npm Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

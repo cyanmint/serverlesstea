@@ -1,10 +1,8 @@
 export default function Tmplerr() {
   return (
-    <div className="tmplerr-container">
-      {/* Auto-converted from devtest/tmplerr.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Template Error</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

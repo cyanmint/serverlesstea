@@ -1,10 +1,8 @@
 export default function Feeds() {
   return (
-    <div className="feeds-container">
-      {/* Auto-converted from user/dashboard/feeds.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Activity Feed</h2>
+      <p>No recent activity.</p>
     </div>
   )
 }

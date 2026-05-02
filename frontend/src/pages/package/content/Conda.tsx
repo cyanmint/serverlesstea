@@ -1,10 +1,8 @@
-export default function Conda() {
+export default function PkgConda() {
   return (
-    <div className="conda-container">
-      {/* Auto-converted from package/content/conda.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Conda Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

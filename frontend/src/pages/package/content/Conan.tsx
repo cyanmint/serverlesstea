@@ -1,10 +1,8 @@
-export default function Conan() {
+export default function PkgConan() {
   return (
-    <div className="conan-container">
-      {/* Auto-converted from package/content/conan.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Conan Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

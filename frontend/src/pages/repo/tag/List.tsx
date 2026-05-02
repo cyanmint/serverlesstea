@@ -1,9 +1,14 @@
-export default function List() {
+import { useParams } from 'react-router-dom'
+import RepoHeader from '../../../components/RepoHeader'
+
+export default function TagList() {
+  const { username, repo } = useParams<{ username: string; repo: string }>()
   return (
-    <div className="list-container">
-      {/* Auto-converted from repo/tag/list.tmpl */}
+    <div className="repo-page">
+      <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
-        {/* Template content rendered here */}
+        <h2>Tags</h2>
+        <p>This feature is coming soon.</p>
       </div>
     </div>
   )

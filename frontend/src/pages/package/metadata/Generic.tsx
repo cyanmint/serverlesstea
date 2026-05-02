@@ -1,10 +1,8 @@
-export default function Generic() {
+export default function PkgMetaGeneric() {
   return (
-    <div className="generic-container">
-      {/* Auto-converted from package/metadata/generic.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Generic Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

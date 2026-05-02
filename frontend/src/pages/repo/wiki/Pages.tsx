@@ -1,9 +1,14 @@
-export default function Pages() {
+import { useParams } from 'react-router-dom'
+import RepoHeader from '../../../components/RepoHeader'
+
+export default function WikiPages() {
+  const { username, repo } = useParams<{ username: string; repo: string }>()
   return (
-    <div className="pages-container">
-      {/* Auto-converted from repo/wiki/pages.tmpl */}
+    <div className="repo-page">
+      <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
-        {/* Template content rendered here */}
+        <h2>Wiki Pages</h2>
+        <p>This feature is coming soon.</p>
       </div>
     </div>
   )

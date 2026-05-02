@@ -1,10 +1,11 @@
-export default function Home() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgHomePage() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="home-container">
-      {/* Auto-converted from org/home.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h1>{org}</h1>
+      <p>Organization home page.</p>
     </div>
   )
 }

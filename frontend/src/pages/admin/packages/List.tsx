@@ -1,10 +1,16 @@
-export default function List() {
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getCurrentUser } from '../../../api/client'
+
+export default function AdminPackagesList() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!getCurrentUser()?.isAdmin) navigate('/')
+  }, [navigate])
   return (
-    <div className="list-container">
-      {/* Auto-converted from admin/packages/list.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Packages</h2>
+      <p>Admin feature – coming soon.</p>
     </div>
   )
 }

@@ -1,10 +1,11 @@
-export default function Invite() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgTeamInvite() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="invite-container">
-      {/* Auto-converted from org/team/invite.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Invite Team Member</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

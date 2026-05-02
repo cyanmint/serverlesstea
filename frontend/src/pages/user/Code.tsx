@@ -1,10 +1,8 @@
-export default function Code() {
+export default function UserCode() {
   return (
-    <div className="code-container">
-      {/* Auto-converted from user/code.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>User Code</h2>
+      <p>Code search coming soon.</p>
     </div>
   )
 }

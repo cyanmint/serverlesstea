@@ -1,10 +1,8 @@
-export default function Swift() {
+export default function PkgSwift() {
   return (
-    <div className="swift-container">
-      {/* Auto-converted from package/content/swift.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Swift Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

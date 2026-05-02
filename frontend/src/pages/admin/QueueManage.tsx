@@ -1,10 +1,16 @@
-export default function QueueManage() {
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getCurrentUser } from '../../api/client'
+
+export default function AdminQueueManage() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!getCurrentUser()?.isAdmin) navigate('/')
+  }, [navigate])
   return (
-    <div className="queue_manage-container">
-      {/* Auto-converted from admin/queue_manage.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Queue Manage</h2>
+      <p>Admin feature – coming soon.</p>
     </div>
   )
 }

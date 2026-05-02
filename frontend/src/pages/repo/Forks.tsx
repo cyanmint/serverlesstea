@@ -1,9 +1,14 @@
-export default function Forks() {
+import { useParams } from 'react-router-dom'
+import RepoHeader from '../../components/RepoHeader'
+
+export default function RepoForks() {
+  const { username, repo } = useParams<{ username: string; repo: string }>()
   return (
-    <div className="forks-container">
-      {/* Auto-converted from repo/forks.tmpl */}
+    <div className="repo-page">
+      <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
-        {/* Template content rendered here */}
+        <h2>Forks</h2>
+        <p>No forks yet.</p>
       </div>
     </div>
   )

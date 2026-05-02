@@ -1,10 +1,8 @@
-export default function Arch() {
+export default function PkgMetaArch() {
   return (
-    <div className="arch-container">
-      {/* Auto-converted from package/metadata/arch.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Arch Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

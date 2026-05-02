@@ -1,10 +1,8 @@
-export default function Cargo() {
+export default function PkgMetaCargo() {
   return (
-    <div className="cargo-container">
-      {/* Auto-converted from package/metadata/cargo.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Cargo Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

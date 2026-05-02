@@ -1,10 +1,8 @@
-export default function Edit() {
+export default function CleanupRulesEdit() {
   return (
-    <div className="edit-container">
-      {/* Auto-converted from package/shared/cleanup_rules/edit.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Edit Cleanup Rule</h2>
+      <p>Cleanup rules coming soon.</p>
     </div>
   )
 }

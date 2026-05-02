@@ -1,10 +1,8 @@
-export default function List() {
+export default function ProjectsList() {
   return (
-    <div className="list-container">
-      {/* Auto-converted from projects/list.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Projects</h2>
+      <p>Projects feature coming soon.</p>
     </div>
   )
 }

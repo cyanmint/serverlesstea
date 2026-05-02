@@ -1,10 +1,8 @@
 export default function OidcWellknown() {
   return (
-    <div className="oidc_wellknown-container">
-      {/* Auto-converted from user/auth/oidc_wellknown.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>OpenID Connect Discovery</h2>
+      <p>This endpoint serves the OpenID Connect discovery document.</p>
     </div>
   )
 }

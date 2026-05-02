@@ -1,10 +1,16 @@
-export default function SelfCheck() {
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getCurrentUser } from '../../api/client'
+
+export default function AdminSelfCheck() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!getCurrentUser()?.isAdmin) navigate('/')
+  }, [navigate])
   return (
-    <div className="self_check-container">
-      {/* Auto-converted from admin/self_check.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Self Check</h2>
+      <p>Admin feature – coming soon.</p>
     </div>
   )
 }

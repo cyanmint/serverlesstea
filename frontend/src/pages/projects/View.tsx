@@ -1,10 +1,8 @@
-export default function View() {
+export default function ProjectsView() {
   return (
-    <div className="view-container">
-      {/* Auto-converted from projects/view.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Project</h2>
+      <p>Projects feature coming soon.</p>
     </div>
   )
 }

@@ -1,10 +1,11 @@
-export default function Repositories() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgTeamRepositories() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="repositories-container">
-      {/* Auto-converted from org/team/repositories.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Team Repositories</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

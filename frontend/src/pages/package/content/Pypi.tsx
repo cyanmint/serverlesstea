@@ -1,10 +1,8 @@
-export default function Pypi() {
+export default function PkgPypi() {
   return (
-    <div className="pypi-container">
-      {/* Auto-converted from package/content/pypi.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Pypi Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

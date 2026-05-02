@@ -1,10 +1,8 @@
-export default function List() {
+export default function PackageList() {
   return (
-    <div className="list-container">
-      {/* Auto-converted from package/shared/list.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Packages</h2>
+      <p>Package list coming soon.</p>
     </div>
   )
 }

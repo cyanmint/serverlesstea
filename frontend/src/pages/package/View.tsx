@@ -1,10 +1,8 @@
-export default function View() {
+export default function PackageView() {
   return (
-    <div className="view-container">
-      {/* Auto-converted from package/view.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Package</h2>
+      <p>Package details coming soon.</p>
     </div>
   )
 }

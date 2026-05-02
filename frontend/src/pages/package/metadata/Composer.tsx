@@ -1,10 +1,8 @@
-export default function Composer() {
+export default function PkgMetaComposer() {
   return (
-    <div className="composer-container">
-      {/* Auto-converted from package/metadata/composer.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Composer Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

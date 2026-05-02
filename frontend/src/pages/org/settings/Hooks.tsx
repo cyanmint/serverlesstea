@@ -1,10 +1,11 @@
-export default function Hooks() {
+import { useParams } from 'react-router-dom'
+
+export default function OrgHooks() {
+  const { org } = useParams<{ org: string }>()
   return (
-    <div className="hooks-container">
-      {/* Auto-converted from org/settings/hooks.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>{org} – Settings – Webhooks</h2>
+      <p>This feature is coming soon.</p>
     </div>
   )
 }

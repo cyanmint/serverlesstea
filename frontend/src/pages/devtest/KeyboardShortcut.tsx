@@ -1,10 +1,8 @@
 export default function KeyboardShortcut() {
   return (
-    <div className="keyboard-shortcut-container">
-      {/* Auto-converted from devtest/keyboard-shortcut.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Devtest: Keyboard Shortcut</h2>
+      <p>Developer testing component.</p>
     </div>
   )
 }

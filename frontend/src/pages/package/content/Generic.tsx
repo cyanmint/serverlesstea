@@ -1,10 +1,8 @@
-export default function Generic() {
+export default function PkgGeneric() {
   return (
-    <div className="generic-container">
-      {/* Auto-converted from package/content/generic.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Generic Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

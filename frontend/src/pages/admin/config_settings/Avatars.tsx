@@ -1,10 +1,16 @@
-export default function Avatars() {
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
+import { getCurrentUser } from '../../../api/client'
+
+export default function AdminAvatarsConfig() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (!getCurrentUser()?.isAdmin) navigate('/')
+  }, [navigate])
   return (
-    <div className="avatars-container">
-      {/* Auto-converted from admin/config_settings/avatars.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Avatars Configuration</h2>
+      <p>Admin feature – coming soon.</p>
     </div>
   )
 }

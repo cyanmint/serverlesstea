@@ -1,10 +1,8 @@
-export default function Alpine() {
+export default function PkgAlpine() {
   return (
-    <div className="alpine-container">
-      {/* Auto-converted from package/content/alpine.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Alpine Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

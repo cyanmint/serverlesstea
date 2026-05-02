@@ -1,9 +1,14 @@
-export default function CodeFrequency() {
+import { useParams } from 'react-router-dom'
+import RepoHeader from '../../components/RepoHeader'
+
+export default function RepoCodeFrequency() {
+  const { username, repo } = useParams<{ username: string; repo: string }>()
   return (
-    <div className="code_frequency-container">
-      {/* Auto-converted from repo/code_frequency.tmpl */}
+    <div className="repo-page">
+      <RepoHeader owner={username!} repo={repo!} />
       <div className="page-content">
-        {/* Template content rendered here */}
+        <h2>Code Frequency</h2>
+        <p>Repository insights coming soon.</p>
       </div>
     </div>
   )

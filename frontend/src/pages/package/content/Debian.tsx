@@ -1,10 +1,8 @@
-export default function Debian() {
+export default function PkgDebian() {
   return (
-    <div className="debian-container">
-      {/* Auto-converted from package/content/debian.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Debian Package</h2>
+      <p>Package format coming soon.</p>
     </div>
   )
 }

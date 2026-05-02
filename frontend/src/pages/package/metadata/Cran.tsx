@@ -1,10 +1,8 @@
-export default function Cran() {
+export default function PkgMetaCran() {
   return (
-    <div className="cran-container">
-      {/* Auto-converted from package/metadata/cran.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Cran Metadata</h2>
+      <p>Package metadata coming soon.</p>
     </div>
   )
 }

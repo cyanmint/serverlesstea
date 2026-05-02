@@ -1,10 +1,8 @@
 export default function TwofaEnroll() {
   return (
-    <div className="twofa_enroll-container">
-      {/* Auto-converted from user/settings/security/twofa_enroll.tmpl */}
-      <div className="page-content">
-        {/* Template content rendered here */}
-      </div>
+    <div className="page">
+      <h2>Enable Two-Factor Authentication</h2>
+      <p>Two-factor authentication setup coming soon.</p>
     </div>
   )
 }
