@@ -15,9 +15,7 @@
   "d1_databases": [
     {
       "binding": "database",
-      "database_name": "git-devel",
-      // Replace with your actual D1 database ID from the Cloudflare dashboard
-      "database_id": ""
+      "database_name": "git-devel"
     }
   ],
   "send_email": [
