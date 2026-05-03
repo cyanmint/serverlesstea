@@ -1,0 +1,1594 @@
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --bg-tertiary: #21262d;
+  --border-color: #30363d;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-link: #58a6ff;
+  --accent-green: #3fb950;
+  --accent-red: #f85149;
+  --accent-orange: #d29922;
+  --btn-primary-bg: #238636;
+  --btn-primary-hover: #2ea043;
+  --btn-bg: #21262d;
+  --btn-hover: #30363d;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ─── Navbar ─────────────────────────────────────── */
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navbar-brand a {
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.navbar-explore-link {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.navbar-explore-link:hover {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-link {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.navbar-link:hover {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.navbar-username {
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.navbar-new-btn {
+  width: auto;
+  margin-top: 0;
+  padding: 4px 10px;
+}
+
+/* ─── Layout ─────────────────────────────────────── */
+.main-content {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0;
+}
+
+.page {
+  padding: 24px;
+}
+
+.page h1 {
+  font-size: 24px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  margin-top: 24px;
+}
+
+.page-centered {
+  display: flex;
+  justify-content: center;
+  padding: 48px 16px;
+}
+
+.page-loading {
+  padding: 48px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+/* ─── Repository subheader & tabs ─────────────────── */
+.repo-subheader {
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  padding: 16px 24px 0;
+}
+
+.repo-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.repo-title-icon {
+  font-size: 18px;
+}
+
+.repo-title {
+  font-size: 20px;
+  font-weight: 400;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.repo-title a {
+  color: var(--text-link);
+}
+
+.repo-title-sep {
+  color: var(--text-secondary);
+  font-weight: 300;
+  margin: 0 2px;
+}
+
+.repo-visibility-badge {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  padding: 1px 8px;
+  margin-left: 4px;
+}
+
+.repo-tabs {
+  display: flex;
+  gap: 0;
+}
+
+.repo-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  border-bottom: 2px solid transparent;
+  text-decoration: none;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.repo-tab:hover {
+  color: var(--text-primary);
+  text-decoration: none;
+  border-bottom-color: var(--border-color);
+}
+
+.repo-tab.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent-orange);
+  font-weight: 500;
+}
+
+.tab-icon {
+  font-size: 14px;
+}
+
+/* ─── Repo page layout ────────────────────────────── */
+.repo-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.repo-body {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+}
+
+.repo-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.repo-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+/* ─── Nav bar (branch + links row) ───────────────── */
+.repo-nav-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.repo-nav-links {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.repo-nav-link {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.repo-nav-link:hover {
+  color: var(--text-link);
+}
+
+/* ─── Branch badge ────────────────────────────────── */
+.branch-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: var(--font-mono);
+  padding: 4px 10px;
+}
+
+.branch-icon {
+  font-size: 13px;
+}
+
+/* ─── File table ──────────────────────────────────── */
+.file-table-container {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.latest-commit-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.latest-commit-msg {
+  color: var(--text-primary);
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.latest-commit-meta {
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.latest-commit-sha {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.files-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.files-table td,
+.files-table th {
+  padding: 7px 16px;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.files-table tr:last-child td {
+  border-bottom: none;
+}
+
+.files-table tr:hover td {
+  background-color: var(--bg-tertiary);
+}
+
+.file-icon-cell {
+  width: 28px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.file-name-cell a {
+  color: var(--text-primary);
+}
+
+.file-name-cell a:hover {
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+/* ─── Breadcrumb ──────────────────────────────────── */
+.breadcrumb {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+.breadcrumb-sep {
+  color: var(--text-secondary);
+}
+
+.breadcrumb-current {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* ─── Empty repo ──────────────────────────────────── */
+.repo-empty {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 24px;
+  color: var(--text-secondary);
+}
+
+.repo-empty p {
+  margin-bottom: 12px;
+}
+
+.empty-repo-hint {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-primary);
+  overflow-x: auto;
+}
+
+/* ─── README ──────────────────────────────────────── */
+.readme-container {
+  margin-top: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.readme-header {
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.readme-body {
+  padding: 16px;
+  background-color: var(--bg-secondary);
+}
+
+.readme-body pre {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  color: var(--text-primary);
+}
+
+/* ─── Sidebar sections ────────────────────────────── */
+.sidebar-section {
+  margin-bottom: 16px;
+}
+
+.sidebar-desc {
+  color: var(--text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.sidebar-meta {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+/* ─── Clone panel ─────────────────────────────────── */
+.clone-panel {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.clone-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.clone-panel-title {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.clone-tab-group {
+  display: flex;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.clone-tab {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 12px;
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.clone-tab:hover {
+  background-color: var(--btn-hover);
+  color: var(--text-primary);
+}
+
+.clone-tab.active {
+  background-color: var(--btn-bg);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.clone-url-row {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  gap: 6px;
+}
+
+.clone-url-input {
+  flex: 1;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.clone-copy-btn {
+  flex-shrink: 0;
+  padding: 4px 8px;
+}
+
+/* ─── Commits page ────────────────────────────────── */
+.commits-page {
+  padding: 24px;
+}
+
+.commits-page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.commits-page-header h2 {
+  font-size: 18px;
+  font-weight: 400;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.commits-count {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin-left: auto;
+}
+
+.commit-group {
+  margin-bottom: 24px;
+}
+
+.commit-group-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 4px;
+}
+
+.commit-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.commit-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 10px 16px;
+  margin-bottom: 4px;
+  gap: 16px;
+}
+
+.commit-item-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.commit-message {
+  font-weight: 500;
+  color: var(--text-primary);
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commit-message:hover {
+  text-decoration: underline;
+}
+
+.commit-meta {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.commit-item-sha {
+  flex-shrink: 0;
+}
+
+.commit-sha {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 2px 8px;
+  color: var(--text-secondary);
+}
+
+.commit-sha:hover {
+  border-color: var(--text-link);
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+/* ─── Commit detail ───────────────────────────────── */
+.commit-detail-page {
+  padding: 24px;
+}
+
+.commit-detail-header {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.commit-detail-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.commit-detail-body {
+  font-size: 13px;
+  color: var(--text-secondary);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 12px;
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+
+.commit-detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.commit-author {
+  color: var(--text-primary);
+}
+
+.commit-detail-date {
+  color: var(--text-secondary);
+}
+
+.commit-sha-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.commit-sha-full {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 4px 10px;
+}
+
+.diff-stats {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.diff-file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.diff-file-entry {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.diff-type-badge {
+  font-size: 11px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.diff-added .diff-type-badge {
+  background-color: rgba(63, 185, 80, 0.15);
+  color: var(--accent-green);
+}
+
+.diff-modified .diff-type-badge {
+  background-color: rgba(210, 153, 34, 0.15);
+  color: var(--accent-orange);
+}
+
+.diff-deleted .diff-type-badge {
+  background-color: rgba(248, 81, 73, 0.15);
+  color: var(--accent-red);
+}
+
+/* ─── File viewer with line numbers ──────────────── */
+.file-viewer-container {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.file-viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+.file-viewer-name {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.file-viewer-lines {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.file-viewer {
+  background-color: var(--bg-secondary);
+  overflow-x: auto;
+}
+
+.file-viewer-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+.file-line:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.line-number {
+  width: 48px;
+  padding: 1px 12px 1px 16px;
+  color: var(--text-secondary);
+  text-align: right;
+  user-select: none;
+  border-right: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.line-content {
+  padding: 1px 16px;
+  white-space: pre;
+  color: var(--text-primary);
+}
+
+/* ─── Stub pages ──────────────────────────────────── */
+.stub-page {
+  padding: 64px 24px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.stub-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.stub-page h2 {
+  font-size: 20px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+/* ─── Repo settings ───────────────────────────────── */
+.settings-page {
+  padding: 24px;
+  max-width: 800px;
+}
+
+.settings-page h2 {
+  font-size: 20px;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.settings-section {
+  margin-bottom: 32px;
+}
+
+.settings-section h3 {
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.danger-zone {
+  border: 1px solid rgba(248, 81, 73, 0.4);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.danger-zone-title {
+  background-color: rgba(248, 81, 73, 0.1);
+  border-bottom: 1px solid rgba(248, 81, 73, 0.4);
+  padding: 10px 16px;
+  color: var(--accent-red);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.danger-action {
+  padding: 16px;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.danger-action-info {
+  flex: 1;
+}
+
+.danger-action-info strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.danger-action-info p {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.danger-action-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.danger-action-form input {
+  width: 100%;
+  padding: 6px 10px;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.btn-danger {
+  background-color: rgba(248, 81, 73, 0.15);
+  border-color: rgba(248, 81, 73, 0.4);
+  color: var(--accent-red);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: rgba(248, 81, 73, 0.25);
+  border-color: var(--accent-red);
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ─── Shared form styles ──────────────────────────── */
+.form-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 32px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-card h2 {
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.form-card p {
+  margin-top: 16px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: border-color 0.15s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--text-link);
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+/* ─── Buttons ─────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  background-color: var(--btn-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background-color: var(--btn-hover);
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--btn-primary-bg);
+  border-color: transparent;
+  color: #fff;
+  width: 100%;
+  padding: 8px 16px;
+  margin-top: 8px;
+}
+
+.btn-primary:hover {
+  background-color: var(--btn-primary-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+/* ─── Alerts ──────────────────────────────────────── */
+.alert {
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.alert-error {
+  background-color: rgba(248, 81, 73, 0.1);
+  border: 1px solid rgba(248, 81, 73, 0.4);
+  color: var(--accent-red);
+}
+
+.alert-success {
+  background-color: rgba(63, 185, 80, 0.1);
+  border: 1px solid rgba(63, 185, 80, 0.4);
+  color: var(--accent-green);
+}
+
+/* ─── Cards (repo listings) ───────────────────────── */
+.card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: border-color 0.15s;
+}
+
+.card:hover {
+  border-color: var(--text-link);
+}
+
+.card-header {
+  margin-bottom: 8px;
+}
+
+.repo-link {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.card-desc {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.card-meta {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.repo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ─── User profile ────────────────────────────────── */
+.profile-header {
+  margin-bottom: 24px;
+  padding: 24px;
+}
+
+.profile-header h1 {
+  border: none;
+  padding: 0;
+  margin-bottom: 4px;
+}
+
+.profile-header .username {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.profile-header .bio {
+  color: var(--text-secondary);
+  margin: 8px 0;
+}
+
+/* ─── Data table (admin etc.) ─────────────────────── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.data-table th,
+.data-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.data-table th {
+  background-color: var(--bg-tertiary);
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tr:hover td {
+  background-color: var(--bg-tertiary);
+}
+
+/* ─── Legacy / compatibility ──────────────────────── */
+.badge {
+  background-color: rgba(88, 166, 255, 0.1);
+  border: 1px solid rgba(88, 166, 255, 0.4);
+  color: var(--text-link);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-brand a {
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navbar-links a {
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.main-content {
+  flex: 1;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.page {
+  padding: 16px 0;
+}
+
+.page h1 {
+  font-size: 24px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  margin-top: 24px;
+}
+
+.page-centered {
+  display: flex;
+  justify-content: center;
+  padding: 48px 16px;
+}
+
+.page-loading {
+  padding: 48px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.form-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 32px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-card h2 {
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.form-card p {
+  margin-top: 16px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: border-color 0.15s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--text-link);
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  background-color: var(--btn-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+  text-decoration: none;
+}
+
+.btn:hover {
+  background-color: var(--btn-hover);
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--btn-primary-bg);
+  border-color: transparent;
+  color: #fff;
+  width: 100%;
+  padding: 8px 16px;
+  margin-top: 8px;
+}
+
+.btn-primary:hover {
+  background-color: var(--btn-primary-hover);
+}
+
+.btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.alert {
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.alert-error {
+  background-color: rgba(248, 81, 73, 0.1);
+  border: 1px solid rgba(248, 81, 73, 0.4);
+  color: var(--accent-red);
+}
+
+.alert-success {
+  background-color: rgba(63, 185, 80, 0.1);
+  border: 1px solid rgba(63, 185, 80, 0.4);
+  color: var(--accent-green);
+}
+
+.card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: border-color 0.15s;
+}
+
+.card:hover {
+  border-color: var(--text-link);
+}
+
+.card-header {
+  margin-bottom: 8px;
+}
+
+.repo-link {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.card-desc {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.card-meta {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.repo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-header {
+  margin-bottom: 24px;
+}
+
+.profile-header h1 {
+  border: none;
+  padding: 0;
+  margin-bottom: 4px;
+}
+
+.profile-header .username {
+  color: var(--text-secondary);
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.profile-header .bio {
+  color: var(--text-secondary);
+  margin: 8px 0;
+}
+
+.repo-header h1 {
+  border: none;
+  padding: 0;
+}
+
+.repo-header .separator {
+  color: var(--text-secondary);
+}
+
+.repo-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.badge {
+  background-color: rgba(88, 166, 255, 0.1);
+  border: 1px solid rgba(88, 166, 255, 0.4);
+  color: var(--text-link);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-family: var(--font-mono);
+}
+
+.clone-url {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 12px 0;
+  font-size: 13px;
+}
+
+.clone-url code {
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
+.files-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.files-table td,
+.files-table th {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.files-table tr:last-child td {
+  border-bottom: none;
+}
+
+.files-table tr:hover td {
+  background-color: var(--bg-tertiary);
+}
+
+.file-viewer {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: auto;
+}
+
+.file-viewer pre {
+  padding: 16px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.commit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.commit-item {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 4px;
+}
+
+.commit-message {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.commit-meta {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.commit-sha {
+  font-family: var(--font-mono);
+  background-color: var(--bg-tertiary);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.data-table th,
+.data-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.data-table th {
+  background-color: var(--bg-tertiary);
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.data-table tr:hover td {
+  background-color: var(--bg-tertiary);
+}
+
+/* Status pages */
+.status-page-error {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+.status-page-error-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+/* Explore pages */
+.explore.repositories { padding: 1rem 0; }
+
+/* Flash messages */
+.flash-message { margin: 0.5rem 0; border-radius: 4px; padding: 0.75rem 1rem; }
+.flash-error { background: #fef2f2; border: 1px solid #fca5a5; color: #dc2626; }
+.flash-warning { background: #fffbeb; border: 1px solid #fcd34d; color: #d97706; }
+.flash-info { background: #eff6ff; border: 1px solid #93c5fd; color: #2563eb; }
+.flash-success { background: #f0fdf4; border: 1px solid #86efac; color: #16a34a; }
+
+/* Pagination */
+.page.buttons { display: flex; justify-content: center; margin: 1rem 0; }
+.ui.pagination.menu { display: flex; list-style: none; gap: 0.25rem; }
+.ui.pagination.menu .item { padding: 0.5rem 0.75rem; cursor: pointer; border-radius: 4px; border: 1px solid var(--border-color); }
+.ui.pagination.menu .item.active { background: var(--primary); color: white; }
+.ui.pagination.menu .item.disabled { opacity: 0.5; cursor: default; }
+
+/* Stub pages */
+.page-content { padding: 1rem; }

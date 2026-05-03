@@ -1,0 +1,42 @@
+{
+  "name": "git-devel",
+  "main": "server/src/index.ts",
+  "compatibility_date": "2026-04-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "NODE_ENV": "production"
+  },
+  "observability": {
+    "enabled": false,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true
+    },
+    "traces": {
+      "enabled": false,
+      "persist": true,
+      "head_sampling_rate": 1
+    }
+  },
+  "r2_buckets": [
+    {
+      "binding": "bucket",
+      "bucket_name": "gitdevel"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "database",
+      "database_name": "git-devel",
+      "database_id": "58a35a6e-1407-478d-a634-3b1ce8f0fe12"
+    }
+  ],
+  "send_email": [
+    {
+      "name": "SEND_EMAIL"
+    }
+  ]
+}
