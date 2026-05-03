@@ -114,7 +114,7 @@ export default function Feeds(props: Record<string, unknown>) {
 				</>) : null} {(item.getOpType?.inActions?.("comment_issue", "approve_pull_request", "reject_pull_request", "comment_pull")) ? (<>
 					<a href={String(props.getCommentLink?.(ctx) ?? "")} className="tw-inline-block tw-truncate tw-self-start issue title">{/* TODO: {{(.GetIssueTitle ctx) | ctx.RenderUtils.RenderIssueSimpleTitle}} */}</a>
 					{/* $comment */}
-					{(comment) ? (<>
+					{(props.comment) ? (<>
 						<div className="render-content markup truncated-markup">{/* TODO: {{ctx.RenderUtils.MarkdownToHtml $comment}} */}</div>
 					</>) : null}
 				</>) : null} {(item.getOpType?.inActions?.("merge_pull_request")) ? (<>

@@ -33,7 +33,7 @@ export default function FilterItemLabel(props: Record<string, unknown>) {
 		{/* $previousExclusiveScope */}
 		{((props.labels) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 			{/* $exclusiveScope */}
-			{((previousExclusiveScope !== exclusiveScope)) ? (<>
+			{((props.previousExclusiveScope !== props.exclusiveScope)) ? (<>
 				<div className="divider" data-scope={String(props.exclusiveScope ?? "")}></div>
 			</>) : null}
 			{/* TODO: {{$previousExclusiveScope = $exclusiveScope}} */}

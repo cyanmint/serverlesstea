@@ -7,13 +7,13 @@ export default function CommitForm(props: Record<string, unknown>) {
 	{/* TODO: {{ctx.AvatarUtils.Avatar .SignedUser 40 "commit-avatar"}} */}
 	<div className="commit-form avatar-content-left-arrow">
 		<h3>
-		{/* TODO: {{- if .CommitFormOptions.WillSign}} */}
+		{(props.commitFormOptions?.willSign) ? (<>
 			<span data-tooltip-content={String(i18n("repo.signing.will_sign") ?? "")}><span className="svg-icon" aria-label="octicon-lock"></span></span>
 			{i18n("repo.editor.commit_signed_changes")}
-		{/* TODO: {{- else}} */}
+		</>) : (<>
 			<span title={String("" ?? "")}><span className="svg-icon" aria-label="octicon-unlock"></span></span>
 			{i18n("repo.editor.commit_changes")}
-		{/* TODO: {{- end}} */}
+		</>)}
 		</h3>
 		<div className="field">
 			<input name="commit_summary" maxlength="100" placeholder={`${(props.pageIsDelete) ? `${i18n("repo.editor.delete")}${i18n("repo.editor.upload_files_to_dir")}${i18n("repo.editor.add_tmpl")}${i18n("repo.editor.patch")}` : `${i18n("repo.editor.update")}`}`} value={String(props.commit_summary ?? "")} />
@@ -77,9 +77,9 @@ export default function CommitForm(props: Record<string, unknown>) {
 			<div className="field">
 				<label>{i18n("repo.editor.commit_email")}</label>
 				<select className="ui selection dropdown" name="commit_email">
-					{/* TODO: {{- range $email := .CommitCandidateEmails -}} */}
-						<option {...(email === props.commitDefaultEmail ? {"selected": true} : {})} value={String("" ?? "")}>{/* $email */}</option>
-					{/* TODO: {{- end -}} */}
+					{((props.commitCandidateEmails) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+						<option {...(props.email === props.commitDefaultEmail ? {"selected": true} : {})} value={String("" ?? "")}>{props.email as any}</option>
+					</React.Fragment>))}
 				</select>
 			</div>
 		</>) : null}

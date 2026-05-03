@@ -59,8 +59,8 @@ export default function List(props: Record<string, unknown>) {
 					</div>
 				</div>
 				{/* $description */}
-				{(description) ? (<>
-					<div className="item-body">{/* $description */}</div>
+				{(props.description) ? (<>
+					<div className="item-body">{props.description as any}</div>
 				</>) : null}
 				{(item.topics) ? (<>
 					<div className="label-list">

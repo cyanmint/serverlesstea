@@ -10,9 +10,9 @@ export default function Generic(props: Record<string, unknown>) {
 			<div className="field">
 				<label><span className="svg-icon" aria-label="octicon-terminal"></span> {i18n("packages.generic.download")}</label>
 				<div className="markup"><pre className="code-block"><code>
-{/* TODO: {{- range .PackageDescriptor.Files -}} */}
-curl -OJ {/* TODO: {{ctx.AppFullLink}} */}/api/packages/{props.packageDescriptor?.owner?.name as any}/generic/{props.packageDescriptor?.package?.name as any}/{props.packageDescriptor?.version?.version as any}/{props.file?.name as any}
-{/* TODO: {{end -}} */}
+{((props.packageDescriptor?.files) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+curl -OJ {/* TODO: {{ctx.AppFullLink}} */}/api/packages/{props.packageDescriptor?.owner?.name as any}/generic/{props.packageDescriptor?.package?.name as any}/{props.packageDescriptor?.version?.version as any}/{item.file?.name as any}
+</React.Fragment>))}
 				</code></pre></div>
 			</div>
 			<div className="field">

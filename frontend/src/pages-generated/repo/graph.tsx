@@ -21,22 +21,22 @@ export default function Graph(props: Record<string, unknown>) {
 							</div>
 							{((props.allRefs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 								{/* $refGroup */}
-								{(refGroup === "pull") ? (<>
+								{(props.refGroup === "pull") ? (<>
 									<div className="item" data-value={String(props.name ?? "")}>
 										<span className="svg-icon" aria-label="octicon-git-pull-request"></span>
 										<span className="gt-ellipsis" title={String(props.shortName ?? "")}>#{item.shortName as any}</span>
 									</div>
-								</>) : null} {(refGroup === "tags") ? (<>
+								</>) : null} {(props.refGroup === "tags") ? (<>
 									<div className="item" data-value={String(props.name ?? "")}>
 										<span className="svg-icon" aria-label="octicon-tag"></span>
 										<span className="gt-ellipsis" title={String(props.shortName ?? "")}>{item.shortName as any}</span>
 									</div>
-								</>) : null} {(refGroup === "remotes") ? (<>
+								</>) : null} {(props.refGroup === "remotes") ? (<>
 									<div className="item" data-value={String(props.name ?? "")}>
 										<span className="svg-icon" aria-label="octicon-cross-reference"></span>
 										<span className="gt-ellipsis" title={String(props.shortName ?? "")}>{item.shortName as any}</span>
 									</div>
-								</>) : null} {(refGroup === "heads") ? (<>
+								</>) : null} {(props.refGroup === "heads") ? (<>
 									<div className="item" data-value={String(props.name ?? "")}>
 										<span className="svg-icon" aria-label="octicon-git-branch"></span>
 										<span className="gt-ellipsis" title={String(props.shortName ?? "")}>{item.shortName as any}</span>

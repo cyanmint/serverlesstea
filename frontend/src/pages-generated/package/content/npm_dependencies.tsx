@@ -15,8 +15,8 @@ export default function NpmDependencies(props: Record<string, unknown>) {
 	<tbody>
 		{((props.dependencies) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 		<tr>
-			<td>{/* $dependency */}</td>
-			<td>{/* $version */}</td>
+			<td>{props.dependency as any}</td>
+			<td>{props.version as any}</td>
 		</tr>
 		</React.Fragment>))}
 	</tbody>

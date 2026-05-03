@@ -20,7 +20,7 @@ export default function CommitsListSmall(props: Record<string, unknown>) {
 		{/* $commitLink */}
 
 		<span className="tw-flex-1 tw-font-mono gt-ellipsis" title={String(props.summary ?? "")}>
-			{/* TODO: {{- ctx.RenderUtils.RenderCommitMessageLinkSubject .Message $commitLink $.comment.Issue.PullRequest.BaseRepo -}} */}
+			{/* TODO: {{ctx.RenderUtils.RenderCommitMessageLinkSubject .Message $commitLink $.comment.Issue.PullRequest.BaseRepo}} */}
 		</span>
 
 		{("IsMultilineCommitMessage .Message") ? (<>
@@ -34,7 +34,7 @@ export default function CommitsListSmall(props: Record<string, unknown>) {
 	</div>
 	{("IsMultilineCommitMessage .Message") ? (<>
 	<pre className="commit-body tw-ml-[33px] tw-hidden" data-singular-commit-body-htmlFor={String("" ?? "")}>
-		{/* TODO: {{- ctx.RenderUtils.RenderCommitBody .Message $.comment.Issue.PullRequest.BaseRepo -}} */}
+		{/* TODO: {{ctx.RenderUtils.RenderCommitBody .Message $.comment.Issue.PullRequest.BaseRepo}} */}
 	</pre>
 	</>) : null}
 </React.Fragment>))}

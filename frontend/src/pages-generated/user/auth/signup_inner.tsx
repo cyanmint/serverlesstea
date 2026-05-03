@@ -55,7 +55,7 @@ export default function SignupInner(props: Record<string, unknown>) {
 				</div>
 			</>)}
 			{/* $showExternalAuthMethods */}
-			{(showExternalAuthMethods) ? (<>
+			{(props.showExternalAuthMethods) ? (<>
 				<div className="divider divider-text">{i18n("sign_in_or")}</div>
 				{/* template: user/auth/external_auth_methods */}
 			</>) : null}

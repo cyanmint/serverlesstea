@@ -11,12 +11,12 @@ export default function ReviewerList(props: Record<string, unknown>) {
 		{...(props.pageMeta?.issue ? {"data-update-url": `/issues/request_review?issue_ids=`} : {})}
 >
 	<input type="hidden" className="combo-value" name="reviewer_ids" />{/* match CreateIssueForm */}
-	<div className={`ui dropdown full-width ${((!(hasCandidates) || !(props.data?.canChooseReviewer))) ? `disabled` : ""}`}>
+	<div className={`ui dropdown full-width ${((!(props.hasCandidates) || !(props.data?.canChooseReviewer))) ? `disabled` : ""}`}>
 		<a className="fixed-text muted">
 			<strong>{i18n("repo.issues.review.reviewers")}</strong> {(props.data?.canChooseReviewer) ? (<><span className="svg-icon" aria-label="octicon-gear"></span></>) : null}
 		</a>
 		<div className="menu flex-items-menu">
-			{(hasCandidates) ? (<>
+			{(props.hasCandidates) ? (<>
 				<div className="ui icon search input">
 					<i className="icon"><span className="svg-icon" aria-label="octicon-search"></span></i>
 					<input type="text" placeholder={String(i18n("repo.issues.filter_reviewers") ?? "")} />
@@ -39,7 +39,7 @@ export default function ReviewerList(props: Record<string, unknown>) {
 							<a className={`item muted ${(props.requested) ? `checked` : ""}`} href="#" data-value={String(props.itemID ?? "")} data-can-change={String(props.canChange ?? "")}
 								{...(!(item.canChange) ? {"data-tooltip-content": String(i18n("repo.issues.remove_request_review_block") ?? "")} : {})}>
 								<span className="item-check-mark"><span className="svg-icon" aria-label="octicon-check"></span></span>
-								<span className="svg-icon" aria-label="octicon-people"></span> {/* $repoOwnerName */}/{item.team?.name as any}
+								<span className="svg-icon" aria-label="octicon-people"></span> {props.repoOwnerName as any}/{item.team?.name as any}
 							</a>
 						</>) : null}
 					</React.Fragment>))}
@@ -58,7 +58,7 @@ export default function ReviewerList(props: Record<string, unknown>) {
 					{(item.user) ? (<>
 						<a className="muted flex-text-inline tw-gap-2" href={String(props.user?.homeLink ?? "")}>{/* TODO: {{ctx.AvatarUtils.Avatar .User 20}} */} {item.user?.getDisplayName as any}</a>
 					</>) : null} {(item.team) ? (<>
-						<span className="flex-text-inline tw-gap-2"><span className="svg-icon" aria-label="octicon-people"></span> {/* $repoOwnerName */}/{item.team?.name as any}</span>
+						<span className="flex-text-inline tw-gap-2"><span className="svg-icon" aria-label="octicon-people"></span> {props.repoOwnerName as any}/{item.team?.name as any}</span>
 					</>) : null}
 				</div>
 				<div className="flex-text-inline">

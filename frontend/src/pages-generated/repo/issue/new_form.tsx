@@ -13,7 +13,8 @@ export default function NewForm(props: Record<string, unknown>) {
 					<div className="field">
 						<input name="title" data-global-init="autoFocusEnd" id="issue_title" required maxlength="255" autocomplete="off"
 								placeholder={String(i18n("repo.milestones.title") ?? "")}
-								value={`${(props.titleQuery) ? `${String(props.titleQuery ?? "")}${String(props.issueTemplateTitle ?? "")}` : `${String(props.title ?? "")}`}`} />
+								value={`${(props.titleQuery) ? `${String(props.titleQuery ?? "")}${String(props.issueTemplateTitle ?? "")}` : `${String(props.title ?? "")}`}`}
+						 />
 						{(props.pageIsComparePull) ? (<>
 							<div className="title_wip_desc" data-wip-prefixes={String("" ?? "")}>{i18n("repo.pulls.title_wip_desc")}</div>
 						</>) : null}

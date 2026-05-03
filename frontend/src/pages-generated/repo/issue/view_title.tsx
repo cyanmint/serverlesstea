@@ -22,7 +22,7 @@ export default function ViewTitle(props: Record<string, unknown>) {
 			<span className="index">#{props.issue?.index as any}</span>
 		</h1>
 		<div className="issue-title-buttons">
-			{(canEditIssueTitle) ? (<>
+			{(props.canEditIssueTitle) ? (<>
 			<button id="issue-title-edit-show" className="ui small basic button">{i18n("repo.issues.edit")}</button>
 			</>) : null}
 			{(!(props.issue?.isPull)) ? (<>
@@ -30,7 +30,7 @@ export default function ViewTitle(props: Record<string, unknown>) {
 			</>) : null}
 		</div>
 	</div>
-	{(canEditIssueTitle) ? (<>
+	{(props.canEditIssueTitle) ? (<>
 	<form className="ui form issue-title tw-hidden" id="issue-title-editor">
 		<div className="ui input tw-flex-1">
 			<input name="title" value={String(props.issue?.title ?? "")} data-old-title={String(props.issue?.title ?? "")} maxlength="255" autocomplete="off" />
@@ -116,7 +116,7 @@ export default function ViewTitle(props: Record<string, unknown>) {
 									{((props.branches) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 										{/* $sameBase */}
 										{/* $differentBranch */}
-										{((sameBase || differentBranch)) ? (<>
+										{((props.sameBase || props.differentBranch)) ? (<>
 											<div className={`item ${(props.baseBranch === ".") ? `selected` : ""}`} data-branch={String("" ?? "")}>{props.baseName as any}:{item as any}</div>
 										</>) : null}
 									</React.Fragment>))}

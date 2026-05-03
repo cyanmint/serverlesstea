@@ -57,8 +57,8 @@ git init{(props.repository?.objectFormatName !== "sha1") ? (<> --object-format={
 {(props.repository?.defaultBranch !== "master") ? (<>git checkout -b {props.repository?.defaultBranch as any}</>) : null}
 git add README.md
 git commit -m "first commit"
-git remote add {/* $gitRemoteName */} <span className="js-clone-url">{props.cloneButtonOriginLink?.hTTPS as any}</span>
-git push -u {/* $gitRemoteName */} {props.repository?.defaultBranch as any}</code></pre>
+git remote add {props.gitRemoteName as any} <span className="js-clone-url">{props.cloneButtonOriginLink?.hTTPS as any}</span>
+git push -u {props.gitRemoteName as any} {props.repository?.defaultBranch as any}</code></pre>
 								</div>
 							</div>
 							<div className="divider"></div>
@@ -66,8 +66,8 @@ git push -u {/* $gitRemoteName */} {props.repository?.defaultBranch as any}</cod
 							<div className="item">
 								<h3>{i18n("repo.push_exist_repo")}</h3>
 								<div className="markup">
-									<pre><code>git remote add {/* $gitRemoteName */} <span className="js-clone-url">{props.cloneButtonOriginLink?.hTTPS as any}</span>
-git push -u {/* $gitRemoteName */} {props.repository?.defaultBranch as any}</code></pre>
+									<pre><code>git remote add {props.gitRemoteName as any} <span className="js-clone-url">{props.cloneButtonOriginLink?.hTTPS as any}</span>
+git push -u {props.gitRemoteName as any} {props.repository?.defaultBranch as any}</code></pre>
 								</div>
 							</div>
 						</>) : null}

@@ -12,12 +12,12 @@ export default function Conversation(props: Record<string, unknown>) {
 	{/* $isReviewPending */}
 	{/* $referenceUrl */}
 	<div className="conversation-holder" data-path={String("" ?? "")} data-side={`${(props.comment?.line < 0) ? `left` : `right`}`} data-idx={String("" ?? "")}>
-		{(resolved) ? (<>
+		{(props.resolved) ? (<>
 			<div className="resolved-placeholder">
 				<div className="flex-text-block tw-flex-wrap tw-text-text-light">
 					<span className="svg-icon" aria-label="octicon-check"></span>
 					<b>{/* TODO: {{$resolveDoer.Name}} */}</b> {i18n("repo.issues.review.resolved_by")}
-					{(invalid) ? (<>
+					{(props.invalid) ? (<>
 						{/* We only handle the case $resolved=true and $invalid=true in this template because if the comment is not resolved it has the outdated label in the comments area (not the header above).
 						The case $resolved=false and $invalid=true is handled in repo/diff/comments.tmpl */}
 						<a href={String("" ?? "")} className="ui label basic small tw-ml-2" data-tooltip-content={String(i18n("repo.issues.review.outdated_description") ?? "")}>
@@ -35,7 +35,7 @@ export default function Conversation(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</>) : null}
-		<div id={`code-comments-`} className={`field comment-code-cloud ${(resolved) ? `tw-hidden` : ""}`}>
+		<div id={`code-comments-`} className={`field comment-code-cloud ${(props.resolved) ? `tw-hidden` : ""}`}>
 			<div className="comment-list">
 				<div className="ui comments">
 					{/* template: repo/diff/comments */}
@@ -50,9 +50,9 @@ export default function Conversation(props: Record<string, unknown>) {
 						<span className="svg-icon" aria-label="octicon-arrow-down"></span> {i18n("repo.issues.next")}
 					</button>
 				</div>
-				{((props.canMarkConversation && hasReview && !(isReviewPending))) ? (<>
-					<button className="ui icon tiny basic button resolve-conversation" data-origin="diff" data-action={`${(!(resolved)) ? `Resolve` : `UnResolve`}`} data-comment-id={String("" ?? "")} data-update-url={`${String(props.repoLink ?? "")}/issues/resolve_conversation`}>
-						{(resolved) ? (<>
+				{((props.canMarkConversation && props.hasReview && !(props.isReviewPending))) ? (<>
+					<button className="ui icon tiny basic button resolve-conversation" data-origin="diff" data-action={`${(!(props.resolved)) ? `Resolve` : `UnResolve`}`} data-comment-id={String("" ?? "")} data-update-url={`${String(props.repoLink ?? "")}/issues/resolve_conversation`}>
+						{(props.resolved) ? (<>
 							{i18n("repo.issues.review.un_resolve_conversation")}
 						</>) : (<>
 							{i18n("repo.issues.review.resolve_conversation")}

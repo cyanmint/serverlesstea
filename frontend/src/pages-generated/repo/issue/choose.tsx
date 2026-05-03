@@ -51,14 +51,14 @@ export default function Choose(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</>) : null}
-		{/* TODO: {{- if .IssueConfigError}} */}{/* normal warning flash makes problems here */}
+		{(props.issueConfigError) ? (<>{/* normal warning flash makes problems here */}
 			<div className="ui warning message">
 				<div className="text left">
 					<div>{i18n("repo.issues.choose.invalid_config")}</div>
 					<div>{props.issueConfigError as any}</div>
 				</div>
 			</div>
-		
+		</>) : null}
 	</div>
 </div>
 

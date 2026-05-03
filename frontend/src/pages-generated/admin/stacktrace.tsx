@@ -10,7 +10,7 @@ export default function Stacktrace(props: Record<string, unknown>) {
 
 	<h4 className="ui top attached header">
 		{/* TODO: {{printf "%d Goroutines" .GoroutineCount}} */}{/* Goroutine is non-translatable */}
-		{/* TODO: {{- if .ProcessCount -}} */}, {i18n("admin.monitor.processes_count")}{/* TODO: {{- end -}} */}
+		{(props.processCount) ? (<>, {i18n("admin.monitor.processes_count")}</>) : null}
 	</h4>
 
 	{(props.processStacks) ? (<>

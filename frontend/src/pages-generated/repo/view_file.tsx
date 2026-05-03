@@ -6,16 +6,16 @@ export default function ViewFile(props: Record<string, unknown>) {
 <div {...(props.readmeInList ? {"id": "readme"} : {})} className={` non-diff-file-content`}
 	data-global-init="initRepoFileView" data-raw-file-link={String(props.rawFileLink ?? "")}>
 
-	{/* TODO: {{- if .FileError}} */}
+	{(props.fileError) ? (<>
 		<div className="ui error message">
 			<div className="text left tw-whitespace-pre">{props.fileError as any}</div>
 		</div>
-	
-	{/* TODO: {{- if .FileWarning}} */}
+	</>) : null}
+	{(props.fileWarning) ? (<>
 		<div className="ui warning message">
 			<div className="text left tw-whitespace-pre">{props.fileWarning as any}</div>
 		</div>
-	
+	</>) : null}
 
 	{(!(props.readmeInList)) ? (<>
 		<div id="repo-file-commit-box" className="ui segment list-header tw-mb-4 flex-left-right">
@@ -117,7 +117,7 @@ export default function ViewFile(props: Record<string, unknown>) {
 						<tr>
 							<td className="lines-num"><span id={`L`} data-line-number={String("" ?? "")}></span></td>
 							{/* TODO: {{ctx.RenderUtils.RenderUnicodeEscapeToggleTd $.EscapeStatus (index $.LineEscapeStatus $idx)}} */}
-							<td rel={`L`} className="lines-code chroma"><code className="code-inner">{/* $code */}</code></td>
+							<td rel={`L`} className="lines-code chroma"><code className="code-inner">{props.code as any}</code></td>
 						</tr>
 					</React.Fragment>))}
 					</tbody>

@@ -3,7 +3,7 @@ import { i18n } from '../../lib/i18n'
 
 export default function HeadOpengraph(props: Record<string, unknown>) {
   return (<>
-{/* TODO: {{- /* og:description - a one to two sentence description of your object, maybe it only needs at most 300 bytes * / -}} */}
+{/* og:description - a one to two sentence description of your object, maybe it only needs at most 300 bytes */}
 {(props.pageIsUserProfile) ? (<>
 	<meta property="og:title" content={String(props.contextUser?.displayName ?? "")} />
 	<meta property="og:type" content="profile" />
@@ -23,11 +23,11 @@ export default function HeadOpengraph(props: Record<string, unknown>) {
 		<meta property="og:title" content={String(props.title ?? "")} />
 		<meta property="og:url" content={String("" ?? "")} />
 		{((props.pageIsDiff && props.commit)) ? (<>
-			{/* TODO: {{- $commitMessageParts := StringUtils.Cut .Commit.Message "\n" -}} */}
-			{/* TODO: {{- $commitMessageBody := index $commitMessageParts 1 -}} */}
-			{/* TODO: {{- if $commitMessageBody -}} */}
+			{/* $commitMessageParts */}
+			{/* $commitMessageBody */}
+			{(props.commitMessageBody) ? (<>
 				<meta property="og:description" content={String("" ?? "")} />
-			{/* TODO: {{- end -}} */}
+			</>) : null}
 		</>) : null}
 	</>) : (<>
 		<meta property="og:title" content={String(props.repository?.name ?? "")} />

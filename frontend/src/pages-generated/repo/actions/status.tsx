@@ -6,8 +6,8 @@ export default function Status(props: Record<string, unknown>) {
 {/* This template should be kept the same as web_src/js/components/ActionRunStatus.vue
 	Please also update the vue file above if this template is modified.
 	action status accepted: success, skipped, waiting, blocked, running, failure, cancelled, unknown */}
-{/* TODO: {{- $size := Iif .size .size 16 -}} */}
-{/* TODO: {{- $className := Iif .className .className "" -}} */}
+{/* $size */}
+{/* $className */}
 <span data-tooltip-content={String("" ?? "")}>
 {(props.status === "success") ? (<>
 	<span className="svg-icon" aria-label="octicon-check-circle-fill"></span>

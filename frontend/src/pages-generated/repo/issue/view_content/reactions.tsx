@@ -6,7 +6,7 @@ export default function Reactions(props: Record<string, unknown>) {
 <div className="bottom-reactions" data-action-url={String(props.actionURL ?? "")} role="group" aria-label={String(i18n("repo.reactions") ?? "")}>
 {((props.reactions) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 	{/* $hasReacted */}
-	<a role="button" className={`ui label basic${(hasReacted) ? ` primary` : ""}${(!("ctx.RootData.IsSigned")) ? ` disabled` : ""}`}
+	<a role="button" className={`ui label basic${(props.hasReacted) ? ` primary` : ""}${(!("ctx.RootData.IsSigned")) ? ` disabled` : ""}`}
 		data-global-click="onCommentReactionButtonClick"
 		data-tooltip-content title={`${(props.value?.getMoreUserCount > 0) ? ` ${i18n("repo.reactions_more")}` : ""}`}
 		aria-label={`: ${(props.value?.getMoreUserCount > 0) ? ` ${i18n("repo.reactions_more")}` : ""}`}

@@ -31,10 +31,10 @@ export default function QueueManage(props: Record<string, unknown>) {
 						<td>{props.queue?.getWorkerMaxNumber as any}</td>
 						<td>
 							{/* $sum */}
-							{(sum < 0) ? (<>
+							{(props.sum < 0) ? (<>
 								-
 							</>) : (<>
-								{/* $sum */}
+								{props.sum as any}
 								<form action={`${String(props.link ?? "")}/remove-all-items`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())} className="tw-inline-block tw-ml-4">
 									<button className="ui tiny basic red button">{i18n("admin.monitor.queue.settings.remove_all_items")}</button>
 								</form>

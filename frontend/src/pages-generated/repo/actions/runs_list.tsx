@@ -26,17 +26,17 @@ export default function RunsList(props: Record<string, unknown>) {
 				<div className="item-body">
 					<span><b>{(!(props.curWorkflow)) ? (<>{/* TODO: {{$run.WorkflowID}} */} </>) : null}#{/* TODO: {{$run.Index}} */}</b>:</span>
 
-					{/* TODO: {{- if $run.ScheduleID -}} */}
+					{(item.run?.scheduleID) ? (<>
 						{i18n("actions.runs.scheduled")}
-					{/* TODO: {{- else -}} */}
+					</>) : (<>
 						{i18n("actions.runs.commit")}
 						<a href={`${String(props.repoLink ?? "")}/commit/`}>{/* TODO: {{ShortSha $run.CommitSHA}} */}</a>
 						{i18n("actions.runs.pushed_by")}
 						<a href={String("" ?? "")}>{/* TODO: {{$run.TriggerUser.GetDisplayName}} */}</a>
-					{/* TODO: {{- end -}} */}
+					</>)}
 
 					{/* $errMsg */}
-					{(errMsg) ? (<>
+					{(props.errMsg) ? (<>
 						<span className="flex-text-inline" data-tooltip-content={String("" ?? "")}>
 							<span className="svg-icon" aria-label="octicon-alert"></span>
 						</span>

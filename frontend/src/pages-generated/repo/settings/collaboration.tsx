@@ -88,16 +88,16 @@ export default function Collaboration(props: Record<string, unknown>) {
 												<div className="item-body" data-tooltip-content={String(i18n("repo.settings.change_team_permission_tip") ?? "")}>
 										Units:
 										{((props.units) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-											{/* TODO: {{- if and ($.Repo.UnitEnabled ctx $unit.Type) ($team.UnitEnabled ctx $unit.Type) -}} */}
-												{/* TODO: {{- Iif $first "" ", "}} */}{/* TODO: {{ctx.Locale.Tr $unit.NameKey -}} */}
-												{/* TODO: {{- $first = false -}} */}
-											{/* TODO: {{- end -}} */}
+											{((props.repo?.unitEnabled?.(ctx, item.unit?.type) && item.team?.unitEnabled?.(ctx, item.unit?.type))) ? (<>
+												{/* TODO: {{Iif $first "" ", "}} */}{/* TODO: {{ctx.Locale.Tr $unit.NameKey}} */}
+												{/* TODO: {{$first = false}} */}
+											</>) : null}
 										</React.Fragment>))}
-										{...(first ? {"None": true} : {})}
+										{...(props.first ? {"None": true} : {})}
 									</div>
 								</>) : null}
 							</div>
-							{(allowedToChangeTeams) ? (<>
+							{(props.allowedToChangeTeams) ? (<>
 								<div className="item-trailing" {...(item.includesAllRepositories ? {"data-tooltip-content": String(i18n("repo.settings.delete_team_tip") ?? "")} : {})}>
 									<button className={`ui red tiny button link-action ${(props.includesAllRepositories) ? `disabled` : ""}`} data-modal-confirm="#repo-collaborator-delete-modal" data-url={`${String(props.link ?? "")}/team/delete?id=${String(props.iD ?? "")}`}>
 											{i18n("repo.settings.delete_collaborator")}
@@ -110,7 +110,7 @@ export default function Collaboration(props: Record<string, unknown>) {
 			</div>
 			</>) : null}
 			<div className="ui bottom attached segment">
-				{(allowedToChangeTeams) ? (<>
+				{(props.allowedToChangeTeams) ? (<>
 					<form className="ui form" id="repo-collab-team-form" action={`${String(props.link ?? "")}/team`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
 						<div id="search-team-box" className="ui search input tw-align-middle" data-org-name={String(props.orgName ?? "")}>
 							<input className="prompt" name="team" placeholder={String(i18n("search.team_kind") ?? "")} autocomplete="off" required />

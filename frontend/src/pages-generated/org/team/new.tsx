@@ -94,7 +94,7 @@ export default function New(props: Record<string, unknown>) {
 											{(item.unit?.maxPerm >= 2) ? (<>
 												<tr>
 													<td>
-														<div {(item.unit?.type?.unitGlobalDisabled) ? (<>className="field" data-tooltip-content={String(i18n("repo.unit_disabled") ?? "")}{/* TODO: {{- else -}} */}className="field"</>) : null}>
+														<div {(item.unit?.type?.unitGlobalDisabled) ? (<>className="field" data-tooltip-content={String(i18n("repo.unit_disabled") ?? "")}</>) : (<>className="field"</>)}>
 															<div>
 																<label>{/* TODO: {{ctx.Locale.Tr $unit.NameKey}} */}{(item.unit?.type?.unitGlobalDisabled) ? (<> {i18n("org.team_unit_disabled")}</>) : null}</label>
 																<span className="help">{/* TODO: {{ctx.Locale.Tr $unit.DescKey}} */}</span>
@@ -113,7 +113,7 @@ export default function New(props: Record<string, unknown>) {
 													</td>
 													<td className="tw-text-center">
 														<div className="ui radio checkbox">
-															<input type="radio" name={`unit_`} value="2"{...(props.team?.unitAccessMode?.(ctx, item.unit?.type) />= 2 ? {"checked": true} : {})} {...(item.unit?.type?.unitGlobalDisabled ? {"disabled": true} : {})} title={String(i18n("org.teams.write_access") ?? "")}>
+															<input type="radio" name={`unit_`} value="2"{...(props.team?.unitAccessMode?.(ctx, item.unit?.type) >= 2 ? {"checked": true} : {})} {...(item.unit?.type?.unitGlobalDisabled ? {"disabled": true} : {})} title={String(i18n("org.teams.write_access") ?? "")} />
 														</div>
 													</td>
 												</tr>

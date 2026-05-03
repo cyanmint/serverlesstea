@@ -8,13 +8,13 @@ export default function LatestCommit(props: Record<string, unknown>) {
 	…
 </>) : (<>
 	<span className="author-wrapper">
-	{/* TODO: {{- if .LatestCommitUser -}} */}
-		{/* TODO: {{- ctx.AvatarUtils.Avatar .LatestCommitUser 20 "tw-mr-2" -}} */}
+	{(props.latestCommitUser) ? (<>
+		{/* TODO: {{ctx.AvatarUtils.Avatar .LatestCommitUser 20 "tw-mr-2"}} */}
 		<strong>{props.latestCommitUser?.getShortDisplayNameLinkHTML as any}</strong>
-	{/* TODO: {{- else if .LatestCommit.Author -}} */}
-		{/* TODO: {{- ctx.AvatarUtils.AvatarByEmail .LatestCommit.Author.Email .LatestCommit.Author.Name 20 "tw-mr-2" -}} */}
+	</>) : null} {(props.latestCommit?.author) ? (<>
+		{/* TODO: {{ctx.AvatarUtils.AvatarByEmail .LatestCommit.Author.Email .LatestCommit.Author.Name 20 "tw-mr-2"}} */}
 		<strong>{props.latestCommit?.author?.name as any}</strong>
-	{/* TODO: {{- end -}} */}
+	</>) : null}
 	</span>
 
 	{/* template: repo/commit_sign_badge */}

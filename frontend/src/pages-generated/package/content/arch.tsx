@@ -9,8 +9,8 @@ export default function Arch(props: Record<string, unknown>) {
 		<div className="ui form">
 			<div className="field">
 				<label><span className="svg-icon" aria-label="octicon-gear"></span> {i18n("packages.arch.registry")}</label>
-				<div className="markup"><pre className="code-block"><code>{((props.repositories) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>{(i) ? (<>
-</>) : null}[{/* $repo */}]
+				<div className="markup"><pre className="code-block"><code>{((props.repositories) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>{(props.i) ? (<>
+</>) : null}[{props.repo as any}]
 SigLevel = Optional TrustAll
 Server = {/* TODO: {{ctx.AppFullLink}} */}/api/packages/{props.packageDescriptor?.owner?.name as any}/arch/$repo/$arch
 </React.Fragment>))}</code></pre></div>

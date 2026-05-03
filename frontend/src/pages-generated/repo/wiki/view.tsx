@@ -14,7 +14,7 @@ export default function View(props: Record<string, unknown>) {
 					<div className="ui basic small button">
 						<span className="text">
 							{i18n("repo.wiki.page")}:
-							<strong>{/* $title */}</strong>
+							<strong>{props.title as any}</strong>
 						</span>
 						<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 					</div>
@@ -40,7 +40,7 @@ export default function View(props: Record<string, unknown>) {
 				<div className="flex-text-block tw-flex-1 tw-min-w-[300px]">
 					<a className="ui basic button tw-px-3 tw-gap-3" title={String(i18n("repo.wiki.file_revision") ?? "")} href={`${String(props.repoLink ?? "")}/wiki/${String(props.pageURL ?? "")}?action=_revision`} >{(props.commitCount) ? (<><span>{props.commitCount as any}</span> </>) : null}<span className="svg-icon" aria-label="octicon-history"></span></a>
 					<div className="tw-flex-1 gt-ellipsis">
-						{/* $title */}
+						{props.title as any}
 						<div className="ui sub header gt-ellipsis">
 							{/* $timeSince */}
 							{i18n("repo.wiki.last_commit_info")}

@@ -21,7 +21,7 @@ export default function Delete(props: Record<string, unknown>) {
 							<a className="section" href={String(props.branchLink ?? "")}>{props.repository?.name as any}</a>
 							{((props.treeNames) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 								<div className="breadcrumb-divider">/</div>
-								<span className="section"><a href={`${String(props.branchLink ?? "")}/`}>{/* $v */}</a></span>
+								<span className="section"><a href={`${String(props.branchLink ?? "")}/`}>{props.v as any}</a></span>
 							</React.Fragment>))}
 						</div>
 					</div>

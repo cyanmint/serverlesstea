@@ -16,7 +16,7 @@ export default function Container(props: Record<string, unknown>) {
 					{(!(props.packageDescriptor?.metadata?.isTagged)) ? (<>
 						{/* TODO: {{$separator = "@"}} */}
 					</>) : null}
-					<div className="markup"><pre className="code-block"><code>docker pull {props.packageRegistryHost as any}/{props.packageDescriptor?.owner?.lowerName as any}/{props.packageDescriptor?.package?.lowerName as any}{/* $separator */}{props.packageDescriptor?.version?.lowerVersion as any}</code></pre></div>
+					<div className="markup"><pre className="code-block"><code>docker pull {props.packageRegistryHost as any}/{props.packageDescriptor?.owner?.lowerName as any}/{props.packageDescriptor?.package?.lowerName as any}{props.separator as any}{props.packageDescriptor?.version?.lowerVersion as any}</code></pre></div>
 				</>)}
 			</div>
 			<div className="field">
@@ -24,11 +24,11 @@ export default function Container(props: Record<string, unknown>) {
 				<div className="markup">
 					<div className="code-block-container code-overflow-scroll">
 						<pre className="code-block"><code>
-							{/* TODO: {{- range .PackageDescriptor.Files -}} */}
-								{/* TODO: {{- if eq .File.LowerName "manifest.json" -}} */}
-									{/* TODO: {{- .Properties.GetByName "container.digest" -}} */}{/* TODO: {{"\n"}} */}
-								{/* TODO: {{- end -}} */}
-							{/* TODO: {{- end -}} */}
+							{((props.packageDescriptor?.files) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+								{(item.file?.lowerName === "manifest.json") ? (<>
+									{item.properties?.getByName?.("container.digest") as any}{/* TODO: {{"\n"}} */}
+								</>) : null}
+							</React.Fragment>))}
 						</code></pre>
 					</div>
 				</div>
@@ -113,8 +113,8 @@ export default function Container(props: Record<string, unknown>) {
 				<tbody>
 					{(($imageMetadata.Labels) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 						<tr>
-							<td className="tw-align-top">{/* $key */}</td>
-							<td className="tw-break-anywhere">{/* $value */}</td>
+							<td className="tw-align-top">{props.key as any}</td>
+							<td className="tw-break-anywhere">{props.value as any}</td>
 						</tr>
 					</React.Fragment>))}
 				</tbody>

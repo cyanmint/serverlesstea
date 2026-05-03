@@ -24,7 +24,7 @@ export default function List(props: Record<string, unknown>) {
 				{((props.releases) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					<div className="item tag-list-row tw-p-4">
 						<h3 className="tag-list-row-title tw-mb-2">
-							{(canReadReleases) ? (<>
+							{(props.canReadReleases) ? (<>
 								<a className="tag-list-row-link" href={`${String(props.repoLink ?? "")}/releases/tag/${String(props.tagName?.("|", "PathEscapeSegments") ?? "")}`} rel="nofollow">{item.tagName as any}</a>
 							</>) : (<>
 								<a className="tag-list-row-link" href={`${String(props.repoLink ?? "")}/src/tag/${String(props.tagName?.("|", "PathEscapeSegments") ?? "")}`} rel="nofollow">{item.tagName as any}</a>
@@ -43,7 +43,7 @@ export default function List(props: Record<string, unknown>) {
 									<a className="archive-link flex-text-inline" href={`${String(props.repoLink ?? "")}/archive/${String(props.tagName?.("|", "PathEscapeSegments") ?? "")}.tar.gz`} rel="nofollow"><span className="svg-icon" aria-label="octicon-file-zip"></span>TAR.GZ</a>
 								</>) : null}
 
-								{((canReadReleases && props.canCreateRelease && item.release?.isTag)) ? (<>
+								{((props.canReadReleases && props.canCreateRelease && item.release?.isTag)) ? (<>
 									<a className="flex-text-inline" href={`${String(props.repoLink ?? "")}/releases/new?tag=${String(props.tagName ?? "")}`}><span className="svg-icon" aria-label="octicon-tag"></span>{i18n("repo.release.new_release")}</a>
 								</>) : null}
 
@@ -53,7 +53,7 @@ export default function List(props: Record<string, unknown>) {
 									</a>
 								</>) : null}
 
-								{((canReadReleases && !(item.release?.isTag))) ? (<>
+								{((props.canReadReleases && !(item.release?.isTag))) ? (<>
 									<a className="flex-text-inline" href={`${String(props.repoLink ?? "")}/releases/tag/${String(props.tagName?.("|", "PathEscapeSegments") ?? "")}`}><span className="svg-icon" aria-label="octicon-tag"></span>{i18n("repo.release.detail")}</a>
 								</>) : null}
 							</>) : null}

@@ -76,7 +76,7 @@ export default function Applications(props: Record<string, unknown>) {
 						<table className="ui table unstackable tw-my-2">
 						{((props.tokenCategories) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 							<tr>
-								<td>{/* $category */}</td>
+								<td>{props.category as any}</td>
 								<td><label className="gt-checkbox"><input type="radio" name={`scope-`} value="" defaultChecked /> {i18n("settings.permission_no_access")}</label></td>
 								<td><label className="gt-checkbox"><input type="radio" name={`scope-`} value={`read:`} /> {i18n("settings.permission_read")}</label></td>
 								<td><label className="gt-checkbox"><input type="radio" name={`scope-`} value={`write:`} /> {i18n("settings.permission_write")}</label></td>

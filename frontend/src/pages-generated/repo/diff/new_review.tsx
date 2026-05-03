@@ -33,7 +33,7 @@ export default function NewReview(props: Record<string, unknown>) {
 			<div className="divider"></div>
 			{/* $showSelfTooltip */}
 			{(!(props.issue?.isClosed)) ? (<>
-				{(showSelfTooltip) ? (<>
+				{(props.showSelfTooltip) ? (<>
 					<span className="tw-inline-block" data-tooltip-content={String(i18n("repo.diff.review.self_approve") ?? "")}>
 						<button type="submit" name="type" value="approve" disabled className="ui submit primary tiny button btn-submit">{i18n("repo.diff.review.approve")}</button>
 					</span>
@@ -43,7 +43,7 @@ export default function NewReview(props: Record<string, unknown>) {
 			</>) : null}
 			<button type="submit" name="type" value="comment" className="ui submit tiny basic button btn-submit">{i18n("repo.diff.review.comment")}</button>
 			{(!(props.issue?.isClosed)) ? (<>
-				{(showSelfTooltip) ? (<>
+				{(props.showSelfTooltip) ? (<>
 					<span className="tw-inline-block" data-tooltip-content={String(i18n("repo.diff.review.self_reject") ?? "")}>
 						<button type="submit" name="type" value="reject" disabled className="ui submit red tiny button btn-submit">{i18n("repo.diff.review.reject")}</button>
 					</span>

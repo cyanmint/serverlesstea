@@ -63,7 +63,7 @@ export default function Options(props: Record<string, unknown>) {
 		{/* $modifyBrokenPullMirror */}
 		{/* $isWorkingPullMirror */}
 
-		{(showMirrorSettings) ? (<>
+		{(props.showMirrorSettings) ? (<>
 			<h4 className="ui top attached header">
 				{i18n("repo.settings.mirror_settings")}
 			</h4>
@@ -73,22 +73,22 @@ export default function Options(props: Record<string, unknown>) {
 						{i18n("repo.settings.archive.mirrors_unavailable")}
 					</div>
 				</>) : (<>
-					{(newMirrorsEntirelyEnabled) ? (<>
+					{(props.newMirrorsEntirelyEnabled) ? (<>
 						{i18n("repo.settings.mirror_settings.docs")}
 						<a target="_blank" href="https://docs.gitea.com/usage/repo-mirror#pushing-to-a-remote-repository">{i18n("repo.settings.mirror_settings.docs.doc_link_title")}</a><br /><br />
 						{i18n("repo.settings.mirror_settings.docs.pull_mirror_instructions")}
 						<a target="_blank" href="https://docs.gitea.com/usage/repo-mirror#pulling-from-a-remote-repository">{i18n("repo.settings.mirror_settings.docs.doc_link_pull_section")}</a><br />
-					</>) : null} {(onlyNewPushMirrorsEnabled) ? (<>
+					</>) : null} {(props.onlyNewPushMirrorsEnabled) ? (<>
 						{i18n("repo.settings.mirror_settings.docs.disabled_pull_mirror.instructions")}
 						{i18n("repo.settings.mirror_settings.docs.more_information_if_disabled")}
 						<a target="_blank" href="https://docs.gitea.com/usage/repo-mirror#pulling-from-a-remote-repository">{i18n("repo.settings.mirror_settings.docs.doc_link_title")}</a><br />
-					</>) : null} {(onlyNewPullMirrorsEnabled) ? (<>
+					</>) : null} {(props.onlyNewPullMirrorsEnabled) ? (<>
 						{i18n("repo.settings.mirror_settings.docs.disabled_push_mirror.instructions")}
 						{i18n("repo.settings.mirror_settings.docs.disabled_push_mirror.pull_mirror_warning")}
 						{i18n("repo.settings.mirror_settings.docs.more_information_if_disabled")}
 						<a target="_blank" href="https://docs.gitea.com/usage/repo-mirror#pulling-from-a-remote-repository">{i18n("repo.settings.mirror_settings.docs.doc_link_title")}</a><br /><br />
 						{i18n("repo.settings.mirror_settings.docs.disabled_push_mirror.info")}
-						{(existingPushMirror) ? (<>
+						{(props.existingPushMirror) ? (<>
 							{i18n("repo.settings.mirror_settings.docs.can_still_use")}
 						</>) : null}
 					</>) : (<>
@@ -105,7 +105,7 @@ export default function Options(props: Record<string, unknown>) {
 								<th></th>
 							</tr>
 						</thead>
-						{(modifyBrokenPullMirror) ? (<>
+						{(props.modifyBrokenPullMirror) ? (<>
 							{/* even if a repo is a pull mirror (IsMirror=true), the PullMirror might still be nil if the mirror migration is broken */}
 							<tbody>
 								<tr>
@@ -114,7 +114,7 @@ export default function Options(props: Record<string, unknown>) {
 									</td>
 								</tr>
 							</tbody>
-						</>) : null} {(isWorkingPullMirror) ? (<>
+						</>) : null} {(props.isWorkingPullMirror) ? (<>
 						<tbody>
 							<tr>
 								<td>{props.pullMirror?.remoteAddress as any}</td>
@@ -304,8 +304,8 @@ export default function Options(props: Record<string, unknown>) {
 				{/* $isCodeGlobalDisabled */}
 				<div className="inline field">
 					<label>{i18n("repo.code")}</label>
-					<div className={`ui checkbox${(isCodeGlobalDisabled) ? ` disabled` : ""}`}{...(isCodeGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
-						<input className="enable-system" name="enable_code" type="checkbox"{...(isCodeEnabled ? {"checked": true} : {})} />
+					<div className={`ui checkbox${(props.isCodeGlobalDisabled) ? ` disabled` : ""}`}{...(props.isCodeGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
+						<input className="enable-system" name="enable_code" type="checkbox"{...(props.isCodeEnabled ? {"checked": true} : {})} />
 						<label>{i18n("repo.code.desc")}</label>
 					</div>
 				</div>
@@ -318,31 +318,31 @@ export default function Options(props: Record<string, unknown>) {
 				{/* $isBothWikiGlobalDisabled */}
 				<div className="inline field">
 					<label>{i18n("repo.wiki")}</label>
-					<div className={`ui checkbox${(isBothWikiGlobalDisabled) ? ` disabled` : ""}`}{...(isBothWikiGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
-						<input className="enable-system" name="enable_wiki" type="checkbox" data-target="#wiki_box" {...(isWikiEnabled ? {"checked": true} : {})} />
+					<div className={`ui checkbox${(props.isBothWikiGlobalDisabled) ? ` disabled` : ""}`}{...(props.isBothWikiGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
+						<input className="enable-system" name="enable_wiki" type="checkbox" data-target="#wiki_box" {...(props.isWikiEnabled ? {"checked": true} : {})} />
 						<label>{i18n("repo.settings.wiki_desc")}</label>
 					</div>
 				</div>
-				<div className={`field${(!(isWikiEnabled)) ? ` disabled` : ""}`} id="wiki_box">
+				<div className={`field${(!(props.isWikiEnabled)) ? ` disabled` : ""}`} id="wiki_box">
 					<div className="field">
-						<div className={`ui radio checkbox${(isWikiGlobalDisabled) ? ` disabled` : ""}`}{...(isWikiGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
-							<input className="enable-system-radio" name="enable_external_wiki" type="radio" value="false" data-context="#internal_wiki_box" data-target="#external_wiki_box" {...(isInternalWikiEnabled ? {"checked": true} : {})} />
+						<div className={`ui radio checkbox${(props.isWikiGlobalDisabled) ? ` disabled` : ""}`}{...(props.isWikiGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
+							<input className="enable-system-radio" name="enable_external_wiki" type="radio" value="false" data-context="#internal_wiki_box" data-target="#external_wiki_box" {...(props.isInternalWikiEnabled ? {"checked": true} : {})} />
 							<label>{i18n("repo.settings.use_internal_wiki")}</label>
 						</div>
 					</div>
-					<div id="internal_wiki_box" className={`field tw-pl-4 ${(!(isInternalWikiEnabled)) ? `disabled` : ""}`}>
+					<div id="internal_wiki_box" className={`field tw-pl-4 ${(!(props.isInternalWikiEnabled)) ? `disabled` : ""}`}>
 						<div className="inline field">
 							<label>{i18n("repo.settings.default_wiki_branch_name")}</label>
 							<input name="default_wiki_branch" value={String(props.repository?.defaultWikiBranch ?? "")} />
 						</div>
 					</div>
 					<div className="field">
-						<div className={`ui radio checkbox${(isExternalWikiGlobalDisabled) ? ` disabled` : ""}`}{...(isExternalWikiGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
-							<input className="enable-system-radio" name="enable_external_wiki" type="radio" value="true" data-context="#internal_wiki_box" data-target="#external_wiki_box" {...(isExternalWikiEnabled ? {"checked": true} : {})} />
+						<div className={`ui radio checkbox${(props.isExternalWikiGlobalDisabled) ? ` disabled` : ""}`}{...(props.isExternalWikiGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
+							<input className="enable-system-radio" name="enable_external_wiki" type="radio" value="true" data-context="#internal_wiki_box" data-target="#external_wiki_box" {...(props.isExternalWikiEnabled ? {"checked": true} : {})} />
 							<label>{i18n("repo.settings.use_external_wiki")}</label>
 						</div>
 					</div>
-					<div id="external_wiki_box" className={`field tw-pl-4 ${(!(isExternalWikiEnabled)) ? `disabled` : ""}`}>
+					<div id="external_wiki_box" className={`field tw-pl-4 ${(!(props.isExternalWikiEnabled)) ? `disabled` : ""}`}>
 						<label htmlFor="external_wiki_url">{i18n("repo.settings.external_wiki_url")}</label>
 						<input id="external_wiki_url" name="external_wiki_url" type="url" value={String("" ?? "")} />
 						<p className="help">{i18n("repo.settings.external_wiki_url_desc")}</p>
@@ -357,14 +357,14 @@ export default function Options(props: Record<string, unknown>) {
 				{/* $isIssuesAndExternalGlobalDisabled */}
 				<div className="inline field">
 					<label>{i18n("repo.issues")}</label>
-					<div className={`ui checkbox${(isIssuesAndExternalGlobalDisabled) ? ` disabled` : ""}`}{...(isIssuesAndExternalGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
-						<input className="enable-system" name="enable_issues" type="checkbox" data-target="#issue_box" {...(isIssuesEnabled ? {"checked": true} : {})} />
+					<div className={`ui checkbox${(props.isIssuesAndExternalGlobalDisabled) ? ` disabled` : ""}`}{...(props.isIssuesAndExternalGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
+						<input className="enable-system" name="enable_issues" type="checkbox" data-target="#issue_box" {...(props.isIssuesEnabled ? {"checked": true} : {})} />
 						<label>{i18n("repo.settings.issues_desc")}</label>
 					</div>
 				</div>
-				<div className={`field ${(!(isIssuesEnabled)) ? `disabled` : ""}`} id="issue_box">
+				<div className={`field ${(!(props.isIssuesEnabled)) ? `disabled` : ""}`} id="issue_box">
 					<div className="field">
-						<div className={`ui radio checkbox${(isIssuesGlobalDisabled) ? ` disabled` : ""}`}{...(isIssuesGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
+						<div className={`ui radio checkbox${(props.isIssuesGlobalDisabled) ? ` disabled` : ""}`}{...(props.isIssuesGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
 							<input className="enable-system-radio" name="enable_external_tracker" type="radio" value="false" data-context="#internal_issue_box" data-target="#external_issue_box" {...(!(props.repository?.unitEnabled?.(ctx, "ctx.Consts.RepoUnitTypeExternalTracker")) ? {"checked": true} : {})} />
 							<label>{i18n("repo.settings.use_internal_issue_tracker")}</label>
 						</div>
@@ -396,7 +396,7 @@ export default function Options(props: Record<string, unknown>) {
 						</div>
 					</div>
 					<div className="field">
-						<div className={`ui radio checkbox${(isExternalTrackerGlobalDisabled) ? ` disabled` : ""}`}{...(isExternalTrackerGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
+						<div className={`ui radio checkbox${(props.isExternalTrackerGlobalDisabled) ? ` disabled` : ""}`}{...(props.isExternalTrackerGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
 							<input className="enable-system-radio" name="enable_external_tracker" type="radio" value="true" data-context="#internal_issue_box" data-target="#external_issue_box" {...(props.repository?.unitEnabled?.(ctx, "ctx.Consts.RepoUnitTypeExternalTracker") ? {"checked": true} : {})} />
 							<label>{i18n("repo.settings.use_external_issue_tracker")}</label>
 						</div>
@@ -418,24 +418,24 @@ export default function Options(props: Record<string, unknown>) {
 								<div className="ui radio checkbox">
 								{/* $externalTracker */}
 								{/* $externalTrackerStyle */}
-									<input className="js-tracker-issue-style" name="tracker_issue_style" type="radio" value="numeric" {...(externalTrackerStyle === "numeric" ? {"checked": true} : {})} />
+									<input className="js-tracker-issue-style" name="tracker_issue_style" type="radio" value="numeric" {...(props.externalTrackerStyle === "numeric" ? {"checked": true} : {})} />
 									<label>{i18n("repo.settings.tracker_issue_style.numeric")} <span className="ui light grey text">#1234</span></label>
 								</div>
 							</div>
 							<div className="field">
 								<div className="ui radio checkbox">
-									<input className="js-tracker-issue-style" name="tracker_issue_style" type="radio" value="alphanumeric" {...(externalTrackerStyle === "alphanumeric" ? {"checked": true} : {})} />
+									<input className="js-tracker-issue-style" name="tracker_issue_style" type="radio" value="alphanumeric" {...(props.externalTrackerStyle === "alphanumeric" ? {"checked": true} : {})} />
 									<label>{i18n("repo.settings.tracker_issue_style.alphanumeric")} <span className="ui light grey text">ABC-123 , DEFG-234</span></label>
 								</div>
 							</div>
 							<div className="field">
 								<div className="ui radio checkbox">
-									<input className="js-tracker-issue-style" name="tracker_issue_style" type="radio" value="regexp" {...(externalTrackerStyle === "regexp" ? {"checked": true} : {})} />
+									<input className="js-tracker-issue-style" name="tracker_issue_style" type="radio" value="regexp" {...(props.externalTrackerStyle === "regexp" ? {"checked": true} : {})} />
 									<label>{i18n("repo.settings.tracker_issue_style.regexp")} <span className="ui light grey text">(ISSUE-\d+) , ISSUE-(\d+)</span></label>
 								</div>
 							</div>
 						</div>
-						<div className={`field ${(externalTrackerStyle !== "regexp") ? `disabled` : ""}`} id="tracker-issue-style-regex-box">
+						<div className={`field ${(props.externalTrackerStyle !== "regexp") ? `disabled` : ""}`} id="tracker-issue-style-regex-box">
 							<label htmlFor="external_tracker_regexp_pattern">{i18n("repo.settings.tracker_issue_style.regexp_pattern")}</label>
 							<input id="external_tracker_regexp_pattern" name="external_tracker_regexp_pattern" value={String("" ?? "")} />
 							<p className="help">{i18n("repo.settings.tracker_issue_style.regexp_pattern_desc")}</p>
@@ -450,20 +450,20 @@ export default function Options(props: Record<string, unknown>) {
 				{/* $projectsUnit */}
 				<div className="inline field">
 					<label>{i18n("repo.projects")}</label>
-					<div className={`ui checkbox${(isProjectsGlobalDisabled) ? ` disabled` : ""}`}{...(isProjectsGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
-						<input className="enable-system" name="enable_projects" type="checkbox" data-target="#projects_box" {...(isProjectsEnabled ? {"checked": true} : {})} />
+					<div className={`ui checkbox${(props.isProjectsGlobalDisabled) ? ` disabled` : ""}`}{...(props.isProjectsGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
+						<input className="enable-system" name="enable_projects" type="checkbox" data-target="#projects_box" {...(props.isProjectsEnabled ? {"checked": true} : {})} />
 						<label>{i18n("repo.settings.projects_desc")}</label>
 					</div>
 				</div>
-				<div className={`field ${(!(isProjectsEnabled)) ? ` disabled` : ""} tw-pl-4`} id="projects_box">
+				<div className={`field ${(!(props.isProjectsEnabled)) ? ` disabled` : ""} tw-pl-4`} id="projects_box">
 					<p>
 						{i18n("repo.settings.projects_mode_desc")}
 					</p>
 					<div className="ui dropdown selection">
 						<select name="projects_mode">
-							<option value="repo" {...((!(isProjectsEnabled) || props.projectsUnit?.projectsConfig?.getProjectsMode === "repo") ? {"selected": true} : {})}>{i18n("repo.settings.projects_mode_repo")}</option>
-							<option value="owner" {...((!(isProjectsEnabled) || props.projectsUnit?.projectsConfig?.getProjectsMode === "owner") ? {"selected": true} : {})}>{i18n("repo.settings.projects_mode_owner")}</option>
-							<option value="all" {...((!(isProjectsEnabled) || props.projectsUnit?.projectsConfig?.getProjectsMode === "all") ? {"selected": true} : {})}>{i18n("repo.settings.projects_mode_all")}</option>
+							<option value="repo" {...((!(props.isProjectsEnabled) || props.projectsUnit?.projectsConfig?.getProjectsMode === "repo") ? {"selected": true} : {})}>{i18n("repo.settings.projects_mode_repo")}</option>
+							<option value="owner" {...((!(props.isProjectsEnabled) || props.projectsUnit?.projectsConfig?.getProjectsMode === "owner") ? {"selected": true} : {})}>{i18n("repo.settings.projects_mode_owner")}</option>
+							<option value="all" {...((!(props.isProjectsEnabled) || props.projectsUnit?.projectsConfig?.getProjectsMode === "all") ? {"selected": true} : {})}>{i18n("repo.settings.projects_mode_all")}</option>
 						</select>
 						<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 						<div className="default text">
@@ -491,8 +491,8 @@ export default function Options(props: Record<string, unknown>) {
 				{/* $isReleasesGlobalDisabled */}
 				<div className="inline field">
 					<label>{i18n("repo.releases")}</label>
-					<div className={`ui checkbox${(isReleasesGlobalDisabled) ? ` disabled` : ""}`}{...(isReleasesGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
-						<input className="enable-system" name="enable_releases" type="checkbox" {...(isReleasesEnabled ? {"checked": true} : {})} />
+					<div className={`ui checkbox${(props.isReleasesGlobalDisabled) ? ` disabled` : ""}`}{...(props.isReleasesGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
+						<input className="enable-system" name="enable_releases" type="checkbox" {...(props.isReleasesEnabled ? {"checked": true} : {})} />
 						<label>{i18n("repo.settings.releases_desc")}</label>
 					</div>
 				</div>
@@ -501,8 +501,8 @@ export default function Options(props: Record<string, unknown>) {
 				{/* $isPackagesGlobalDisabled */}
 				<div className="inline field">
 					<label>{i18n("repo.packages")}</label>
-					<div className={`ui checkbox${(isPackagesGlobalDisabled) ? ` disabled` : ""}`}{...(isPackagesGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
-						<input className="enable-system" name="enable_packages" type="checkbox" {...(isPackagesEnabled ? {"checked": true} : {})} />
+					<div className={`ui checkbox${(props.isPackagesGlobalDisabled) ? ` disabled` : ""}`}{...(props.isPackagesGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
+						<input className="enable-system" name="enable_packages" type="checkbox" {...(props.isPackagesEnabled ? {"checked": true} : {})} />
 						<label>{i18n("repo.settings.packages_desc")}</label>
 					</div>
 				</div>
@@ -514,12 +514,12 @@ export default function Options(props: Record<string, unknown>) {
 					{/* $prUnit */}
 					<div className="inline field">
 						<label>{i18n("repo.pulls")}</label>
-						<div className={`ui checkbox${(pullRequestGlobalDisabled) ? ` disabled` : ""}`}{...(pullRequestGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
-							<input className="enable-system" name="enable_pulls" type="checkbox" data-target="#pull_box" {...(pullRequestEnabled ? {"checked": true} : {})} />
+						<div className={`ui checkbox${(props.pullRequestGlobalDisabled) ? ` disabled` : ""}`}{...(props.pullRequestGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
+							<input className="enable-system" name="enable_pulls" type="checkbox" data-target="#pull_box" {...(props.pullRequestEnabled ? {"checked": true} : {})} />
 							<label>{i18n("repo.settings.pulls_desc")}</label>
 						</div>
 					</div>
-					<div className={`field${(!(pullRequestEnabled)) ? ` disabled` : ""}`} id="pull_box">
+					<div className={`field${(!(props.pullRequestEnabled)) ? ` disabled` : ""}`} id="pull_box">
 						<div className="field">
 							<p>
 								{i18n("repo.settings.merge_style_desc")}
@@ -527,37 +527,37 @@ export default function Options(props: Record<string, unknown>) {
 						</div>
 						<div className="field">
 							<div className="ui checkbox">
-								<input name="pulls_allow_merge" type="checkbox" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowMerge) ? {"checked": true} : {})} />
+								<input name="pulls_allow_merge" type="checkbox" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowMerge) ? {"checked": true} : {})} />
 								<label>{i18n("repo.pulls.merge_pull_request")}</label>
 							</div>
 						</div>
 						<div className="field">
 							<div className="ui checkbox">
-								<input name="pulls_allow_rebase" type="checkbox" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowRebase) ? {"checked": true} : {})} />
+								<input name="pulls_allow_rebase" type="checkbox" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowRebase) ? {"checked": true} : {})} />
 								<label>{i18n("repo.pulls.rebase_merge_pull_request")}</label>
 							</div>
 						</div>
 						<div className="field">
 							<div className="ui checkbox">
-								<input name="pulls_allow_rebase_merge" type="checkbox" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowRebaseMerge) ? {"checked": true} : {})} />
+								<input name="pulls_allow_rebase_merge" type="checkbox" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowRebaseMerge) ? {"checked": true} : {})} />
 								<label>{i18n("repo.pulls.rebase_merge_commit_pull_request")}</label>
 							</div>
 						</div>
 						<div className="field">
 							<div className="ui checkbox">
-								<input name="pulls_allow_squash" type="checkbox" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowSquash) ? {"checked": true} : {})} />
+								<input name="pulls_allow_squash" type="checkbox" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowSquash) ? {"checked": true} : {})} />
 								<label>{i18n("repo.pulls.squash_merge_pull_request")}</label>
 							</div>
 						</div>
 						<div className="field">
 							<div className="ui checkbox">
-								<input name="pulls_allow_fast_forward_only" type="checkbox" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowFastForwardOnly) ? {"checked": true} : {})} />
+								<input name="pulls_allow_fast_forward_only" type="checkbox" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowFastForwardOnly) ? {"checked": true} : {})} />
 								<label>{i18n("repo.pulls.fast_forward_only_merge_pull_request")}</label>
 							</div>
 						</div>
 						<div className="field">
 							<div className="ui checkbox">
-								<input name="pulls_allow_manual_merge" type="checkbox" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowManualMerge) ? {"checked": true} : {})} />
+								<input name="pulls_allow_manual_merge" type="checkbox" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowManualMerge) ? {"checked": true} : {})} />
 								<label>{i18n("repo.pulls.merge_manually")}</label>
 							</div>
 						</div>
@@ -568,11 +568,11 @@ export default function Options(props: Record<string, unknown>) {
 							</p>
 							<div className="ui dropdown selection">
 								<select name="pulls_default_merge_style">
-									<option value="merge" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultMergeStyle === "merge") ? {"selected": true} : {})}>{i18n("repo.pulls.merge_pull_request")}</option>
-									<option value="rebase" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultMergeStyle === "rebase") ? {"selected": true} : {})}>{i18n("repo.pulls.rebase_merge_pull_request")}</option>
-									<option value="rebase-merge" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultMergeStyle === "rebase-merge") ? {"selected": true} : {})}>{i18n("repo.pulls.rebase_merge_commit_pull_request")}</option>
-									<option value="squash" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultMergeStyle === "squash") ? {"selected": true} : {})}>{i18n("repo.pulls.squash_merge_pull_request")}</option>
-									<option value="fast-forward-only" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultMergeStyle === "fast-forward-only") ? {"selected": true} : {})}>{i18n("repo.pulls.fast_forward_only_merge_pull_request")}</option>
+									<option value="merge" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultMergeStyle === "merge") ? {"selected": true} : {})}>{i18n("repo.pulls.merge_pull_request")}</option>
+									<option value="rebase" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultMergeStyle === "rebase") ? {"selected": true} : {})}>{i18n("repo.pulls.rebase_merge_pull_request")}</option>
+									<option value="rebase-merge" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultMergeStyle === "rebase-merge") ? {"selected": true} : {})}>{i18n("repo.pulls.rebase_merge_commit_pull_request")}</option>
+									<option value="squash" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultMergeStyle === "squash") ? {"selected": true} : {})}>{i18n("repo.pulls.squash_merge_pull_request")}</option>
+									<option value="fast-forward-only" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultMergeStyle === "fast-forward-only") ? {"selected": true} : {})}>{i18n("repo.pulls.fast_forward_only_merge_pull_request")}</option>
 								</select><span className="svg-icon" aria-label="octicon-triangle-down"></span>
 								<div className="default text">
 									{(props.prUnit?.pullRequestsConfig?.defaultMergeStyle === "merge") ? (<>
@@ -609,38 +609,38 @@ export default function Options(props: Record<string, unknown>) {
 								<div className="menu">
 									<div className="item" data-value="">{i18n("repo.settings.pulls.default_target_branch_default")}</div>
 									{((props.branches) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-										<div className="item" data-value={String("" ?? "")}>{/* $branchName */}</div>
+										<div className="item" data-value={String("" ?? "")}>{props.branchName as any}</div>
 									</React.Fragment>))}
 								</div>
 							</div>
 						</div>
 						<div className="field">
 							<div className="ui checkbox">
-								<input name="default_allow_maintainer_edit" type="checkbox" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultAllowMaintainerEdit) ? {"checked": true} : {})} />
+								<input name="default_allow_maintainer_edit" type="checkbox" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultAllowMaintainerEdit) ? {"checked": true} : {})} />
 								<label>{i18n("repo.settings.pulls.default_allow_edits_from_maintainers")}</label>
 							</div>
 						</div>
 						<div className="field">
 							<div className="ui checkbox">
-								<input name="pulls_allow_rebase_update" type="checkbox" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowRebaseUpdate) ? {"checked": true} : {})} />
+								<input name="pulls_allow_rebase_update" type="checkbox" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.allowRebaseUpdate) ? {"checked": true} : {})} />
 								<label>{i18n("repo.settings.pulls.allow_rebase_update")}</label>
 							</div>
 						</div>
 						<div className="field">
 							<div className="ui checkbox">
-								<input name="default_delete_branch_after_merge" type="checkbox" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultDeleteBranchAfterMerge) ? {"checked": true} : {})} />
+								<input name="default_delete_branch_after_merge" type="checkbox" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.defaultDeleteBranchAfterMerge) ? {"checked": true} : {})} />
 								<label>{i18n("repo.settings.pulls.default_delete_branch_after_merge")}</label>
 							</div>
 						</div>
 						<div className="field">
 							<div className="ui checkbox">
-								<input name="enable_autodetect_manual_merge" type="checkbox" {...((!(pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.autodetectManualMerge) ? {"checked": true} : {})} />
+								<input name="enable_autodetect_manual_merge" type="checkbox" {...((!(props.pullRequestEnabled) || props.prUnit?.pullRequestsConfig?.autodetectManualMerge) ? {"checked": true} : {})} />
 								<label>{i18n("repo.settings.pulls.enable_autodetect_manual_merge")}</label>
 							</div>
 						</div>
 						<div className="field">
 							<div className="ui checkbox">
-								<input name="pulls_ignore_whitespace" type="checkbox" {...((pullRequestEnabled && props.prUnit?.pullRequestsConfig?.ignoreWhitespaceConflicts) ? {"checked": true} : {})} />
+								<input name="pulls_ignore_whitespace" type="checkbox" {...((props.pullRequestEnabled && props.prUnit?.pullRequestsConfig?.ignoreWhitespaceConflicts) ? {"checked": true} : {})} />
 								<label>{i18n("repo.settings.pulls.ignore_whitespace")}</label>
 							</div>
 						</div>

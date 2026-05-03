@@ -64,7 +64,7 @@ export default function ViewContent(props: Record<string, unknown>) {
 						</>) : null}
 					</div>
 					{/* $reactions */}
-					{(reactions) ? (<>
+					{(props.reactions) ? (<>
 						{/* template: repo/issue/view_content/reactions */}
 					</>) : null}
 				</div>
@@ -106,7 +106,7 @@ export default function ViewContent(props: Record<string, unknown>) {
 											</>)}
 											<button id="status-button" className="ui button" data-status={String("" ?? "")} data-status-and-comment={String("" ?? "")} name="status" value={String("" ?? "")}>
 												<span className={`status-button-icon `}>{/* TODO: {{svg $btnIcon}} */}</span>
-												<span className="status-button-text">{/* $btnTextNoComment */}</span>
+												<span className="status-button-text">{props.btnTextNoComment as any}</span>
 											</button>
 										</>) : null}
 										<button id="comment-button" className="ui primary button">

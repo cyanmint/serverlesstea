@@ -9,7 +9,7 @@ export default function ViewContent(props: Record<string, unknown>) {
 {/* template: repo/sub_menu */}
 <div className="repo-button-row">
 	<div className="repo-button-row-left">
-	{(!(isTreePathRoot)) ? (<>
+	{(!(props.isTreePathRoot)) ? (<>
 		{/* template: repo/view_file_tree_toggle_button */}
 	</>) : null}
 
@@ -23,25 +23,25 @@ export default function ViewContent(props: Record<string, unknown>) {
 		</a>
 	</>) : null}
 
-	{((isTreePathRoot && props.repository?.isTemplate)) ? (<>
+	{((props.isTreePathRoot && props.repository?.isTemplate)) ? (<>
 		<a role="button" className="ui primary compact button" href={`/repo/create?template_id=${String(props.repository?.iD ?? "")}`}>
 			{i18n("repo.use_template")}
 		</a>
 	</>) : null}
 
-	{(!(isTreePathRoot)) ? (<>
+	{(!(props.isTreePathRoot)) ? (<>
 		{/* $treeNameIdxLast */}
 		<span className="breadcrumb">
 			<a className="section" href={`${String(props.repoLink ?? "")}/src/${String(props.refTypeNameSubURL ?? "")}`} title={String(props.repository?.name ?? "")}>{/* TODO: {{StringUtils.EllipsisString .Repository.Name 30}} */}</a>
-			{/* TODO: {{- range $i, $v := .TreeNames -}} */}
+			{((props.treeNames) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				<span className="breadcrumb-divider">/</span>
-				{/* TODO: {{- if eq $i $treeNameIdxLast -}} */}
-					<span className="active section" title={String("" ?? "")}>{/* $v */}</span>
+				{(props.i === props.treeNameIdxLast) ? (<>
+					<span className="active section" title={String("" ?? "")}>{props.v as any}</span>
 					<button className="btn interact-fg tw-mx-1" data-clipboard-text={String(props.treePath ?? "")} data-tooltip-content={String(i18n("copy_path") ?? "")}><span className="svg-icon" aria-label="octicon-copy"></span></button>
-				{/* TODO: {{- else -}} */}
-					{/* $p */}<span className="section"><a href={`${String(props.branchLink ?? "")}/`} title={String("" ?? "")}>{/* $v */}</a></span>
-				{/* TODO: {{- end -}} */}
-			{/* TODO: {{- end -}} */}
+				</>) : (<>
+					{/* $p */}<span className="section"><a href={`${String(props.branchLink ?? "")}/`} title={String("" ?? "")}>{props.v as any}</a></span>
+				</>)}
+			</React.Fragment>))}
 		</span>
 	</>) : null}
 	</div>
@@ -83,7 +83,7 @@ export default function ViewContent(props: Record<string, unknown>) {
 				</div>
 			</button>
 
-			{((!(props.isViewFile) && !(isTreePathRoot))) ? (<>
+			{((!(props.isViewFile) && !(props.isTreePathRoot))) ? (<>
 			<button className="ui dropdown basic compact jump button tw-px-3" data-tooltip-content={String(i18n("repo.more_operations") ?? "")}>
 				<span className="svg-icon" aria-label="octicon-kebab-horizontal"></span>
 				<div className="menu">
@@ -95,7 +95,7 @@ export default function ViewContent(props: Record<string, unknown>) {
 						<a className="item muted archive-link" href={`${String(props.repoLink ?? "")}/archive/.zip?path=`} rel="nofollow"><span className="svg-icon" aria-label="octicon-file-zip"></span>{i18n("repo.download_directory_as")}</a>
 						<a className="item muted archive-link" href={`${String(props.repoLink ?? "")}/archive/.tar.gz?path=`} rel="nofollow"><span className="svg-icon" aria-label="octicon-file-zip"></span>{i18n("repo.download_directory_as")}</a>
 					</>) : null}
-					{((props.repository?.canContentChange && !(isTreePathRoot))) ? (<>
+					{((props.repository?.canContentChange && !(props.isTreePathRoot))) ? (<>
 						<div className="divider"></div>
 						<a className="item tw-text-danger" href={`${String(props.repoLink ?? "")}/_delete/${String(props.branchName?.("|", "PathEscapeSegments") ?? "")}/${String(props.treePath?.("|", "PathEscapeSegments") ?? "")}`}>
 							<span className="svg-icon" aria-label="octicon-trash"></span>{i18n("repo.editor.delete_this_directory")}
@@ -106,10 +106,10 @@ export default function ViewContent(props: Record<string, unknown>) {
 			</>) : null}
 		</>) : null}
 		{/* Only show clone panel in repository home page */}
-		{(isTreePathRoot) ? (<>
+		{(props.isTreePathRoot) ? (<>
 			{/* template: repo/clone_panel */}
 		</>) : null}
-		{((!(isTreePathRoot) && !(props.isViewFile) && !(props.isBlame))) ? (<>{/* IsViewDirectory (not home), TODO: split the templates, avoid using "if" tricks */}
+		{((!(props.isTreePathRoot) && !(props.isViewFile) && !(props.isBlame))) ? (<>{/* IsViewDirectory (not home), TODO: split the templates, avoid using "if" tricks */}
 			<a className="ui compact button" href={`${String(props.repoLink ?? "")}/commits/${String(props.refTypeNameSubURL ?? "")}/${String(props.treePath?.("|", "PathEscapeSegments") ?? "")}`}>
 				<span className="svg-icon" aria-label="octicon-history"></span>{i18n("repo.file_history")}
 			</a>
@@ -121,7 +121,7 @@ export default function ViewContent(props: Record<string, unknown>) {
 </>) : null} {(props.isBlame) ? (<>
 	{/* template: repo/blame */}
 </>) : (<>{/* IsViewDirectory */}
-	{(isTreePathRoot) ? (<>
+	{(props.isTreePathRoot) ? (<>
 		{/* template: repo/code/upstream_diverging_info */}
 	</>) : null}
 	{/* template: repo/view_list */}

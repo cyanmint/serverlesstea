@@ -9,27 +9,27 @@ export default function Rpm(props: Record<string, unknown>) {
 		<div className="ui form">
 			<div className="field">
 				<label><span className="svg-icon" aria-label="octicon-terminal"></span> {i18n("packages.rpm.registry")}</label>
-				<div className="markup"><pre className="code-block"><code>{/* TODO: {{- if gt (len .Groups) 1 -}} */}
+				<div className="markup"><pre className="code-block"><code>{("len .Groups" > 1) ? (<>
 # {i18n("packages.rpm.repository.multiple_groups")}
 
-{/* TODO: {{end -}} */}
+</>) : null}
 # {i18n("packages.rpm.distros.redhat")}
-{/* TODO: {{- range $group := .Groups}} */}
-	{/* TODO: {{- if $group}} */}{/* TODO: {{$group = print "/" $group}} */}</>) : null}
-dnf config-manager --add-repo {/* TODO: {{ctx.AppFullLink}} */}/api/packages/{props.packageDescriptor?.owner?.name as any}/rpm{/* $group */}.repo
-{/* TODO: {{- end}} */}
+{((props.groups) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+	{(props.group) ? (<>{/* TODO: {{$group = print "/" $group}} */}</>) : null}
+dnf config-manager --add-repo {/* TODO: {{ctx.AppFullLink}} */}/api/packages/{props.packageDescriptor?.owner?.name as any}/rpm{props.group as any}.repo
+</React.Fragment>))}
 
 # Fedora 41+ (DNF5)
-{/* TODO: {{- range $group := .Groups}} */}
-	{/* TODO: {{- if $group}} */}{/* TODO: {{$group = print "/" $group}} */}
-dnf config-manager addrepo --from-repofile={/* TODO: {{ctx.AppFullLink}} */}/api/packages/{props.packageDescriptor?.owner?.name as any}/rpm{/* $group */}.repo
-{/* TODO: {{- end}} */}
+{((props.groups) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+	{(props.group) ? (<>{/* TODO: {{$group = print "/" $group}} */}</>) : null}
+dnf config-manager addrepo --from-repofile={/* TODO: {{ctx.AppFullLink}} */}/api/packages/{props.packageDescriptor?.owner?.name as any}/rpm{props.group as any}.repo
+</React.Fragment>))}
 
 # {i18n("packages.rpm.distros.suse")}
-{/* TODO: {{- range $group := .Groups}} */}
-	{/* TODO: {{- if $group}} */}{/* TODO: {{$group = print "/" $group}} */}
-zypper addrepo {/* TODO: {{ctx.AppFullLink}} */}/api/packages/{props.packageDescriptor?.owner?.name as any}/rpm{/* $group */}.repo
-{/* TODO: {{- end}} */}</code></pre></div>
+{((props.groups) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+	{(props.group) ? (<>{/* TODO: {{$group = print "/" $group}} */}</>) : null}
+zypper addrepo {/* TODO: {{ctx.AppFullLink}} */}/api/packages/{props.packageDescriptor?.owner?.name as any}/rpm{props.group as any}.repo
+</React.Fragment>))}</code></pre></div>
 			</div>
 			<div className="field">
 				<label><span className="svg-icon" aria-label="octicon-terminal"></span> {i18n("packages.rpm.install")}</label>
@@ -64,7 +64,7 @@ zypper install {props.packageDescriptor?.package?.name as any}</code></pre>
 		{(props.packageDescriptor?.metadata?.summary) ? (<><div className="ui attached segment">{props.packageDescriptor?.metadata?.summary as any}</div></>) : null}
 		{(props.packageDescriptor?.metadata?.description) ? (<><div className="ui attached segment">{props.packageDescriptor?.metadata?.description as any}</div></>) : null}
 	</>) : null}
-
+</>) : null}
 
   </>)
 }

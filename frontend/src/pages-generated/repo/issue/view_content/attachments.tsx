@@ -8,7 +8,7 @@ export default function Attachments(props: Record<string, unknown>) {
 		<div className="divider"></div>
 	</>) : null}
 	{/* $hasThumbnails */}
-	{/* TODO: {{- range .Attachments -}} */}
+	{((props.attachments) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 		<div className="tw-flex">
 			<div className="tw-flex-1 tw-p-2">
 				<a target="_blank" href={String(props.downloadURL ?? "")} title={String(i18n("repo.issues.attachment.open_tab") ?? "")}>
@@ -20,19 +20,19 @@ export default function Attachments(props: Record<string, unknown>) {
 					</>) : (<>
 						<span className="svg-icon" aria-label="octicon-desktop-download"></span>
 					</>)}
-					<span><strong>{props.name as any}</strong></span>
+					<span><strong>{item.name as any}</strong></span>
 				</a>
 			</div>
 			<div className="flex-text-block tw-p-2">
-				<span className="ui tw-text-text-light">{props.size?.("|", "FileSize") as any}</span>
+				<span className="ui tw-text-text-light">{item.size?.("|", "FileSize") as any}</span>
 			</div>
 		</div>
-	{/* TODO: {{end -}} */}
+	</React.Fragment>))}
 
-	{(hasThumbnails) ? (<>
+	{(props.hasThumbnails) ? (<>
 		<div className="divider"></div>
 		<div className="ui small thumbnails">
-			{/* TODO: {{- range .Attachments -}} */}
+			{((props.attachments) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				{("FilenameIsImage .Name") ? (<>
 					{(!("StringUtils.Contains (StringUtils.ToString $.RenderedContent) .UUID")) ? (<>
 					<a target="_blank" href={String(props.downloadURL ?? "")}>
@@ -40,7 +40,7 @@ export default function Attachments(props: Record<string, unknown>) {
 					</a>
 					</>) : null}
 				</>) : null}
-			{/* TODO: {{end -}} */}
+			</React.Fragment>))}
 		</div>
 	</>) : null}
 

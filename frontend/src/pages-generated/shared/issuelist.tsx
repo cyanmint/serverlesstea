@@ -94,10 +94,10 @@ export default function Issuelist(props: Record<string, unknown>) {
 						</a>
 					</>) : null}
 					{/* $tasks */}
-					{(tasks > 0) ? (<>
+					{(props.tasks > 0) ? (<>
 						{/* $tasksDone */}
 						<span className="checklist flex-text-inline">
-							<span className="svg-icon" aria-label="octicon-checklist"></span>{/* $tasksDone */} / {/* $tasks */}
+							<span className="svg-icon" aria-label="octicon-checklist"></span>{props.tasksDone as any} / {props.tasks as any}
 							<progress value={String("" ?? "")} max={String("" ?? "")}></progress>
 						</span>
 					</>) : null}
@@ -113,19 +113,19 @@ export default function Issuelist(props: Record<string, unknown>) {
 						{/* $approveOfficial */}
 						{/* $rejectOfficial */}
 						{/* $waitingOfficial */}
-						{(approveOfficial > 0) ? (<>
+						{(props.approveOfficial > 0) ? (<>
 							<span className="approvals green flex-text-inline">
 								<span className="svg-icon" aria-label="octicon-check"></span>
 								{/* TODO: {{ctx.Locale.TrN $approveOfficial "repo.pulls.approve_count_1" "repo.pulls.approve_count_n" $approveOfficial}} */}
 							</span>
 						</>) : null}
-						{(rejectOfficial > 0) ? (<>
+						{(props.rejectOfficial > 0) ? (<>
 							<span className="rejects red flex-text-inline">
 								<span className="svg-icon" aria-label="octicon-diff"></span>
 								{/* TODO: {{ctx.Locale.TrN $rejectOfficial "repo.pulls.reject_count_1" "repo.pulls.reject_count_n" $rejectOfficial}} */}
 							</span>
 						</>) : null}
-						{(waitingOfficial > 0) ? (<>
+						{(props.waitingOfficial > 0) ? (<>
 							<span className="waiting flex-text-inline">
 								<span className="svg-icon" aria-label="octicon-eye"></span>
 								{/* TODO: {{ctx.Locale.TrN $waitingOfficial "repo.pulls.waiting_count_1" "repo.pulls.waiting_count_n" $waitingOfficial}} */}

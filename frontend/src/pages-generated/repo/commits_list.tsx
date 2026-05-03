@@ -20,13 +20,13 @@ export default function CommitsList(props: Record<string, unknown>) {
 				<tr>
 					<td className="author">
 						<span className="author-wrapper">
-							{/* TODO: {{- if .User -}} */}
-								{/* TODO: {{- ctx.AvatarUtils.Avatar .User 20 "tw-mr-2" -}} */}
-								{/* TODO: {{- .User.GetShortDisplayNameLinkHTML -}} */}
-							{/* TODO: {{- else -}} */}
-								{/* TODO: {{- ctx.AvatarUtils.AvatarByEmail .Author.Email .Author.Name 20 "tw-mr-2" -}} */}
-								{/* TODO: {{- .Author.Name -}} */}
-							{/* TODO: {{- end -}} */}
+							{(item.user) ? (<>
+								{/* TODO: {{ctx.AvatarUtils.Avatar .User 20 "tw-mr-2"}} */}
+								{item.user?.getShortDisplayNameLinkHTML as any}
+							</>) : (<>
+								{/* TODO: {{ctx.AvatarUtils.AvatarByEmail .Author.Email .Author.Name 20 "tw-mr-2"}} */}
+								{item.author?.name as any}
+							</>)}
 						</span>
 					</td>
 					<td className="sha">
@@ -58,7 +58,7 @@ export default function CommitsList(props: Record<string, unknown>) {
 						</>) : null}
 						{(props.commitsTagsMap) ? (<>
 							{(((index $.CommitsTagsMap .ID.String)) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								{/* TODO: {{- template "repo/tag/name" dict "AdditionalClasses" "tw-py-0" "RepoLink" $.Repository.Link "TagName" .TagName "IsRelease" (not .IsTag) -}} */}
+								{/* template: repo/tag/name */}
 							</React.Fragment>))}
 						</>) : null}
 					</td>

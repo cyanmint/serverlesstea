@@ -30,7 +30,7 @@ export default function ViewList(props: Record<string, unknown>) {
 				{/* TODO: {{index $.FileIcons $entry.Name}} */}
 				{(item.entry?.isSubModule) ? (<>
 					{/* $submoduleLink */}
-					{(submoduleLink) ? (<>
+					{(props.submoduleLink) ? (<>
 						<a className="entry-name" href={String("" ?? "")} title={String("" ?? "")}>{/* TODO: {{$entry.Name}} */}</a>
 						@ <a className="tw-text-primary" href={String("" ?? "")}>{/* TODO: {{ShortSha $submoduleFile.RefID}} */}</a>
 					</>) : (<>
@@ -43,8 +43,8 @@ export default function ViewList(props: Record<string, unknown>) {
 						<a className="entry-name" href={`${String(props.treeLink ?? "")}/`} title={String("" ?? "")}>
 							{/* $subJumpablePathFields */}
 							{/* $subJumpablePathFieldLast */}
-							{(subJumpablePathFieldLast === 0) ? (<>
-								{/* $subJumpablePathName */}
+							{(props.subJumpablePathFieldLast === 0) ? (<>
+								{props.subJumpablePathName as any}
 							</>) : (<>
 								{/* $subJumpablePathPrefixes */}
 								<span className="tw-text-text-light-2">{/* TODO: {{StringUtils.Join $subJumpablePathPrefixes "/"}} */}</span>/{/* TODO: {{index $subJumpablePathFields $subJumpablePathFieldLast}} */}
@@ -58,15 +58,15 @@ export default function ViewList(props: Record<string, unknown>) {
 					</>)}
 				</>)}
 			</div>
-			<div className={`repo-file-cell message commit-summary ${(!(commit)) ? `notready` : ""}`}>
-				{(commit) ? (<>
+			<div className={`repo-file-cell message commit-summary ${(!(props.commit)) ? `notready` : ""}`}>
+				{(props.commit) ? (<>
 					{/* $commitLink */}
 					{/* TODO: {{ctx.RenderUtils.RenderCommitMessageLinkSubject $commit.Message $commitLink $.Repository}} */}
 				</>) : (<>
 					… {/* will be loaded again by LastCommitLoaderURL */}
 				</>)}
 			</div>
-			<div className="repo-file-cell age">{(commit) ? (<>{/* TODO: {{DateUtils.TimeSince $commit.Committer.When}} */}</>) : null}</div>
+			<div className="repo-file-cell age">{(props.commit) ? (<>{/* TODO: {{DateUtils.TimeSince $commit.Committer.When}} */}</>) : null}</div>
 		</div>
 	</React.Fragment>))}
 </div>

@@ -22,19 +22,19 @@ export default function Compare(props: Record<string, unknown>) {
 		{/* $BaseCompareName */}
 		{/* $HeadCompareName */}
 		{/* $OwnForkCompareName */}
-		{(props.ownForkRepo?.("-")) ? (<>
-			{/* TODO: {{$OwnForkCompareName = $.OwnForkRepo.FullName -}} */}
-		{/* TODO: {{end -}} */}
+		{(props.ownForkRepo) ? (<>
+			{/* TODO: {{$OwnForkCompareName = $.OwnForkRepo.FullName}} */}
+		</>) : null}
 		{/* $RootRepoCompareName */}
-		{(props.rootRepo?.("-")) ? (<>
-			{/* TODO: {{$RootRepoCompareName = $.RootRepo.FullName -}} */}
-		{/* TODO: {{end -}} */}
+		{(props.rootRepo) ? (<>
+			{/* TODO: {{$RootRepoCompareName = $.RootRepo.FullName}} */}
+		</>) : null}
 
 		<div className="ui segment choose branch">
 			<a className="tw-mr-2" href={`${String(props.headRepo?.link ?? "")}/compare/${(!(props.pullRequestCtx?.sameRepo)) ? `/:` : ""}`} title={String(i18n("repo.pulls.switch_head_and_base") ?? "")}><span className="svg-icon" aria-label="octicon-git-compare"></span></a>
 			<div className="ui dropdown jump select-branch">
 				<div className="ui basic small button">
-					<span className="text">{(props.pageIsComparePull) ? (<>{i18n("repo.pulls.compare_base")}</>) : (<>{i18n("repo.compare.compare_base")}</>)}: <strong>{/* $BaseCompareName */}:{props.baseBranch as any}</strong></span>
+					<span className="text">{(props.pageIsComparePull) ? (<>{i18n("repo.pulls.compare_base")}</>) : (<>{i18n("repo.compare.compare_base")}</>)}: <strong>{props.baseCompareName as any}:{props.baseBranch as any}</strong></span>
 					<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 				</div>
 				<div className="menu">
@@ -60,52 +60,52 @@ export default function Compare(props: Record<string, unknown>) {
 					</div>
 					<div className="scrolling menu reference-list-menu base-branch-list">
 						{((props.branches) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-							<a className={`item ${(props.baseBranch === ".") ? `selected` : ""}`} href={`${String(props.repoLink ?? "")}/compare/${(!(props.pullRequestCtx?.sameRepo)) ? `/:` : ""}`}>{/* $BaseCompareName */}:{item as any}</a>
+							<a className={`item ${(props.baseBranch === ".") ? `selected` : ""}`} href={`${String(props.repoLink ?? "")}/compare/${(!(props.pullRequestCtx?.sameRepo)) ? `/:` : ""}`}>{props.baseCompareName as any}:{item as any}</a>
 						</React.Fragment>))}
 						{(!(props.pullRequestCtx?.sameRepo)) ? (<>
 							{((props.headBranches) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								<a className="item" href={`${String(props.headRepo?.link ?? "")}/compare//:`}>{/* $HeadCompareName */}:{item as any}</a>
+								<a className="item" href={`${String(props.headRepo?.link ?? "")}/compare//:`}>{props.headCompareName as any}:{item as any}</a>
 							</React.Fragment>))}
 						</>) : null}
 						{(props.ownForkRepo) ? (<>
 							{((props.ownForkRepoBranches) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								<a className="item" href={`${String(props.ownForkRepo?.link ?? "")}/compare//:`}>{/* $OwnForkCompareName */}:{item as any}</a>
+								<a className="item" href={`${String(props.ownForkRepo?.link ?? "")}/compare//:`}>{props.ownForkCompareName as any}:{item as any}</a>
 							</React.Fragment>))}
 						</>) : null}
 						{((props.rootRepo && props.rootRepo?.allowsPulls?.(ctx))) ? (<>
 							{((props.rootRepoBranches) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								<a className="item" href={`${String(props.rootRepo?.link ?? "")}/compare//:`}>{/* $RootRepoCompareName */}:{item as any}</a>
+								<a className="item" href={`${String(props.rootRepo?.link ?? "")}/compare//:`}>{props.rootRepoCompareName as any}:{item as any}</a>
 							</React.Fragment>))}
 						</>) : null}
 					</div>
 					<div className="scrolling menu reference-list-menu base-tag-list tw-hidden">
 						{((props.tags) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-							<a className={`item ${(props.baseBranch === ".") ? `selected` : ""}`} href={`${String(props.repoLink ?? "")}/compare/${(!(props.pullRequestCtx?.sameRepo)) ? `/:` : ""}`}>{/* $BaseCompareName */}:{item as any}</a>
+							<a className={`item ${(props.baseBranch === ".") ? `selected` : ""}`} href={`${String(props.repoLink ?? "")}/compare/${(!(props.pullRequestCtx?.sameRepo)) ? `/:` : ""}`}>{props.baseCompareName as any}:{item as any}</a>
 						</React.Fragment>))}
 						{(!(props.pullRequestCtx?.sameRepo)) ? (<>
 							{((props.headTags) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								<a className="item" href={`${String(props.headRepo?.link ?? "")}/compare//:`}>{/* $HeadCompareName */}:{item as any}</a>
+								<a className="item" href={`${String(props.headRepo?.link ?? "")}/compare//:`}>{props.headCompareName as any}:{item as any}</a>
 							</React.Fragment>))}
 						</>) : null}
 						{(props.ownForkRepo) ? (<>
 							{((props.ownForkRepoTags) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								<a className="item" href={`${String(props.ownForkRepo?.link ?? "")}/compare//:`}>{/* $OwnForkCompareName */}:{item as any}</a>
+								<a className="item" href={`${String(props.ownForkRepo?.link ?? "")}/compare//:`}>{props.ownForkCompareName as any}:{item as any}</a>
 							</React.Fragment>))}
 						</>) : null}
 						{(props.rootRepo) ? (<>
 							{((props.rootRepoTags) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								<a className="item" href={`${String(props.rootRepo?.link ?? "")}/compare//:`}>{/* $RootRepoCompareName */}:{item as any}</a>
+								<a className="item" href={`${String(props.rootRepo?.link ?? "")}/compare//:`}>{props.rootRepoCompareName as any}:{item as any}</a>
 							</React.Fragment>))}
 						</>) : null}
 					</div>
 				</div>
 			</div>
 
-			<a href={`${String(props.repoLink ?? "")}/compare/${(!(props.pullRequestCtx?.sameRepo)) ? `/:` : ""}`} title={String(i18n("repo.pulls.switch_comparison_type") ?? "")}><span className="svg-icon" aria-label="octicon-arrow-left"></span><div className="compare-separator">{/* $compareSeparator */}</div></a>
+			<a href={`${String(props.repoLink ?? "")}/compare/${(!(props.pullRequestCtx?.sameRepo)) ? `/:` : ""}`} title={String(i18n("repo.pulls.switch_comparison_type") ?? "")}><span className="svg-icon" aria-label="octicon-arrow-left"></span><div className="compare-separator">{props.compareSeparator as any}</div></a>
 
 			<div className="ui dropdown jump select-branch">
 				<div className="ui basic small button">
-					<span className="text">{(props.pageIsComparePull) ? (<>{i18n("repo.pulls.compare_compare")}</>) : (<>{i18n("repo.compare.compare_head")}</>)}: <strong>{/* $HeadCompareName */}:{props.headBranch as any}</strong></span>
+					<span className="text">{(props.pageIsComparePull) ? (<>{i18n("repo.pulls.compare_compare")}</>) : (<>{i18n("repo.compare.compare_head")}</>)}: <strong>{props.headCompareName as any}:{props.headBranch as any}</strong></span>
 					<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 				</div>
 				<div className="menu">
@@ -131,41 +131,41 @@ export default function Compare(props: Record<string, unknown>) {
 					</div>
 					<div className="scrolling menu reference-list-menu head-branch-list">
 						{((props.headBranches) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-							<a className={`${(props.headBranch === ".") ? `selected` : ""} item`} href={`${String(props.repoLink ?? "")}/compare/${(!(props.pullRequestCtx?.sameRepo)) ? `/:` : ""}`}>{/* $HeadCompareName */}:{item as any}</a>
+							<a className={`${(props.headBranch === ".") ? `selected` : ""} item`} href={`${String(props.repoLink ?? "")}/compare/${(!(props.pullRequestCtx?.sameRepo)) ? `/:` : ""}`}>{props.headCompareName as any}:{item as any}</a>
 						</React.Fragment>))}
 						{(!(props.pullRequestCtx?.sameRepo)) ? (<>
 							{((props.branches) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								<a className="item" href={`${String(props.repoLink ?? "")}/compare//:`}>{/* $BaseCompareName */}:{item as any}</a>
+								<a className="item" href={`${String(props.repoLink ?? "")}/compare//:`}>{props.baseCompareName as any}:{item as any}</a>
 							</React.Fragment>))}
 						</>) : null}
 						{(props.ownForkRepo) ? (<>
 							{((props.ownForkRepoBranches) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								<a className="item" href={`${String(props.repoLink ?? "")}/compare//:`}>{/* $OwnForkCompareName */}:{item as any}</a>
+								<a className="item" href={`${String(props.repoLink ?? "")}/compare//:`}>{props.ownForkCompareName as any}:{item as any}</a>
 							</React.Fragment>))}
 						</>) : null}
 						{(props.rootRepo) ? (<>
 							{((props.rootRepoBranches) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								<a className="item" href={`${String(props.repoLink ?? "")}/compare//:`}>{/* $RootRepoCompareName */}:{item as any}</a>
+								<a className="item" href={`${String(props.repoLink ?? "")}/compare//:`}>{props.rootRepoCompareName as any}:{item as any}</a>
 							</React.Fragment>))}
 						</>) : null}
 					</div>
 					<div className="scrolling menu reference-list-menu head-tag-list tw-hidden">
 						{((props.headTags) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-							<a className={`${(props.headBranch === ".") ? `selected` : ""} item`} href={`${String(props.repoLink ?? "")}/compare/${(!(props.pullRequestCtx?.sameRepo)) ? `/:` : ""}`}>{/* $HeadCompareName */}:{item as any}</a>
+							<a className={`${(props.headBranch === ".") ? `selected` : ""} item`} href={`${String(props.repoLink ?? "")}/compare/${(!(props.pullRequestCtx?.sameRepo)) ? `/:` : ""}`}>{props.headCompareName as any}:{item as any}</a>
 						</React.Fragment>))}
 						{(!(props.pullRequestCtx?.sameRepo)) ? (<>
 							{((props.tags) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								<a className="item" href={`${String(props.repoLink ?? "")}/compare//:`}>{/* $BaseCompareName */}:{item as any}</a>
+								<a className="item" href={`${String(props.repoLink ?? "")}/compare//:`}>{props.baseCompareName as any}:{item as any}</a>
 							</React.Fragment>))}
 						</>) : null}
 						{(props.ownForkRepo) ? (<>
 							{((props.ownForkRepoTags) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								<a className="item" href={`${String(props.repoLink ?? "")}/compare//:`}>{/* $OwnForkCompareName */}:{item as any}</a>
+								<a className="item" href={`${String(props.repoLink ?? "")}/compare//:`}>{props.ownForkCompareName as any}:{item as any}</a>
 							</React.Fragment>))}
 						</>) : null}
 						{(props.rootRepo) ? (<>
 							{((props.rootRepoTags) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								<a className="item" href={`${String(props.repoLink ?? "")}/compare//:`}>{/* $RootRepoCompareName */}:{item as any}</a>
+								<a className="item" href={`${String(props.repoLink ?? "")}/compare//:`}>{props.rootRepoCompareName as any}:{item as any}</a>
 							</React.Fragment>))}
 						</>) : null}
 					</div>
@@ -178,7 +178,7 @@ export default function Compare(props: Record<string, unknown>) {
 			{/* $allowCreatePR */}
 			{(props.isNothingToCompare) ? (<>
 				<div className="ui segment">
-					{(allowCreatePR) ? (<>
+					{(props.allowCreatePR) ? (<>
 						{i18n("repo.pulls.nothing_to_compare_and_allow_empty_pr")}
 					</>) : null} {((props.compareInfo?.baseRef?.isBranch && props.compareInfo?.headRef?.isBranch)) ? (<>
 						{i18n("repo.pulls.nothing_to_compare")}
@@ -206,7 +206,7 @@ export default function Compare(props: Record<string, unknown>) {
 						{i18n("repo.archive.title_date")}
 					</>)}
 				</div>
-			</>) : null} {(allowCreatePR) ? (<>
+			</>) : null} {(props.allowCreatePR) ? (<>
 				<div className={`ui info message flex-text-block pullrequest-form-toggle ${(props.expandNewPrForm) ? `tw-hidden` : ""}`}>
 					<span className="tw-flex-1">{i18n("repo.pulls.new.description")}</span>
 					<a className="ui button primary show-panel toggle" data-panel=".pullrequest-form-toggle, .pullrequest-form">{i18n("repo.pulls.new")}</a>
@@ -222,7 +222,7 @@ export default function Compare(props: Record<string, unknown>) {
 		</>)}
 	</div>
 
-	{(showDiffBox) ? (<>
+	{(props.showDiffBox) ? (<>
 		<div className="ui container fluid padded tw-my-4">
 			{/* template: repo/commits_table */}
 			{/* template: repo/diff/box */}

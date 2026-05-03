@@ -26,7 +26,7 @@ export default function Unadopted(props: Record<string, unknown>) {
 					<div className="ui aligned divided list">
 						{((props.dirs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 							<div className="item flex-text-block">
-								<span className="tw-flex-1"> <span className="svg-icon" aria-label="octicon-file-directory-fill"></span> {/* $dir */}</span>
+								<span className="tw-flex-1"> <span className="svg-icon" aria-label="octicon-file-directory-fill"></span> {props.dir as any}</span>
 								<div>
 									<button className="ui button primary show-modal tw-p-2" data-modal={`#adopt-unadopted-modal-`}><span className="svg-icon" aria-label="octicon-plus"></span> {i18n("repo.adopt_preexisting_label")}</button>
 									<div className="ui g-modal-confirm modal" id={`adopt-unadopted-modal-`}>

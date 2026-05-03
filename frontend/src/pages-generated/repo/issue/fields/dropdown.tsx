@@ -15,7 +15,7 @@ export default function Dropdown(props: Record<string, unknown>) {
 		<div className="default text"></div>
 		<div className="menu">
 			{((props.item?.attributes?.options) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-				<div className="item" data-value={String("" ?? "")}>{/* $opt */}</div>
+				<div className="item" data-value={String("" ?? "")}>{props.opt as any}</div>
 			</React.Fragment>))}
 		</div>
 	</div>

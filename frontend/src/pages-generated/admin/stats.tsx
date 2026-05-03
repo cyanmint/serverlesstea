@@ -12,7 +12,7 @@ export default function Stats(props: Record<string, unknown>) {
 		<table className="ui very basic table unstackable">
 			{((props.statsKeys) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 			<tr>
-				<td width="200">{/* $statsKey */}</td>
+				<td width="200">{props.statsKey as any}</td>
 				<td>{/* TODO: {{index $.StatsCounter $statsKey}} */}</td>
 			</tr>
 			</React.Fragment>))}

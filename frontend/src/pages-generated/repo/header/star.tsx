@@ -16,7 +16,7 @@ export default function Star(props: Record<string, unknown>) {
 		</>)}
 	>
 		{/* TODO: {{svg (Iif $.IsStaringRepo "octicon-star-fill" "octicon-star")}} */}
-		<span className="not-mobile" aria-hidden="true">{/* $buttonText */}</span>
+		<span className="not-mobile" aria-hidden="true">{props.buttonText as any}</span>
 	</a>
 	<a className="ui basic label" href={`${String(props.repoLink ?? "")}/stars`}>
 		{/* TODO: {{CountFmt .Repository.NumStars}} */}

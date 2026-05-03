@@ -18,8 +18,8 @@ export default function HomeSidebarTop(props: Record<string, unknown>) {
 		<div className="repo-home-sidebar-header">{i18n("repo.repo_desc")}</div>
 
 		<div className="repo-description tw-break-anywhere tw-gap-2">
-			{/* TODO: {{- $description := .Repository.DescriptionHTML ctx -}} */}
-			{(description) ? (<>{/* TODO: {{$description | RenderCodeBlock}} */}</>) : (<>{i18n("repo.repo_no_desc")}</>)}
+			{/* $description */}
+			{(props.description) ? (<>{/* TODO: {{$description | RenderCodeBlock}} */}</>) : (<>{i18n("repo.repo_no_desc")}</>)}
 		</div>
 
 		{(props.repository?.website) ? (<>

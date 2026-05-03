@@ -76,7 +76,7 @@ export default function Comments(props: Record<string, unknown>) {
 			</>) : null}
 		</div>
 		{/* $reactions */}
-		{(reactions) ? (<>
+		{(props.reactions) ? (<>
 			{/* template: repo/issue/view_content/reactions */}
 		</>) : null}
 	</div>

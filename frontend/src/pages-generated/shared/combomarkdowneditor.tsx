@@ -28,9 +28,9 @@ export default function Combomarkdowneditor(props: Record<string, unknown>) {
 		data-support-easy-mde={String("" ?? "")}
 		data-preview-url={String("" ?? "")}
 		data-preview-context={String("" ?? "")}
-		{...(mentionsLink ? {"data-mentions-url": String("" ?? "")} : {})}
+		{...(props.mentionsLink ? {"data-mentions-url": String("" ?? "")} : {})}
 >
-	{(previewMode !== "none") ? (<>
+	{(props.previewMode !== "none") ? (<>
 	<div className="ui top tabular menu">
 		<a className="active item" data-tab-htmlFor="markdown-writer">{/* template: shared/misc/tabtitle */}</a>
 		<a className="item" data-tab-htmlFor="markdown-previewer">{/* template: shared/misc/tabtitle */}</a>
@@ -59,7 +59,7 @@ export default function Combomarkdowneditor(props: Record<string, unknown>) {
 				<md-task-list className="markdown-toolbar-button" data-tooltip-content={String(i18n("editor.buttons.list.task.tooltip") ?? "")}><span className="svg-icon" aria-label="octicon-tasklist"></span></md-task-list>
 				<button className="markdown-toolbar-button markdown-button-table-add" data-tooltip-content={String(i18n("editor.buttons.table.add.tooltip") ?? "")}><span className="svg-icon" aria-label="octicon-table"></span></button>
 			</div>
-			{(mentionsLink) ? (<>
+			{(props.mentionsLink) ? (<>
 			<div className="markdown-toolbar-group">
 				<md-mention className="markdown-toolbar-button" data-tooltip-content={String(i18n("editor.buttons.mention.tooltip") ?? "")}><span className="svg-icon" aria-label="octicon-mention"></span></md-mention>
 				<md-ref className="markdown-toolbar-button" data-tooltip-content={String(i18n("editor.buttons.ref.tooltip") ?? "")}><span className="svg-icon" aria-label="octicon-cross-reference"></span></md-ref>
@@ -67,7 +67,7 @@ export default function Combomarkdowneditor(props: Record<string, unknown>) {
 			</>) : null}
 			<div className="markdown-toolbar-group">
 				<button className="markdown-toolbar-button markdown-switch-monospace" role="switch" data-enable-text={String(i18n("editor.buttons.enable_monospace_font") ?? "")} data-disable-text={String(i18n("editor.buttons.disable_monospace_font") ?? "")}><span className="svg-icon" aria-label="octicon-typography"></span></button>
-				{(supportEasyMDE) ? (<>
+				{(props.supportEasyMDE) ? (<>
 				<button className="markdown-toolbar-button markdown-switch-easymde" data-tooltip-content={String(i18n("editor.buttons.switch_to_legacy.tooltip") ?? "")}><span className="svg-icon" aria-label="octicon-arrow-switch"></span></button>
 				</>) : null}
 			</div>
@@ -75,7 +75,7 @@ export default function Combomarkdowneditor(props: Record<string, unknown>) {
 		<text-expander keys=": @ #" multiword="#" suffix="">
 			<textarea className="markdown-text-editor"
 				{...(props.textareaName ? {"name": String(props.textareaName ?? "")} : {})} {...(props.textareaMaxLength ? {"maxlength": String(props.textareaMaxLength ?? "")} : {})}
-				{...(props.textareaPlaceholder ? {"placeholder": String(props.textareaPlaceholder ?? "")} : {})} {...(ariaLabel ? {"aria-label": String("" ?? "")} : {})}
+				{...(props.textareaPlaceholder ? {"placeholder": String(props.textareaPlaceholder ?? "")} : {})} {...(props.ariaLabel ? {"aria-label": String("" ?? "")} : {})}
 				{...(props.disableAutosize ? {"data-disable-autosize": String(props.disableAutosize ?? "")} : {})}
 			>{props.textareaContent as any}</textarea>
 		</text-expander>

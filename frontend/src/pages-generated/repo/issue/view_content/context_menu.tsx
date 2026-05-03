@@ -34,14 +34,14 @@ export default function ContextMenu(props: Record<string, unknown>) {
 			</>) : null}
 			{/* $canUserBlock */}
 			{/* $canOrgBlock */}
-			{((canOrgBlock || canUserBlock)) ? (<>
-				{(needDivider) ? (<>
+			{((props.canOrgBlock || props.canUserBlock)) ? (<>
+				{(props.needDivider) ? (<>
 					<div className="divider"></div>
 				</>) : null}
-				{(canUserBlock) ? (<>
+				{(props.canUserBlock) ? (<>
 				<div className="item context js-aria-clickable show-modal" data-modal="#block-user-modal" data-modal-modal-blockee={String(props.item?.poster?.name ?? "")} data-modal-modal-blockee-name={String(props.item?.poster?.getDisplayName ?? "")} {...{"data-modal-modal-form.action": `/user/settings/blocked_users`}}>{i18n("user.block.block.user")}</div>
 				</>) : null}
-				{(canOrgBlock) ? (<>
+				{(props.canOrgBlock) ? (<>
 				<div className="item context js-aria-clickable show-modal" data-modal="#block-user-modal" data-modal-modal-blockee={String(props.item?.poster?.name ?? "")} data-modal-modal-blockee-name={String(props.item?.poster?.getDisplayName ?? "")} {...{"data-modal-modal-form.action": `/settings/blocked_users`}}>{i18n("user.block.block.org")}</div>
 				</>) : null}
 			</>) : null}

@@ -49,8 +49,8 @@ export default function MilestoneList(props: Record<string, unknown>) {
 	</div>
 
 	<div className="ui list muted-links flex-items-block">
-		<span className={`item empty-list ${(issueMilestone) ? `tw-hidden` : ""}`}>{i18n("repo.issues.new.no_milestone")}</span>
-		{(issueMilestone) ? (<>
+		<span className={`item empty-list ${(props.issueMilestone) ? `tw-hidden` : ""}`}>{i18n("repo.issues.new.no_milestone")}</span>
+		{(props.issueMilestone) ? (<>
 			<a className="item" href={`/milestone/`}>
 				<span className="svg-icon" aria-label="octicon-milestone"></span><span className="tw-flex-1 tw-break-anywhere">{/* TODO: {{$issueMilestone.Name}} */}</span>
 			</a>

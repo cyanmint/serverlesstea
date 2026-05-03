@@ -157,7 +157,7 @@ export default function HeadNavbar(props: Record<string, unknown>) {
 	</div>{/* end full right menu */}
 
 	{/* $activeStopwatch */}
-	{(activeStopwatch) ? (<>
+	{(props.activeStopwatch) ? (<>
 		<div className="active-stopwatch-popup tippy-target">
 			<div className="flex-text-block tw-p-3">
 				<a className="stopwatch-link flex-text-block muted" href={String("" ?? "")}>

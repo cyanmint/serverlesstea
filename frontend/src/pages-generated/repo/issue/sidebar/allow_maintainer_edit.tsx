@@ -3,14 +3,14 @@ import { i18n } from '../../../../lib/i18n'
 
 export default function AllowMaintainerEdit(props: Record<string, unknown>) {
   return (<>
-{/* TODO: {{- $isHeadForkedRepo := and .Issue.PullRequest .Issue.PullRequest.HeadRepo (ne .Issue.PullRequest.HeadRepo.FullName .Issue.PullRequest.BaseRepo.FullName) -}} */}
-{(isHeadForkedRepo) ? (<>
-	{/* TODO: {{- $isPullPoster := and .Issue.IsPull .IsIssuePoster -}} */}
-	{/* TODO: {{- $isPullEditable := and .Issue.PullRequest (not .Issue.IsClosed) (not .Repository.IsArchived) -}} */}
-	{/* TODO: {{- $allowToChange := and $isPullPoster $isPullEditable -}} */}
+{/* $isHeadForkedRepo */}
+{(props.isHeadForkedRepo) ? (<>
+	{/* $isPullPoster */}
+	{/* $isPullEditable */}
+	{/* $allowToChange */}
 	<div className="divider"></div>
-	<div className={`ui checkbox ${(!(allowToChange)) ? `disabled` : ""} loading-icon-2px`}
-			{(allowToChange) ? (<>
+	<div className={`ui checkbox ${(!(props.allowToChange)) ? `disabled` : ""} loading-icon-2px`}
+			{(props.allowToChange) ? (<>
 			id="allow-edits-from-maintainers"
 			data-url={String(props.issue?.link ?? "")}
 			data-tooltip-content={String(i18n("repo.pulls.allow_edits_from_maintainers_desc") ?? "")}
@@ -18,7 +18,7 @@ export default function AllowMaintainerEdit(props: Record<string, unknown>) {
 			</>) : null}
 	>
 		<label><strong>{i18n("repo.pulls.allow_edits_from_maintainers")}</strong></label>
-		<input type="checkbox" {...(props.issue?.pullRequest?.allowMaintainerEdit ? {"checked": true} : {})} {...(!(allowToChange) ? {"disabled": true} : {})} />
+		<input type="checkbox" {...(props.issue?.pullRequest?.allowMaintainerEdit ? {"checked": true} : {})} {...(!(props.allowToChange) ? {"disabled": true} : {})} />
 	</div>
 </>) : null}
 

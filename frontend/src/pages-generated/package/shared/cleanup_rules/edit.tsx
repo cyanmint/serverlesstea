@@ -17,7 +17,7 @@ export default function Edit(props: Record<string, unknown>) {
 			<label>{i18n("packages.filter.type")}</label>
 			<select className="ui selection dropdown" name="type">
 				{((props.availableTypes) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-				<option{...(props.cleanupRule?.type === type ? {"selected": "selected"} : {})} value={String("" ?? "")}>{/* TODO: {{$type.Name}} */}</option>
+				<option{...(props.cleanupRule?.type === props.type ? {"selected": "selected"} : {})} value={String("" ?? "")}>{/* TODO: {{$type.Name}} */}</option>
 				</React.Fragment>))}
 			</select>
 		</div>

@@ -14,7 +14,7 @@ export default function Repositories(props: Record<string, unknown>) {
 				{/* template: org/team/navbar */}
 				{/* $hasTopAttachedSegment */}
 				{/* $canAddRemove */}
-				{(canAddRemove) ? (<>
+				{(props.canAddRemove) ? (<>
 					{/* TODO: {{$hasTopAttachedSegment = true}} */}
 					<div className="ui top attached segment flex-text-block tw-flex-wrap">
 						<form className="ui form ignore-dirty tw-flex-1 tw-flex" action={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName?.("|", "PathEscape") ?? "")}/action/repo/add`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
@@ -35,7 +35,7 @@ export default function Repositories(props: Record<string, unknown>) {
 					{/* TODO: {{$hasTopAttachedSegment = true}} */}
 					<div className="ui top attached segment">{i18n("org.teams.all_repositories")}</div>
 				</>) : null}
-				<div className={`ui ${(!(hasTopAttachedSegment)) ? `top` : ""} attached segment`}>
+				<div className={`ui ${(!(props.hasTopAttachedSegment)) ? `top` : ""} attached segment`}>
 					<div className="flex-divided-list items-with-main">
 						{((props.teamRepos) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 							<div className="item tw-items-center">
@@ -48,7 +48,7 @@ export default function Repositories(props: Record<string, unknown>) {
 									</a>
 								</div>
 								<div className="item-trailing">
-									{(canAddRemove) ? (<>
+									{(props.canAddRemove) ? (<>
 										<form method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())} action={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName?.("|", "PathEscape") ?? "")}/action/repo/remove`}>
 											<button type="submit" className="ui red small button" name="repoid" value={String(props.iD ?? "")}>{i18n("remove")}</button>
 										</form>

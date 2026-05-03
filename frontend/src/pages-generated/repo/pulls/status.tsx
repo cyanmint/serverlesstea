@@ -24,7 +24,7 @@ export default function Status(props: Record<string, unknown>) {
 		</>) : null}
 	</div>
 
-	{((statusCheckData && props.statusCheckData?.requireApprovalRunCount)) ? (<>
+	{((props.statusCheckData && props.statusCheckData?.requireApprovalRunCount)) ? (<>
 		<div className="ui attached segment flex-left-right" id="approve-status-checks">
 			<div>
 				<strong>
@@ -46,14 +46,14 @@ export default function Status(props: Record<string, unknown>) {
 				{/* template: repo/commit_status */}
 				<div className="status-context gt-ellipsis">{item.context as any} <span className="tw-text-text-light-2">{item.description as any}</span></div>
 				<div className="ui status-details">
-					{((statusCheckData && item.statusCheckData?.isContextRequired)) ? (<>
+					{((props.statusCheckData && item.statusCheckData?.isContextRequired)) ? (<>
 						{(item.statusCheckData?.isContextRequired?.(item.context)) ? (<><div className="ui label">{i18n("repo.pulls.status_checks_requested")}</div></>) : null}
 					</>) : null}
 					<span>{(item.targetURL) ? (<><a href={String(props.targetURL ?? "")}>{i18n("repo.pulls.status_checks_details")}</a></>) : null}</span>
 				</div>
 			</div>
 		</React.Fragment>))}
-		{(statusCheckData) ? (<>
+		{(props.statusCheckData) ? (<>
 			{(($statusCheckData.MissingRequiredChecks) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				<div className="commit-status-item">
 					<span className="svg-icon" aria-label="octicon-dot-fill"></span>

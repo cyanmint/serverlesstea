@@ -9,11 +9,11 @@ export default function CommonBreadcrumb(props: Record<string, unknown>) {
 	{/* $l */}
 	{((props.treeNames) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 		<div className="breadcrumb-divider">/</div>
-		{(i === l) ? (<>
-			<input id="file-name" maxlength="255" value={String("" ?? "")} placeholder={String("" ?? "")} {/* TODO: {{Iif $.PageIsUpload "" "required"}} */} />
+		{(props.i === props.l) ? (<>
+			<input id="file-name" maxlength="255" value={String("" ?? "")} placeholder={String("" ?? "")} />
 			<span data-tooltip-content={String(i18n("repo.editor.filename_help") ?? "")}><span className="svg-icon" aria-label="octicon-info"></span></span>
 		</>) : (<>
-			<span className="section"><a href={`${String(props.branchLink ?? "")}/`}>{/* $v */}</a></span>
+			<span className="section"><a href={`${String(props.branchLink ?? "")}/`}>{props.v as any}</a></span>
 		</>)}
 	</React.Fragment>))}
 	<span>{i18n("repo.editor.or")} <a href={String("" ?? "")}>{i18n("repo.editor.cancel_lower")}</a></span>

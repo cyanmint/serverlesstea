@@ -14,12 +14,12 @@ export default function ActionsGeneral(props: Record<string, unknown>) {
 			{/* $isActionsGlobalDisabled */}
 			<div className="inline field">
 				<label>{i18n("actions.actions")}</label>
-				<div className={`ui checkbox${(isActionsGlobalDisabled) ? ` disabled` : ""}`}{...(isActionsGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
-					<input name="enable_actions" type="checkbox" {...(isActionsGlobalDisabled ? {"disabled": true} : {})} {...(isActionsEnabled ? {"checked": true} : {})} />
+				<div className={`ui checkbox${(props.isActionsGlobalDisabled) ? ` disabled` : ""}`}{...(props.isActionsGlobalDisabled ? {"data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {})}>
+					<input name="enable_actions" type="checkbox" {...(props.isActionsGlobalDisabled ? {"disabled": true} : {})} {...(props.isActionsEnabled ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.actions_desc")}</label>
 				</div>
 			</div>
-			{(!(isActionsGlobalDisabled)) ? (<>
+			{(!(props.isActionsGlobalDisabled)) ? (<>
 			<div className="divider"></div>
 				<div className="field">
 				<button className="ui primary button">{i18n("repo.settings.update_settings")}</button>
@@ -28,7 +28,7 @@ export default function ActionsGeneral(props: Record<string, unknown>) {
 		</form>
 	</div>
 
-{(isActionsEnabled) ? (<>
+{(props.isActionsEnabled) ? (<>
 	{/* Token Permissions Section */}
 	<h4 className="ui top attached header">
 		{i18n("actions.general.permissions")}
@@ -59,7 +59,7 @@ export default function ActionsGeneral(props: Record<string, unknown>) {
 	</div>
 </>) : null}
 
-{(isActionsEnabled) ? (<>
+{(props.isActionsEnabled) ? (<>
 	{(props.repository?.isPrivate) ? (<>
 	{/* Collaborative Owners Section */}
 	<h4 className="ui top attached header">

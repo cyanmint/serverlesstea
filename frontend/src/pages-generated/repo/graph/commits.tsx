@@ -22,20 +22,20 @@ export default function Commits(props: Record<string, unknown>) {
 					<span className="commit-refs flex-text-inline">
 						{(($commit.Refs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 							{/* $refGroup */}
-							{(refGroup === "pull") ? (<>
+							{(props.refGroup === "pull") ? (<>
 								{((!(props.hidePRRefs) || "SliceUtils.Contains $.SelectedBranches .Name")) ? (<>
 									{/* it's intended to use issues not pulls, if it's a pull you will get redirected */}
 									<a className="ui basic tiny button" href={`${String(props.repoLink ?? "")}/${(props.repository?.unitEnabled?.(ctx, "ctx.Consts.RepoUnitTypePullRequests")) ? `pulls` : `issues`}/${String(props.shortName|PathEscape ?? "")}`}>
 										<span className="svg-icon" aria-label="octicon-git-pull-request"></span> #{item.shortName as any}
 									</a>
 								</>) : null}
-							</>) : null} {(refGroup === "tags") ? (<>
-								{/* TODO: {{- template "repo/tag/name" dict "AdditionalClasses" "tag-label" "RepoLink" $.Repository.Link "TagName" .ShortName -}} */}
-							</>) : null} {(refGroup === "remotes") ? (<>
+							</>) : null} {(props.refGroup === "tags") ? (<>
+								{/* template: repo/tag/name */}
+							</>) : null} {(props.refGroup === "remotes") ? (<>
 								<a className="ui basic tiny button" href={`${String(props.repoLink ?? "")}/src/commit/`}>
 									<span className="svg-icon" aria-label="octicon-cross-reference"></span> {item.shortName as any}
 								</a>
-							</>) : null} {(refGroup === "heads") ? (<>
+							</>) : null} {(props.refGroup === "heads") ? (<>
 								<a className="ui basic tiny button" href={`${String(props.repoLink ?? "")}/src/branch/${String(props.shortName|PathEscape ?? "")}`}>
 									<span className="svg-icon" aria-label="octicon-git-branch"></span> {item.shortName as any}
 								</a>
@@ -52,7 +52,7 @@ export default function Commits(props: Record<string, unknown>) {
 						</>) : (<>
 							{/* $gitUserName */}
 							{/* TODO: {{ctx.AvatarUtils.AvatarByEmail $commit.Commit.Author.Email $gitUserName 18}} */}
-							{/* $gitUserName */}
+							{props.gitUserName as any}
 						</>)}
 					</span>
 

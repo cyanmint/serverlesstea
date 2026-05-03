@@ -17,11 +17,11 @@ export default function PullMergeInstruction(props: Record<string, unknown>) {
 		<div className="ui secondary segment tw-font-mono">
 			{/* $gitRemoteName */}
 			{(props.pull?.flow === 0) ? (<>
-			<div>git fetch -u {(props.pull?.headRepo?.iD !== props.pull?.baseRepo?.iD) ? (<>{/* TODO: {{ctx.AppFullLink $pull.HeadRepo.Link}} */}</>) : (<>{/* $gitRemoteName */}</>)} {/* TODO: {{$pull.HeadBranch}} */}:{/* $localBranch */}</div>
+			<div>git fetch -u {(props.pull?.headRepo?.iD !== props.pull?.baseRepo?.iD) ? (<>{/* TODO: {{ctx.AppFullLink $pull.HeadRepo.Link}} */}</>) : (<>{props.gitRemoteName as any}</>)} {/* TODO: {{$pull.HeadBranch}} */}:{props.localBranch as any}</div>
 			</>) : (<>
-			<div>git fetch -u {/* $gitRemoteName */} {/* TODO: {{$pull.GetGitHeadRefName}} */}:{/* $localBranch */}</div>
+			<div>git fetch -u {props.gitRemoteName as any} {/* TODO: {{$pull.GetGitHeadRefName}} */}:{props.localBranch as any}</div>
 			</>)}
-			<div>git checkout {/* $localBranch */}</div>
+			<div>git checkout {props.localBranch as any}</div>
 		</div>
 		{(props.data?.showMergeInstructions) ? (<>
 		<div>
@@ -34,31 +34,31 @@ export default function PullMergeInstruction(props: Record<string, unknown>) {
 		<div className="ui secondary segment tw-font-mono">
 			<div data-pull-merge-style="merge">
 				<div>git checkout {/* TODO: {{$pull.BaseBranch}} */}</div>
-				<div>git merge --no-ff {/* $localBranch */}</div>
+				<div>git merge --no-ff {props.localBranch as any}</div>
 			</div>
 			<div className="tw-hidden" data-pull-merge-style="rebase">
 				<div>git checkout {/* TODO: {{$pull.BaseBranch}} */}</div>
-				<div>git merge --ff-only {/* $localBranch */}</div>
+				<div>git merge --ff-only {props.localBranch as any}</div>
 			</div>
 			<div className="tw-hidden" data-pull-merge-style="rebase-merge">
-				<div>git checkout {/* $localBranch */}</div>
+				<div>git checkout {props.localBranch as any}</div>
 				<div>git rebase {/* TODO: {{$pull.BaseBranch}} */}</div>
 				<div>git checkout {/* TODO: {{$pull.BaseBranch}} */}</div>
-				<div>git merge --no-ff {/* $localBranch */}</div>
+				<div>git merge --no-ff {props.localBranch as any}</div>
 			</div>
 			<div className="tw-hidden" data-pull-merge-style="squash">
 				<div>git checkout {/* TODO: {{$pull.BaseBranch}} */}</div>
-				<div>git merge --squash {/* $localBranch */}</div>
+				<div>git merge --squash {props.localBranch as any}</div>
 			</div>
 			<div className="tw-hidden" data-pull-merge-style="fast-forward-only">
 				<div>git checkout {/* TODO: {{$pull.BaseBranch}} */}</div>
-				<div>git merge --ff-only {/* $localBranch */}</div>
+				<div>git merge --ff-only {props.localBranch as any}</div>
 			</div>
 			<div className="tw-hidden" data-pull-merge-style="manually-merged">
 				<div>git checkout {/* TODO: {{$pull.BaseBranch}} */}</div>
-				<div>git merge {/* $localBranch */}</div>
+				<div>git merge {props.localBranch as any}</div>
 			</div>
-			<div>git push {/* $gitRemoteName */} {/* TODO: {{$pull.BaseBranch}} */}</div>
+			<div>git push {props.gitRemoteName as any} {/* TODO: {{$pull.BaseBranch}} */}</div>
 		</div>
 		</>) : null}
 	</div>

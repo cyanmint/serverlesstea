@@ -20,7 +20,8 @@ export default function WorkflowDispatch(props: Record<string, unknown>) {
 				<div className="ui inline field dropdown button select-branch branch-selector-dropdown ellipsis-text-items">
 					<input type="hidden" name="ref" value={`refs/heads/`}
 								data-fetch-trigger="change" data-fetch-sync="$body #runWorkflowDispatchModalInputs"
-								data-fetch-url={`${String(props.link ?? "")}/workflow-dispatch-inputs?workflow=${String(props.curWorkflow ?? "")}`} />
+								data-fetch-url={`${String(props.link ?? "")}/workflow-dispatch-inputs?workflow=${String(props.curWorkflow ?? "")}`}
+					 />
 					<span className="svg-icon" aria-label="octicon-git-branch"></span>
 					<div className="default text">{/* TODO: {{index .Branches 0}} */}</div>
 					<span className="svg-icon" aria-label="octicon-triangle-down"></span>

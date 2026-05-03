@@ -30,7 +30,7 @@ export default function PullMergeBox(props: Record<string, unknown>) {
 	tw-text-yellow
 	tw-text-text-light
 	tw-text-green
-	tw-text-red` : ""}`}><span className="svg-icon" aria-label="octicon-git-merge"></span></div>
+	` : `tw-text-red`}`}><span className="svg-icon" aria-label="octicon-git-merge"></span></div>
 	<div className="content">
 		{(props.latestCommitStatus) ? (<>
 		<div className="ui attached segment fitted">
@@ -172,8 +172,8 @@ export default function PullMergeBox(props: Record<string, unknown>) {
 				{/* $notAllOverridableChecksOk */}
 				{/* $canMergeNow */}
 
-				{(canMergeNow) ? (<>
-					{(notAllOverridableChecksOk) ? (<>
+				{(props.canMergeNow) ? (<>
+					{(props.notAllOverridableChecksOk) ? (<>
 						<div className="item">
 							<span className="svg-icon" aria-label="octicon-dot-fill"></span>
 							{i18n("repo.pulls.required_status_check_administrator")}
@@ -294,7 +294,7 @@ export default function PullMergeBox(props: Record<string, unknown>) {
 			* - Merge the pull request branch locally and push the merged commit to Gitea
 			* - Make some conflicts between the base branch and the pull request branch
 			* Then the Manually Merged form will be shown in the merge form */}
-			{((props.stillCanManualMerge && !(showGeneralMergeForm))) ? (<>
+			{((props.stillCanManualMerge && !(props.showGeneralMergeForm))) ? (<>
 				<div className="divider"></div>
 				<form className="ui form form-fetch-action" action={`${String(props.issue?.link ?? "")}/merge`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>{/* another similar form is in PullRequestMergeForm.vue */}
 					<div className="field">

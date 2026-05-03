@@ -26,8 +26,8 @@ export default function FilterList(props: Record<string, unknown>) {
 			<i className="icon"><span className="svg-icon" aria-label="octicon-search"></span></i>
 			<input type="text" placeholder={String(i18n("repo.issues.filter_project") ?? "")} />
 		</div>
-		<a className={`item ${(showAllProjects) ? `selected` : ""}`} href={String("" ?? "")}>{i18n("repo.issues.filter_project_all")}</a>
-		<a className={`item ${(showNoProjectSelected) ? `selected` : ""}`} href={String("" ?? "")}>{i18n("repo.issues.filter_project_none")}</a>
+		<a className={`item ${(props.showAllProjects) ? `selected` : ""}`} href={String("" ?? "")}>{i18n("repo.issues.filter_project_all")}</a>
+		<a className={`item ${(props.showNoProjectSelected) ? `selected` : ""}`} href={String("" ?? "")}>{i18n("repo.issues.filter_project_none")}</a>
 		{(props.openProjects) ? (<>
 			<div className="divider"></div>
 			<div className="header">
@@ -102,7 +102,7 @@ export default function FilterList(props: Record<string, unknown>) {
 			<div className="header">{i18n("repo.issues.filter_label")}</div>
 			{((props.exclusiveLabelScopes) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				{/* $sortType */}
-				<a className={`${(props.sortType === sortType) ? `active ` : ""}item`} href={String("" ?? "")}>{/* $scope */}</a>
+				<a className={`${(props.sortType === props.sortType) ? `active ` : ""}item`} href={String("" ?? "")}>{props.scope as any}</a>
 			</React.Fragment>))}
 		</>) : null}
 	</div>

@@ -20,15 +20,15 @@ export default function Milestones(props: Record<string, unknown>) {
 							<a className={`${("." === props.repo?.iD) ? `active` : ""} repo name item`} href={`?repos=[
 								
 										
-											
+											${("." === props.repo?.iD) ? `
 												
-											
+											` : `
 												%2C
-											
+											`}
 										
-										
+										${(props.include === true) ? `
 											%2C
-										
+										` : ""}
 									
 								]&sort=${String(props.sortType ?? "")}&state=${String(props.state ?? "")}&q=${String(props.keyword ?? "")}`} title={String(props.fullName ?? "")}>
 								<span className="tw-inline-block tw-truncate tw-w-3/4">{/* TODO: {{$Repo.FullName}} */}</span>

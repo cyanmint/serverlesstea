@@ -31,12 +31,12 @@ export default function PublicAccess(props: Record<string, unknown>) {
 				{((props.repoUnitPublicAccesses) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					<tr>
 						<td>{/* TODO: {{$ua.DisplayName}} */}</td>
-						<td className="tw-text-center"><label><input type="radio" name={String("" ?? "")} value={String("" ?? "")} {/* TODO: {{Iif (eq $paNotSet $ua.UnitPublicAccess) "checked"}} */} /></label></td>
-						<td className="tw-text-center"><label><input type="radio" name={String("" ?? "")} value={String("" ?? "")} {/* TODO: {{Iif (eq $paAnonymousRead $ua.UnitPublicAccess) "checked"}} */} /></label></td>
-						<td className="tw-text-center"><label><input type="radio" name={String("" ?? "")} value={String("" ?? "")} {/* TODO: {{Iif (eq $paEveryoneRead $ua.UnitPublicAccess) "checked"}} */} /></label></td>
+						<td className="tw-text-center"><label><input type="radio" name={String("" ?? "")} value={String("" ?? "")} /></label></td>
+						<td className="tw-text-center"><label><input type="radio" name={String("" ?? "")} value={String("" ?? "")} /></label></td>
+						<td className="tw-text-center"><label><input type="radio" name={String("" ?? "")} value={String("" ?? "")} /></label></td>
 						<td className="tw-text-center">
 							{("SliceUtils.Contains $ua.PublicAccessTypes $paEveryoneWrite") ? (<>
-								<label><input type="radio" name={String("" ?? "")} value={String("" ?? "")} {/* TODO: {{Iif (eq $paEveryoneWrite $ua.UnitPublicAccess) "checked"}} */} /></label>
+								<label><input type="radio" name={String("" ?? "")} value={String("" ?? "")} /></label>
 							</>) : (<>
 								-
 							</>)}

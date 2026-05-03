@@ -4,9 +4,9 @@ import { i18n } from '../../../lib/i18n'
 export default function CommentTab(props: Record<string, unknown>) {
   return (<>
 {/* $textareaContent */}
-{(!(textareaContent)) ? (<>{/* TODO: {{$textareaContent = .IssueTemplate}} */}</>) : null}
-{(!(textareaContent)) ? (<>{/* TODO: {{$textareaContent = .PullRequestTemplate}} */}</>) : null}
-{(!(textareaContent)) ? (<>{/* TODO: {{$textareaContent = .content}} */}</>) : null}
+{(!(props.textareaContent)) ? (<>{/* TODO: {{$textareaContent = .IssueTemplate}} */}</>) : null}
+{(!(props.textareaContent)) ? (<>{/* TODO: {{$textareaContent = .PullRequestTemplate}} */}</>) : null}
+{(!(props.textareaContent)) ? (<>{/* TODO: {{$textareaContent = .content}} */}</>) : null}
 
 <div className="field">
 	{/* template: shared/combomarkdowneditor */}

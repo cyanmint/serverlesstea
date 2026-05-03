@@ -83,7 +83,8 @@ export default function VariableList(props: Record<string, unknown>) {
 					id="dialog-variable-name"
 					value={String(props.name ?? "")}
 					pattern="^(?!GITEA_|GITHUB_)[a-zA-Z_][a-zA-Z0-9_]*$"
-					placeholder={String(i18n("secrets.creation.name_placeholder") ?? "")} />
+					placeholder={String(i18n("secrets.creation.name_placeholder") ?? "")}
+				 />
 			</div>
 			<div className="field">
 				<label htmlFor="dialog-variable-data">{i18n("value")}</label>

@@ -55,19 +55,19 @@ export default function ProjectList(props: Record<string, unknown>) {
 	{(($data.ProjectCards) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 		{/* $selectedColumn */}
 		{/* only show a "project column card" if the selected column exists, otherwise only show the project title */}
-		<div className={`item ${(selectedColumn) ? `sidebar-project-card` : ""}`}>
+		<div className={`item ${(props.selectedColumn) ? `sidebar-project-card` : ""}`}>
 			<a className="suppressed flex-text-block" href={String("" ?? "")}>
 				{/* TODO: {{svg $card.Project.IconName 16}} */} <span className="gt-ellipsis">{/* TODO: {{$card.Project.Title}} */}</span>
 			</a>
-			{((selectedColumn && item.pageMeta?.canModifyIssueOrPull)) ? (<>
+			{((props.selectedColumn && item.pageMeta?.canModifyIssueOrPull)) ? (<>
 				<div className="issue-sidebar-combo sidebar-project-column-combo" data-selection-mode="single" data-update-algo="all"
 					data-update-url={`/issues/projects/column?issue_id=`}
 				>
-					<input className="combo-value" name="column_id" type="hidden" value={`${(selectedColumn) ? `` : ""}`} />
+					<input className="combo-value" name="column_id" type="hidden" value={`${(props.selectedColumn) ? `` : ""}`} />
 					<div className="ui dropdown full-width">
 						<div className="flex-text-block tw-ml-[16px]">{/* align with the "project" icon */}
 							<div className="interact-bg tw-px-2 tw-py-1 tw-rounded flex-text-block fixed-text">
-								{(selectedColumn) ? (<>
+								{(props.selectedColumn) ? (<>
 									{(item.card?.selectedColumn?.color) ? (<><span className="color-icon icon-size-8" style={`background-color: `}></span></>) : null}
 									<div className="gt-ellipsis">{/* TODO: {{$card.SelectedColumn.Title}} */}</div>
 								</>) : (<>
@@ -87,7 +87,7 @@ export default function ProjectList(props: Record<string, unknown>) {
 						</div>
 					</div>
 				</div>
-			</>) : null} {(selectedColumn) ? (<>
+			</>) : null} {(props.selectedColumn) ? (<>
 				<div className="flex-text-block tw-my-1 tw-ml-[22px]">{/* align with the "project" icon */}
 					{(item.selectedColumn?.color) ? (<><span className="color-icon icon-size-8" style={`background-color: `}></span></>) : null}
 					<div className="gt-ellipsis">{/* TODO: {{$selectedColumn.Title}} */}</div>

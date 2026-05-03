@@ -42,8 +42,8 @@ export default function Chef(props: Record<string, unknown>) {
 				<tbody>
 					{((props.packageDescriptor?.metadata?.dependencies) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					<tr>
-						<td>{/* $dependency */}</td>
-						<td>{/* $version */}</td>
+						<td>{props.dependency as any}</td>
+						<td>{props.version as any}</td>
 					</tr>
 					</React.Fragment>))}
 				</tbody>

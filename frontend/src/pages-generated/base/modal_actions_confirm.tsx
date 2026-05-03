@@ -24,8 +24,8 @@ The ".ok.button" and ".cancel.button" selectors are also used by Fomantic Modal 
 		</>) : null}
 		{(props.modalButtonCancelText) ? (<>{/* TODO: {{$textNegative = .ModalButtonCancelText}} */}</>) : null}
 		{(props.modalButtonOkText) ? (<>{/* TODO: {{$textPositive = .ModalButtonOkText}} */}</>) : null}
-		<button className="ui cancel button"><span className="svg-icon" aria-label="octicon-x"></span> {/* $textNegative */}</button>
-		<button className="ui primary ok button"><span className="svg-icon" aria-label="octicon-check"></span> {/* $textPositive */}</button>
+		<button className="ui cancel button"><span className="svg-icon" aria-label="octicon-x"></span> {props.textNegative as any}</button>
+		<button className="ui primary ok button"><span className="svg-icon" aria-label="octicon-check"></span> {props.textPositive as any}</button>
 	</>)}
 </div>
 

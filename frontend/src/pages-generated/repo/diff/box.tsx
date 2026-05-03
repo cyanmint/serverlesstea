@@ -7,7 +7,7 @@ export default function Box(props: Record<string, unknown>) {
 <div>
 	<div className="diff-detail-box">
 		<div className="flex-text-block tw-flex-wrap tw-ml-0.5">
-			{(showFileTree) ? (<>
+			{(props.showFileTree) ? (<>
 				<button className="diff-toggle-file-tree-button not-mobile btn interact-fg" data-show-text={String(i18n("repo.diff.show_file_tree") ?? "")} data-hide-text={String(i18n("repo.diff.hide_file_tree") ?? "")}>
 					{/* the icon meaning is reversed here, "octicon-sidebar-collapse" means show the file tree */}
 					<span className="svg-icon" aria-label="octicon-sidebar-collapse"></span>
@@ -64,7 +64,7 @@ export default function Box(props: Record<string, unknown>) {
 		</>) : null}
 	</>) : null}
 	<div id="diff-container">
-		{(showFileTree) ? (<>
+		{(props.showFileTree) ? (<>
 			{props.fileIconPoolHTML as any}
 			<div id="diff-file-tree" className="tw-hidden not-mobile"></div>
 			<script nonce={String("" ?? "")}>
@@ -86,11 +86,11 @@ export default function Box(props: Record<string, unknown>) {
 					{/* $showFileViewToggle */}
 					{/* $isExpandable */}
 					{/* $isReviewFile */}
-					<div className={`diff-file-box file-content  tw-mt-0`} id={`diff-`} data-old-filename={String("" ?? "")} data-new-filename={String("" ?? "")} {...((item.file?.shouldBeHidden || !(isExpandable)) ? {"data-folded": "true"} : {})}>
+					<div className={`diff-file-box file-content  tw-mt-0`} id={`diff-`} data-old-filename={String("" ?? "")} data-new-filename={String("" ?? "")} {...((item.file?.shouldBeHidden || !(props.isExpandable)) ? {"data-folded": "true"} : {})}>
 						<div className="diff-file-header sticky-2nd-row ui top attached header">
 							<div className="diff-file-name tw-flex tw-flex-1 tw-items-center tw-gap-1 tw-flex-wrap">
 								<div className="flex-text-block">
-									<button className={`fold-file btn interact-bg tw-flex-shrink-0 tw-p-1${(!(isExpandable)) ? ` tw-invisible` : ""}`}>
+									<button className={`fold-file btn interact-bg tw-flex-shrink-0 tw-p-1${(!(props.isExpandable)) ? ` tw-invisible` : ""}`}>
 										{(item.file?.shouldBeHidden) ? (<>
 											<span className="svg-icon" aria-label="octicon-chevron-right"></span>
 										</>) : (<>
@@ -112,8 +112,8 @@ export default function Box(props: Record<string, unknown>) {
 								{(item.file?.isVendored) ? (<>
 									<span className="ui label">{i18n("repo.diff.vendored")}</span>
 								</>) : null}
-								{(entryModeText) ? (<>
-									<span className="ui label">{/* $entryModeText */}</span>
+								{(props.entryModeText) ? (<>
+									<span className="ui label">{props.entryModeText as any}</span>
 								</>) : null}
 							</div>
 							<div className="diff-file-header-actions flex-text-block tw-justify-end tw-flex-wrap">
@@ -123,7 +123,7 @@ export default function Box(props: Record<string, unknown>) {
 									{/* template: repo/diff/stats */}
 								</>)}
 
-								{(showFileViewToggle) ? (<>
+								{(props.showFileViewToggle) ? (<>
 									<div className="ui compact icon buttons">
 										<button className="ui tiny basic button file-view-toggle" data-toggle-selector={`#diff-source-`} data-tooltip-content={String(i18n("repo.file_view_source") ?? "")}><span className="svg-icon" aria-label="octicon-code"></span></button>
 										<button className="ui tiny basic button file-view-toggle active" data-toggle-selector={`#diff-rendered-`} data-tooltip-content={String(i18n("repo.file_view_rendered") ?? "")}><span className="svg-icon" aria-label="octicon-file"></span></button>
@@ -132,10 +132,10 @@ export default function Box(props: Record<string, unknown>) {
 								{(item.file?.isProtected) ? (<>
 									<span className="ui basic label">{i18n("repo.diff.protected")}</span>
 								</>) : null}
-								{((isReviewFile && item.file?.hasChangedSinceLastReview)) ? (<>
+								{((props.isReviewFile && item.file?.hasChangedSinceLastReview)) ? (<>
 									<span className="changed-since-last-review unselectable not-mobile">{i18n("repo.pulls.has_changed_since_last_review")}</span>
 								</>) : null}
-								{(isReviewFile) ? (<>
+								{(props.isReviewFile) ? (<>
 									<label data-link={`${String(props.issue?.link ?? "")}/viewed-files`} data-headcommit={String(props.afterCommitID ?? "")} className={`viewed-file-form unselectable${(props.file?.isViewed) ? ` viewed-file-checked-form` : ""}`}>
 										<input type="checkbox" name={String("" ?? "")} autocomplete="off"{...(item.file?.isViewed ? {"checked": true} : {})} /> {i18n("repo.pulls.has_viewed_file")}
 									</label>
@@ -163,7 +163,7 @@ export default function Box(props: Record<string, unknown>) {
 							</div>
 						</div>
 						<div className="diff-file-body ui attached unstackable table segment" {...((item.file?.isViewed && props.isShowingAllCommits) ? {"data-folded": "true"} : {})}>
-							<div id={`diff-source-`} className={`file-body file-code unicode-escaped code-diff${(props.isSplitStyle) ? ` code-diff-split` : ` code-diff-unified`}${(showFileViewToggle) ? ` tw-hidden` : ""}`}>
+							<div id={`diff-source-`} className={`file-body file-code unicode-escaped code-diff${(props.isSplitStyle) ? ` code-diff-split` : ` code-diff-unified`}${(props.showFileViewToggle) ? ` tw-hidden` : ""}`}>
 								{((item.file?.isIncomplete || item.file?.isBin)) ? (<>
 									<div className="diff-file-body binary">
 										{(item.file?.isIncomplete) ? (<>
@@ -179,16 +179,16 @@ export default function Box(props: Record<string, unknown>) {
 									</div>
 								</>) : null} {(item.file?.submoduleDiffInfo) ? (<>
 									<div className="tw-p-3"><span className="svg-icon" aria-label="octicon-file-submodule"></span> {/* $submoduleDiffInfo */}
-										{/* TODO: {{- $submoduleName := $submoduleDiffInfo.SubmoduleRepoLinkHTML ctx -}} */}
-										{/* TODO: {{- if $file.IsDeleted -}} */}
-											{/* TODO: {{- ctx.Locale.Tr "repo.diff.submodule_deleted" $submoduleName ($submoduleDiffInfo.CommitRefIDLinkHTML ctx $submoduleDiffInfo.PreviousRefID) -}} */}
-										{/* TODO: {{- else if $file.IsCreated -}} */}
-											{/* TODO: {{- ctx.Locale.Tr "repo.diff.submodule_added" $submoduleName ($submoduleDiffInfo.CommitRefIDLinkHTML ctx $submoduleDiffInfo.NewRefID) -}} */}
-										{/* TODO: {{- else -}} */}
-											{/* TODO: {{- ctx.Locale.Tr "repo.diff.submodule_updated" $submoduleName ($submoduleDiffInfo.CompareRefIDLinkHTML ctx) -}} */}
-										</>) : null}
+										{/* $submoduleName */}
+										{(item.file?.isDeleted) ? (<>
+											{i18n("repo.diff.submodule_deleted")}
+										</>) : null} {(item.file?.isCreated) ? (<>
+											{i18n("repo.diff.submodule_added")}
+										</>) : (<>
+											{i18n("repo.diff.submodule_updated")}
+										</>)}
 									</div>
-								{/* else */}
+								</>) : (<>
 									<table className="chroma" data-new-comment-url={`${String(props.issue?.link ?? "")}/files/reviews/new_comment`} data-path={String("" ?? "")}>
 										{(props.isSplitStyle) ? (<>
 											{/* template: repo/diff/section_split */}
@@ -196,13 +196,13 @@ export default function Box(props: Record<string, unknown>) {
 											{/* template: repo/diff/section_unified */}
 										</>)}
 									</table>
-								</React.Fragment>))}
+								</>)}
 							</div>
-							{(showFileViewToggle) ? (<>
+							{(props.showFileViewToggle) ? (<>
 								{/* for image or CSV, it can have a horizontal scroll bar, there won't be review comment context menu (position absolute) which would be clipped by "overflow" */}
 								<div id={`diff-rendered-`} className={`file-body file-code ${(props.isSplitStyle) ? `code-diff-split` : `code-diff-unified`} tw-overflow-x-scroll`}>
 									<table className="chroma tw-w-full">
-										{(isImage) ? (<>
+										{(props.isImage) ? (<>
 											{/* template: repo/diff/image_diff */}
 										</>) : (<>
 											{/* template: repo/diff/csv_diff */}
@@ -212,7 +212,7 @@ export default function Box(props: Record<string, unknown>) {
 							</>) : null}
 						</div>
 					</div>
-				</>)}
+				</React.Fragment>))}
 
 				{(props.diff?.isIncomplete) ? (<>
 					<div className="diff-file-box file-content tw-mt-2" id="diff-incomplete">
@@ -223,7 +223,7 @@ export default function Box(props: Record<string, unknown>) {
 					</div>
 				</>) : null}
 			</div>
-		
+		</>)}
 	</div>
 
 	{((!(props.repository?.isArchived) && !(props.diffNotAvailable))) ? (<>

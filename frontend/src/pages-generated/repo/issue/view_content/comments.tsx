@@ -79,7 +79,7 @@ export default function Comments(props: Record<string, unknown>) {
 						</>) : null}
 					</div>
 					{/* $reactions */}
-					{(reactions) ? (<>
+					{(props.reactions) ? (<>
 						{/* template: repo/issue/view_content/reactions */}
 					</>) : null}
 				</div>
@@ -258,7 +258,7 @@ export default function Comments(props: Record<string, unknown>) {
 				<span className="comment-text-line">
 					{/* template: shared/user/authorlink */}
 					{/* $timeStr */} {/* compatibility with time comments made before v1.21 */}
-					{(!(timeStr)) ? (<>{/* TODO: {{$timeStr = .Content|Sec2Hour}} */}</>) : null}
+					{(!(props.timeStr)) ? (<>{/* TODO: {{$timeStr = .Content|Sec2Hour}} */}</>) : null}
 					{i18n("repo.issues.stop_tracking_history")}
 				</span>
 				{/* template: repo/issue/view_content/comments_delete_time */}
@@ -270,7 +270,7 @@ export default function Comments(props: Record<string, unknown>) {
 				<span className="comment-text-line">
 					{/* template: shared/user/authorlink */}
 					{/* $timeStr */} {/* compatibility with time comments made before v1.21 */}
-					{(!(timeStr)) ? (<>{/* TODO: {{$timeStr = .Content|Sec2Hour}} */}</>) : null}
+					{(!(props.timeStr)) ? (<>{/* TODO: {{$timeStr = .Content|Sec2Hour}} */}</>) : null}
 					{i18n("repo.issues.add_time_history")}
 				</span>
 				{/* template: repo/issue/view_content/comments_delete_time */}
@@ -377,16 +377,16 @@ export default function Comments(props: Record<string, unknown>) {
 						{/* TODO: {{ctx.AvatarUtils.Avatar .Poster 40}} */}
 					</a>
 					</>) : null}
-					<span className={`badge tw-text-white${(reviewType === 1) ? `${(props.review?.official) ? ` tw-bg-green ` : ` tw-bg-grey`} tw-bg-red` : ""}`}>
+					<span className={`badge tw-text-white${(props.reviewType === 1) ? `${(props.review?.official) ? ` tw-bg-green ` : ` tw-bg-grey`} tw-bg-red` : ""}`}>
 						{(item.review) ? (<>{/* TODO: {{svg (printf "octicon-%s" .Review.Type.Icon)}} */}</>) : null}
 					</span>
 					<span className="comment-text-line">
 						{/* template: repo/issue/view_content/comments_authorlink */}
-						{(reviewType === 1) ? (<>
+						{(props.reviewType === 1) ? (<>
 							{i18n("repo.issues.review.approve")}
-						</>) : null} {(reviewType === 2) ? (<>
+						</>) : null} {(props.reviewType === 2) ? (<>
 							{i18n("repo.issues.review.comment")}
-						</>) : null} {(reviewType === 3) ? (<>
+						</>) : null} {(props.reviewType === 3) ? (<>
 							{i18n("repo.issues.review.reject")}
 						</>) : (<>
 							{i18n("repo.issues.review.comment")}
@@ -444,7 +444,7 @@ export default function Comments(props: Record<string, unknown>) {
 							</>) : null}
 						</div>
 						{/* $reactions */}
-						{(reactions) ? (<>
+						{(props.reactions) ? (<>
 							{/* template: repo/issue/view_content/reactions */}
 						</>) : null}
 					</div>
@@ -454,7 +454,7 @@ export default function Comments(props: Record<string, unknown>) {
 				{((item.review && item.review?.codeComments)) ? (<>
 				<div className="timeline-item event code-comments-list">
 					{((item.review?.codeComments) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-						{(((undefined /* $lines */)) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+						{((props.lines) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 							{/* template: repo/issue/view_content/conversation */}
 						</React.Fragment>))}
 					</React.Fragment>))}
@@ -521,16 +521,16 @@ export default function Comments(props: Record<string, unknown>) {
 				<span className="badge"><span className="svg-icon" aria-label="octicon-eye"></span></span>
 				{/* $specialDoerHtml */}
 				{/* $timelineRequestedReviewHtml */}
-				{(specialDoerHtml) ? (<>
+				{(props.specialDoerHtml) ? (<>
 					<span className="comment-text-line">
-						{/* $specialDoerHtml */}
-						{/* $timelineRequestedReviewHtml */}
+						{props.specialDoerHtml as any}
+						{props.timelineRequestedReviewHtml as any}
 					</span>
 				</>) : (<>
 					{/* template: shared/user/avatarlink */}
 					<span className="comment-text-line">
 						{/* template: shared/user/authorlink */}
-						{/* $timelineRequestedReviewHtml */}
+						{props.timelineRequestedReviewHtml as any}
 					</span>
 				</>)}
 			</div>
@@ -690,7 +690,7 @@ export default function Comments(props: Record<string, unknown>) {
 				<span className="comment-text-line">
 					{/* template: shared/user/authorlink */}
 					{/* $timeStr */}
-					{(timeStr) ? (<>
+					{(props.timeStr) ? (<>
 						{i18n("repo.issues.change_time_estimate_at")}
 					</>) : (<>
 						{i18n("repo.issues.remove_time_estimate_at")}

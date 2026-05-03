@@ -18,7 +18,7 @@ export default function Settings(props: Record<string, unknown>) {
 
 <div className="inline field">
 	<div className="ui checkbox">
-		<input name="active" type="checkbox" {...((isNew || props.webhook?.isActive) ? {"checked": true} : {})} />
+		<input name="active" type="checkbox" {...((props.isNew || props.webhook?.isActive) ? {"checked": true} : {})} />
 		<label>{i18n("repo.settings.active")}</label>
 		<span className="help">{i18n("repo.settings.active_helper")}</span>
 	</div>
@@ -27,28 +27,28 @@ export default function Settings(props: Record<string, unknown>) {
 {/* Authorization Header */}
 {(props.useAuthorizationHeader) ? (<>
 	{/* $attributeValid */}
-	{(!(attributeValid)) ? (<><div className="ui error message">Invalid UseAuthorizationHeader: {props.useAuthorizationHeader as any}}</div></>) : null}
+	{(!(props.attributeValid)) ? (<><div className="ui error message">Invalid UseAuthorizationHeader: {props.useAuthorizationHeader as any}}</div></>) : null}
 	{/* $required */}
-	<div className={`field ${(required) ? `required` : ""}`}>
+	<div className={`field ${(props.required) ? `required` : ""}`}>
 		<label>{i18n("repo.settings.authorization_header")}</label>
-		<input name="authorization_header" type="text" value={String(props.webhook?.headerAuthorization ?? "")} {...(required ? {"required": true, "placeholder": "Bearer $access_token"} : {})} />
-		{(!(required)) ? (<>
+		<input name="authorization_header" type="text" value={String(props.webhook?.headerAuthorization ?? "")} {...(props.required ? {"required": true, "placeholder": "Bearer $access_token"} : {})} />
+		{(!(props.required)) ? (<>
 			<span className="help">{i18n("repo.settings.authorization_header_desc")}</span>
 		</>) : null}
 	</div>
-</>) : null}
+</>) : null{'}'}
 
 {/* Secret */}
 {(props.useRequestSecret) ? (<>
 	{/* $attributeValid */}
-	{(!(attributeValid)) ? (<><div className="ui error message">Invalid UseRequestSecret: {props.useRequestSecret as any}}</div></>) : null}
+	{(!(props.attributeValid)) ? (<><div className="ui error message">Invalid UseRequestSecret: {props.useRequestSecret as any}}</div></>) : null}
 	{/* $required */}
-	<div className={`field ${(required) ? `required` : ""}`}>
+	<div className={`field ${(props.required) ? `required` : ""}`}>
 		<label>{i18n("repo.settings.secret")}</label>
-		<input name="secret" type="password" value={String(props.webhook?.secret ?? "")} autocomplete="off" {...(required ? {"required": true} : {})} />
+		<input name="secret" type="password" value={String(props.webhook?.secret ?? "")} autocomplete="off" {...(props.required ? {"required": true} : {})} />
 		<span className="help">{i18n("repo.settings.webhook_secret_desc")}</span>
 	</div>
-</>) : null}
+</>) : null{'}'}
 
 {/* Branch filter */}
 <div className="field">
@@ -71,7 +71,7 @@ export default function Settings(props: Record<string, unknown>) {
 	<div className="grouped event type fields">
 		<div className="field">
 			<div className="ui radio non-events checkbox">
-				<input name="events" type="radio" value="push_only" {...((isNew || props.webhook?.pushOnly) ? {"checked": true} : {})} />
+				<input name="events" type="radio" value="push_only" {...((props.isNew || props.webhook?.pushOnly) ? {"checked": true} : {})} />
 				<label>{i18n("repo.settings.event_push_only")}</label>
 			</div>
 		</div>
@@ -354,7 +354,7 @@ export default function Settings(props: Record<string, unknown>) {
 </div>
 
 <div className="field">
-	{(isNew) ? (<>
+	{(props.isNew) ? (<>
 		<button className="ui primary button">{i18n("repo.settings.add_webhook")}</button>
 	</>) : (<>
 		<button className="ui primary button">{i18n("repo.settings.update_webhook")}</button>

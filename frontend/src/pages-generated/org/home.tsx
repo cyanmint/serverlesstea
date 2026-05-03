@@ -41,7 +41,7 @@ export default function Home(props: Record<string, unknown>) {
 				{((props.showMemberAndTeamTab && props.showOrgProfileReadmeSelector)) ? (<>
 				<div className="tw-my-4">
 					<div id="org-home-view-as-dropdown" className="ui dropdown jump">
-						{/* TODO: {{- $viewAsRole := Iif (.IsViewingOrgAsMember) (ctx.Locale.Tr "org.members.member") (ctx.Locale.Tr "settings.visibility.public") -}} */}
+						{/* $viewAsRole */}
 						<span className="text"><span className="svg-icon" aria-label="octicon-eye"></span> {i18n("org.view_as_role")}</span>
 						<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 						<div className="menu">

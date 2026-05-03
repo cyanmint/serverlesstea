@@ -47,39 +47,7 @@ export default function Sidebar(props: Record<string, unknown>) {
 					</>) : null}
 				</ul>
 				{/* the AccessMode should be either none or admin/owner, the real permissions are provided by each team unit */}
-				{(false) ? (<>{/* (eq .Team.AccessMode 2) */}
-					<h3>{i18n("org.settings.permission")}</h3>
-					{i18n("org.teams.write_permission_desc")}
-				</>) : null} {(props.team?.accessMode === 3) ? (<>
-					{/* FIXME: here might not right, see "FIXME: TEAM-UNIT-PERMISSION", new units might not have correct admin permission */}
-					<h3>{i18n("org.settings.permission")}</h3>
-					{i18n("org.teams.admin_permission_desc")}
-				</>) : (<>
-					<table className="ui table">
-						<thead>
-							<tr>
-								<th>{i18n("units.unit")}</th>
-								<th>{i18n("org.team_permission_desc")}</th>
-							</tr>
-						</thead>
-						<tbody>
-							{((props.units) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								{(!(item.unit?.type?.unitGlobalDisabled)) ? (<>
-									<tr>
-										<td><strong>{/* TODO: {{ctx.Locale.Tr $unit.NameKey}} */}</strong></td>
-										<td>{(props.team?.unitAccessMode?.(ctx, item.unit?.type) === 0 -) ? (<>
-										{i18n("org.teams.none_access")}
-										{/* TODO: {{- else if or (eq $.Team.ID 0) (eq ($.Team.UnitAccessMode ctx $unit.Type) 1) -}} */}
-										{i18n("org.teams.read_access")}
-										{/* TODO: {{- else if eq ($.Team.UnitAccessMode ctx $unit.Type) 2 -}} */}
-										{i18n("org.teams.write_access")}
-										{/* TODO: {{- end}} */}</td>
-									</tr>
-								</>) : null}
-							</>) : null}
-						</tbody>
-					</table>
-				</React.Fragment>))}
+				
 			</>)}
 		</div>
 

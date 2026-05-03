@@ -49,7 +49,7 @@ export default function LabelList(props: Record<string, unknown>) {
 			</div>
 			<div className="label-operation">
 				{/* template: repo/issue/labels/label_archived */}
-					{(canEditLabel) ? (<>
+					{(props.canEditLabel) ? (<>
 						<a className="edit-label-button" href="#"
 							data-label-id={String(props.iD ?? "")} data-label-name={String(props.name ?? "")} data-label-color={String(props.color ?? "")}
 							data-label-exclusive={String(props.exclusive ?? "")} data-label-is-archived={String("" ?? "")}

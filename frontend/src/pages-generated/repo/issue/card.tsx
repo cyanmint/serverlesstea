@@ -6,9 +6,9 @@ export default function Card(props: Record<string, unknown>) {
 {(props.issue) && (<>
 	{(props.page?.project?.cardType === 1) ? (<>{/* Images and Text */}
 		{/* $attachments */}
-		{(attachments) ? (<>
+		{(props.attachments) ? (<>
 		<div className="card-attachment-images">
-			{(((undefined /* $attachments */)) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+			{((props.attachments) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				<img loading="lazy" src={String(props.downloadURL ?? "")} alt={String(props.name ?? "")} />
 			</React.Fragment>))}
 		</div>
@@ -58,10 +58,10 @@ export default function Card(props: Record<string, unknown>) {
 		</React.Fragment>))}
 		</>) : null}
 		{/* $tasks */}
-		{(tasks > 0) ? (<>
+		{(props.tasks > 0) ? (<>
 			<div className="meta tw-my-1">
 				<span className="svg-icon" aria-label="octicon-checklist"></span>
-				<span className="tw-align-middle">{props.getTasksDone as any} / {/* $tasks */}</span>
+				<span className="tw-align-middle">{props.getTasksDone as any} / {props.tasks as any}</span>
 			</div>
 		</>) : null}
 	</div>

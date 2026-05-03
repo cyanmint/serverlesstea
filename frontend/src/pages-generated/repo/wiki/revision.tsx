@@ -12,7 +12,7 @@ export default function Revision(props: Record<string, unknown>) {
 			<div className="flex-text-block">
 				<a className="ui basic button tw-px-3" title={String(i18n("repo.wiki.back_to_wiki") ?? "")} href={`${String(props.repoLink ?? "")}/wiki/${String(props.pageURL ?? "")}`}><span className="svg-icon" aria-label="octicon-home"></span></a>
 				<div className="tw-flex-1 gt-ellipsis">
-					{/* $title */}
+					{props.title as any}
 					<div className="ui sub header gt-ellipsis">
 						{/* $timeSince */}
 						{i18n("repo.wiki.last_commit_info")}

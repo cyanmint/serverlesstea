@@ -53,10 +53,10 @@ export default function SigninInner(props: Record<string, unknown>) {
 		</form>
 		</>) : null}{/* end if .EnablePasswordSignInForm */}
 		{/* $showExternalAuthMethods */}
-		{((showExternalAuthMethods && props.enablePasswordSignInForm)) ? (<>
+		{((props.showExternalAuthMethods && props.enablePasswordSignInForm)) ? (<>
 			<div className="divider divider-text">{i18n("sign_in_or")}</div>
 		</>) : null}
-		{(showExternalAuthMethods) ? (<>
+		{(props.showExternalAuthMethods) ? (<>
 			{/* template: user/auth/external_auth_methods */}
 		</>) : null}
 	</div>

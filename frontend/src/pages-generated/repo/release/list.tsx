@@ -72,7 +72,7 @@ export default function List(props: Record<string, unknown>) {
 							{/* TODO: {{$release.RenderedNote}} */}
 						</div>
 						<div className="divider"></div>
-						<details className="download" {...(idx === 0 ? {"open": true} : {})}>
+						<details className="download" {...(props.idx === 0 ? {"open": true} : {})}>
 							<summary>
 								{i18n("repo.release.downloads")}
 							</summary>

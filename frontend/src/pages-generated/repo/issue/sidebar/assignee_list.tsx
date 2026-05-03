@@ -35,8 +35,8 @@ export default function AssigneeList(props: Record<string, unknown>) {
 		</div>
 	</div>
 	<div className="ui relaxed list muted-links flex-items-block">
-		<span className={`item empty-list ${(issueAssignees) ? `tw-hidden` : ""}`}>{i18n("repo.issues.new.no_assignees")}</span>
-		{(((undefined /* $issueAssignees */)) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+		<span className={`item empty-list ${(props.issueAssignees) ? `tw-hidden` : ""}`}>{i18n("repo.issues.new.no_assignees")}</span>
+		{((props.issueAssignees) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 			<a className="item" href={`?assignee=${String(props.iD ?? "")}`}>
 				{/* TODO: {{ctx.AvatarUtils.Avatar . 20}} */} {item.getDisplayName as any}
 			</a>

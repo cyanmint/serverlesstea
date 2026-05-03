@@ -16,7 +16,7 @@ export default function Watch(props: Record<string, unknown>) {
 		</>)}
 	>
 		<span className="svg-icon" aria-label="octicon-eye"></span>
-		<span className="not-mobile" aria-hidden="true">{/* $buttonText */}</span>
+		<span className="not-mobile" aria-hidden="true">{props.buttonText as any}</span>
 	</a>
 	<a className="ui basic label" href={`${String(props.repoLink ?? "")}/watchers`}>
 		{/* TODO: {{CountFmt .Repository.NumWatches}} */}

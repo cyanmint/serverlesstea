@@ -17,7 +17,7 @@ export default function SectionUnified(props: Record<string, unknown>) {
 	{(($section.Lines) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 		<tr className={`${String(props.getHTMLDiffLineType ?? "")}-code nl- ol-`} data-line-type={String(props.getHTMLDiffLineType ?? "")}>
 			{(item.getType === 4) ? (<>
-				{(diffBlobExcerptData) ? (<>
+				{(props.diffBlobExcerptData) ? (<>
 					<td colSpan="2" className="lines-num">{/* TODO: {{$line.RenderBlobExcerptButtons $file.NameHash $diffBlobExcerptData}} */}</td>
 				</>) : (<>
 					{/* when DiffBlobExcerptData is not available (code file preview, pull conversation diff comment), do not show the expansion arrows */}
@@ -36,12 +36,12 @@ export default function SectionUnified(props: Record<string, unknown>) {
 				<td className="chroma lines-code blob-hunk">{/* template: repo/diff/section_code */}</td>
 			</>) : (<>
 				<td className={`chroma lines-code${(!(props.line?.rightIdx)) ? ` lines-code-old` : ""}`}>
-					{/* TODO: {{- if and $.root.SignedUserID $.root.PageIsPullFiles -}} */}
+					{((props.root?.signedUserID && props.root?.pageIsPullFiles)) ? (<>
 						<button type="button" aria-label={String(i18n("repo.diff.comment.add_line_comment") ?? "")} className={`ui primary button add-code-comment add-code-comment-${(props.line?.rightIdx) ? `right` : `left`}${(!(props.line?.canComment)) ? ` tw-invisible` : ""}`} data-side={`${(props.line?.rightIdx) ? `right` : `left`}`} data-idx={`${(props.line?.rightIdx) ? `` : ``}`}>
-							{/* TODO: {{- svg "octicon-plus" -}} */}
+							<span className="svg-icon" aria-label="octicon-plus"></span>
 						</button>
-					{/* TODO: {{- end -}} */}
-					{/* TODO: {{- template "repo/diff/section_code" dict "diff" $inlineDiff -}} */}
+					</>) : null}
+					{/* template: repo/diff/section_code */}
 				</td>
 			</>)}
 		</tr>

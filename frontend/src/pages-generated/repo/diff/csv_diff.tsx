@@ -11,13 +11,13 @@ export default function CsvDiff(props: Record<string, unknown>) {
 		</>) : null} {(props.result?.sections) ? (<>
 			<table className="data-table">
 			{(($result.Sections) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-				<tbody {...(i > 0 ? {"className": "section"} : {})}>
+				<tbody {...(props.i > 0 ? {"className": "section"} : {})}>
 				{(($section.Rows) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					<tr>
-						{((i === 0 && j === 0)) ? (<>
+						{((props.i === 0 && props.j === 0)) ? (<>
 							<th className="line-num">{item.rowIdx as any}</th>
 							{(($row.Cells) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								{(!(cell)) ? (<>
+								{(!(props.cell)) ? (<>
 									<th></th>
 								</>) : null} {(item.cell?.type === 2) ? (<>
 									<th className="modified"><span className="removed-code">{item.leftCell as any}</span> <span className="added-code">{item.rightCell as any}</span></th>
@@ -36,7 +36,7 @@ export default function CsvDiff(props: Record<string, unknown>) {
 						</>) : (<>
 							<td className="line-num">{(item.rowIdx) ? (<>{item.rowIdx as any}</>) : null}</td>
 							{(($row.Cells) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								{(!(cell)) ? (<>
+								{(!(props.cell)) ? (<>
 									<td></td>
 								</>) : null} {(item.cell?.type === 2) ? (<>
 									<td className="modified"><span className="removed-code">{item.leftCell as any}</span> <span className="added-code">{item.rightCell as any}</span></td>

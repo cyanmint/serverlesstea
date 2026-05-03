@@ -42,11 +42,11 @@ export default function Nuget(props: Record<string, unknown>) {
 				<tbody>
 					{/* $tooltipSearchInNuget */}
 					{((props.packageDescriptor?.metadata?.dependencies) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-						{(((undefined /* $dependencies */)) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+						{((props.dependencies) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 						<tr>
 							<td>{item.iD as any} <a target="_blank" href={`https://www.nuget.org/packages/${String(props.iD ?? "")}`} data-tooltip-content={String("" ?? "")}><span className="svg-icon" aria-label="octicon-link-external"></span></a></td>
 							<td>{item.version as any} <a target="_blank" href={`https://www.nuget.org/packages/${String(props.iD ?? "")}/${String(props.version ?? "")}`} data-tooltip-content={String("" ?? "")}><span className="svg-icon" aria-label="octicon-link-external"></span></a></td>
-							<td>{/* $framework */}</td>
+							<td>{props.framework as any}</td>
 						</tr>
 						</React.Fragment>))}
 					</React.Fragment>))}

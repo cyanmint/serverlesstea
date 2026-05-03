@@ -16,8 +16,8 @@ export default function Versionlist(props: Record<string, unknown>) {
 		{(props.packageDescriptor?.package?.type === "container") ? (<>
 		<select className="ui small dropdown" name="tagged">
 			{/* $isTagged */}
-			<option value="tagged"{...(isTagged ? {"selected": "selected"} : {})}>{i18n("packages.filter.container.tagged")}</option>
-			<option value="untagged"{...(!(isTagged) ? {"selected": "selected"} : {})}>{i18n("packages.filter.container.untagged")}</option>
+			<option value="tagged"{...(props.isTagged ? {"selected": "selected"} : {})}>{i18n("packages.filter.container.tagged")}</option>
+			<option value="untagged"{...(!(props.isTagged) ? {"selected": "selected"} : {})}>{i18n("packages.filter.container.untagged")}</option>
 		</select>
 		</>) : null}
 		{/* template: shared/search/button */}

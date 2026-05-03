@@ -10,8 +10,8 @@ export default function History(props: Record<string, unknown>) {
 		{(props.permission?.isAdmin) ? (<>
 			<div className="ui right">
 				{/* the button is wrapped with a span because the tooltip doesn't show on hover if we put data-tooltip-content directly on the button */}
-				<span data-tooltip-content={`${((isNew || props.webhook?.isActive)) ? `${i18n("repo.settings.webhook.test_delivery_desc")}` : `${i18n("repo.settings.webhook.test_delivery_desc_disabled")}`}`}>
-					<button className={`ui tiny button${(!((isNew || props.webhook?.isActive))) ? ` disabled` : ""}`} id="test-delivery" data-link={`${String(props.link ?? "")}/test`}>
+				<span data-tooltip-content={`${((props.isNew || props.webhook?.isActive)) ? `${i18n("repo.settings.webhook.test_delivery_desc")}` : `${i18n("repo.settings.webhook.test_delivery_desc_disabled")}`}`}>
+					<button className={`ui tiny button${(!((props.isNew || props.webhook?.isActive))) ? ` disabled` : ""}`} id="test-delivery" data-link={`${String(props.link ?? "")}/test`}>
 						<span className="text">{i18n("repo.settings.webhook.test_delivery")}</span>
 					</button>
 			</span>
@@ -69,7 +69,7 @@ export default function History(props: Record<string, unknown>) {
 								<h5>{i18n("repo.settings.webhook.headers")}</h5>
 								<pre className="webhook-info"><strong>Request URL:</strong> {item.requestInfo?.uRL as any}
 <strong>Request method:</strong> {(item.requestInfo?.hTTPMethod) ? (<>{item.requestInfo?.hTTPMethod as any}</>) : (<>POST</>)}
-{((item.requestInfo?.headers) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}><strong>{/* $key */}:</strong> {/* $val */}
+{((item.requestInfo?.headers) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}><strong>{props.key as any}:</strong> {props.val as any}
 </React.Fragment>))}</pre>
 								<h5>{i18n("repo.settings.webhook.payload")}</h5>
 								<pre className="webhook-info">{/* TODO: {{or .RequestInfo.Body .PayloadContent}} */}</pre>
@@ -80,7 +80,7 @@ export default function History(props: Record<string, unknown>) {
 						<div className="ui bottom attached tab segment" data-tab={`response-${String(props.iD ?? "")}`}>
 							{(item.responseInfo) ? (<>
 								<h5>{i18n("repo.settings.webhook.headers")}</h5>
-								<pre className="webhook-info">{((item.responseInfo?.headers) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}><strong>{/* $key */}:</strong> {/* $val */}
+								<pre className="webhook-info">{((item.responseInfo?.headers) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}><strong>{props.key as any}:</strong> {props.val as any}
 </React.Fragment>))}</pre>
 								<h5>{i18n("repo.settings.webhook.body")}</h5>
 								<pre className="webhook-info">{item.responseInfo?.body as any}</pre>

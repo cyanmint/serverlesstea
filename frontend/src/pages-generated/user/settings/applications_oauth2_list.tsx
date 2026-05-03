@@ -22,7 +22,7 @@ export default function ApplicationsOauth2List(props: Record<string, unknown>) {
 				</div>
 				{/* $isBuiltin */}
 				<div className="item-trailing">
-					{(isBuiltin) ? (<>
+					{(props.isBuiltin) ? (<>
 						<span className="ui basic label" data-tooltip-content={String(i18n("settings.oauth2_application_locked") ?? "")}>{i18n("locked")}</span>
 					</>) : (<>
 						<a href={`${String(props.link ?? "")}/oauth2/${String(props.iD ?? "")}`} className="ui primary tiny button">

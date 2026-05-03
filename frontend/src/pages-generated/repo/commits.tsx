@@ -10,17 +10,8 @@ export default function Commits(props: Record<string, unknown>) {
 		{/* template: repo/sub_menu */}
 		<div className="repo-button-row">
 			<div className="repo-button-row-left">
-				{/* TODO: {{- /* for /owner/repo/commits/{RefType}/{RefShortName} * / -}} */}
-				{/* TODO: {{- template "repo/branch_dropdown" dict
-					"Repository" .Repository
-					"ShowTabBranches" true
-					"ShowTabTags" true
-					"CurrentRefType" .RefFullName.RefType
-					"CurrentRefShortName" .RefFullName.ShortName
-					"CurrentTreePath" .TreePath
-					"RefLinkTemplate" "{RepoLink}/commits/{RefType}/{RefShortName}/{TreePath}"
-					"AllowCreateNewRef" .CanCreateBranch
-				-}} */}
+				{/* for /owner/repo/commits/{RefType}/{RefShortName} */}
+				{/* template: repo/branch_dropdown */}
 				<a href={`${String(props.repoLink ?? "")}/graph`} className="ui basic small compact button">
 					<span className="svg-icon" aria-label="octicon-git-branch"></span>
 					{i18n("repo.commit_graph")}

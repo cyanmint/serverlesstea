@@ -1,41 +1,28 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { getCurrentUser, logout } from '../api/client'
+import { getCurrentUser } from '../api/client'
+import HeadNavbar from '../pages-generated/base/head_navbar'
 
 export default function Navbar() {
-  const navigate = useNavigate()
   const user = getCurrentUser()
-
-  function handleLogout() {
-    logout()
-    navigate('/login')
+  // Build a props shape that matches what the translated HeadNavbar template expects
+  const navProps: Record<string, unknown> = {
+    isSigned: !!user,
+    signedUser: user
+      ? {
+          name: user.username,
+          homeLink: `/${user.username}`,
+          canCreateOrganization: true,
+        }
+      : null,
+    isAdmin: !!(user?.isAdmin),
+    mustChangePassword: false,
+    showRegistrationButton: true,
+    disableMigrations: false,
+    disableStars: false,
+    pageIsExplore: window.location.search.includes('explore'),
+    pageIsUserSettings: window.location.search.includes('user/settings'),
+    pageIsAdmin: window.location.search.includes('admin'),
+    pageIsSignIn: window.location.search.includes('user/login'),
+    pageIsSignUp: window.location.search.includes('user/sign_up'),
   }
-
-  return (
-    <nav className="navbar">
-      <div className="navbar-left">
-        <div className="navbar-brand">
-          <Link to="/">🍵 serverlesstea</Link>
-        </div>
-        <div className="navbar-explore">
-          <Link to="/explore/repos" className="navbar-explore-link">Explore</Link>
-        </div>
-      </div>
-      <div className="navbar-links">
-        {user ? (
-          <>
-            <Link to="/new" className="btn btn-sm btn-primary navbar-new-btn">＋ New</Link>
-            <Link to={`/${user.username}`} className="navbar-username">{user.username}</Link>
-            <Link to="/settings" className="navbar-link">Settings</Link>
-            {user.isAdmin && <Link to="/admin" className="navbar-link">Admin</Link>}
-            <button className="btn btn-sm" onClick={handleLogout}>Logout</button>
-          </>
-        ) : (
-          <>
-            <Link to="/login" className="navbar-link">Sign in</Link>
-            <Link to="/register" className="btn btn-sm btn-primary">Register</Link>
-          </>
-        )}
-      </div>
-    </nav>
-  )
+  return <HeadNavbar {...navProps} />
 }

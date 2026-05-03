@@ -28,17 +28,15 @@ export default function LabelList(props: Record<string, unknown>) {
 					{/* $previousExclusiveScope */}
 					{(($data.RepoLabels) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 						{/* $exclusiveScope */}
-						{((previousExclusiveScope !== "_no_scope" && previousExclusiveScope !== exclusiveScope)) ? (<>
+						{((props.previousExclusiveScope !== "_no_scope" && props.previousExclusiveScope !== props.exclusiveScope)) ? (<>
 							<div className="divider" data-scope={String(props.exclusiveScope ?? "")}></div>
 						</>) : null}
 						{/* TODO: {{$previousExclusiveScope = $exclusiveScope}} */}
 						{/* template: repo/issue/sidebar/label_list_item */}
 					
 					${((props.data?.repoLabels && props.data?.orgLabels)) ? `<div className=`}divider"></div></React.Fragment>))}
-					{/* TODO: {{$previousExclusiveScope = "_no_scope"}} */}
 					{(($data.OrgLabels) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-						{/* $exclusiveScope */}
-						{((previousExclusiveScope !== "_no_scope" && previousExclusiveScope !== exclusiveScope)) ? (<>
+						{((props.previousExclusiveScope !== "_no_scope" && props.previousExclusiveScope !== props.exclusiveScope)) ? (<>
 							<div className="divider" data-scope={String(props.exclusiveScope ?? "")}></div>
 						</>) : null}
 						{/* TODO: {{$previousExclusiveScope = $exclusiveScope}} */}
@@ -54,7 +52,7 @@ export default function LabelList(props: Record<string, unknown>) {
 		{(($data.AllLabels) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 			{(item.isChecked) ? (<>
 				<a className="item" href={`?labels=${String(props.iD ?? "")}`}>
-					{/* TODO: {{- ctx.RenderUtils.RenderLabel . -}} */}
+					{/* TODO: {{ctx.RenderUtils.RenderLabel .}} */}
 				</a>
 			</>) : null}
 		</React.Fragment>))}

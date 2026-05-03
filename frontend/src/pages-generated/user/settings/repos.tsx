@@ -14,9 +14,9 @@ export default function Repos(props: Record<string, unknown>) {
 					<div className="ui list">
 						{((props.dirs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 							{/* $repo */}
-							<div className={`item ${(!(repo)) ? `tw-py-1` : ""}`}>{/* if not repo, then there are "adapt" buttons, so the padding shouldn't be that default large */}
+							<div className={`item ${(!(props.repo)) ? `tw-py-1` : ""}`}>{/* if not repo, then there are "adapt" buttons, so the padding shouldn't be that default large */}
 								<div className="content">
-									{(repo) ? (<>
+									{(props.repo) ? (<>
 										{(item.repo?.isPrivate) ? (<>
 											<span className="tw-text-gold icon"><span className="svg-icon" aria-label="octicon-lock"></span></span>
 										</>) : null} {(item.repo?.isFork) ? (<>
@@ -36,7 +36,7 @@ export default function Repos(props: Record<string, unknown>) {
 										</>) : null}
 									</>) : (<>
 										<span className="icon tw-inline-block tw-pt-2"><span className="svg-icon" aria-label="octicon-file-directory-fill"></span></span>
-										<span className="name tw-inline-block tw-pt-2">{props.contextUser?.name as any}/{/* $dir */}</span>
+										<span className="name tw-inline-block tw-pt-2">{props.contextUser?.name as any}/{props.dir as any}</span>
 										<div className="tw-float-right">
 											{(props.allowAdopt) ? (<>
 												<button className="ui button primary show-modal tw-p-2" data-modal={`#adopt-unadopted-modal-`}><span className="icon"><span className="svg-icon" aria-label="octicon-plus"></span></span><span className="label">{i18n("repo.adopt_preexisting_label")}</span></button>

@@ -18,7 +18,7 @@ default_channels:
 			<div className="field">
 				<label><span className="svg-icon" aria-label="octicon-terminal"></span> {i18n("packages.conda.install")}</label>
 				{/* $channel */}
-				<div className="markup"><pre className="code-block"><code>conda install{(channel) ? (<> -c {/* $channel */}</>) : null} {props.packageDescriptor?.packageProperties?.getByName?.("conda.name") as any}={props.packageDescriptor?.version?.version as any}</code></pre></div>
+				<div className="markup"><pre className="code-block"><code>conda install{(props.channel) ? (<> -c {props.channel as any}</>) : null} {props.packageDescriptor?.packageProperties?.getByName?.("conda.name") as any}={props.packageDescriptor?.version?.version as any}</code></pre></div>
 			</div>
 			<div className="field">
 				<label>{i18n("packages.registry.documentation")}</label>

@@ -23,7 +23,7 @@ export default function List(props: Record<string, unknown>) {
 						<option value="">{i18n("packages.filter.type")}</option>
 						<option value="all">{i18n("packages.filter.type.all")}</option>
 						{((props.availableTypes) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-						<option{...(props.packageType === type ? {"selected": "selected"} : {})} value={String("" ?? "")}>{/* TODO: {{$type.Name}} */}</option>
+						<option{...(props.packageType === props.type ? {"selected": "selected"} : {})} value={String("" ?? "")}>{/* TODO: {{$type.Name}} */}</option>
 						</React.Fragment>))}
 					</select>
 					{/* template: shared/search/button */}

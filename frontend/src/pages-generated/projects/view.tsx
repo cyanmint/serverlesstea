@@ -15,7 +15,7 @@ export default function View(props: Record<string, unknown>) {
 			{/* template: repo/issue/filter_item_user_assign */}
 			{/* template: repo/issue/filter_item_milestone */}
 		</div>
-		{(canWriteProject) ? (<>
+		{(props.canWriteProject) ? (<>
 			<div className="ui compact mini menu">
 				<a className="item screen-full">
 					<span className="svg-icon" aria-label="octicon-screen-full"></span>
@@ -69,17 +69,17 @@ export default function View(props: Record<string, unknown>) {
 		<div className="divider"></div>
 	</div>
 
-	<div id="project-board" className={`board ${(canWriteProject) ? `sortable` : ""}`} data-project-board-writable={String("" ?? "")} {...(canWriteProject ? {"data-url": `${String(props.link ?? "")}/move`} : {})}>
+	<div id="project-board" className={`board ${(props.canWriteProject) ? `sortable` : ""}`} data-project-board-writable={String("" ?? "")} {...(props.canWriteProject ? {"data-url": `${String(props.link ?? "")}/move`} : {})}>
 		{((props.columns) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 			<div className="project-column" {...(item.color ? {"style": `background: ${String(props.color ?? "")} !important; color:  !important`} : {})} data-id={String(props.iD ?? "")} data-sorting={String(props.sorting ?? "")} data-url={`${String(props.link ?? "")}/${String(props.iD ?? "")}`}>
-				<div className={`project-column-header${(canWriteProject) ? ` tw-cursor-grab` : ""}`}>
+				<div className={`project-column-header${(props.canWriteProject) ? ` tw-cursor-grab` : ""}`}>
 					<div className="ui circular label project-column-issue-count">
 						{item.numIssues as any}
 					</div>
 					<div className="project-column-title-text flex-text-inline gt-ellipsis" {...(item.default ? {"data-tooltip-content": String(i18n("repo.projects.column.default_column_hint") ?? "")} : {})}>
 						{(item.default) ? (<><span className="svg-icon" aria-label="octicon-star"></span> </>) : null}{item.title as any}
 					</div>
-					{(canWriteProject) ? (<>
+					{(props.canWriteProject) ? (<>
 						<div className="ui dropdown tw-p-1">
 							<span className="svg-icon" aria-label="octicon-kebab-horizontal"></span>
 							<div className="menu">
@@ -114,7 +114,7 @@ export default function View(props: Record<string, unknown>) {
 				<div className="divider"{...(item.color ? {"style": `color:  !important`} : {})}></div>
 				<div className="ui cards" data-url={`${String(props.link ?? "")}/${String(props.iD ?? "")}`} data-project={String(props.project?.iD ?? "")} data-board={String(props.iD ?? "")} id={`board_${String(props.iD ?? "")}`}>
 					{(((index $.IssuesMap .ID)) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-						<div className={`issue-card tw-break-anywhere ${(canWriteProject) ? `tw-cursor-grab` : ""}`} data-issue={String(props.iD ?? "")}>
+						<div className={`issue-card tw-break-anywhere ${(props.canWriteProject) ? `tw-cursor-grab` : ""}`} data-issue={String(props.iD ?? "")}>
 							{/* template: repo/issue/card */}
 						</div>
 					</React.Fragment>))}
@@ -124,7 +124,7 @@ export default function View(props: Record<string, unknown>) {
 	</div>
 </div>
 
-{(canWriteProject) ? (<>
+{(props.canWriteProject) ? (<>
 <div className="ui small modal" id="project-column-modal-edit">
 	<div className="header">edit</div>
 	<div className="content">

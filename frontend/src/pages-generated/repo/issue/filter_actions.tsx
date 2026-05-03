@@ -30,7 +30,7 @@ export default function FilterActions(props: Record<string, unknown>) {
 				{/* $previousExclusiveScope */}
 				{((props.labels) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					{/* $exclusiveScope */}
-					{((previousExclusiveScope !== "_no_scope" && previousExclusiveScope !== exclusiveScope)) ? (<>
+					{((props.previousExclusiveScope !== "_no_scope" && props.previousExclusiveScope !== props.exclusiveScope)) ? (<>
 						<div className="divider"></div>
 					</>) : null}
 					{/* TODO: {{$previousExclusiveScope = $exclusiveScope}} */}
