@@ -3,7 +3,7 @@ import { i18n } from '../../lib/i18n'
 
 export default function ViewFile(props: Record<string, unknown>) {
   return (<>
-<div {(props.readmeInList) ? (<>id="readme"</>) : null} className={` non-diff-file-content`}
+<div {...(props.readmeInList ? {"id": "readme"} : {})} className={` non-diff-file-content`}
 	data-global-init="initRepoFileView" data-raw-file-link={String(props.rawFileLink ?? "")}>
 
 	{/* TODO: {{- if .FileError}} */}
@@ -66,7 +66,7 @@ export default function ViewFile(props: Record<string, unknown>) {
 				</div>
 				<a download className="btn-octicon" data-tooltip-content={String(i18n("repo.download_file") ?? "")} href={String(props.rawFileLink ?? "")}><span className="svg-icon" aria-label="octicon-download"></span></a>
 				<a className={`btn-octicon ${(!(props.canCopyContent)) ? `disabled` : ""}`} data-global-click="onCopyContentButtonClick"
-					{(!(props.isDisplayingSource)) ? (<>data-raw-file-link={String(props.rawFileLink ?? "")}</>) : null}
+					{...(!(props.isDisplayingSource) ? {"data-raw-file-link": String(props.rawFileLink ?? "")} : {})}
 					data-tooltip-content={`${(props.canCopyContent) ? `${i18n("copy_content")}` : `${i18n("copy_type_unsupported")}`}`}
 				><span className="svg-icon" aria-label="octicon-copy"></span></a>
 				{((props.enableFeed && props.refFullName?.isBranch)) ? (<>
@@ -146,7 +146,7 @@ export default function ViewFile(props: Record<string, unknown>) {
 		</div>
 
 		<div className="code-line-menu tippy-target">
-			{(props.permission?.canRead ctx?.consts?.repoUnitTypeIssues) ? (<>
+			{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypeIssues")) ? (<>
 			<a className="item ref-in-new-issue" role="menuitem" data-url-issue-new={`${String(props.repoLink ?? "")}/issues/new`} data-url-param-body-link={`${String(props.repository?.link ?? "")}/src/commit//${(props.hasSourceRenderedToggle) ? `?display=source` : ""}`} rel="nofollow noindex">{i18n("repo.issues.context.reference_issue")}</a>
 			</>) : null}
 			<a className="item view_git_blame" role="menuitem" href={`${String(props.repository?.link ?? "")}/blame/commit//`}>{i18n("repo.view_git_blame")}</a>

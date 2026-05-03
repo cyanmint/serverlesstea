@@ -22,17 +22,15 @@ export default function Create(props: Record<string, unknown>) {
 						<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 						<div className="menu">
 							<div className="item" data-value={String(props.signedUser?.iD ?? "")} title={String(props.signedUser?.name ?? "")}
-								{(!(props.canCreateRepoInDoer)) ? (<>
-									data-create-repo-disallowed-prompt={String("" ?? "")}
-								</>) : null}
+								{...(!(props.canCreateRepoInDoer) ? {"data-create-repo-disallowed-prompt": String("" ?? "")} : {})}
 							>
 								{/* TODO: {{ctx.AvatarUtils.Avatar .SignedUser 28 "mini"}} */}
-								{props.signedUser?.shortName 40 as any}
+								{props.signedUser?.shortName?.(40) as any}
 							</div>
 							{((props.orgs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 								<div className="item" data-value={String(props.iD ?? "")} title={String(props.name ?? "")}>
 									{/* TODO: {{ctx.AvatarUtils.Avatar . 28 "mini"}} */}
-									{item.shortName 40 as any}
+									{item.shortName?.(40) as any}
 								</div>
 							</React.Fragment>))}
 						</div>
@@ -82,7 +80,7 @@ export default function Create(props: Record<string, unknown>) {
 							<input name="git_content" type="checkbox" {...(props.git_content ? {"checked": true} : {})} />
 							<label>{i18n("repo.template.git_content")}</label>
 						</div>
-						<div className="ui checkbox" {(!(props.signedUser?.canEditGitHook)) ? (<>data-tooltip-content={String(i18n("repo.template.git_hooks_tooltip") ?? "")}</>) : null}>
+						<div className="ui checkbox" {...(!(props.signedUser?.canEditGitHook) ? {"data-tooltip-content": String(i18n("repo.template.git_hooks_tooltip") ?? "")} : {})}>
 							<input name="git_hooks" type="checkbox" {...(props.git_hooks ? {"checked": true} : {})} />
 							<label>{i18n("repo.template.git_hooks")}</label>
 						</div>

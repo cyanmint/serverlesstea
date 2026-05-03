@@ -23,10 +23,10 @@ export default function Pulse(props: Record<string, unknown>) {
 	</div>
 </h2>
 
-{((props.permission?.canRead ctx?.consts?.repoUnitTypeIssues || props.permission?.canRead ctx?.consts?.repoUnitTypePullRequests)) ? (<>
+{((props.permission?.canRead?.("ctx.Consts.RepoUnitTypeIssues") || props.permission?.canRead?.("ctx.Consts.RepoUnitTypePullRequests"))) ? (<>
 <h4 className="ui top attached header">{i18n("repo.activity.overview")}</h4>
 <div className="ui attached segment two column grid">
-	{(props.permission?.canRead ctx?.consts?.repoUnitTypePullRequests) ? (<>
+	{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypePullRequests")) ? (<>
 		<div className="column">
 			{(props.activity?.activePRCount > 0) ? (<>
 			<div className="stats-table">
@@ -43,7 +43,7 @@ export default function Pulse(props: Record<string, unknown>) {
 			{/* TODO: {{ctx.Locale.TrN .Activity.ActivePRCount "repo.activity.active_prs_count_1" "repo.activity.active_prs_count_n" .Activity.ActivePRCount}} */}
 		</div>
 	</>) : null}
-	{(props.permission?.canRead ctx?.consts?.repoUnitTypeIssues) ? (<>
+	{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypeIssues")) ? (<>
 		<div className="column">
 			{(props.activity?.activeIssueCount > 0) ? (<>
 			<div className="stats-table">
@@ -62,7 +62,7 @@ export default function Pulse(props: Record<string, unknown>) {
 	</>) : null}
 </div>
 <div className="ui attached segment horizontal segments">
-	{(props.permission?.canRead ctx?.consts?.repoUnitTypePullRequests) ? (<>
+	{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypePullRequests")) ? (<>
 		<a href="#merged-pull-requests" className="ui attached segment text center">
 			<span className="tw-text-purple"><span className="svg-icon" aria-label="octicon-git-pull-request"></span></span> <strong>{props.activity?.mergedPRCount as any}</strong><br />
 			{/* TODO: {{ctx.Locale.TrN .Activity.MergedPRCount "repo.activity.merged_prs_count_1" "repo.activity.merged_prs_count_n"}} */}
@@ -72,7 +72,7 @@ export default function Pulse(props: Record<string, unknown>) {
 			{/* TODO: {{ctx.Locale.TrN .Activity.OpenedPRCount "repo.activity.opened_prs_count_1" "repo.activity.opened_prs_count_n"}} */}
 		</a>
 	</>) : null}
-	{(props.permission?.canRead ctx?.consts?.repoUnitTypeIssues) ? (<>
+	{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypeIssues")) ? (<>
 		<a href="#closed-issues" className="ui attached segment text center">
 			<span className="tw-text-red"><span className="svg-icon" aria-label="octicon-issue-closed"></span></span> <strong>{props.activity?.closedIssueCount as any}</strong><br />
 			{/* TODO: {{ctx.Locale.TrN .Activity.ClosedIssueCount "repo.activity.closed_issues_count_1" "repo.activity.closed_issues_count_n"}} */}
@@ -85,7 +85,7 @@ export default function Pulse(props: Record<string, unknown>) {
 </div>
 </>) : null}
 
-{(props.permission?.canRead ctx?.consts?.repoUnitTypeCode) ? (<>
+{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypeCode")) ? (<>
 	{(props.activity?.code?.commitCountInAllBranches === 0) ? (<>
 		<div className="ui tw-text-center segment">
 		<h4 className="ui header">{i18n("repo.activity.no_git_activity")}</h4>
@@ -127,7 +127,7 @@ export default function Pulse(props: Record<string, unknown>) {
 				<span className="ui green label">{i18n("repo.activity.published_release_label")}</span>
 				{item.tagName as any}
 				{(!(item.isTag)) ? (<>
-					<a className="title" href={`${String(props.repoLink ?? "")}/src/${String(props.tagName | PathEscapeSegments ?? "")}`}>{item.title | ctx?.renderUtils?.renderIssueSimpleTitle as any}</a>
+					<a className="title" href={`${String(props.repoLink ?? "")}/src/${String(props.tagName?.("|", "PathEscapeSegments") ?? "")}`}>{item.title?.("|", "ctx.RenderUtils.RenderIssueSimpleTitle") as any}</a>
 				</>) : null}
 				{/* TODO: {{DateUtils.TimeSince .CreatedUnix}} */}
 			</p>
@@ -144,7 +144,7 @@ export default function Pulse(props: Record<string, unknown>) {
 		{((props.activity?.mergedPRs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 			<p className="desc">
 				<span className="ui purple label">{i18n("repo.activity.merged_prs_label")}</span>
-				#{item.index as any} <a className="title" href={`${String(props.repoLink ?? "")}/pulls/${String(props.index ?? "")}`}>{item.issue?.title | ctx?.renderUtils?.renderIssueSimpleTitle as any}</a>
+				#{item.index as any} <a className="title" href={`${String(props.repoLink ?? "")}/pulls/${String(props.index ?? "")}`}>{item.issue?.title?.("|", "ctx.RenderUtils.RenderIssueSimpleTitle") as any}</a>
 				{/* TODO: {{DateUtils.TimeSince .MergedUnix}} */}
 			</p>
 		</React.Fragment>))}
@@ -160,7 +160,7 @@ export default function Pulse(props: Record<string, unknown>) {
 		{((props.activity?.openedPRs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 			<p className="desc">
 				<span className="ui green label">{i18n("repo.activity.opened_prs_label")}</span>
-				#{item.index as any} <a className="title" href={`${String(props.repoLink ?? "")}/pulls/${String(props.index ?? "")}`}>{item.issue?.title | ctx?.renderUtils?.renderIssueSimpleTitle as any}</a>
+				#{item.index as any} <a className="title" href={`${String(props.repoLink ?? "")}/pulls/${String(props.index ?? "")}`}>{item.issue?.title?.("|", "ctx.RenderUtils.RenderIssueSimpleTitle") as any}</a>
 				{/* TODO: {{DateUtils.TimeSince .Issue.CreatedUnix}} */}
 			</p>
 		</React.Fragment>))}
@@ -176,7 +176,7 @@ export default function Pulse(props: Record<string, unknown>) {
 		{((props.activity?.closedIssues) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 			<p className="desc">
 				<span className="ui red label">{i18n("repo.activity.closed_issue_label")}</span>
-				#{item.index as any} <a className="title" href={`${String(props.repoLink ?? "")}/issues/${String(props.index ?? "")}`}>{item.title | ctx?.renderUtils?.renderIssueSimpleTitle as any}</a>
+				#{item.index as any} <a className="title" href={`${String(props.repoLink ?? "")}/issues/${String(props.index ?? "")}`}>{item.title?.("|", "ctx.RenderUtils.RenderIssueSimpleTitle") as any}</a>
 				{/* TODO: {{DateUtils.TimeSince .ClosedUnix}} */}
 			</p>
 		</React.Fragment>))}
@@ -192,7 +192,7 @@ export default function Pulse(props: Record<string, unknown>) {
 		{((props.activity?.openedIssues) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 			<p className="desc">
 				<span className="ui green label">{i18n("repo.activity.new_issue_label")}</span>
-				#{item.index as any} <a className="title" href={`${String(props.repoLink ?? "")}/issues/${String(props.index ?? "")}`}>{item.title | ctx?.renderUtils?.renderIssueSimpleTitle as any}</a>
+				#{item.index as any} <a className="title" href={`${String(props.repoLink ?? "")}/issues/${String(props.index ?? "")}`}>{item.title?.("|", "ctx.RenderUtils.RenderIssueSimpleTitle") as any}</a>
 				{/* TODO: {{DateUtils.TimeSince .CreatedUnix}} */}
 			</p>
 		</React.Fragment>))}
@@ -210,9 +210,9 @@ export default function Pulse(props: Record<string, unknown>) {
 				<span className="ui green label">{i18n("repo.activity.unresolved_conv_label")}</span>
 				#{item.index as any}
 				{(item.isPull) ? (<>
-				<a className="title" href={`${String(props.repoLink ?? "")}/pulls/${String(props.index ?? "")}`}>{item.title | ctx?.renderUtils?.renderIssueSimpleTitle as any}</a>
+				<a className="title" href={`${String(props.repoLink ?? "")}/pulls/${String(props.index ?? "")}`}>{item.title?.("|", "ctx.RenderUtils.RenderIssueSimpleTitle") as any}</a>
 				</>) : (<>
-				<a className="title" href={`${String(props.repoLink ?? "")}/issues/${String(props.index ?? "")}`}>{item.title | ctx?.renderUtils?.renderIssueSimpleTitle as any}</a>
+				<a className="title" href={`${String(props.repoLink ?? "")}/issues/${String(props.index ?? "")}`}>{item.title?.("|", "ctx.RenderUtils.RenderIssueSimpleTitle") as any}</a>
 				</>)}
 				{/* TODO: {{DateUtils.TimeSince .UpdatedUnix}} */}
 			</p>

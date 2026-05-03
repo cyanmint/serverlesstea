@@ -28,7 +28,7 @@ export default function Branches(props: Record<string, unknown>) {
 								</React.Fragment>))}
 							</div>
 						</div>
-						<button className="ui primary button"{(props.repository?.isEmpty) ? (<> disabled</>) : null}>{i18n("repo.settings.branches.update_default_branch")}</button>
+						<button className="ui primary button"{...(props.repository?.isEmpty ? {"disabled": true} : {})}>{i18n("repo.settings.branches.update_default_branch")}</button>
 					</div>
 					<div className="help tw-mt-4 tw-p-0">{i18n("repo.settings.default_target_branch_desc")}</div>
 				</form>

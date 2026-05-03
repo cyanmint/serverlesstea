@@ -117,7 +117,7 @@ export default function Tags(props: Record<string, unknown>) {
 										</td>
 									</tr>
 								{/* else */}
-									<tr className="tw-text-center"><td colspan="3">{i18n("repo.settings.tags.protection.none")}</td></tr>
+									<tr className="tw-text-center"><td colSpan="3">{i18n("repo.settings.tags.protection.none")}</td></tr>
 								</React.Fragment>))}
 							</tbody>
 						</table>

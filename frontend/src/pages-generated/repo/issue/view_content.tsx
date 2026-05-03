@@ -13,7 +13,7 @@ export default function ViewContent(props: Record<string, unknown>) {
 					{/* TODO: {{ctx.AvatarUtils.Avatar nil 40}} */}
 				</span>
 				</>) : (<>
-				<a className="timeline-avatar" {(props.issue?.poster?.iD > 0) ? (<>href={String(props.issue?.poster?.homeLink ?? "")}</>) : null}>
+				<a className="timeline-avatar" {...(props.issue?.poster?.iD > 0 ? {"href": String(props.issue?.poster?.homeLink ?? "")} : {})}>
 					{/* TODO: {{ctx.AvatarUtils.Avatar .Issue.Poster 40}} */}
 				</a>
 				</>)}
@@ -50,7 +50,7 @@ export default function ViewContent(props: Record<string, unknown>) {
 						</div>
 					</div>
 					<div className="ui attached segment comment-body" role="article">
-						<div className="render-content markup" {((props.permission?.isAdmin || props.hasIssuesOrPullsWritePermission || props.isIssuePoster)) ? (<>data-can-edit="true"</>) : null}>
+						<div className="render-content markup" {...((props.permission?.isAdmin || props.hasIssuesOrPullsWritePermission || props.isIssuePoster) ? {"data-can-edit": "true"} : {})}>
 							{(props.issue?.renderedContent) ? (<>
 								{props.issue?.renderedContent as any}
 							</>) : (<>
@@ -64,7 +64,7 @@ export default function ViewContent(props: Record<string, unknown>) {
 						</>) : null}
 					</div>
 					{/* $reactions */}
-					{("$reactions") ? (<>
+					{(reactions) ? (<>
 						{/* template: repo/issue/view_content/reactions */}
 					</>) : null}
 				</div>

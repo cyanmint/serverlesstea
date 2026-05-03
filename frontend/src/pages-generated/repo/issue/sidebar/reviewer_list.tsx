@@ -8,15 +8,15 @@ export default function ReviewerList(props: Record<string, unknown>) {
 {/* $repoOwnerName */}
 {/* $hasCandidates */}
 <div className="issue-sidebar-combo" data-selection-mode="multiple" data-update-algo="diff"
-		{("$pageMeta.Issue") ? (<>data-update-url={`/issues/request_review?issue_ids=`}</>) : null}
+		{...(props.pageMeta?.issue ? {"data-update-url": `/issues/request_review?issue_ids=`} : {})}
 >
 	<input type="hidden" className="combo-value" name="reviewer_ids" />{/* match CreateIssueForm */}
-	<div className={`ui dropdown full-width ${((!("$hasCandidates") || !("$data.CanChooseReviewer"))) ? `disabled` : ""}`}>
+	<div className={`ui dropdown full-width ${((!(hasCandidates) || !(props.data?.canChooseReviewer))) ? `disabled` : ""}`}>
 		<a className="fixed-text muted">
-			<strong>{i18n("repo.issues.review.reviewers")}</strong> {("$data.CanChooseReviewer") ? (<><span className="svg-icon" aria-label="octicon-gear"></span></>) : null}
+			<strong>{i18n("repo.issues.review.reviewers")}</strong> {(props.data?.canChooseReviewer) ? (<><span className="svg-icon" aria-label="octicon-gear"></span></>) : null}
 		</a>
 		<div className="menu flex-items-menu">
-			{("$hasCandidates") ? (<>
+			{(hasCandidates) ? (<>
 				<div className="ui icon search input">
 					<i className="icon"><span className="svg-icon" aria-label="octicon-search"></span></i>
 					<input type="text" placeholder={String(i18n("repo.issues.filter_reviewers") ?? "")} />
@@ -26,18 +26,18 @@ export default function ReviewerList(props: Record<string, unknown>) {
 				{(($data.Reviewers) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					{(item.user) ? (<>
 						<a className={`item muted ${(props.requested) ? `checked` : ""}`} href={String(props.user?.homeLink ?? "")} data-value={String(props.itemID ?? "")} data-can-change={String(props.canChange ?? "")}
-							{(!(item.canChange)) ? (<>data-tooltip-content={String(i18n("repo.issues.remove_request_review_block") ?? "")}</>) : null}>
+							{...(!(item.canChange) ? {"data-tooltip-content": String(i18n("repo.issues.remove_request_review_block") ?? "")} : {})}>
 							<span className="item-check-mark"><span className="svg-icon" aria-label="octicon-check"></span></span>
 							{/* TODO: {{ctx.AvatarUtils.Avatar .User 20}} */} {/* template: repo/search_name */}
 						</a>
 					</>) : null}
 				</React.Fragment>))}
-				{("$data.TeamReviewers") ? (<>
-					{("$data.Reviewers") ? (<><div className="divider"></div></>) : null}
+				{(props.data?.teamReviewers) ? (<>
+					{(props.data?.reviewers) ? (<><div className="divider"></div></>) : null}
 					{(($data.TeamReviewers) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 						{(item.team) ? (<>
 							<a className={`item muted ${(props.requested) ? `checked` : ""}`} href="#" data-value={String(props.itemID ?? "")} data-can-change={String(props.canChange ?? "")}
-								{(!(item.canChange)) ? (<> data-tooltip-content={String(i18n("repo.issues.remove_request_review_block") ?? "")}</>) : null}>
+								{...(!(item.canChange) ? {"data-tooltip-content": String(i18n("repo.issues.remove_request_review_block") ?? "")} : {})}>
 								<span className="item-check-mark"><span className="svg-icon" aria-label="octicon-check"></span></span>
 								<span className="svg-icon" aria-label="octicon-people"></span> {/* $repoOwnerName */}/{item.team?.name as any}
 							</a>
@@ -49,7 +49,7 @@ export default function ReviewerList(props: Record<string, unknown>) {
 	</div>
 
 	<div className="ui relaxed list flex-items-block">
-		<span className={`item empty-list ${(("$data.OriginalReviews" || "$data.CurrentPullReviewers")) ? `tw-hidden` : ""}`}>
+		<span className={`item empty-list ${((props.data?.originalReviews || props.data?.currentPullReviewers)) ? `tw-hidden` : ""}`}>
 			{i18n("repo.issues.new.no_reviewers")}
 		</span>
 		{(($data.CurrentPullReviewers) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
@@ -71,7 +71,7 @@ export default function ReviewerList(props: Record<string, unknown>) {
 					{(item.review?.stale) ? (<>
 						<span data-tooltip-content={String(i18n("repo.issues.is_stale") ?? "")}><span className="svg-icon" aria-label="octicon-hourglass"></span></span>
 					</>) : null}
-					{((item.canChange && "$data.CanChooseReviewer")) ? (<>
+					{((item.canChange && item.data?.canChooseReviewer)) ? (<>
 						{(item.requested) ? (<>
 							<a href="#" className="ui muted icon link-action"
 								data-tooltip-content={String(i18n("repo.issues.remove_request_review") ?? "")}
@@ -86,7 +86,7 @@ export default function ReviewerList(props: Record<string, unknown>) {
 							</a>
 						</>)}
 					</>) : null}
-					<span {(item.review?.tooltipContent) ? (<>data-tooltip-content={String("" ?? "")}</>) : null}>
+					<span {...(item.review?.tooltipContent ? {"data-tooltip-content": String("" ?? "")} : {})}>
 						{/* TODO: {{svg (printf "octicon-%s" .Review.Type.Icon) 16 .Review.HTMLTypeColorClass}} */}
 					</span>
 				</div>
@@ -102,7 +102,7 @@ export default function ReviewerList(props: Record<string, unknown>) {
 					</a>
 				</div>
 				<div className="flex-text-inline">
-					<span {(item.tooltipContent) ? (<>data-tooltip-content={String("" ?? "")}</>) : null}>
+					<span {...(item.tooltipContent ? {"data-tooltip-content": String("" ?? "")} : {})}>
 						{/* TODO: {{svg (printf "octicon-%s" .Type.Icon) 16 .HTMLTypeColorClass}} */}
 					</span>
 				</div>
@@ -110,7 +110,7 @@ export default function ReviewerList(props: Record<string, unknown>) {
 		</React.Fragment>))}
 	</div>
 
-	{("$data.CurrentPullReviewers") ? (<>
+	{(props.data?.currentPullReviewers) ? (<>
 	<div className="ui small modal" id="issue-sidebar-dismiss-review-modal">
 		<div className="header">
 			{i18n("repo.issues.dismiss_review")}

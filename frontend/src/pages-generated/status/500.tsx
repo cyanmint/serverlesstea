@@ -9,7 +9,7 @@ export default function 500(props: Record<string, unknown>) {
 * .Flash
 * .ErrorMsg
 * .SignedUser (optional) */}
-<!DOCTYPE html>
+
 <html lang={String("" ?? "")} data-theme={String("" ?? "")}>
 <head>
 	{/* TODO: {{ctx.HeadMetaContentSecurityPolicy}} */}

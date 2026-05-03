@@ -24,14 +24,14 @@ export default function List(props: Record<string, unknown>) {
 				{((props.releases) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					<div className="item tag-list-row tw-p-4">
 						<h3 className="tag-list-row-title tw-mb-2">
-							{("$canReadReleases") ? (<>
-								<a className="tag-list-row-link" href={`${String(props.repoLink ?? "")}/releases/tag/${String(props.tagName | PathEscapeSegments ?? "")}`} rel="nofollow">{item.tagName as any}</a>
+							{(canReadReleases) ? (<>
+								<a className="tag-list-row-link" href={`${String(props.repoLink ?? "")}/releases/tag/${String(props.tagName?.("|", "PathEscapeSegments") ?? "")}`} rel="nofollow">{item.tagName as any}</a>
 							</>) : (<>
-								<a className="tag-list-row-link" href={`${String(props.repoLink ?? "")}/src/tag/${String(props.tagName | PathEscapeSegments ?? "")}`} rel="nofollow">{item.tagName as any}</a>
+								<a className="tag-list-row-link" href={`${String(props.repoLink ?? "")}/src/tag/${String(props.tagName?.("|", "PathEscapeSegments") ?? "")}`} rel="nofollow">{item.tagName as any}</a>
 							</>)}
 						</h3>
 						<div className="flex-text-block muted-links tw-gap-4 tw-flex-wrap">
-							{(props.permission?.canRead ctx?.consts?.repoUnitTypeCode) ? (<>
+							{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypeCode")) ? (<>
 								{(item.createdUnix) ? (<>
 									<span className="flex-text-inline"><span className="svg-icon" aria-label="octicon-clock"></span>{/* TODO: {{DateUtils.TimeSince .CreatedUnix}} */}</span>
 								</>) : null}
@@ -39,22 +39,22 @@ export default function List(props: Record<string, unknown>) {
 								<a className="flex-text-inline tw-font-mono" href={`${String(props.repoLink ?? "")}/src/commit/${String(props.sha1 ?? "")}`} rel="nofollow"><span className="svg-icon" aria-label="octicon-git-commit"></span>{/* TODO: {{ShortSha .Sha1}} */}</a>
 
 								{(!(props.disableDownloadSourceArchives)) ? (<>
-									<a className="archive-link flex-text-inline" href={`${String(props.repoLink ?? "")}/archive/${String(props.tagName | PathEscapeSegments ?? "")}.zip`} rel="nofollow"><span className="svg-icon" aria-label="octicon-file-zip"></span>ZIP</a>
-									<a className="archive-link flex-text-inline" href={`${String(props.repoLink ?? "")}/archive/${String(props.tagName | PathEscapeSegments ?? "")}.tar.gz`} rel="nofollow"><span className="svg-icon" aria-label="octicon-file-zip"></span>TAR.GZ</a>
+									<a className="archive-link flex-text-inline" href={`${String(props.repoLink ?? "")}/archive/${String(props.tagName?.("|", "PathEscapeSegments") ?? "")}.zip`} rel="nofollow"><span className="svg-icon" aria-label="octicon-file-zip"></span>ZIP</a>
+									<a className="archive-link flex-text-inline" href={`${String(props.repoLink ?? "")}/archive/${String(props.tagName?.("|", "PathEscapeSegments") ?? "")}.tar.gz`} rel="nofollow"><span className="svg-icon" aria-label="octicon-file-zip"></span>TAR.GZ</a>
 								</>) : null}
 
-								{(("$canReadReleases" && props.canCreateRelease && "$release.IsTag")) ? (<>
+								{((canReadReleases && props.canCreateRelease && item.release?.isTag)) ? (<>
 									<a className="flex-text-inline" href={`${String(props.repoLink ?? "")}/releases/new?tag=${String(props.tagName ?? "")}`}><span className="svg-icon" aria-label="octicon-tag"></span>{i18n("repo.release.new_release")}</a>
 								</>) : null}
 
-								{((props.repository?.canContentChange && props.permission?.canWrite ctx?.consts?.repoUnitTypeCode && "$release.IsTag")) ? (<>
+								{((props.repository?.canContentChange && props.permission?.canWrite?.("ctx.Consts.RepoUnitTypeCode") && item.release?.isTag)) ? (<>
 									<a className="flex-text-inline link-action" data-url={`${String(props.repoLink ?? "")}/tags/delete?id=${String(props.iD ?? "")}`} data-modal-confirm="#confirm-delete-tag-modal">
 										<span className="svg-icon" aria-label="octicon-trash"></span>{i18n("repo.release.delete_tag")}
 									</a>
 								</>) : null}
 
-								{(("$canReadReleases" && !("$release.IsTag"))) ? (<>
-									<a className="flex-text-inline" href={`${String(props.repoLink ?? "")}/releases/tag/${String(props.tagName | PathEscapeSegments ?? "")}`}><span className="svg-icon" aria-label="octicon-tag"></span>{i18n("repo.release.detail")}</a>
+								{((canReadReleases && !(item.release?.isTag))) ? (<>
+									<a className="flex-text-inline" href={`${String(props.repoLink ?? "")}/releases/tag/${String(props.tagName?.("|", "PathEscapeSegments") ?? "")}`}><span className="svg-icon" aria-label="octicon-tag"></span>{i18n("repo.release.detail")}</a>
 								</>) : null}
 							</>) : null}
 						</div>
@@ -71,7 +71,7 @@ export default function List(props: Record<string, unknown>) {
 	</div>
 </div>
 
-{(props.permission?.canWrite ctx?.consts?.repoUnitTypeCode) ? (<>
+{(props.permission?.canWrite?.("ctx.Consts.RepoUnitTypeCode")) ? (<>
 <div id="confirm-delete-tag-modal" className="ui small modal">
 	<div className="header">
 		{i18n("repo.release.delete_tag")}

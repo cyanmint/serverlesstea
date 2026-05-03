@@ -29,8 +29,8 @@ Solutions which work:
 We make the names of these dummy inputs begin with an underline to indicate it is for special usage,
 and these dummy form values won't be used by backend code. */}
 <div className="autofill-dummy" aria-hidden="true">
-	<input type="text" name="_autofill_dummy_username" className="ays-ignore" tabindex="-1" />
-	<input type="password" name="_autofill_dummy_password" className="ays-ignore" tabindex="-1" />
+	<input type="text" name="_autofill_dummy_username" className="ays-ignore" tabIndex="-1" />
+	<input type="password" name="_autofill_dummy_password" className="ays-ignore" tabIndex="-1" />
 </div>
 
   </>)

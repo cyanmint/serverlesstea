@@ -22,12 +22,12 @@ export default function KeysPrincipal(props: Record<string, unknown>) {
 			{((props.principals) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				<div className="item">
 					<div className="item-leading">
-						<span className={`${(props.hasRecentActivity) ? `tw-text-green` : ""}`} {(item.hasRecentActivity) ? (<>data-tooltip-content={String(i18n("settings.principal_state_desc") ?? "")}</>) : null}><span className="svg-icon" aria-label="octicon-key"></span></span>
+						<span className={`${(props.hasRecentActivity) ? `tw-text-green` : ""}`} {...(item.hasRecentActivity ? {"data-tooltip-content": String(i18n("settings.principal_state_desc") ?? "")} : {})}><span className="svg-icon" aria-label="octicon-key"></span></span>
 					</div>
 					<div className="item-main">
 						<div className="item-title">{item.name as any}</div>
 						<div className="item-body">
-							<i>{i18n("settings.added_on")} —  <span className="svg-icon" aria-label="octicon-info"></span> {(item.hasUsed) ? (<>{i18n("settings.last_used")} <span {(item.hasRecentActivity) ? (<>className="green"</>) : null}>{/* TODO: {{DateUtils.AbsoluteShort .UpdatedUnix}} */}</span></>) : (<>{i18n("settings.no_activity")}</>)}</i>
+							<i>{i18n("settings.added_on")} —  <span className="svg-icon" aria-label="octicon-info"></span> {(item.hasUsed) ? (<>{i18n("settings.last_used")} <span {...(item.hasRecentActivity ? {"className": "green"} : {})}>{/* TODO: {{DateUtils.AbsoluteShort .UpdatedUnix}} */}</span></>) : (<>{i18n("settings.no_activity")}</>)}</i>
 						</div>
 					</div>
 					<div className="item-trailing">
@@ -41,7 +41,7 @@ export default function KeysPrincipal(props: Record<string, unknown>) {
 	</div>
 	<br />
 
-	<div {(!(props.hasPrincipalError)) ? (<>className="tw-hidden"</>) : null} id="add-ssh-principal-panel">
+	<div {...(!(props.hasPrincipalError) ? {"className": "tw-hidden"} : {})} id="add-ssh-principal-panel">
 		<h4 className="ui top attached header">
 			{i18n("settings.add_new_principal")}
 		</h4>

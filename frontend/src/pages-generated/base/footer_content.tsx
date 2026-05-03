@@ -34,7 +34,7 @@ export default function FooterContent(props: Record<string, unknown>) {
 		<div className="ui dropdown upward">
 			<span className="flex-text-inline"><span className="svg-icon" aria-label="octicon-globe"></span> {/* TODO: {{ctx.Locale.LangName}} */}</span>
 			<div className="menu language-menu">
-				{((props.allLangs -) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+				{((props.allLangs?.("-")) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				<a lang={String(props.lang ?? "")} data-url={`/?lang=${String(props.lang ?? "")}`} className={`item ${("ctx.Locale.Lang" === props.lang) ? `selected` : ""}`}>{item.name as any}</a>
 				{/* TODO: {{end -}} */}
 			</div>

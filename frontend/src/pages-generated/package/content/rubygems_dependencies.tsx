@@ -16,7 +16,7 @@ export default function RubygemsDependencies(props: Record<string, unknown>) {
 		{((props.dependencies) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 		<tr>
 			<td>{item.name as any}</td>
-			<td>{((item.version) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>{("$i" > 0) ? (<>, </>) : null}{/* TODO: {{$v.Restriction}} */}{/* TODO: {{$v.Version}} */}</React.Fragment>))}</td>
+			<td>{((item.version) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>{(i > 0) ? (<>, </>) : null}{/* TODO: {{$v.Restriction}} */}{/* TODO: {{$v.Version}} */}</React.Fragment>))}</td>
 		</tr>
 		</React.Fragment>))}
 	</tbody>

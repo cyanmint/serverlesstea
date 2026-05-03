@@ -4,7 +4,7 @@ import { i18n } from '../../lib/i18n'
 export default function HeadBanner(props: Record<string, unknown>) {
   return (<>
 {/* $banner */}
-{("$banner") ? (<>
+{(banner) ? (<>
 <div className="ui info message web-banner-container">
 	<div className="render-content markup web-banner-content">
 		{/* TODO: {{ctx.RenderUtils.MarkdownToHtml $banner.ContentMessage}} */}

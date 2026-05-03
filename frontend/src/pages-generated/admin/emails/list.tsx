@@ -49,7 +49,7 @@ export default function List(props: Record<string, unknown>) {
 				<tbody>
 					{((props.emails) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 						<tr>
-							<td><a href={`/${String(props.name | PathEscape ?? "")}`}>{item.name as any}</a></td>
+							<td><a href={`/${String(props.name?.("|", "PathEscape") ?? "")}`}>{item.name as any}</a></td>
 							<td className="gt-ellipsis tw-max-w-48">{item.fullName as any}</td>
 							<td className="gt-ellipsis tw-max-w-48">{item.email as any}</td>
 							<td>{/* TODO: {{svg (Iif .IsPrimary "octicon-check" "octicon-x")}} */}</td>
@@ -73,7 +73,7 @@ export default function List(props: Record<string, unknown>) {
 							</td>
 						</tr>
 					{/* else */}
-						<tr><td className="tw-text-center" colspan="6">{i18n("no_results_found")}</td></tr>
+						<tr><td className="tw-text-center" colSpan="6">{i18n("no_results_found")}</td></tr>
 					</React.Fragment>))}
 				</tbody>
 			</table>

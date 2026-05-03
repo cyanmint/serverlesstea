@@ -41,7 +41,7 @@ export default function MilestoneIssues(props: Record<string, unknown>) {
 					</>) : (<>
 
 						{(props.milestone?.deadlineString) ? (<>
-							<span{(props.isOverdue) ? (<> className="tw-text-red"</>) : null}>
+							<span{...(props.isOverdue ? {"className": "tw-text-red"} : {})}>
 								<span className="svg-icon" aria-label="octicon-calendar"></span>
 								{/* TODO: {{DateUtils.AbsoluteShort (.Milestone.DeadlineString|DateUtils.ParseLegacy)}} */}
 							</span>
@@ -55,7 +55,7 @@ export default function MilestoneIssues(props: Record<string, unknown>) {
 				{(props.totalTrackedTime) ? (<>
 					<div data-tooltip-content='{i18n("tracked_time_summary")}'>
 						<span className="svg-icon" aria-label="octicon-clock"></span>
-						{props.totalTrackedTime | Sec2Hour as any}
+						{props.totalTrackedTime?.("|", "Sec2Hour") as any}
 					</div>
 				</>) : null}
 			</div>

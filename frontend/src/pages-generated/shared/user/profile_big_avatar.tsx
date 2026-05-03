@@ -89,7 +89,7 @@ export default function ProfileBigAvatar(props: Record<string, unknown>) {
 			<li>
 				<ul className="user-orgs">
 				{((props.orgs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-					{((item.visibility?.isPublic || (props.signedUser && (item.visibility?.isLimited || (item.hasMemberWithUserID ctx $?.signedUserID && item.visibility?.isPrivate) || props.isAdmin)))) ? (<>
+					{((item.visibility?.isPublic || (props.signedUser && (item.visibility?.isLimited || (item.hasMemberWithUserID?.(ctx, props.signedUserID) && item.visibility?.isPrivate) || props.isAdmin)))) ? (<>
 					<li>
 						<a href={String(props.homeLink ?? "")} data-tooltip-content={String(props.name ?? "")}>
 							{/* TODO: {{ctx.AvatarUtils.Avatar .}} */}
@@ -137,7 +137,7 @@ export default function ProfileBigAvatar(props: Record<string, unknown>) {
 				</>) : null}
 				<li>
 					{(!(props.userBlocking)) ? (<>
-						<a className="muted show-modal" href="#" data-modal="#block-user-modal" data-modal-modal-blockee={String(props.contextUser?.name ?? "")} data-modal-modal-blockee-name={String(props.contextUser?.getDisplayName ?? "")} data-modal-modal-form.action={`/user/settings/blocked_users`}>{i18n("user.block.block.user")}</a>
+						<a className="muted show-modal" href="#" data-modal="#block-user-modal" data-modal-modal-blockee={String(props.contextUser?.name ?? "")} data-modal-modal-blockee-name={String(props.contextUser?.getDisplayName ?? "")} {...{"data-modal-modal-form.action": `/user/settings/blocked_users`}}>{i18n("user.block.block.user")}</a>
 					</>) : (<>
 						<a className="muted" href={`/user/settings/blocked_users`}>{i18n("user.block.unblock")}</a>
 					</>)}

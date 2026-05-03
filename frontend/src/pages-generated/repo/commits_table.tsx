@@ -15,9 +15,9 @@ export default function CommitsTable(props: Record<string, unknown>) {
 	</div>
 	{(props.isDiffCompare) ? (<>
 		<div className="commits-table-right tw-whitespace-nowrap">
-			<a href={`${String(props.commitRepoLink ?? "")}/commit/${String(props.beforeCommitID | PathEscape ?? "")}`} className="ui green sha label tw-mx-0">{/* template: repo/commits_ref_name */}</a>
+			<a href={`${String(props.commitRepoLink ?? "")}/commit/${String(props.beforeCommitID?.("|", "PathEscape") ?? "")}`} className="ui green sha label tw-mx-0">{/* template: repo/commits_ref_name */}</a>
 			{props.compareInfo?.compareSeparator as any}
-			<a href={`${String(props.commitRepoLink ?? "")}/commit/${String(props.afterCommitID | PathEscape ?? "")}`} className="ui green sha label tw-mx-0">{/* template: repo/commits_ref_name */}</a>
+			<a href={`${String(props.commitRepoLink ?? "")}/commit/${String(props.afterCommitID?.("|", "PathEscape") ?? "")}`} className="ui green sha label tw-mx-0">{/* template: repo/commits_ref_name */}</a>
 		</div>
 	</>) : null}
 </h4>

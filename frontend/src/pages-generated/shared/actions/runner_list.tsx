@@ -72,26 +72,26 @@ export default function RunnerList(props: Record<string, unknown>) {
 				{((props.runners) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					<tr>
 						<td>
-							<span className={`ui label ${(props.isOnline) ? `green` : ""}`}>{item.statusLocaleName ctx?.locale as any}</span>
+							<span className={`ui label ${(props.isOnline) ? `green` : ""}`}>{item.statusLocaleName?.("ctx.Locale") as any}</span>
 							{(item.isDisabled) ? (<><span className="ui grey label">{i18n("actions.runners.disabled")}</span></>) : null}
 						</td>
 						<td>{item.iD as any}</td>
 						<td><p data-tooltip-content={String(props.description ?? "")}>{item.name as any}</p></td>
 						<td>{(item.version) ? (<>{item.version as any}</>) : (<>{i18n("unknown")}</>)}</td>
-						<td><span data-tooltip-content={String(props.belongsToOwnerName ?? "")}>{item.belongsToOwnerType?.localeString ctx?.locale as any}</span></td>
+						<td><span data-tooltip-content={String(props.belongsToOwnerName ?? "")}>{item.belongsToOwnerType?.localeString?.("ctx.Locale") as any}</span></td>
 						<td>
 							<span className="flex-text-inline tw-flex-wrap">{((item.agentLabels) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}><span className="ui label">{item as any}</span></React.Fragment>))}</span>
 						</td>
 						<td>{(item.lastOnline) ? (<>{/* TODO: {{DateUtils.TimeSince .LastOnline}} */}</>) : (<>{i18n("never")}</>)}</td>
 						<td>
-							{(item.editableInContext $?.runnerOwnerID $?.runnerRepoID) ? (<>
+							{(item.editableInContext?.(props.runnerOwnerID, props.runnerRepoID)) ? (<>
 								<a href={`${String(props.link ?? "")}/${String(props.iD ?? "")}`}><span className="svg-icon" aria-label="octicon-pencil"></span></a>
 							</>) : null}
 						</td>
 					</tr>
 				{/* else */}
 					<tr>
-						<td className="tw-text-center" colspan="8">{i18n("actions.runners.none")}</td>
+						<td className="tw-text-center" colSpan="8">{i18n("actions.runners.none")}</td>
 					</tr>
 				</React.Fragment>))}
 			</tbody>

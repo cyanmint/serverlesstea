@@ -3,7 +3,7 @@ import { i18n } from '../../lib/i18n'
 
 export default function Contributors(props: Record<string, unknown>) {
   return (<>
-{(props.permission?.canRead ctx?.consts?.repoUnitTypeCode) ? (<>
+{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypeCode")) ? (<>
 	<div id="repo-contributors-chart"
 		data-repo-link={String(props.repoLink ?? "")}
 		data-repo-default-branch-name={String(props.repository?.defaultBranch ?? "")}

@@ -3,7 +3,7 @@ import { i18n } from '../../../../lib/i18n'
 
 export default function CommentsDeleteTime(props: Record<string, unknown>) {
   return (<>
-{((props.comment?.time && props.ctxData?.repository?.isTimetrackerEnabled ctx)) ? (<> {/* compatibility with time comments made before v1.14 */}
+{((props.comment?.time && props.ctxData?.repository?.isTimetrackerEnabled?.(ctx))) ? (<> {/* compatibility with time comments made before v1.14 */}
 	{(!(props.comment?.time?.deleted)) ? (<>
 		{((props.ctxData?.isAdmin || (props.ctxData?.isSigned && props.ctxData?.signedUserID === props.comment?.posterID))) ? (<>
 			<span className="tw-ml-auto">

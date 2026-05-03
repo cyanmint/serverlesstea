@@ -8,10 +8,10 @@ export default function AddList(props: Record<string, unknown>) {
 	<div className="ui right">
 		<button className="ui primary tiny button show-modal"
 			data-modal="#add-secret-modal"
-			data-modal-form.action={String(props.link ?? "")}
+			{...{"data-modal-form.action": String(props.link ?? "")}}
 			data-modal-header={String(i18n("secrets.add_secret") ?? "")}
-			data-modal-secret-name.value=""
-			data-modal-secret-name.read-only="false"
+			{...{"data-modal-secret-name.value": ""}}
+			{...{"data-modal-secret-name.read-only": "false"}}
 			data-modal-secret-data=""
 			data-modal-secret-description=""
 		>
@@ -44,11 +44,11 @@ export default function AddList(props: Record<string, unknown>) {
 				</span>
 				<button className="btn interact-bg show-modal tw-p-2"
 					data-modal="#add-secret-modal"
-					data-modal-form.action={String(props.link ?? "")}
+					{...{"data-modal-form.action": String(props.link ?? "")}}
 					data-modal-header={String(i18n("secrets.edit_secret") ?? "")}
 					data-tooltip-content={String(i18n("secrets.edit_secret") ?? "")}
-					data-modal-secret-name.value={String(props.name ?? "")}
-					data-modal-secret-name.read-only="true"
+					{...{"data-modal-secret-name.value": String(props.name ?? "")}}
+					{...{"data-modal-secret-name.read-only": "true"}}
 					data-modal-secret-data=""
 					data-modal-secret-description={`${(props.description) ? `${String(props.description ?? "")}` : ""}`}
 				>

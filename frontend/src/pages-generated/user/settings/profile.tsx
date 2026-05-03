@@ -16,15 +16,15 @@ export default function Profile(props: Record<string, unknown>) {
 						<span className="tw-text-red tw-hidden" id="name-change-prompt"> {i18n("settings.change_username_prompt")}</span>
 						<span className="tw-text-red tw-hidden" id="name-change-redirect-prompt"> {i18n("settings.change_username_redirect_prompt")}</span>
 					</label>
-					<input id="username" name="name" value={String(props.signedUser?.name ?? "")} data-name={String(props.signedUser?.name ?? "")} required {((!(props.signedUser?.isLocal) || props.userDisabledFeatures?.contains "change_username" || props.isReverseProxy)) ? (< />disabled</>) : null} maxlength="40">
-					{((!(props.signedUser?.isLocal) || props.userDisabledFeatures?.contains "change_username" || props.isReverseProxy)) ? (<>
+					<input id="username" name="name" value={String(props.signedUser?.name ?? "")} data-name={String(props.signedUser?.name ?? "")} required {...((!(props.signedUser?.isLocal) || props.userDisabledFeatures?.contains?.("change_username") || props.isReverseProxy) ? {"disabled": true} : {})} maxlength="40" />
+					{((!(props.signedUser?.isLocal) || props.userDisabledFeatures?.contains?.("change_username") || props.isReverseProxy)) ? (<>
 					<p className="help tw-text-blue">{i18n("settings.password_username_disabled")}</p>
 					</>) : null}
 				</div>
 				<div className={`field ${(props.err_FullName) ? `error` : ""}`}>
 					<label htmlFor="full_name">{i18n("settings.full_name")}</label>
-					<input id="full_name" name="full_name" value={String(props.signedUser?.fullName ?? "")} {...(props.userDisabledFeatures?.contains "change_full_name" ? {"disabled": true} : {})} maxlength="100" />
-					{(props.userDisabledFeatures?.contains "change_full_name") ? (<>
+					<input id="full_name" name="full_name" value={String(props.signedUser?.fullName ?? "")} {...(props.userDisabledFeatures?.contains?.("change_full_name") ? {"disabled": true} : {})} maxlength="100" />
+					{(props.userDisabledFeatures?.contains?.("change_full_name")) ? (<>
 					<p className="help tw-text-blue">{i18n("settings.password_full_name_disabled")}</p>
 					</>) : null}
 				</div>
@@ -67,11 +67,11 @@ export default function Profile(props: Record<string, unknown>) {
 						<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 						<div className="menu">
 							{((props.allowedUserVisibilityModes) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								{("$mode.IsPublic") ? (<>
+								{(item.mode?.isPublic) ? (<>
 									<div className="item" data-tooltip-content={String(i18n("settings.visibility.public_tooltip") ?? "")} data-value="0">{i18n("settings.visibility.public")}</div>
-								</>) : null} {("$mode.IsLimited") ? (<>
+								</>) : null} {(item.mode?.isLimited) ? (<>
 									<div className="item" data-tooltip-content={String(i18n("settings.visibility.limited_tooltip") ?? "")} data-value="1">{i18n("settings.visibility.limited")}</div>
-								</>) : null} {("$mode.IsPrivate") ? (<>
+								</>) : null} {(item.mode?.isPrivate) ? (<>
 									<div className="item" data-tooltip-content={String(i18n("settings.visibility.private_tooltip") ?? "")} data-value="2">{i18n("settings.visibility.private")}</div>
 								</>) : null}
 							</React.Fragment>))}
@@ -109,7 +109,7 @@ export default function Profile(props: Record<string, unknown>) {
 				{(!(props.disableGravatar)) ? (<>
 				<div className="inline field">
 					<div className="ui radio checkbox">
-						<input name="source" value="lookup" type="radio" {(!(props.signedUser?.useCustomAvatar)) ? (< />checked</>) : null}>
+						<input name="source" value="lookup" type="radio" {...(!(props.signedUser?.useCustomAvatar) ? {"checked": true} : {})} />
 						<label>{i18n("settings.lookup_avatar_by_mail")}</label>
 					</div>
 				</div>

@@ -17,7 +17,7 @@ export default function Edit(props: Record<string, unknown>) {
 			<label>{i18n("packages.filter.type")}</label>
 			<select className="ui selection dropdown" name="type">
 				{((props.availableTypes) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-				<option{(props.cleanupRule?.type === "$type") ? (<> selected="selected"</>) : null} value={String("" ?? "")}>{/* TODO: {{$type.Name}} */}</option>
+				<option{...(props.cleanupRule?.type === type ? {"selected": "selected"} : {})} value={String("" ?? "")}>{/* TODO: {{$type.Name}} */}</option>
 				</React.Fragment>))}
 			</select>
 		</div>
@@ -32,13 +32,13 @@ export default function Edit(props: Record<string, unknown>) {
 		<div className={`field ${(props.err_KeepCount) ? `error` : ""}`}>
 			<label>{i18n("packages.owner.settings.cleanuprules.keep.count")}:</label>
 			<select className="ui selection dropdown" name="keep_count">
-				<option{(props.cleanupRule?.keepCount === 0) ? (<> selected="selected"</>) : null} value="0"></option>
-				<option{(props.cleanupRule?.keepCount === 1) ? (<> selected="selected"</>) : null} value="1">{i18n("packages.owner.settings.cleanuprules.keep.count.1")}</option>
-				<option{(props.cleanupRule?.keepCount === 5) ? (<> selected="selected"</>) : null} value="5">{i18n("packages.owner.settings.cleanuprules.keep.count.n")}</option>
-				<option{(props.cleanupRule?.keepCount === 10) ? (<> selected="selected"</>) : null} value="10">{i18n("packages.owner.settings.cleanuprules.keep.count.n")}</option>
-				<option{(props.cleanupRule?.keepCount === 25) ? (<> selected="selected"</>) : null} value="25">{i18n("packages.owner.settings.cleanuprules.keep.count.n")}</option>
-				<option{(props.cleanupRule?.keepCount === 50) ? (<> selected="selected"</>) : null} value="50">{i18n("packages.owner.settings.cleanuprules.keep.count.n")}</option>
-				<option{(props.cleanupRule?.keepCount === 100) ? (<> selected="selected"</>) : null} value="100">{i18n("packages.owner.settings.cleanuprules.keep.count.n")}</option>
+				<option{...(props.cleanupRule?.keepCount === 0 ? {"selected": "selected"} : {})} value="0"></option>
+				<option{...(props.cleanupRule?.keepCount === 1 ? {"selected": "selected"} : {})} value="1">{i18n("packages.owner.settings.cleanuprules.keep.count.1")}</option>
+				<option{...(props.cleanupRule?.keepCount === 5 ? {"selected": "selected"} : {})} value="5">{i18n("packages.owner.settings.cleanuprules.keep.count.n")}</option>
+				<option{...(props.cleanupRule?.keepCount === 10 ? {"selected": "selected"} : {})} value="10">{i18n("packages.owner.settings.cleanuprules.keep.count.n")}</option>
+				<option{...(props.cleanupRule?.keepCount === 25 ? {"selected": "selected"} : {})} value="25">{i18n("packages.owner.settings.cleanuprules.keep.count.n")}</option>
+				<option{...(props.cleanupRule?.keepCount === 50 ? {"selected": "selected"} : {})} value="50">{i18n("packages.owner.settings.cleanuprules.keep.count.n")}</option>
+				<option{...(props.cleanupRule?.keepCount === 100 ? {"selected": "selected"} : {})} value="100">{i18n("packages.owner.settings.cleanuprules.keep.count.n")}</option>
 			</select>
 		</div>
 		<div className={`field ${(props.err_KeepPattern) ? `error` : ""}`}>
@@ -51,13 +51,13 @@ export default function Edit(props: Record<string, unknown>) {
 		<div className={`field ${(props.err_RemoveDays) ? `error` : ""}`}>
 			<label>{i18n("packages.owner.settings.cleanuprules.remove.days")}:</label>
 			<select className="ui selection dropdown" name="remove_days">
-				<option{(props.cleanupRule?.removeDays === 0) ? (<> selected="selected"</>) : null} value="0"></option>
-				<option{(props.cleanupRule?.removeDays === 7) ? (<> selected="selected"</>) : null} value="7">{i18n("tool.days")}</option>
-				<option{(props.cleanupRule?.removeDays === 14) ? (<> selected="selected"</>) : null} value="14">{i18n("tool.days")}</option>
-				<option{(props.cleanupRule?.removeDays === 30) ? (<> selected="selected"</>) : null} value="30">{i18n("tool.days")}</option>
-				<option{(props.cleanupRule?.removeDays === 60) ? (<> selected="selected"</>) : null} value="60">{i18n("tool.days")}</option>
-				<option{(props.cleanupRule?.removeDays === 90) ? (<> selected="selected"</>) : null} value="90">{i18n("tool.days")}</option>
-				<option{(props.cleanupRule?.removeDays === 180) ? (<> selected="selected"</>) : null} value="180">{i18n("tool.days")}</option>
+				<option{...(props.cleanupRule?.removeDays === 0 ? {"selected": "selected"} : {})} value="0"></option>
+				<option{...(props.cleanupRule?.removeDays === 7 ? {"selected": "selected"} : {})} value="7">{i18n("tool.days")}</option>
+				<option{...(props.cleanupRule?.removeDays === 14 ? {"selected": "selected"} : {})} value="14">{i18n("tool.days")}</option>
+				<option{...(props.cleanupRule?.removeDays === 30 ? {"selected": "selected"} : {})} value="30">{i18n("tool.days")}</option>
+				<option{...(props.cleanupRule?.removeDays === 60 ? {"selected": "selected"} : {})} value="60">{i18n("tool.days")}</option>
+				<option{...(props.cleanupRule?.removeDays === 90 ? {"selected": "selected"} : {})} value="90">{i18n("tool.days")}</option>
+				<option{...(props.cleanupRule?.removeDays === 180 ? {"selected": "selected"} : {})} value="180">{i18n("tool.days")}</option>
 			</select>
 		</div>
 		<div className={`field ${(props.err_RemovePattern) ? `error` : ""}`}>

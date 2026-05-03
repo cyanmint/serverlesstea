@@ -22,11 +22,11 @@ export default function Compare(props: Record<string, unknown>) {
 		{/* $BaseCompareName */}
 		{/* $HeadCompareName */}
 		{/* $OwnForkCompareName */}
-		{(props.ownForkRepo -) ? (<>
+		{(props.ownForkRepo?.("-")) ? (<>
 			{/* TODO: {{$OwnForkCompareName = $.OwnForkRepo.FullName -}} */}
 		{/* TODO: {{end -}} */}
 		{/* $RootRepoCompareName */}
-		{(props.rootRepo -) ? (<>
+		{(props.rootRepo?.("-")) ? (<>
 			{/* TODO: {{$RootRepoCompareName = $.RootRepo.FullName -}} */}
 		{/* TODO: {{end -}} */}
 
@@ -72,7 +72,7 @@ export default function Compare(props: Record<string, unknown>) {
 								<a className="item" href={`${String(props.ownForkRepo?.link ?? "")}/compare//:`}>{/* $OwnForkCompareName */}:{item as any}</a>
 							</React.Fragment>))}
 						</>) : null}
-						{((props.rootRepo && props.rootRepo?.allowsPulls ctx)) ? (<>
+						{((props.rootRepo && props.rootRepo?.allowsPulls?.(ctx))) ? (<>
 							{((props.rootRepoBranches) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 								<a className="item" href={`${String(props.rootRepo?.link ?? "")}/compare//:`}>{/* $RootRepoCompareName */}:{item as any}</a>
 							</React.Fragment>))}
@@ -178,7 +178,7 @@ export default function Compare(props: Record<string, unknown>) {
 			{/* $allowCreatePR */}
 			{(props.isNothingToCompare) ? (<>
 				<div className="ui segment">
-					{("$allowCreatePR") ? (<>
+					{(allowCreatePR) ? (<>
 						{i18n("repo.pulls.nothing_to_compare_and_allow_empty_pr")}
 					</>) : null} {((props.compareInfo?.baseRef?.isBranch && props.compareInfo?.headRef?.isBranch)) ? (<>
 						{i18n("repo.pulls.nothing_to_compare")}
@@ -206,7 +206,7 @@ export default function Compare(props: Record<string, unknown>) {
 						{i18n("repo.archive.title_date")}
 					</>)}
 				</div>
-			</>) : null} {("$allowCreatePR") ? (<>
+			</>) : null} {(allowCreatePR) ? (<>
 				<div className={`ui info message flex-text-block pullrequest-form-toggle ${(props.expandNewPrForm) ? `tw-hidden` : ""}`}>
 					<span className="tw-flex-1">{i18n("repo.pulls.new.description")}</span>
 					<a className="ui button primary show-panel toggle" data-panel=".pullrequest-form-toggle, .pullrequest-form">{i18n("repo.pulls.new")}</a>
@@ -222,7 +222,7 @@ export default function Compare(props: Record<string, unknown>) {
 		</>)}
 	</div>
 
-	{("$showDiffBox") ? (<>
+	{(showDiffBox) ? (<>
 		<div className="ui container fluid padded tw-my-4">
 			{/* template: repo/commits_table */}
 			{/* template: repo/diff/box */}

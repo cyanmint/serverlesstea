@@ -29,7 +29,7 @@ export default function Queue(props: Record<string, unknown>) {
 				<td>{/* TODO: {{$q.GetItemTypeName}} */}</td>
 				<td>{/* TODO: {{$q.GetWorkerNumber}} */}</td>
 				<td>{/* TODO: {{$q.GetWorkerActiveNumber}} */}</td>
-				<td>{/* $sum */}{("$sum" < 0) ? (<>-</>) : (<>{/* $sum */}</>)}</td>
+				<td>{/* $sum */}{(sum < 0) ? (<>-</>) : (<>{/* $sum */}</>)}</td>
 				<td><a href={`${String(props.link ?? "")}/`} className="button">{i18n("admin.monitor.queue.review_add")}</a></td>
 			</tr>
 			</React.Fragment>))}

@@ -10,7 +10,7 @@ export default function Navbar(props: Record<string, unknown>) {
 	<a className={`${(props.pageIsPulse) ? `active ` : ""}item`} href={`${String(props.repoLink ?? "")}/activity`}>
 		{i18n("repo.activity.navbar.pulse")}
 	</a>
-	{("$canReadCode") ? (<>
+	{(canReadCode) ? (<>
 		<a className={`${(props.pageIsContributors) ? `active ` : ""}item`} href={`${String(props.repoLink ?? "")}/activity/contributors`}>
 			{i18n("repo.activity.navbar.contributors")}
 		</a>

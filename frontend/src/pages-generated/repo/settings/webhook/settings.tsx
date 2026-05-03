@@ -18,7 +18,7 @@ export default function Settings(props: Record<string, unknown>) {
 
 <div className="inline field">
 	<div className="ui checkbox">
-		<input name="active" type="checkbox" {(("$isNew" || props.webhook?.isActive)) ? (< />checked</>) : null}>
+		<input name="active" type="checkbox" {...((isNew || props.webhook?.isActive) ? {"checked": true} : {})} />
 		<label>{i18n("repo.settings.active")}</label>
 		<span className="help">{i18n("repo.settings.active_helper")}</span>
 	</div>
@@ -27,12 +27,12 @@ export default function Settings(props: Record<string, unknown>) {
 {/* Authorization Header */}
 {(props.useAuthorizationHeader) ? (<>
 	{/* $attributeValid */}
-	{(!("$attributeValid")) ? (<><div className="ui error message">Invalid UseAuthorizationHeader: {props.useAuthorizationHeader as any}}</div></>) : null}
+	{(!(attributeValid)) ? (<><div className="ui error message">Invalid UseAuthorizationHeader: {props.useAuthorizationHeader as any}}</div></>) : null}
 	{/* $required */}
-	<div className={`field ${("$required") ? `required` : ""}`}>
+	<div className={`field ${(required) ? `required` : ""}`}>
 		<label>{i18n("repo.settings.authorization_header")}</label>
-		<input name="authorization_header" type="text" value={String(props.webhook?.headerAuthorization ?? "")} {("$required") ? (< />required placeholder="Bearer $access_token"</>) : null}>
-		{(!("$required")) ? (<>
+		<input name="authorization_header" type="text" value={String(props.webhook?.headerAuthorization ?? "")} {...(required ? {"required": true, "placeholder": "Bearer $access_token"} : {})} />
+		{(!(required)) ? (<>
 			<span className="help">{i18n("repo.settings.authorization_header_desc")}</span>
 		</>) : null}
 	</div>
@@ -41,11 +41,11 @@ export default function Settings(props: Record<string, unknown>) {
 {/* Secret */}
 {(props.useRequestSecret) ? (<>
 	{/* $attributeValid */}
-	{(!("$attributeValid")) ? (<><div className="ui error message">Invalid UseRequestSecret: {props.useRequestSecret as any}}</div></>) : null}
+	{(!(attributeValid)) ? (<><div className="ui error message">Invalid UseRequestSecret: {props.useRequestSecret as any}}</div></>) : null}
 	{/* $required */}
-	<div className={`field ${("$required") ? `required` : ""}`}>
+	<div className={`field ${(required) ? `required` : ""}`}>
 		<label>{i18n("repo.settings.secret")}</label>
-		<input name="secret" type="password" value={String(props.webhook?.secret ?? "")} autocomplete="off" {...("$required" ? {"required": true} : {})} />
+		<input name="secret" type="password" value={String(props.webhook?.secret ?? "")} autocomplete="off" {...(required ? {"required": true} : {})} />
 		<span className="help">{i18n("repo.settings.webhook_secret_desc")}</span>
 	</div>
 </>) : null}
@@ -71,7 +71,7 @@ export default function Settings(props: Record<string, unknown>) {
 	<div className="grouped event type fields">
 		<div className="field">
 			<div className="ui radio non-events checkbox">
-				<input name="events" type="radio" value="push_only" {(("$isNew" || props.webhook?.pushOnly)) ? (< />checked</>) : null}>
+				<input name="events" type="radio" value="push_only" {...((isNew || props.webhook?.pushOnly) ? {"checked": true} : {})} />
 				<label>{i18n("repo.settings.event_push_only")}</label>
 			</div>
 		</div>
@@ -98,7 +98,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="create" type="checkbox" {...(props.webhook?.hookEvents?.get "create" ? {"checked": true} : {})} />
+					<input name="create" type="checkbox" {...(props.webhook?.hookEvents?.get?.("create") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_create")}</label>
 					<span className="help">{i18n("repo.settings.event_create_desc")}</span>
 				</div>
@@ -108,7 +108,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="delete" type="checkbox" {...(props.webhook?.hookEvents?.get "delete" ? {"checked": true} : {})} />
+					<input name="delete" type="checkbox" {...(props.webhook?.hookEvents?.get?.("delete") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_delete")}</label>
 					<span className="help">{i18n("repo.settings.event_delete_desc")}</span>
 				</div>
@@ -118,7 +118,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="fork" type="checkbox" {...(props.webhook?.hookEvents?.get "fork" ? {"checked": true} : {})} />
+					<input name="fork" type="checkbox" {...(props.webhook?.hookEvents?.get?.("fork") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_fork")}</label>
 					<span className="help">{i18n("repo.settings.event_fork_desc")}</span>
 				</div>
@@ -128,7 +128,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="push" type="checkbox" {...(props.webhook?.hookEvents?.get "push" ? {"checked": true} : {})} />
+					<input name="push" type="checkbox" {...(props.webhook?.hookEvents?.get?.("push") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_push")}</label>
 					<span className="help">{i18n("repo.settings.event_push_desc")}</span>
 				</div>
@@ -138,7 +138,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="repository" type="checkbox" {...(props.webhook?.hookEvents?.get "repository" ? {"checked": true} : {})} />
+					<input name="repository" type="checkbox" {...(props.webhook?.hookEvents?.get?.("repository") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_repository")}</label>
 					<span className="help">{i18n("repo.settings.event_repository_desc")}</span>
 				</div>
@@ -148,7 +148,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="release" type="checkbox" {...(props.webhook?.hookEvents?.get "release" ? {"checked": true} : {})} />
+					<input name="release" type="checkbox" {...(props.webhook?.hookEvents?.get?.("release") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_release")}</label>
 					<span className="help">{i18n("repo.settings.event_release_desc")}</span>
 				</div>
@@ -158,7 +158,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="package" type="checkbox" {...(props.webhook?.hookEvents?.get "package" ? {"checked": true} : {})} />
+					<input name="package" type="checkbox" {...(props.webhook?.hookEvents?.get?.("package") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_package")}</label>
 					<span className="help">{i18n("repo.settings.event_package_desc")}</span>
 				</div>
@@ -169,7 +169,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="wiki" type="checkbox" {...(props.webhook?.hookEvents?.get "wiki" ? {"checked": true} : {})} />
+					<input name="wiki" type="checkbox" {...(props.webhook?.hookEvents?.get?.("wiki") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_wiki")}</label>
 					<span className="help">{i18n("repo.settings.event_wiki_desc")}</span>
 				</div>
@@ -180,7 +180,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="status" type="checkbox" {...(props.webhook?.hookEvents?.get "status" ? {"checked": true} : {})} />
+					<input name="status" type="checkbox" {...(props.webhook?.hookEvents?.get?.("status") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_statuses")}</label>
 					<span className="help">{i18n("repo.settings.event_statuses_desc")}</span>
 				</div>
@@ -195,7 +195,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="issues" type="checkbox" {...(props.webhook?.hookEvents?.get "issues" ? {"checked": true} : {})} />
+					<input name="issues" type="checkbox" {...(props.webhook?.hookEvents?.get?.("issues") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_issues")}</label>
 					<span className="help">{i18n("repo.settings.event_issues_desc")}</span>
 				</div>
@@ -205,7 +205,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="issue_assign" type="checkbox" {...(props.webhook?.hookEvents?.get "issue_assign" ? {"checked": true} : {})} />
+					<input name="issue_assign" type="checkbox" {...(props.webhook?.hookEvents?.get?.("issue_assign") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_issue_assign")}</label>
 					<span className="help">{i18n("repo.settings.event_issue_assign_desc")}</span>
 				</div>
@@ -215,7 +215,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="issue_label" type="checkbox" {...(props.webhook?.hookEvents?.get "issue_label" ? {"checked": true} : {})} />
+					<input name="issue_label" type="checkbox" {...(props.webhook?.hookEvents?.get?.("issue_label") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_issue_label")}</label>
 					<span className="help">{i18n("repo.settings.event_issue_label_desc")}</span>
 				</div>
@@ -225,7 +225,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="issue_milestone" type="checkbox" {...(props.webhook?.hookEvents?.get "issue_milestone" ? {"checked": true} : {})} />
+					<input name="issue_milestone" type="checkbox" {...(props.webhook?.hookEvents?.get?.("issue_milestone") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_issue_milestone")}</label>
 					<span className="help">{i18n("repo.settings.event_issue_milestone_desc")}</span>
 				</div>
@@ -235,7 +235,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="issue_comment" type="checkbox" {...(props.webhook?.hookEvents?.get "issue_comment" ? {"checked": true} : {})} />
+					<input name="issue_comment" type="checkbox" {...(props.webhook?.hookEvents?.get?.("issue_comment") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_issue_comment")}</label>
 					<span className="help">{i18n("repo.settings.event_issue_comment_desc")}</span>
 				</div>
@@ -250,7 +250,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="pull_request" type="checkbox" {...(props.webhook?.hookEvents?.get "pull_request" ? {"checked": true} : {})} />
+					<input name="pull_request" type="checkbox" {...(props.webhook?.hookEvents?.get?.("pull_request") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_pull_request")}</label>
 					<span className="help">{i18n("repo.settings.event_pull_request_desc")}</span>
 				</div>
@@ -260,7 +260,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="pull_request_assign" type="checkbox" {...(props.webhook?.hookEvents?.get "pull_request_assign" ? {"checked": true} : {})} />
+					<input name="pull_request_assign" type="checkbox" {...(props.webhook?.hookEvents?.get?.("pull_request_assign") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_pull_request_assign")}</label>
 					<span className="help">{i18n("repo.settings.event_pull_request_assign_desc")}</span>
 				</div>
@@ -270,7 +270,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="pull_request_label" type="checkbox" {...(props.webhook?.hookEvents?.get "pull_request_label" ? {"checked": true} : {})} />
+					<input name="pull_request_label" type="checkbox" {...(props.webhook?.hookEvents?.get?.("pull_request_label") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_pull_request_label")}</label>
 					<span className="help">{i18n("repo.settings.event_pull_request_label_desc")}</span>
 				</div>
@@ -280,7 +280,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="pull_request_milestone" type="checkbox" {...(props.webhook?.hookEvents?.get "pull_request_milestone" ? {"checked": true} : {})} />
+					<input name="pull_request_milestone" type="checkbox" {...(props.webhook?.hookEvents?.get?.("pull_request_milestone") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_pull_request_milestone")}</label>
 					<span className="help">{i18n("repo.settings.event_pull_request_milestone_desc")}</span>
 				</div>
@@ -290,7 +290,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="pull_request_comment" type="checkbox" {...(props.webhook?.hookEvents?.get "pull_request_comment" ? {"checked": true} : {})} />
+					<input name="pull_request_comment" type="checkbox" {...(props.webhook?.hookEvents?.get?.("pull_request_comment") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_pull_request_comment")}</label>
 					<span className="help">{i18n("repo.settings.event_pull_request_comment_desc")}</span>
 				</div>
@@ -300,7 +300,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="pull_request_review" type="checkbox" {...(props.webhook?.hookEvents?.get "pull_request_review" ? {"checked": true} : {})} />
+					<input name="pull_request_review" type="checkbox" {...(props.webhook?.hookEvents?.get?.("pull_request_review") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_pull_request_review")}</label>
 					<span className="help">{i18n("repo.settings.event_pull_request_review_desc")}</span>
 				</div>
@@ -310,7 +310,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="pull_request_sync" type="checkbox" {...(props.webhook?.hookEvents?.get "pull_request_sync" ? {"checked": true} : {})} />
+					<input name="pull_request_sync" type="checkbox" {...(props.webhook?.hookEvents?.get?.("pull_request_sync") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_pull_request_sync")}</label>
 					<span className="help">{i18n("repo.settings.event_pull_request_sync_desc")}</span>
 				</div>
@@ -320,7 +320,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="pull_request_review_request" type="checkbox" {...(props.webhook?.hookEvents?.get "pull_request_review_request" ? {"checked": true} : {})} />
+					<input name="pull_request_review_request" type="checkbox" {...(props.webhook?.hookEvents?.get?.("pull_request_review_request") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_pull_request_review_request")}</label>
 					<span className="help">{i18n("repo.settings.event_pull_request_review_request_desc")}</span>
 				</div>
@@ -334,7 +334,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="workflow_run" type="checkbox" {...(props.webhook?.hookEvents?.get "workflow_run" ? {"checked": true} : {})} />
+					<input name="workflow_run" type="checkbox" {...(props.webhook?.hookEvents?.get?.("workflow_run") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_workflow_run")}</label>
 					<span className="help">{i18n("repo.settings.event_workflow_run_desc")}</span>
 				</div>
@@ -344,7 +344,7 @@ export default function Settings(props: Record<string, unknown>) {
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
-					<input name="workflow_job" type="checkbox" {...(props.webhook?.hookEvents?.get "workflow_job" ? {"checked": true} : {})} />
+					<input name="workflow_job" type="checkbox" {...(props.webhook?.hookEvents?.get?.("workflow_job") ? {"checked": true} : {})} />
 					<label>{i18n("repo.settings.event_workflow_job")}</label>
 					<span className="help">{i18n("repo.settings.event_workflow_job_desc")}</span>
 				</div>
@@ -354,7 +354,7 @@ export default function Settings(props: Record<string, unknown>) {
 </div>
 
 <div className="field">
-	{("$isNew") ? (<>
+	{(isNew) ? (<>
 		<button className="ui primary button">{i18n("repo.settings.add_webhook")}</button>
 	</>) : (<>
 		<button className="ui primary button">{i18n("repo.settings.update_webhook")}</button>

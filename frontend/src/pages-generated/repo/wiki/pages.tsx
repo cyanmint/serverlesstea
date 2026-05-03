@@ -23,7 +23,7 @@ export default function Pages(props: Record<string, unknown>) {
 						<td>
 							<span className="svg-icon" aria-label="octicon-file"></span>
 							<a href={`${String(props.repoLink ?? "")}/wiki/${String(props.subURL ?? "")}`}>{item.name as any}</a>
-							<a className="wiki-git-entry" href={`${String(props.repoLink ?? "")}/wiki/${String(props.gitEntryName | PathEscape ?? "")}`} data-tooltip-content={String(i18n("repo.wiki.original_git_entry_tooltip") ?? "")}><span className="svg-icon" aria-label="octicon-chevron-right"></span></a>
+							<a className="wiki-git-entry" href={`${String(props.repoLink ?? "")}/wiki/${String(props.gitEntryName?.("|", "PathEscape") ?? "")}`} data-tooltip-content={String(i18n("repo.wiki.original_git_entry_tooltip") ?? "")}><span className="svg-icon" aria-label="octicon-chevron-right"></span></a>
 						</td>
 						{/* $timeSince */}
 						<td className="tw-text-right">{i18n("repo.wiki.last_updated")}</td>

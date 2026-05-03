@@ -14,23 +14,23 @@ export default function Repos(props: Record<string, unknown>) {
 					<div className="ui list">
 						{((props.dirs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 							{/* $repo */}
-							<div className={`item ${(!("$repo")) ? `tw-py-1` : ""}`}>{/* if not repo, then there are "adapt" buttons, so the padding shouldn't be that default large */}
+							<div className={`item ${(!(repo)) ? `tw-py-1` : ""}`}>{/* if not repo, then there are "adapt" buttons, so the padding shouldn't be that default large */}
 								<div className="content">
-									{("$repo") ? (<>
-										{("$repo.IsPrivate") ? (<>
+									{(repo) ? (<>
+										{(item.repo?.isPrivate) ? (<>
 											<span className="tw-text-gold icon"><span className="svg-icon" aria-label="octicon-lock"></span></span>
-										</>) : null} {("$repo.IsFork") ? (<>
+										</>) : null} {(item.repo?.isFork) ? (<>
 											<span className="icon"><span className="svg-icon" aria-label="octicon-repo-forked"></span></span>
-										</>) : null} {("$repo.IsMirror") ? (<>
+										</>) : null} {(item.repo?.isMirror) ? (<>
 											<span className="icon"><span className="svg-icon" aria-label="octicon-mirror"></span></span>
-										</>) : null} {("$repo.IsTemplate") ? (<>
+										</>) : null} {(item.repo?.isTemplate) ? (<>
 											<span className="icon"><span className="svg-icon" aria-label="octicon-repo-template"></span></span>
 										</>) : (<>
 											<span className="icon"><span className="svg-icon" aria-label="octicon-repo"></span></span>
 										</>)}
 										<a className="muted name" href={String("" ?? "")}>{/* TODO: {{$repo.OwnerName}} */}/{/* TODO: {{$repo.Name}} */}</a>
-										<span className="tw-text-text-light-3" {(!("$repo.Size" === 0)) ? (<> data-tooltip-content={String("" ?? "")}</>) : null}>{/* TODO: {{FileSize $repo.Size}} */}</span>
-										{("$repo.IsFork") ? (<>
+										<span className="tw-text-text-light-3" {...(!(item.repo?.size === 0) ? {"data-tooltip-content": String("" ?? "")} : {})}>{/* TODO: {{FileSize $repo.Size}} */}</span>
+										{(item.repo?.isFork) ? (<>
 											{i18n("repo.forked_from")}
 											<span><a href={String("" ?? "")}>{/* TODO: {{$repo.BaseRepo.OwnerName}} */}/{/* TODO: {{$repo.BaseRepo.Name}} */}</a></span>
 										</>) : null}

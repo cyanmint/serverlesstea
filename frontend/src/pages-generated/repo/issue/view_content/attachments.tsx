@@ -24,12 +24,12 @@ export default function Attachments(props: Record<string, unknown>) {
 				</a>
 			</div>
 			<div className="flex-text-block tw-p-2">
-				<span className="ui tw-text-text-light">{props.size | FileSize as any}</span>
+				<span className="ui tw-text-text-light">{props.size?.("|", "FileSize") as any}</span>
 			</div>
 		</div>
 	{/* TODO: {{end -}} */}
 
-	{("$hasThumbnails") ? (<>
+	{(hasThumbnails) ? (<>
 		<div className="divider"></div>
 		<div className="ui small thumbnails">
 			{/* TODO: {{- range .Attachments -}} */}

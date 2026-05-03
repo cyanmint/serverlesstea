@@ -60,7 +60,7 @@ so this template should be kept as small as possible, DO NOT put large component
 {/* TODO: {{- end -}} */}
 
 {/* TODO: {{- if $commit -}} */}
-<a {("$commitBaseLink") ? (<>href={`/`}</>) : null} className={`ui label commit-id-short `} rel="nofollow">
+<a {...(commitBaseLink ? {"href": `/`} : {})} className={`ui label commit-id-short `} rel="nofollow">
 	{/* TODO: {{- ShortSha $commit.ID.String -}} */}
 {/* TODO: {{- end -}} */}
 {/* TODO: {{- if or (not $commit) $extraClass}} */}{/* only show the lock icon if there is no commit info (icon only) or the commit is really signed */}

@@ -19,7 +19,7 @@ export default function HomeSidebarTop(props: Record<string, unknown>) {
 
 		<div className="repo-description tw-break-anywhere tw-gap-2">
 			{/* TODO: {{- $description := .Repository.DescriptionHTML ctx -}} */}
-			{("$description") ? (<>{/* TODO: {{$description | RenderCodeBlock}} */}</>) : (<>{i18n("repo.repo_no_desc")}</>)}
+			{(description) ? (<>{/* TODO: {{$description | RenderCodeBlock}} */}</>) : (<>{i18n("repo.repo_no_desc")}</>)}
 		</div>
 
 		{(props.repository?.website) ? (<>
@@ -68,7 +68,7 @@ export default function HomeSidebarTop(props: Record<string, unknown>) {
 				<span className="svg-icon" aria-label="octicon-cross-reference"></span> {i18n("repo.cite_this_repo")}
 			</a>
 		</>) : null}
-		<div className="flex-text-block muted" {(!(props.repository?.size === 0)) ? (<>data-tooltip-placement="top" data-tooltip-content={String(props.repository?.sizeDetailsString ?? "")}</>) : null}>
+		<div className="flex-text-block muted" {...(!(props.repository?.size === 0) ? {"data-tooltip-placement": "top", "data-tooltip-content": String(props.repository?.sizeDetailsString ?? "")} : {})}>
 			{/* $fileSizeFormatted */}{/* the formatted string is always "{val} {unit}" */}
 			{/* $fileSizeFields */}
 			<span className="svg-icon" aria-label="octicon-database"></span> <b>{/* TODO: {{ctx.Locale.PrettyNumber (index $fileSizeFields 0)}} */}</b> {/* TODO: {{index $fileSizeFields 1}} */}

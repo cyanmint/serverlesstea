@@ -5,20 +5,12 @@ export default function Fork(props: Record<string, unknown>) {
   return (<>
 {/* $canNotForkOwn */}
 <div className="ui labeled button"
-	{(!(props.isSigned)) ? (<>
-		data-tooltip-content={String(i18n("repo.fork_guest_user") ?? "")}
-	</>) : null} {("$canNotForkOwn") ? (<>
-		data-tooltip-content={String(i18n("repo.fork_from_self") ?? "")}
-	</>) : null}
+	{...(!(props.isSigned) ? {"data-tooltip-content": String(i18n("repo.fork_guest_user") ?? "")} : {})} {...(canNotForkOwn ? {"data-tooltip-content": String(i18n("repo.fork_from_self") ?? "")} : {})}
 >
 	<a role="button" className={`ui compact small basic button ${(props.showForkModal) ? `show-modal` : ""}`}
-		{(!(props.isSigned)) ? (<>
-			href={`/user/login`}
-		</>) : null} {(props.showForkModal) ? (<>{/* see backend comment for this logic */}
+		{...(!(props.isSigned) ? {"href": `/user/login`} : {})} {(props.showForkModal) ? (<>{/* see backend comment for this logic */}
 			href="#" data-modal="#fork-repo-modal"
-		</>) : null} {("len $.UserAndOrgForks" === 1) ? (<>
-			href={`/`}
-		</>) : null} {("$canNotForkOwn") ? (<>
+		</>) : null} {...("len $.UserAndOrgForks" === 1 ? {"href": `/`} : {})} {(canNotForkOwn) ? (<>
 			href="#"
 		</>) : (<>
 			href={`${String(props.repoLink ?? "")}/fork`}

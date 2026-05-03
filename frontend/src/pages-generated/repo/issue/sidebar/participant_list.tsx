@@ -8,7 +8,7 @@ export default function ParticipantList(props: Record<string, unknown>) {
 	<span className="text"><strong>{i18n("repo.issues.num_participants")}</strong></span>
 	<div className="ui list tw-flex tw-flex-wrap">
 		{((props.participants) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-			<a {(item.iD > 0) ? (<>href={String(props.homeLink ?? "")}</>) : null} data-tooltip-content={String(props.getDisplayName ?? "")}>
+			<a {...(item.iD > 0 ? {"href": String(props.homeLink ?? "")} : {})} data-tooltip-content={String(props.getDisplayName ?? "")}>
 				{/* TODO: {{ctx.AvatarUtils.Avatar . 20 "tw-my-0.5 tw-mr-1"}} */}
 			</a>
 		</React.Fragment>))}

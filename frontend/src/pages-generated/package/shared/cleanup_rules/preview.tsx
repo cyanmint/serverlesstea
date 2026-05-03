@@ -31,7 +31,7 @@ export default function Preview(props: Record<string, unknown>) {
 				</tr>
 			{/* else */}
 				<tr>
-					<td colspan="6">{i18n("packages.owner.settings.cleanuprules.preview.none")}</td>
+					<td colSpan="6">{i18n("packages.owner.settings.cleanuprules.preview.none")}</td>
 				</tr>
 			</React.Fragment>))}
 		</tbody>

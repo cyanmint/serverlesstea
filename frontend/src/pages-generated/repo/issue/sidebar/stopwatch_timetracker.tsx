@@ -3,7 +3,7 @@ import { i18n } from '../../../../lib/i18n'
 
 export default function StopwatchTimetracker(props: Record<string, unknown>) {
   return (<>
-{(props.repository?.isTimetrackerEnabled ctx) ? (<>
+{(props.repository?.isTimetrackerEnabled?.(ctx)) ? (<>
 	{((props.canUseTimetracker && !(props.repository?.isArchived))) ? (<>
 		<div className="divider"></div>
 		<div>

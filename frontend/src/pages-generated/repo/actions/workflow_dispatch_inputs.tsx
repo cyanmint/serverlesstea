@@ -19,7 +19,7 @@ export default function WorkflowDispatchInputs(props: Record<string, unknown>) {
 				<label>{/* TODO: {{or .Description .Name}} */}:</label>
 				<select className="ui selection dropdown" name={String(props.name ?? "")}>
 					{((item.options) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-						<option value={String("" ?? "")} {...("$item.Default" === "." ? {"selected": true} : {})}>{item as any}</option>
+						<option value={String("" ?? "")} {...(item.item?.default === "." ? {"selected": true} : {})}>{item as any}</option>
 					</React.Fragment>))}
 				</select>
 			</>) : null} {(item.type === "boolean") ? (<>

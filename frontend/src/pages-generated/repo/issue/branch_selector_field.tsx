@@ -21,7 +21,7 @@ Still needs to figure out:
 <input id="ref_selector" name="ref" type="hidden" value={String(props.reference ?? "")} />
 <div className={`ui dropdown select-branch branch-selector-dropdown ellipsis-text-items ${(!(props.hasIssuesOrPullsWritePermission)) ? `disabled` : ""}`}
 	data-no-results={String(i18n("no_results_found") ?? "")}
-	{((props.issue && (props.isIssueWriter || props.hasIssuesOrPullsWritePermission))) ? (<>data-url-update-issueref={`${String(props.repoLink ?? "")}/issues/${String(props.issue?.index ?? "")}/ref`}</>) : null}
+	{...((props.issue && (props.isIssueWriter || props.hasIssuesOrPullsWritePermission)) ? {"data-url-update-issueref": `${String(props.repoLink ?? "")}/issues/${String(props.issue?.index ?? "")}/ref`} : {})}
 >
 	<div className="ui button branch-dropdown-button">
 		<span className="text-branch-name gt-ellipsis">{(props.reference) ? (<>{props.refEndName as any}</>) : (<>{i18n("repo.issues.no_ref")}</>)}</span>

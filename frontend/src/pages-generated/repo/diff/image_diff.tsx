@@ -5,7 +5,7 @@ export default function ImageDiff(props: Record<string, unknown>) {
   return (<>
 {((props.blobBase || props.blobHead)) ? (<>
 <tr>
-	<td colspan="2">
+	<td colSpan="2">
 		<div className="image-diff"
 			data-path-before={`${String(props.root?.beforeRawPath ?? "")}/`}
 			data-path-after={`${String(props.root?.rawPath ?? "")}/`}

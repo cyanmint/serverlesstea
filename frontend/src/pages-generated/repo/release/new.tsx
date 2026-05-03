@@ -81,7 +81,7 @@ export default function New(props: Record<string, unknown>) {
 					<div className="flex-text-block tw-flex-1">
 						<input name={`attachment-edit-${String(props.uUID ?? "")}`} className="tw-max-w-[48em]" required value={String(props.name ?? "")} />
 						<input name={`attachment-del-${String(props.uUID ?? "")}`} type="hidden" value="false" />
-						<span className="tw-text-text-light tw-flex-shrink-0">{item.size | FileSize as any}</span>
+						<span className="tw-text-text-light tw-flex-shrink-0">{item.size?.("|", "FileSize") as any}</span>
 						<span data-tooltip-content={String(i18n("repo.release.download_count") ?? "")}>
 							<span className="svg-icon" aria-label="octicon-info"></span>
 						</span>

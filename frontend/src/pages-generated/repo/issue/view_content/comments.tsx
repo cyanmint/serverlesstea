@@ -5,7 +5,7 @@ export default function Comments(props: Record<string, unknown>) {
   return (<>
 {/* alert */}
 {((props.issue?.comments) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-	{("call $.ShouldShowCommentType .Type") ? (<>
+	{(props.shouldShowCommentType?.(item.type)) ? (<>
 		{/* $createdStr */}
 
 		{/* 0 = COMMENT, 1 = REOPEN, 2 = CLOSE, 3 = ISSUE_REF, 4 = COMMIT_REF,
@@ -26,7 +26,7 @@ export default function Comments(props: Record<string, unknown>) {
 					{/* TODO: {{ctx.AvatarUtils.Avatar nil 40}} */}
 				</span>
 			</>) : (<>
-				<a className="timeline-avatar"{(item.poster?.iD > 0) ? (<> href={String(props.poster?.homeLink ?? "")}</>) : null}>
+				<a className="timeline-avatar"{...(item.poster?.iD > 0 ? {"href": String(props.poster?.homeLink ?? "")} : {})}>
 					{/* TODO: {{ctx.AvatarUtils.Avatar .Poster 40}} */}
 				</a>
 			</>)}
@@ -65,7 +65,7 @@ export default function Comments(props: Record<string, unknown>) {
 						</div>
 					</div>
 					<div className="ui attached segment comment-body" role="article">
-						<div className="render-content markup" {((props.permission?.isAdmin || props.hasIssuesOrPullsWritePermission || (props.isSigned && props.signedUserID === item.posterID))) ? (<>data-can-edit="true"</>) : null}>
+						<div className="render-content markup" {...((props.permission?.isAdmin || props.hasIssuesOrPullsWritePermission || (props.isSigned && props.signedUserID === item.posterID)) ? {"data-can-edit": "true"} : {})}>
 							{(item.renderedContent) ? (<>
 								{item.renderedContent as any}
 							</>) : (<>
@@ -79,7 +79,7 @@ export default function Comments(props: Record<string, unknown>) {
 						</>) : null}
 					</div>
 					{/* $reactions */}
-					{("$reactions") ? (<>
+					{(reactions) ? (<>
 						{/* template: repo/issue/view_content/reactions */}
 					</>) : null}
 				</div>
@@ -155,7 +155,7 @@ export default function Comments(props: Record<string, unknown>) {
 				</span>
 
 				<div className="detail flex-text-block">
-					<span className="comment-text-line"><a href={String(props.refIssueLink ctx ?? "")}><b>{item.refIssueTitle ctx as any}</b> {item.refIssueIdent ctx as any}</a></span>
+					<span className="comment-text-line"><a href={String(props.refIssueLink?.(ctx) ?? "")}><b>{item.refIssueTitle?.(ctx) as any}</b> {item.refIssueIdent?.(ctx) as any}</a></span>
 				</div>
 			</div>
 		</>) : null} {(item.type === 4) ? (<>
@@ -258,7 +258,7 @@ export default function Comments(props: Record<string, unknown>) {
 				<span className="comment-text-line">
 					{/* template: shared/user/authorlink */}
 					{/* $timeStr */} {/* compatibility with time comments made before v1.21 */}
-					{(!("$timeStr")) ? (<>{/* TODO: {{$timeStr = .Content|Sec2Hour}} */}</>) : null}
+					{(!(timeStr)) ? (<>{/* TODO: {{$timeStr = .Content|Sec2Hour}} */}</>) : null}
 					{i18n("repo.issues.stop_tracking_history")}
 				</span>
 				{/* template: repo/issue/view_content/comments_delete_time */}
@@ -270,7 +270,7 @@ export default function Comments(props: Record<string, unknown>) {
 				<span className="comment-text-line">
 					{/* template: shared/user/authorlink */}
 					{/* $timeStr */} {/* compatibility with time comments made before v1.21 */}
-					{(!("$timeStr")) ? (<>{/* TODO: {{$timeStr = .Content|Sec2Hour}} */}</>) : null}
+					{(!(timeStr)) ? (<>{/* TODO: {{$timeStr = .Content|Sec2Hour}} */}</>) : null}
 					{i18n("repo.issues.add_time_history")}
 				</span>
 				{/* template: repo/issue/view_content/comments_delete_time */}
@@ -373,20 +373,20 @@ export default function Comments(props: Record<string, unknown>) {
 					{/* Some timeline avatars need a offset to correctly align with their speech bubble.
 						The condition depends on whether the comment has contents/attachments,
 						review's comment is also controlled/rendered by issue comment's Content field */}
-					<a className={`timeline-avatar${((props.content || props.attachments)) ? ` timeline-avatar-offset` : ""}`}{(item.poster?.iD > 0) ? (<> href={String(props.poster?.homeLink ?? "")}</>) : null}>
+					<a className={`timeline-avatar${((props.content || props.attachments)) ? ` timeline-avatar-offset` : ""}`}{...(item.poster?.iD > 0 ? {"href": String(props.poster?.homeLink ?? "")} : {})}>
 						{/* TODO: {{ctx.AvatarUtils.Avatar .Poster 40}} */}
 					</a>
 					</>) : null}
-					<span className={`badge tw-text-white${("$reviewType" === 1) ? `${(props.review?.official) ? ` tw-bg-green ` : ` tw-bg-grey`} tw-bg-red` : ""}`}>
+					<span className={`badge tw-text-white${(reviewType === 1) ? `${(props.review?.official) ? ` tw-bg-green ` : ` tw-bg-grey`} tw-bg-red` : ""}`}>
 						{(item.review) ? (<>{/* TODO: {{svg (printf "octicon-%s" .Review.Type.Icon)}} */}</>) : null}
 					</span>
 					<span className="comment-text-line">
 						{/* template: repo/issue/view_content/comments_authorlink */}
-						{("$reviewType" === 1) ? (<>
+						{(reviewType === 1) ? (<>
 							{i18n("repo.issues.review.approve")}
-						</>) : null} {("$reviewType" === 2) ? (<>
+						</>) : null} {(reviewType === 2) ? (<>
 							{i18n("repo.issues.review.comment")}
-						</>) : null} {("$reviewType" === 3) ? (<>
+						</>) : null} {(reviewType === 3) ? (<>
 							{i18n("repo.issues.review.reject")}
 						</>) : (<>
 							{i18n("repo.issues.review.comment")}
@@ -430,7 +430,7 @@ export default function Comments(props: Record<string, unknown>) {
 							</div>
 						</div>
 						<div className="ui attached segment comment-body">
-							<div className="render-content markup" {((props.permission?.isAdmin || props.hasIssuesOrPullsWritePermission || (props.isSigned && props.signedUserID === item.posterID))) ? (<>data-can-edit="true"</>) : null}>
+							<div className="render-content markup" {...((props.permission?.isAdmin || props.hasIssuesOrPullsWritePermission || (props.isSigned && props.signedUserID === item.posterID)) ? {"data-can-edit": "true"} : {})}>
 								{(item.renderedContent) ? (<>
 									{item.renderedContent as any}
 								</>) : (<>
@@ -444,7 +444,7 @@ export default function Comments(props: Record<string, unknown>) {
 							</>) : null}
 						</div>
 						{/* $reactions */}
-						{("$reactions") ? (<>
+						{(reactions) ? (<>
 							{/* template: repo/issue/view_content/reactions */}
 						</>) : null}
 					</div>
@@ -521,7 +521,7 @@ export default function Comments(props: Record<string, unknown>) {
 				<span className="badge"><span className="svg-icon" aria-label="octicon-eye"></span></span>
 				{/* $specialDoerHtml */}
 				{/* $timelineRequestedReviewHtml */}
-				{("$specialDoerHtml") ? (<>
+				{(specialDoerHtml) ? (<>
 					<span className="comment-text-line">
 						{/* $specialDoerHtml */}
 						{/* $timelineRequestedReviewHtml */}
@@ -606,7 +606,7 @@ export default function Comments(props: Record<string, unknown>) {
 		</>) : null} {(item.type === 32) ? (<>
 			<div className="timeline-item-group">
 				<div className="timeline-item event" id={String(props.hashTag ?? "")}>
-					<a className="timeline-avatar"{(item.poster?.iD > 0) ? (<> href={String(props.poster?.homeLink ?? "")}</>) : null}>
+					<a className="timeline-avatar"{...(item.poster?.iD > 0 ? {"href": String(props.poster?.homeLink ?? "")} : {})}>
 						{/* TODO: {{ctx.AvatarUtils.Avatar .Poster 40}} */}
 					</a>
 					<span className="badge grey"><span className="svg-icon" aria-label="octicon-x"></span></span>
@@ -690,7 +690,7 @@ export default function Comments(props: Record<string, unknown>) {
 				<span className="comment-text-line">
 					{/* template: shared/user/authorlink */}
 					{/* $timeStr */}
-					{("$timeStr") ? (<>
+					{(timeStr) ? (<>
 						{i18n("repo.issues.change_time_estimate_at")}
 					</>) : (<>
 						{i18n("repo.issues.remove_time_estimate_at")}

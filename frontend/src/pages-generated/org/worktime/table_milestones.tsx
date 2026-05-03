@@ -26,7 +26,7 @@ export default function TableMilestones(props: Record<string, unknown>) {
 					-
 				</>)}
 			</td>
-			<td><span className="svg-icon" aria-label="octicon-clock"></span> {item.sumTime | Sec2Hour as any}</td>
+			<td><span className="svg-icon" aria-label="octicon-clock"></span> {item.sumTime?.("|", "Sec2Hour") as any}</td>
 		</tr>
 		{/* else */}
 			{/* template: org/worktime/empty_placeholder */}

@@ -53,7 +53,7 @@ export default function KeysGpg(props: Record<string, unknown>) {
 		{((props.gPGKeys) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 			<div className="item">
 				<div className="item-leading">
-					<span className={`${((props.expiredUnix?.isZero || props.pageStartTime?.before ?.expiredUnix?.asTime)) ? `tw-text-green` : ""}`}><span className="svg-icon" aria-label="octicon-key"></span></span>
+					<span className={`${((props.expiredUnix?.isZero || props.pageStartTime?.before?.(props.expiredUnix?.asTime))) ? `tw-text-green` : ""}`}><span className="svg-icon" aria-label="octicon-key"></span></span>
 				</div>
 				<div className="item-main">
 					{(item.verified) ? (<>

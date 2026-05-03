@@ -9,7 +9,7 @@ export default function Navbar(props: Record<string, unknown>) {
 			<div className="ui floating dropdown jump">
 				<span className="text">
 					{/* TODO: {{ctx.AvatarUtils.Avatar .ContextUser 24 "tw-mr-1"}} */}
-					<span className="gt-ellipsis">{props.contextUser?.shortName 40 as any}</span>
+					<span className="gt-ellipsis">{props.contextUser?.shortName?.(40) as any}</span>
 					<span className="org-visibility">
 						{(props.contextUser?.visibility?.isLimited) ? (<><div className="ui basic tiny horizontal label">{i18n("org.settings.visibility.limited_shortname")}</div></>) : null}
 						{(props.contextUser?.visibility?.isPrivate) ? (<><div className="ui basic tiny horizontal label">{i18n("org.settings.visibility.private_shortname")}</div></>) : null}
@@ -23,7 +23,7 @@ export default function Navbar(props: Record<string, unknown>) {
 					<div className="scrolling menu">
 						<a className={`${(props.contextUser?.iD === props.signedUser?.iD) ? `active selected` : ""} item`} href={`/${(props.pageIsIssues) ? `issuespullsmilestones` : ""}`}>
 							{/* TODO: {{ctx.AvatarUtils.Avatar .SignedUser}} */}
-							<span className="gt-ellipsis">{props.signedUser?.shortName 40 as any}</span>
+							<span className="gt-ellipsis">{props.signedUser?.shortName?.(40) as any}</span>
 							<span className="org-visibility">
 								{(props.signedUser?.visibility?.isLimited) ? (<><div className="ui basic tiny horizontal label">{i18n("org.settings.visibility.limited_shortname")}</div></>) : null}
 								{(props.signedUser?.visibility?.isPrivate) ? (<><div className="ui basic tiny horizontal label">{i18n("org.settings.visibility.private_shortname")}</div></>) : null}
@@ -32,7 +32,7 @@ export default function Navbar(props: Record<string, unknown>) {
 						{((props.orgs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 							<a className={`${(props.contextUser?.iD === props.iD) ? `active selected` : ""} item`} title={String(props.name ?? "")} href={`${String(props.organisationLink ?? "")}/${(props.pageIsIssues) ? `issuespullsmilestones` : `dashboard`}`}>
 								{/* TODO: {{ctx.AvatarUtils.Avatar .}} */}
-								<span className="gt-ellipsis">{item.shortName 40 as any}</span>
+								<span className="gt-ellipsis">{item.shortName?.(40) as any}</span>
 								<span className="org-visibility">
 									{(item.visibility?.isLimited) ? (<><div className="ui basic tiny horizontal label">{i18n("org.settings.visibility.limited_shortname")}</div></>) : null}
 									{(item.visibility?.isPrivate) ? (<><div className="ui basic tiny horizontal label">{i18n("org.settings.visibility.private_shortname")}</div></>) : null}

@@ -17,7 +17,7 @@ export default function RunsList(props: Record<string, unknown>) {
 			</div>
 			<div className="item-main">
 				<span className="item-title" title={String("" ?? "")}>
-					{("$run.Title") ? (<>
+					{(item.run?.title) ? (<>
 						{/* TODO: {{ctx.RenderUtils.RenderCommitMessageLinkSubject $run.Title $run.Link $.Repository}} */}
 					</>) : (<>
 						<a href={String("" ?? "")}>{i18n("actions.runs.empty_commit_message")}</a>
@@ -36,7 +36,7 @@ export default function RunsList(props: Record<string, unknown>) {
 					{/* TODO: {{- end -}} */}
 
 					{/* $errMsg */}
-					{("$errMsg") ? (<>
+					{(errMsg) ? (<>
 						<span className="flex-text-inline" data-tooltip-content={String("" ?? "")}>
 							<span className="svg-icon" aria-label="octicon-alert"></span>
 						</span>
@@ -44,7 +44,7 @@ export default function RunsList(props: Record<string, unknown>) {
 				</div>
 			</div>
 			<div className="item-trailing">
-				{("$run.IsRefDeleted") ? (<>
+				{(item.run?.isRefDeleted) ? (<>
 					<span className="ui label run-list-ref gt-ellipsis tw-line-through" data-tooltip-content={String("" ?? "")}>{/* TODO: {{$run.PrettyRef}} */}</span>
 				</>) : (<>
 					<a className="ui label run-list-ref gt-ellipsis" href={String("" ?? "")} data-tooltip-content={String("" ?? "")}>{/* TODO: {{$run.PrettyRef}} */}</a>
@@ -57,12 +57,12 @@ export default function RunsList(props: Record<string, unknown>) {
 					<span className="svg-icon" aria-label="octicon-kebab-horizontal"></span>
 					<div className="menu flex-items-menu">
 						<a className="item" href={`/workflow`}><span className="svg-icon" aria-label="octicon-play"></span>{i18n("actions.runs.view_workflow_file")}</a>
-						{((props.canWriteRepoUnitActions && !("$run.Status.IsDone"))) ? (<>
+						{((props.canWriteRepoUnitActions && !(item.run?.status?.isDone))) ? (<>
 							<a className="item link-action" data-url={`/cancel`}>
 								<span className="svg-icon" aria-label="octicon-x"></span>{i18n("actions.runs.cancel")}
 							</a>
 						</>) : null}
-						{((props.canWriteRepoUnitActions && "$run.Status.IsDone")) ? (<>
+						{((props.canWriteRepoUnitActions && item.run?.status?.isDone)) ? (<>
 							<a className="item link-action"
 								data-url={`/delete`}
 								data-modal-confirm={String(i18n("actions.runs.delete.description") ?? "")}

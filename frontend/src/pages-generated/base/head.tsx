@@ -3,7 +3,7 @@ import { i18n } from '../../lib/i18n'
 
 export default function Head(props: Record<string, unknown>) {
   return (<>
-<!DOCTYPE html>
+
 <html lang={String("" ?? "")} data-theme={String("" ?? "")}>
 <head>
 	{/* TODO: {{ctx.HeadMetaContentSecurityPolicy}} */}

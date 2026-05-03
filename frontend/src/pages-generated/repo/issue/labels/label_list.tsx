@@ -38,7 +38,7 @@ export default function LabelList(props: Record<string, unknown>) {
 		<li className="item">
 			<div className="label-title">
 				{/* TODO: {{ctx.RenderUtils.RenderLabel .}} */}
-				{(item.description) ? (<><br /><small className="desc">{item.description | ctx?.renderUtils?.renderEmoji as any}</small></>) : null}
+				{(item.description) ? (<><br /><small className="desc">{item.description?.("|", "ctx.RenderUtils.RenderEmoji") as any}</small></>) : null}
 			</div>
 			<div className="label-issues">
 				{(props.pageIsOrgSettingsLabels) ? (<>
@@ -49,7 +49,7 @@ export default function LabelList(props: Record<string, unknown>) {
 			</div>
 			<div className="label-operation">
 				{/* template: repo/issue/labels/label_archived */}
-					{("$canEditLabel") ? (<>
+					{(canEditLabel) ? (<>
 						<a className="edit-label-button" href="#"
 							data-label-id={String(props.iD ?? "")} data-label-name={String(props.name ?? "")} data-label-color={String(props.color ?? "")}
 							data-label-exclusive={String(props.exclusive ?? "")} data-label-is-archived={String("" ?? "")}
@@ -79,7 +79,7 @@ export default function LabelList(props: Record<string, unknown>) {
 			<li className="item org-label">
 				<div className="label-title">
 					{/* TODO: {{ctx.RenderUtils.RenderLabel .}} */}
-					{(item.description) ? (<><br /><small className="desc">{item.description | ctx?.renderUtils?.renderEmoji as any}</small></>) : null}
+					{(item.description) ? (<><br /><small className="desc">{item.description?.("|", "ctx.RenderUtils.RenderEmoji") as any}</small></>) : null}
 				</div>
 				<div className="label-issues">
 					<a className="open-issues" {...(item.isArchived ? {"data-is-archived": true} : {})} href={`${String(props.repoLink ?? "")}/issues?labels=${String(props.iD ?? "")}`}><span className="svg-icon" aria-label="octicon-issue-opened"></span> {i18n("repo.issues.label_open_issues")}</a>

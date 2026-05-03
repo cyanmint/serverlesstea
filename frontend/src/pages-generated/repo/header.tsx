@@ -64,7 +64,7 @@ export default function Header(props: Record<string, unknown>) {
 					{(!(props.disableStars)) ? (<>
 					{/* template: repo/header/star */}
 					</>) : null}
-					{((!(props.isEmpty) && props.permission?.canRead ctx?.consts?.repoUnitTypeCode)) ? (<>
+					{((!(props.isEmpty) && props.permission?.canRead?.("ctx.Consts.RepoUnitTypeCode"))) ? (<>
 						{/* template: repo/header/fork */}
 					</>) : null}
 				</div>
@@ -88,13 +88,13 @@ export default function Header(props: Record<string, unknown>) {
 		<overflow-menu className="ui secondary pointing menu">
 			{(!((props.repository?.isBeingCreated || props.repository?.isBroken))) ? (<>
 				<div className="overflow-menu-items">
-					{(props.permission?.canRead ctx?.consts?.repoUnitTypeCode) ? (<>
+					{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypeCode")) ? (<>
 					<a className={`${(props.pageIsViewCode) ? `active ` : ""}item`} href={`${String(props.repoLink ?? "")}${((props.branchName !== props.repository?.defaultBranch && !(props.pageIsWiki))) ? `/src/${String(props.refTypeNameSubURL ?? "")}` : ""}`}>
 						<span className="svg-icon" aria-label="octicon-code"></span> {i18n("repo.code")}
 					</a>
 					</>) : null}
 
-					{(props.permission?.canRead ctx?.consts?.repoUnitTypeIssues) ? (<>
+					{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypeIssues")) ? (<>
 						<a className={`${(props.pageIsIssueList) ? `active ` : ""}item`} href={`${String(props.repoLink ?? "")}/issues`}>
 							<span className="svg-icon" aria-label="octicon-issue-opened"></span> {i18n("repo.issues")}
 							{(props.repository?.numOpenIssues) ? (<>
@@ -103,13 +103,13 @@ export default function Header(props: Record<string, unknown>) {
 						</a>
 					</>) : null}
 
-					{(props.permission?.canRead ctx?.consts?.repoUnitTypeExternalTracker) ? (<>
+					{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypeExternalTracker")) ? (<>
 						<a className={`${(props.pageIsIssueList) ? `active ` : ""}item`} href={String(props.repoExternalIssuesLink ?? "")} target="_blank">
 							<span className="svg-icon" aria-label="octicon-link-external"></span> {i18n("repo.issues")}
 						</a>
 					</>) : null}
 
-					{((props.repository?.canEnablePulls && props.permission?.canRead ctx?.consts?.repoUnitTypePullRequests)) ? (<>
+					{((props.repository?.canEnablePulls && props.permission?.canRead?.("ctx.Consts.RepoUnitTypePullRequests"))) ? (<>
 						<a className={`${(props.pageIsPullList) ? `active ` : ""}item`} href={`${String(props.repoLink ?? "")}/pulls`}>
 							<span className="svg-icon" aria-label="octicon-git-pull-request"></span> {i18n("repo.pulls")}
 							{(props.repository?.numOpenPulls) ? (<>
@@ -118,7 +118,7 @@ export default function Header(props: Record<string, unknown>) {
 						</a>
 					</>) : null}
 
-					{((props.enableActions && props.permission?.canRead ctx?.consts?.repoUnitTypeActions && !(props.isEmptyRepo))) ? (<>
+					{((props.enableActions && props.permission?.canRead?.("ctx.Consts.RepoUnitTypeActions") && !(props.isEmptyRepo))) ? (<>
 						<a className={`${(props.pageIsActions) ? `active ` : ""}item`} href={`${String(props.repoLink ?? "")}/actions`}>
 							<span className="svg-icon" aria-label="octicon-play"></span> {i18n("actions.actions")}
 							{(props.repository?.numOpenActionRuns) ? (<>
@@ -127,14 +127,14 @@ export default function Header(props: Record<string, unknown>) {
 						</a>
 					</>) : null}
 
-					{(props.permission?.canRead ctx?.consts?.repoUnitTypePackages) ? (<>
+					{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypePackages")) ? (<>
 						<a href={`${String(props.repoLink ?? "")}/packages`} className={`${(props.isPackagesPage) ? `active ` : ""}item`}>
 							<span className="svg-icon" aria-label="octicon-package"></span> {i18n("packages.title")}
 						</a>
 					</>) : null}
 
 					{/* $projectsUnit */}
-					{((!("ctx.Consts.RepoUnitTypeProjects.UnitGlobalDisabled") && props.permission?.canRead ctx?.consts?.repoUnitTypeProjects && "$projectsUnit.ProjectsConfig.IsProjectsAllowed "repo"")) ? (<>
+					{((!("ctx.Consts.RepoUnitTypeProjects.UnitGlobalDisabled") && props.permission?.canRead?.("ctx.Consts.RepoUnitTypeProjects") && props.projectsUnit?.projectsConfig?.isProjectsAllowed?.("repo"))) ? (<>
 						<a href={`${String(props.repoLink ?? "")}/projects`} className={`${(props.isProjectsPage) ? `active ` : ""}item`}>
 							<span className="svg-icon" aria-label="octicon-project"></span> {i18n("repo.projects")}
 							{(props.repository?.numOpenProjects) ? (<>
@@ -143,7 +143,7 @@ export default function Header(props: Record<string, unknown>) {
 						</a>
 					</>) : null}
 
-					{((props.permission?.canRead ctx?.consts?.repoUnitTypeReleases && !(props.isEmptyRepo))) ? (<>
+					{((props.permission?.canRead?.("ctx.Consts.RepoUnitTypeReleases") && !(props.isEmptyRepo))) ? (<>
 					<a className={`${((props.pageIsReleaseList || props.pageIsTagList)) ? `active ` : ""}item`} href={`${String(props.repoLink ?? "")}/releases`}>
 						<span className="svg-icon" aria-label="octicon-tag"></span> {i18n("repo.releases")}
 						{(props.numReleases) ? (<>
@@ -152,19 +152,19 @@ export default function Header(props: Record<string, unknown>) {
 					</a>
 					</>) : null}
 
-					{(props.permission?.canRead ctx?.consts?.repoUnitTypeWiki) ? (<>
+					{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypeWiki")) ? (<>
 						<a className={`${(props.pageIsWiki) ? `active ` : ""}item`} href={`${String(props.repoLink ?? "")}/wiki`}>
 							<span className="svg-icon" aria-label="octicon-book"></span> {i18n("repo.wiki")}
 						</a>
 					</>) : null}
 
-					{(props.permission?.canRead ctx?.consts?.repoUnitTypeExternalWiki) ? (<>
+					{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypeExternalWiki")) ? (<>
 						<a className="item" href={String("" ?? "")} target="_blank">
 							<span className="svg-icon" aria-label="octicon-link-external"></span> {i18n("repo.wiki")}
 						</a>
 					</>) : null}
 
-					{((props.permission?.canReadAny ctx?.consts?.repoUnitTypePullRequests ctx?.consts?.repoUnitTypeIssues ctx?.consts?.repoUnitTypeReleases ctx?.consts?.repoUnitTypeCode && !(props.isEmptyRepo))) ? (<>
+					{((props.permission?.canReadAny?.("ctx.Consts.RepoUnitTypePullRequests", "ctx.Consts.RepoUnitTypeIssues", "ctx.Consts.RepoUnitTypeReleases", "ctx.Consts.RepoUnitTypeCode") && !(props.isEmptyRepo))) ? (<>
 						<a className={`${(props.pageIsActivity) ? `active ` : ""}item`} href={`${String(props.repoLink ?? "")}/activity`}>
 							<span className="svg-icon" aria-label="octicon-pulse"></span> {i18n("repo.activity")}
 						</a>
@@ -181,11 +181,11 @@ export default function Header(props: Record<string, unknown>) {
 				</div>
 			</>) : (<>
 				<div className="overflow-menu-items">
-					{/* TODO: {{if(and .Repository.IsBeingCreated (.Permission.CanRead ctx.Consts.RepoUnitTypeCode))}} */}
+					{((props.repository?.isBeingCreated && props.permission?.canRead?.("ctx.Consts.RepoUnitTypeCode"))) ? (<>
 					<a className={`${(!(props.pageIsRepoSettings)) ? `active ` : ""}item`} href={String(props.repoLink ?? "")}>
 						<span className="svg-icon" aria-label="octicon-clock"></span> {i18n("repo.migration_status")}
 					</a>
-					</>)}
+					</>) : null}
 
 					{(props.permission?.isAdmin) ? (<>
 					<a className={`${(props.pageIsRepoSettings) ? `active ` : ""} item`} href={`${String(props.repoLink ?? "")}/settings`}>
@@ -193,7 +193,7 @@ export default function Header(props: Record<string, unknown>) {
 					</a>
 					</>) : null}
 				</div>
-			
+			</>)}
 		</overflow-menu>
 	</div>
 	<div className="ui tabs divider"></div>

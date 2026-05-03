@@ -49,17 +49,17 @@ export default function List(props: Record<string, unknown>) {
 						{(!(props.disableStars)) ? (<>
 							<a className="flex-text-inline" href={`${String(props.link ?? "")}/stars`}>
 								<span className="tw-contents" aria-label={String(i18n("repo.stars") ?? "")}><span className="svg-icon" aria-label="octicon-star"></span></span>
-								<span {(item.numStars >= 1000) ? (<>data-tooltip-content={String(props.numStars ?? "")}</>) : null}>{/* TODO: {{CountFmt .NumStars}} */}</span>
+								<span {...(item.numStars >= 1000 ? {"data-tooltip-content": String(props.numStars ?? "")} : {})}>{/* TODO: {{CountFmt .NumStars}} */}</span>
 							</a>
 						</>) : null}
 						<a className="flex-text-inline" href={`${String(props.link ?? "")}/forks`}>
 							<span className="tw-contents" aria-label={String(i18n("repo.forks") ?? "")}><span className="svg-icon" aria-label="octicon-git-branch"></span></span>
-							<span {(item.numForks >= 1000) ? (<>data-tooltip-content={String(props.numForks ?? "")}</>) : null}>{/* TODO: {{CountFmt .NumForks}} */}</span>
+							<span {...(item.numForks >= 1000 ? {"data-tooltip-content": String(props.numForks ?? "")} : {})}>{/* TODO: {{CountFmt .NumForks}} */}</span>
 						</a>
 					</div>
 				</div>
 				{/* $description */}
-				{("$description") ? (<>
+				{(description) ? (<>
 					<div className="item-body">{/* $description */}</div>
 				</>) : null}
 				{(item.topics) ? (<>

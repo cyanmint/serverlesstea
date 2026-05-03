@@ -27,7 +27,7 @@ export default function Home(props: Record<string, unknown>) {
 				{/* template: repo/view_content */}
 			</div>
 
-			{("$showSidebar") ? (<>
+			{(showSidebar) ? (<>
 				{/* template: repo/home_sidebar_top */}
 				{/* template: repo/home_sidebar_bottom */}
 			</>) : null}

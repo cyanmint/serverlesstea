@@ -12,25 +12,25 @@ export default function Options(props: Record<string, unknown>) {
 	<div className="native-select">
 		<select className="js-indent-style-select" aria-label={String(i18n("text_indent_style") ?? "")}>
 			<optgroup label={String(i18n("text_indent_style") ?? "")}>
-				<option{("$indentStyle" === "space") ? (<> selected</>) : null} value="space">{i18n("characters_spaces")}</option>
-				<option{("$indentStyle" === "tab") ? (<> selected</>) : null} value="tab">{i18n("characters_tabs")}</option>
+				<option{...(indentStyle === "space" ? {"selected": true} : {})} value="space">{i18n("characters_spaces")}</option>
+				<option{...(indentStyle === "tab" ? {"selected": true} : {})} value="tab">{i18n("characters_tabs")}</option>
 			</optgroup>
 		</select>
 	</div>
 	<div className="native-select">
 		<select className="js-indent-size-select" aria-label={String(i18n("text_indent_size") ?? "")}>
 			<optgroup label={String(i18n("text_indent_size") ?? "")}>
-				<option{("$indentSize" === 2) ? (<> selected</>) : null} value="2">2</option>
-				<option{("$indentSize" === 4) ? (<> selected</>) : null} value="4">4</option>
-				<option{("$indentSize" === 8) ? (<> selected</>) : null} value="8">8</option>
+				<option{...(indentSize === 2 ? {"selected": true} : {})} value="2">2</option>
+				<option{...(indentSize === 4 ? {"selected": true} : {})} value="4">4</option>
+				<option{...(indentSize === 8 ? {"selected": true} : {})} value="8">8</option>
 			</optgroup>
 		</select>
 	</div>
 	<div className="native-select">
 		<select className="js-line-wrap-select" aria-label={String(i18n("text_line_wrap_mode") ?? "")}>
 			<optgroup label={String(i18n("text_line_wrap_mode") ?? "")}>
-				<option{("$lineWrap") ? (<> selected</>) : null} value="on">{i18n("text_line_wrap")}</option>
-				<option{(!("$lineWrap")) ? (<> selected</>) : null} value="off">{i18n("text_line_nowrap")}</option>
+				<option{...(lineWrap ? {"selected": true} : {})} value="on">{i18n("text_line_wrap")}</option>
+				<option{...(!(lineWrap) ? {"selected": true} : {})} value="off">{i18n("text_line_nowrap")}</option>
 			</optgroup>
 		</select>
 	</div>

@@ -36,7 +36,7 @@ export default function List(props: Record<string, unknown>) {
 							<td><a href={`/-/admin/auths/${String(props.iD ?? "")}`}><span className="svg-icon" aria-label="octicon-pencil"></span></a></td>
 						</tr>
 					{/* else */}
-						<tr><td className="tw-text-center" colspan="7">{i18n("no_results_found")}</td></tr>
+						<tr><td className="tw-text-center" colSpan="7">{i18n("no_results_found")}</td></tr>
 					</React.Fragment>))}
 				</tbody>
 			</table>

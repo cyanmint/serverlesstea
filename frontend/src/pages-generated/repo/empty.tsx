@@ -32,11 +32,11 @@ export default function Empty(props: Record<string, unknown>) {
 
 							<div className="repo-button-row">
 								{((props.canWriteCode && !(props.repository?.isArchived))) ? (<>
-									<a className="ui small button" href={`${String(props.repoLink ?? "")}/_new/${String(props.branchName | PathEscapeSegments ?? "")}/`}>
+									<a className="ui small button" href={`${String(props.repoLink ?? "")}/_new/${String(props.branchName?.("|", "PathEscapeSegments") ?? "")}/`}>
 										{i18n("repo.editor.new_file")}
 									</a>
 									{(props.repositoryUploadEnabled) ? (<>
-									<a className="ui small button" href={`${String(props.repoLink ?? "")}/_upload/${String(props.branchName | PathEscapeSegments ?? "")}/`}>
+									<a className="ui small button" href={`${String(props.repoLink ?? "")}/_upload/${String(props.branchName?.("|", "PathEscapeSegments") ?? "")}/`}>
 										{i18n("repo.editor.upload_file")}
 									</a>
 									</>) : null}

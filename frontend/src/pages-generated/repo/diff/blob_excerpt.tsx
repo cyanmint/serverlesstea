@@ -10,19 +10,19 @@ export default function BlobExcerpt(props: Record<string, unknown>) {
 	<tr className={`${String(props.getHTMLDiffLineType ?? "")}-code nl- ol- line-expanded`} data-line-type={String(props.getHTMLDiffLineType ?? "")}>
 		{(item.getType === 4) ? (<>
 			<td className="lines-num lines-num-old">{/* TODO: {{$line.RenderBlobExcerptButtons $.FileNameHash $diffBlobExcerptData}} */}</td>
-			<td colspan="7" className="lines-code lines-code-old">
+			<td colSpan="7" className="lines-code lines-code-old">
 				{/* TODO: {{- $inlineDiff := $.section.GetComputedInlineDiffFor $line ctx.Locale -}} */}
 				{/* TODO: {{- template "repo/diff/section_code" dict "diff" $inlineDiff -}} */}
 			</td>
 		</>) : (<>
 			{/* $inlineDiff */}
-			<td className="lines-num lines-num-old" data-line-num={`${("$line.LeftIdx") ? `` : ""}`}><span rel={`${("$line.LeftIdx") ? `diff-${String(props.fileNameHash ?? "")}L` : ""}`}></span></td>
-			<td className="lines-escape lines-escape-old">{("$line.LeftIdx") ? (<>{/* TODO: {{ctx.RenderUtils.RenderUnicodeEscapeToggleButton $inlineDiff.EscapeStatus}} */}</>) : null}</td>
-			<td className="lines-type-marker lines-type-marker-old">{("$line.LeftIdx") ? (<><span className="tw-font-mono" data-type-marker=""></span></>) : null}</td>
+			<td className="lines-num lines-num-old" data-line-num={`${(props.line?.leftIdx) ? `` : ""}`}><span rel={`${(props.line?.leftIdx) ? `diff-${String(props.fileNameHash ?? "")}L` : ""}`}></span></td>
+			<td className="lines-escape lines-escape-old">{(item.line?.leftIdx) ? (<>{/* TODO: {{ctx.RenderUtils.RenderUnicodeEscapeToggleButton $inlineDiff.EscapeStatus}} */}</>) : null}</td>
+			<td className="lines-type-marker lines-type-marker-old">{(item.line?.leftIdx) ? (<><span className="tw-font-mono" data-type-marker=""></span></>) : null}</td>
 			<td className="lines-code lines-code-old">
 				{/* ATTENTION: BLOB-EXCERPT-COMMENT-RIGHT: here it intentionally use "right" side to comment, because the backend code depends on the assumption that the comment only happens on right side */}
 				{/* TODO: {{- if and $canCreateComment $line.RightIdx -}} */}
-					<button type="button" aria-label={String(i18n("repo.diff.comment.add_line_comment") ?? "")} className={`ui primary button add-code-comment add-code-comment-right${(!("$line.CanComment")) ? ` tw-invisible` : ""}`} data-side="right" data-idx={String("" ?? "")}>
+					<button type="button" aria-label={String(i18n("repo.diff.comment.add_line_comment") ?? "")} className={`ui primary button add-code-comment add-code-comment-right${(!(props.line?.canComment)) ? ` tw-invisible` : ""}`} data-side="right" data-idx={String("" ?? "")}>
 						{/* TODO: {{- svg "octicon-plus" -}} */}
 					</button>
 				{/* TODO: {{- end -}} */}
@@ -32,12 +32,12 @@ export default function BlobExcerpt(props: Record<string, unknown>) {
 					<code className="code-inner"></code>
 				{/* TODO: {{- end -}} */}
 			</td>
-			<td className="lines-num lines-num-new" data-line-num={`${("$line.RightIdx") ? `` : ""}`}><span rel={`${("$line.RightIdx") ? `diff-${String(props.fileNameHash ?? "")}R` : ""}`}></span></td>
-			<td className="lines-escape lines-escape-new">{(("$line.RightIdx")) ? (<>{/* TODO: {{ctx.RenderUtils.RenderUnicodeEscapeToggleButton $inlineDiff.EscapeStatus}} */}</>) : null}</td>
-			<td className="lines-type-marker lines-type-marker-new">{("$line.RightIdx") ? (<><span className="tw-font-mono" data-type-marker=""></span></>) : null}</td>
+			<td className="lines-num lines-num-new" data-line-num={`${(props.line?.rightIdx) ? `` : ""}`}><span rel={`${(props.line?.rightIdx) ? `diff-${String(props.fileNameHash ?? "")}R` : ""}`}></span></td>
+			<td className="lines-escape lines-escape-new">{((item.line?.rightIdx)) ? (<>{/* TODO: {{ctx.RenderUtils.RenderUnicodeEscapeToggleButton $inlineDiff.EscapeStatus}} */}</>) : null}</td>
+			<td className="lines-type-marker lines-type-marker-new">{(item.line?.rightIdx) ? (<><span className="tw-font-mono" data-type-marker=""></span></>) : null}</td>
 			<td className="lines-code lines-code-new">
 				{/* TODO: {{- if and $canCreateComment $line.RightIdx -}} */}
-					<button type="button" aria-label={String(i18n("repo.diff.comment.add_line_comment") ?? "")} className={`ui primary button add-code-comment add-code-comment-right${(!("$line.CanComment")) ? ` tw-invisible` : ""}`} data-side="right" data-idx={String("" ?? "")}>
+					<button type="button" aria-label={String(i18n("repo.diff.comment.add_line_comment") ?? "")} className={`ui primary button add-code-comment add-code-comment-right${(!(props.line?.canComment)) ? ` tw-invisible` : ""}`} data-side="right" data-idx={String("" ?? "")}>
 						{/* TODO: {{- svg "octicon-plus" -}} */}
 					</button>
 				{/* TODO: {{- end -}} */}
@@ -49,15 +49,15 @@ export default function BlobExcerpt(props: Record<string, unknown>) {
 			</td>
 		</>)}
 	</tr>
-	{("$line.Comments") ? (<>
+	{(item.line?.comments) ? (<>
 		<tr className="add-comment" data-line-type={String(props.getHTMLDiffLineType ?? "")}>
-			<td className="add-comment-left" colspan="4">
-				{("$line.GetCommentSide" === "previous") ? (<>
+			<td className="add-comment-left" colSpan="4">
+				{(item.line?.getCommentSide === "previous") ? (<>
 					{/* template: repo/diff/conversation */}
 				</>) : null}
 			</td>
-			<td className="add-comment-right" colspan="4">
-				{("$line.GetCommentSide" === "proposed") ? (<>
+			<td className="add-comment-right" colSpan="4">
+				{(item.line?.getCommentSide === "proposed") ? (<>
 					{/* template: repo/diff/conversation */}
 				</>) : null}
 			</td>
@@ -68,26 +68,26 @@ export default function BlobExcerpt(props: Record<string, unknown>) {
 	{((props.section?.lines) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 	<tr className={`${String(props.getHTMLDiffLineType ?? "")}-code nl- ol- line-expanded`} data-line-type={String(props.getHTMLDiffLineType ?? "")}>
 		{(item.getType === 4) ? (<>
-			<td colspan="2" className="lines-num">{/* TODO: {{$line.RenderBlobExcerptButtons $.FileNameHash $diffBlobExcerptData}} */}</td>
+			<td colSpan="2" className="lines-num">{/* TODO: {{$line.RenderBlobExcerptButtons $.FileNameHash $diffBlobExcerptData}} */}</td>
 		</>) : (<>
-			<td className="lines-num lines-num-old" data-line-num={`${("$line.LeftIdx") ? `` : ""}`}><span rel={`${("$line.LeftIdx") ? `diff-${String(props.fileNameHash ?? "")}L` : ""}`}></span></td>
-			<td className="lines-num lines-num-new" data-line-num={`${("$line.RightIdx") ? `` : ""}`}><span rel={`${("$line.RightIdx") ? `diff-${String(props.fileNameHash ?? "")}R` : ""}`}></span></td>
+			<td className="lines-num lines-num-old" data-line-num={`${(props.line?.leftIdx) ? `` : ""}`}><span rel={`${(props.line?.leftIdx) ? `diff-${String(props.fileNameHash ?? "")}L` : ""}`}></span></td>
+			<td className="lines-num lines-num-new" data-line-num={`${(props.line?.rightIdx) ? `` : ""}`}><span rel={`${(props.line?.rightIdx) ? `diff-${String(props.fileNameHash ?? "")}R` : ""}`}></span></td>
 		</>)}
 		{/* $inlineDiff */}
 		<td className="lines-escape">{/* TODO: {{ctx.RenderUtils.RenderUnicodeEscapeToggleButton $inlineDiff.EscapeStatus}} */}</td>
 		<td className="lines-type-marker"><span className="tw-font-mono" data-type-marker={String("" ?? "")}></span></td>
-		<td className={`lines-code${(!("$line.RightIdx")) ? ` lines-code-old` : ""}`}>
+		<td className={`lines-code${(!(props.line?.rightIdx)) ? ` lines-code-old` : ""}`}>
 			{/* TODO: {{- if and $canCreateComment -}} */}
-				<button type="button" aria-label={String(i18n("repo.diff.comment.add_line_comment") ?? "")} className={`ui primary button add-code-comment add-code-comment-${("$line.RightIdx") ? `right` : `left`}${(!("$line.CanComment")) ? ` tw-invisible` : ""}`} data-side={`${("$line.RightIdx") ? `right` : `left`}`} data-idx={`${("$line.RightIdx") ? `` : ``}`}>
+				<button type="button" aria-label={String(i18n("repo.diff.comment.add_line_comment") ?? "")} className={`ui primary button add-code-comment add-code-comment-${(props.line?.rightIdx) ? `right` : `left`}${(!(props.line?.canComment)) ? ` tw-invisible` : ""}`} data-side={`${(props.line?.rightIdx) ? `right` : `left`}`} data-idx={`${(props.line?.rightIdx) ? `` : ``}`}>
 					{/* TODO: {{- svg "octicon-plus" -}} */}
 				</button>
 			{/* TODO: {{- end -}} */}
-			<code className={`code-inner ${("$inlineDiff.EscapeStatus.Escaped") ? `has-escaped` : ""}`}>{/* TODO: {{$inlineDiff.Content}} */}</code>
+			<code className={`code-inner ${(props.inlineDiff?.escapeStatus?.escaped) ? `has-escaped` : ""}`}>{/* TODO: {{$inlineDiff.Content}} */}</code>
 		</td>
 	</tr>
-	{("$line.Comments") ? (<>
+	{(item.line?.comments) ? (<>
 		<tr className="add-comment" data-line-type={String(props.getHTMLDiffLineType ?? "")}>
-			<td className="add-comment-left add-comment-right" colspan="5">
+			<td className="add-comment-left add-comment-right" colSpan="5">
 				{/* template: repo/diff/conversation */}
 			</td>
 		</tr>

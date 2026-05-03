@@ -20,7 +20,7 @@ export default function LfsFileFind(props: Record<string, unknown>) {
 							<td className="message">
 								<span className="truncate">
 									<a href={`${String(props.repoLink ?? "")}/commit/${String(props.sHA ?? "")}`} title={String(props.summary ?? "")}>
-										{item.summary | ctx?.renderUtils?.renderEmoji as any}
+										{item.summary?.("|", "ctx.RenderUtils.RenderEmoji") as any}
 									</a>
 								</span>
 							</td>
@@ -41,7 +41,7 @@ export default function LfsFileFind(props: Record<string, unknown>) {
 						</tr>
 					{/* else */}
 						<tr>
-							<td colspan="5">{i18n("repo.settings.lfs_lfs_file_no_commits")}</td>
+							<td colSpan="5">{i18n("repo.settings.lfs_lfs_file_no_commits")}</td>
 						</tr>
 					</React.Fragment>))}
 				</tbody>

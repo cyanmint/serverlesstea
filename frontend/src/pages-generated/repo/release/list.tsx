@@ -14,13 +14,13 @@ export default function List(props: Record<string, unknown>) {
 				{/* $release */}
 				<li className="release-entry">
 					<div className="meta">
-						<a className="muted" href={`${(!(("$release.Sha1" && props.permission?.canRead ctx?.consts?.repoUnitTypeCode))) ? `#` : `${String(props.repoLink ?? "")}/src/tag/`}`} rel="nofollow"><span className="svg-icon" aria-label="octicon-tag"></span>{/* TODO: {{$release.TagName}} */}</a>
-						{(("$release.Sha1" && props.permission?.canRead ctx?.consts?.repoUnitTypeCode)) ? (<>
+						<a className="muted" href={`${(!((props.release?.sha1 && props.permission?.canRead?.("ctx.Consts.RepoUnitTypeCode")))) ? `#` : `${String(props.repoLink ?? "")}/src/tag/`}`} rel="nofollow"><span className="svg-icon" aria-label="octicon-tag"></span>{/* TODO: {{$release.TagName}} */}</a>
+						{((item.release?.sha1 && props.permission?.canRead?.("ctx.Consts.RepoUnitTypeCode"))) ? (<>
 							<a className="muted tw-font-mono" href={`${String(props.repoLink ?? "")}/src/commit/`} rel="nofollow"><span className="svg-icon" aria-label="octicon-git-commit"></span>{/* TODO: {{ShortSha $release.Sha1}} */}</a>
 							{/* $compareTarget */}
-							{("$release.IsDraft") ? (<>
+							{(item.release?.isDraft) ? (<>
 									{/* TODO: {{$compareTarget = $release.Target}} */}
-							</>) : null} {("$release.TagName") ? (<>
+							</>) : null} {(item.release?.tagName) ? (<>
 									{/* TODO: {{$compareTarget = $release.TagName}} */}
 							</>) : (<>
 								{/* TODO: {{$compareTarget = $release.Sha1}} */}
@@ -45,11 +45,11 @@ export default function List(props: Record<string, unknown>) {
 						</div>
 						<p className="tw-text-text-light">
 							<span className="author">
-							{("$release.OriginalAuthor") ? (<>
+							{(item.release?.originalAuthor) ? (<>
 								{/* TODO: {{svg (MigrationIcon $release.Repo.GetOriginalURLHostname) 20 "tw-mr-1"}} */}{/* TODO: {{$release.OriginalAuthor}} */}
-							</>) : null} {("$release.Publisher") ? (<>
+							</>) : null} {(item.release?.publisher) ? (<>
 								{/* TODO: {{ctx.AvatarUtils.Avatar $release.Publisher 20 "tw-mr-1"}} */}
-								{("$release.PublisherID" > 0) ? (<>
+								{(item.release?.publisherID > 0) ? (<>
 									<a href={String("" ?? "")}>{/* TODO: {{$release.Publisher.GetDisplayName}} */}</a>
 								</>) : (<>
 									{/* TODO: {{$release.Publisher.GetDisplayName}} */}
@@ -61,10 +61,10 @@ export default function List(props: Record<string, unknown>) {
 							<span className="released">
 								{i18n("repo.released_this")}
 							</span>
-							{("$release.CreatedUnix") ? (<>
+							{(item.release?.createdUnix) ? (<>
 								<span className="time">{/* TODO: {{DateUtils.TimeSince $release.CreatedUnix}} */}</span>
 							</>) : null}
-							{(("$release.NumCommits" > 0 && !("$release.IsDraft") && props.permission?.canRead ctx?.consts?.repoUnitTypeCode)) ? (<>
+							{((item.release?.numCommits > 0 && !(item.release?.isDraft) && props.permission?.canRead?.("ctx.Consts.RepoUnitTypeCode"))) ? (<>
 								| <span className="ahead"><a href={`${String(props.repoLink ?? "")}/compare/...`}>{i18n("repo.release.ahead.commits")}</a> {i18n("repo.release.ahead.target")}</span>
 							</>) : null}
 						</p>
@@ -72,7 +72,7 @@ export default function List(props: Record<string, unknown>) {
 							{/* TODO: {{$release.RenderedNote}} */}
 						</div>
 						<div className="divider"></div>
-						<details className="download" {...("$idx" === 0 ? {"open": true} : {})}>
+						<details className="download" {...(idx === 0 ? {"open": true} : {})}>
 							<summary>
 								{i18n("repo.release.downloads")}
 							</summary>
@@ -92,7 +92,7 @@ export default function List(props: Record<string, unknown>) {
 										</div>
 									</li>
 								</React.Fragment>))}
-								{((!(props.disableDownloadSourceArchives) && !("$release.IsDraft") && props.permission?.canRead ctx?.consts?.repoUnitTypeCode)) ? (<>
+								{((!(props.disableDownloadSourceArchives) && !(item.release?.isDraft) && props.permission?.canRead?.("ctx.Consts.RepoUnitTypeCode"))) ? (<>
 									<li className="item">
 										<a className="archive-link" download href={`${String(props.repoLink ?? "")}/archive/.zip`} rel="nofollow">
 											<strong className="flex-text-inline"><span className="svg-icon" aria-label="octicon-file-zip"></span>{i18n("repo.release.source_code")} (ZIP)</strong>
@@ -115,7 +115,7 @@ export default function List(props: Record<string, unknown>) {
 	</div>
 </div>
 
-{((props.permission?.canWrite ctx?.consts?.repoUnitTypeCode && props.pageIsTagList)) ? (<>
+{((props.permission?.canWrite?.("ctx.Consts.RepoUnitTypeCode") && props.pageIsTagList)) ? (<>
 	<div className="ui g-modal-confirm delete modal">
 		<div className="header">
 			<span className="svg-icon" aria-label="octicon-trash"></span>

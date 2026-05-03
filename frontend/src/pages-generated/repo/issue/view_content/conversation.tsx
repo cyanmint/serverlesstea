@@ -19,25 +19,25 @@ The variables in "ctx.Data" are different in each case, making this template fra
 		<div className="ui segment collapsible-comment-box tw-py-2 flex-left-right">
 			<div className="tw-flex tw-items-center">
 				<a href={String("" ?? "")} className="file-comment tw-ml-2 tw-break-anywhere">{/* TODO: {{$comment.TreePath}} */}</a>
-				{("$invalid") ? (<>
+				{(invalid) ? (<>
 					<span className="ui label basic small tw-ml-2" data-tooltip-content={String(i18n("repo.issues.review.outdated_description") ?? "")}>
 						{i18n("repo.issues.review.outdated")}
 					</span>
 				</>) : null}
 			</div>
 			<div className="tw-flex tw-items-center">
-				{(("$invalid" || "$resolved")) ? (<>
-					<button id={`show-outdated-`} data-comment={String("" ?? "")} className={`${(!("$resolved")) ? `tw-hidden` : ""} btn tiny show-outdated`}>
+				{((invalid || resolved)) ? (<>
+					<button id={`show-outdated-`} data-comment={String("" ?? "")} className={`${(!(resolved)) ? `tw-hidden` : ""} btn tiny show-outdated`}>
 						<span className="svg-icon" aria-label="octicon-unfold"></span>
-						{("$resolved") ? (<>
+						{(resolved) ? (<>
 							{i18n("repo.issues.review.show_resolved")}
 						</>) : (<>
 							{i18n("repo.issues.review.show_outdated")}
 						</>)}
 					</button>
-					<button id={`hide-outdated-`} data-comment={String("" ?? "")} className={`${("$resolved") ? `tw-hidden ` : ""} btn tiny hide-outdated`}>
+					<button id={`hide-outdated-`} data-comment={String("" ?? "")} className={`${(resolved) ? `tw-hidden ` : ""} btn tiny hide-outdated`}>
 						<span className="svg-icon" aria-label="octicon-fold"></span>
-						{("$resolved") ? (<>
+						{(resolved) ? (<>
 							{i18n("repo.issues.review.hide_resolved")}
 						</>) : (<>
 							{i18n("repo.issues.review.hide_outdated")}
@@ -47,9 +47,9 @@ The variables in "ctx.Data" are different in each case, making this template fra
 			</div>
 		</div>
 		{/* $diff */}
-		{("$diff") ? (<>
+		{(diff) ? (<>
 			{/* $file */}
-			<div id={`code-preview-`} className={`ui table segment${("$resolved") ? ` tw-hidden` : ""}`}>
+			<div id={`code-preview-`} className={`ui table segment${(resolved) ? ` tw-hidden` : ""}`}>
 				<div className={`diff-file-box file-content `}>
 					<div className="file-body file-code code-view code-diff code-diff-unified unicode-escaped">
 						<table>
@@ -61,7 +61,7 @@ The variables in "ctx.Data" are different in each case, making this template fra
 				</div>
 			</div>
 		</>) : null}
-		<div id={`code-comments-`} className={`comment-code-cloud ui segment${("$resolved") ? ` tw-hidden` : ""}`}>
+		<div id={`code-comments-`} className={`comment-code-cloud ui segment${(resolved) ? ` tw-hidden` : ""}`}>
 			<div className="ui comments tw-mb-0">
 				{((props.comments) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					{/* $createdSubStr */}
@@ -98,7 +98,7 @@ The variables in "ctx.Data" are different in each case, making this template fra
 								</div>
 							</div>
 							<div className="text comment-content">
-								<div className="render-content markup" {((props.permission?.isAdmin || props.hasIssuesOrPullsWritePermission || (props.isSigned && props.signedUserID === item.posterID))) ? (<>data-can-edit="true"</>) : null}>
+								<div className="render-content markup" {...((props.permission?.isAdmin || props.hasIssuesOrPullsWritePermission || (props.isSigned && props.signedUserID === item.posterID)) ? {"data-can-edit": "true"} : {})}>
 								{(item.renderedContent) ? (<>
 									{item.renderedContent as any}
 								</>) : (<>
@@ -112,7 +112,7 @@ The variables in "ctx.Data" are different in each case, making this template fra
 								</>) : null}
 							</div>
 							{/* $reactions */}
-							{("$reactions") ? (<>
+							{(reactions) ? (<>
 								{/* template: repo/issue/view_content/reactions */}
 							</>) : null}
 						</div>
@@ -121,7 +121,7 @@ The variables in "ctx.Data" are different in each case, making this template fra
 			</div>
 			<div className="flex-text-block tw-flex-wrap tw-my-2">
 				<div className="tw-flex-1">
-					{("$resolved") ? (<>
+					{(resolved) ? (<>
 						<div className="ui grey text">
 							<span className="svg-icon" aria-label="octicon-check"></span>
 							<b>{/* TODO: {{$resolveDoer.Name}} */}</b> {i18n("repo.issues.review.resolved_by")}
@@ -129,9 +129,9 @@ The variables in "ctx.Data" are different in each case, making this template fra
 					</>) : null}
 				</div>
 				<div className="flex-text-block">
-					{((props.canMarkConversation && "$hasReview" && !("$isReviewPending"))) ? (<>
-						<button className="ui tiny basic button resolve-conversation" data-origin="timeline" data-action={`${(!("$resolved")) ? `Resolve` : `UnResolve`}`} data-comment-id={String("" ?? "")} data-update-url={`${String(props.repoLink ?? "")}/issues/resolve_conversation`}>
-							{("$resolved") ? (<>
+					{((props.canMarkConversation && hasReview && !(isReviewPending))) ? (<>
+						<button className="ui tiny basic button resolve-conversation" data-origin="timeline" data-action={`${(!(resolved)) ? `Resolve` : `UnResolve`}`} data-comment-id={String("" ?? "")} data-update-url={`${String(props.repoLink ?? "")}/issues/resolve_conversation`}>
+							{(resolved) ? (<>
 								{i18n("repo.issues.review.un_resolve_conversation")}
 							</>) : (<>
 								{i18n("repo.issues.review.resolve_conversation")}

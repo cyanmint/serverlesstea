@@ -3,7 +3,7 @@ import { i18n } from '../../lib/i18n'
 
 export default function CodeFrequency(props: Record<string, unknown>) {
   return (<>
-{(props.permission?.canRead ctx?.consts?.repoUnitTypeCode) ? (<>
+{(props.permission?.canRead?.("ctx.Consts.RepoUnitTypeCode")) ? (<>
 	<div id="repo-code-frequency-chart"
 		data-locale-loading-title={String(i18n("graphs.component_loading") ?? "")}
 		data-locale-loading-title-failed={String(i18n("graphs.component_loading_failed") ?? "")}

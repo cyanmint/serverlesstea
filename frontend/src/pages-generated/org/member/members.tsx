@@ -26,7 +26,7 @@ export default function Members(props: Record<string, unknown>) {
 					<div className="item-main">
 						<div className="item-title">
 							{/* template: shared/user/name */}
-							{(!("$isPublic")) ? (<>
+							{(!(isPublic)) ? (<>
 								<span className="ui basic small label">{i18n("org.members.private")}</span>
 							</>) : null}
 						</div>
@@ -51,7 +51,7 @@ export default function Members(props: Record<string, unknown>) {
 					</div>
 					<div className="item-trailing">
 						{((props.signedUser?.iD === item.iD || props.isOrganizationOwner)) ? (<>
-							{("$isPublic") ? (<>
+							{(isPublic) ? (<>
 								<a className="ui tiny button link-action" href data-url={`${String(props.orgLink ?? "")}/members/action/private?uid=${String(props.iD ?? "")}`}><span className="svg-icon" aria-label="octicon-eye-closed"></span>{i18n("org.members.public_helper")}</a>
 							</>) : (<>
 								<a className="ui tiny button link-action" href data-url={`${String(props.orgLink ?? "")}/members/action/public?uid=${String(props.iD ?? "")}`}><span className="svg-icon" aria-label="octicon-eye"></span>{i18n("org.members.private_helper")}</a>

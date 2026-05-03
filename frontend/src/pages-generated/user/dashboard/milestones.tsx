@@ -17,7 +17,7 @@ export default function Milestones(props: Record<string, unknown>) {
 					<div className="divider"></div>
 					{((props.repos) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 						{($Repo := .) && (<>
-							<a className={`${("." === "$Repo.ID") ? `active` : ""} repo name item`} href={`?repos=[
+							<a className={`${("." === props.repo?.iD) ? `active` : ""} repo name item`} href={`?repos=[
 								
 										
 											

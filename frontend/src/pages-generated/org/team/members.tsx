@@ -14,9 +14,9 @@ export default function Members(props: Record<string, unknown>) {
 				{/* template: org/team/navbar */}
 				{(props.isOrganizationOwner) ? (<>
 					<div className="ui top attached segment">
-						<form className="ui form ignore-dirty tw-flex tw-flex-wrap tw-gap-2" action={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName | PathEscape ?? "")}/action/add`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
+						<form className="ui form ignore-dirty tw-flex tw-flex-wrap tw-gap-2" action={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName?.("|", "PathEscape") ?? "")}/action/add`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
 							<input type="hidden" name="uid" value={String(props.signedUser?.iD ?? "")} />
-							<div id="search-user-box" className="ui search tw-mr-2"{(props.isEmailInviteEnabled) ? (<> data-allow-email="true" data-allow-email-description={String(i18n("org.teams.invite_team_member") ?? "")}</>) : null}>
+							<div id="search-user-box" className="ui search tw-mr-2"{...(props.isEmailInviteEnabled ? {"data-allow-email": "true", "data-allow-email-description": String(i18n("org.teams.invite_team_member") ?? "")} : {})}>
 								<div className="ui input">
 									<input className="prompt" name="uname" placeholder={String(i18n("search.user_kind") ?? "")} autocomplete="off" required />
 								</div>
@@ -41,7 +41,7 @@ export default function Members(props: Record<string, unknown>) {
 									{((props.isOrganizationOwner && !((props.team?.isOwnerTeam && "len $.Team.Members" === 1)))) ? (<>
 										<form>
 											<button className="ui red button delete-button" data-modal-id="remove-team-member"
-												data-url={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName | PathEscape ?? "")}/action/remove`} data-datauid={String(props.iD ?? "")}
+												data-url={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName?.("|", "PathEscape") ?? "")}/action/remove`} data-datauid={String(props.iD ?? "")}
 												data-name={String(props.displayName ?? "")}
 												data-data-team-name={String(props.team?.name ?? "")}>{i18n("org.members.remove")}</button>
 										</form>
@@ -65,7 +65,7 @@ export default function Members(props: Record<string, unknown>) {
 									{item.email as any}
 								</div>
 								<div className="item-trailing">
-									<form action={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName | PathEscape ?? "")}/action/remove_invite`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
+									<form action={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName?.("|", "PathEscape") ?? "")}/action/remove_invite`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
 										<input type="hidden" name="iid" value={String(props.iD ?? "")} />
 										<button className="ui red button">{i18n("org.members.remove")}</button>
 									</form>

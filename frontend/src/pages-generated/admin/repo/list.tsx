@@ -91,13 +91,13 @@ export default function List(props: Record<string, unknown>) {
 							<td>{/* TODO: {{DateUtils.AbsoluteShort .CreatedUnix}} */}</td>
 							<td>
 								<a className="tw-text-red show-modal" href data-modal="#admin-repo-delete-modal"
-									data-modal-form.action={`${String(props.link ?? "")}/delete?page=${String(props.page?.paginater?.current ?? "")}&sort=${String(props.sortType ?? "")}&id=${String(props.iD ?? "")}`}
+									{...{"data-modal-form.action": `${String(props.link ?? "")}/delete?page=${String(props.page?.paginater?.current ?? "")}&sort=${String(props.sortType ?? "")}&id=${String(props.iD ?? "")}`}}
 									data-modal-repo-name={String(props.name ?? "")}
 								><span className="svg-icon" aria-label="octicon-trash"></span></a>
 							</td>
 						</tr>
 					{/* else */}
-						<tr><td className="tw-text-center" colspan="12">{i18n("no_results_found")}</td></tr>
+						<tr><td className="tw-text-center" colSpan="12">{i18n("no_results_found")}</td></tr>
 					</React.Fragment>))}
 				</tbody>
 			</table>

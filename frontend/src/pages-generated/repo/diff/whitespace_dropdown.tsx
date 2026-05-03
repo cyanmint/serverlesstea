@@ -8,25 +8,25 @@ export default function WhitespaceDropdown(props: Record<string, unknown>) {
 	<div className="menu">
 		<a className="item" href={`?style=${(props.isSplitStyle) ? `split` : `unified`}&whitespace=show-all&show-outdated=${String(props.showOutdatedComments ?? "")}`}>
 			<label className="tw-pointer-events-none">
-				<input className="tw-mr-2 tw-pointer-events-none" type="radio"{(props.whitespaceBehavior === "show-all") ? (< /> checked</>) : null}>
+				<input className="tw-mr-2 tw-pointer-events-none" type="radio"{...(props.whitespaceBehavior === "show-all" ? {"checked": true} : {})} />
 				{i18n("repo.diff.whitespace_show_everything")}
 			</label>
 		</a>
 		<a className="item" href={`?style=${(props.isSplitStyle) ? `split` : `unified`}&whitespace=ignore-all&show-outdated=${String(props.showOutdatedComments ?? "")}`}>
 			<label className="tw-pointer-events-none">
-				<input className="tw-mr-2 tw-pointer-events-none" type="radio"{(props.whitespaceBehavior === "ignore-all") ? (< /> checked</>) : null}>
+				<input className="tw-mr-2 tw-pointer-events-none" type="radio"{...(props.whitespaceBehavior === "ignore-all" ? {"checked": true} : {})} />
 				{i18n("repo.diff.whitespace_ignore_all_whitespace")}
 			</label>
 		</a>
 		<a className="item" href={`?style=${(props.isSplitStyle) ? `split` : `unified`}&whitespace=ignore-change&show-outdated=${String(props.showOutdatedComments ?? "")}`}>
 			<label className="tw-pointer-events-none">
-				<input className="tw-mr-2 tw-pointer-events-none" type="radio"{(props.whitespaceBehavior === "ignore-change") ? (< /> checked</>) : null}>
+				<input className="tw-mr-2 tw-pointer-events-none" type="radio"{...(props.whitespaceBehavior === "ignore-change" ? {"checked": true} : {})} />
 				{i18n("repo.diff.whitespace_ignore_amount_changes")}
 			</label>
 		</a>
 		<a className="item" href={`?style=${(props.isSplitStyle) ? `split` : `unified`}&whitespace=ignore-eol&show-outdated=${String(props.showOutdatedComments ?? "")}`}>
 			<label className="tw-pointer-events-none">
-				<input className="tw-mr-2 tw-pointer-events-none" type="radio"{(props.whitespaceBehavior === "ignore-eol") ? (< /> checked</>) : null}>
+				<input className="tw-mr-2 tw-pointer-events-none" type="radio"{...(props.whitespaceBehavior === "ignore-eol" ? {"checked": true} : {})} />
 				{i18n("repo.diff.whitespace_ignore_at_eol")}
 			</label>
 		</a>

@@ -26,22 +26,22 @@ export default function Teams(props: Record<string, unknown>) {
 			{((props.orgListTeams) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				<div className="column team-item-box">
 					<div className="ui top attached header muted-links flex-left-right team-item-header">
-						<a href={`${String(props.orgLink ?? "")}/teams/${String(props.lowerName | PathEscape ?? "")}`}><strong>{item.name as any}</strong></a>
+						<a href={`${String(props.orgLink ?? "")}/teams/${String(props.lowerName?.("|", "PathEscape") ?? "")}`}><strong>{item.name as any}</strong></a>
 						<div className="flex-text-block tw-flex-wrap">
-							<a href={`${String(props.orgLink ?? "")}/teams/${String(props.lowerName | PathEscape ?? "")}`}>{item.numMembers as any} {i18n("org.lower_members")}</a>
+							<a href={`${String(props.orgLink ?? "")}/teams/${String(props.lowerName?.("|", "PathEscape") ?? "")}`}>{item.numMembers as any} {i18n("org.lower_members")}</a>
 							·
-							<a href={`${String(props.orgLink ?? "")}/teams/${String(props.lowerName | PathEscape ?? "")}/repositories`}>{item.numRepos as any} {i18n("org.lower_repositories")}</a>
-							{(item.isMember ctx $?.signedUser?.iD) ? (<>
+							<a href={`${String(props.orgLink ?? "")}/teams/${String(props.lowerName?.("|", "PathEscape") ?? "")}/repositories`}>{item.numRepos as any} {i18n("org.lower_repositories")}</a>
+							{(item.isMember?.(ctx, props.signedUser?.iD)) ? (<>
 								<button className="ui red mini compact button show-modal" data-modal="#org-member-leave-team"
-									data-modal-form.action={`${String(props.orgLink ?? "")}/teams/${String(props.lowerName | PathEscape ?? "")}/action/leave?uid=${String(props.signedUser?.iD ?? "")}`}
+									{...{"data-modal-form.action": `${String(props.orgLink ?? "")}/teams/${String(props.lowerName?.("|", "PathEscape") ?? "")}/action/leave?uid=${String(props.signedUser?.iD ?? "")}`}}
 									data-modal-to-leave-team-name={String(props.name ?? "")}
 								>{i18n("org.teams.leave")}</button>
 							</>) : null}
 						</div>
 					</div>
-					{("$team.Description") ? (<>
+					{(item.team?.description) ? (<>
 					<div className="ui attached header team-item-description">
-						{("$team.Description") ? (<>{/* TODO: {{$team.Description}} */}</>) : null}
+						{(item.team?.description) ? (<>{/* TODO: {{$team.Description}} */}</>) : null}
 					</div>
 					</>) : null}
 					<div className="ui attached segment">

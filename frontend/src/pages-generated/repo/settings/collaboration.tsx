@@ -93,12 +93,12 @@ export default function Collaboration(props: Record<string, unknown>) {
 												{/* TODO: {{- $first = false -}} */}
 											{/* TODO: {{- end -}} */}
 										</React.Fragment>))}
-										{...("$first" ? {"None": true} : {})}
+										{...(first ? {"None": true} : {})}
 									</div>
 								</>) : null}
 							</div>
-							{("$allowedToChangeTeams") ? (<>
-								<div className="item-trailing" {(item.includesAllRepositories) ? (<> data-tooltip-content={String(i18n("repo.settings.delete_team_tip") ?? "")}</>) : null}>
+							{(allowedToChangeTeams) ? (<>
+								<div className="item-trailing" {...(item.includesAllRepositories ? {"data-tooltip-content": String(i18n("repo.settings.delete_team_tip") ?? "")} : {})}>
 									<button className={`ui red tiny button link-action ${(props.includesAllRepositories) ? `disabled` : ""}`} data-modal-confirm="#repo-collaborator-delete-modal" data-url={`${String(props.link ?? "")}/team/delete?id=${String(props.iD ?? "")}`}>
 											{i18n("repo.settings.delete_collaborator")}
 									</button>
@@ -110,7 +110,7 @@ export default function Collaboration(props: Record<string, unknown>) {
 			</div>
 			</>) : null}
 			<div className="ui bottom attached segment">
-				{("$allowedToChangeTeams") ? (<>
+				{(allowedToChangeTeams) ? (<>
 					<form className="ui form" id="repo-collab-team-form" action={`${String(props.link ?? "")}/team`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
 						<div id="search-team-box" className="ui search input tw-align-middle" data-org-name={String(props.orgName ?? "")}>
 							<input className="prompt" name="team" placeholder={String(i18n("search.team_kind") ?? "")} autocomplete="off" required />

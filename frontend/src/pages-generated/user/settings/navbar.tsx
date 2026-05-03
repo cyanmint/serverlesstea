@@ -9,7 +9,7 @@ export default function Navbar(props: Record<string, unknown>) {
 		<a className={`${(props.pageIsSettingsProfile) ? `active ` : ""}item`} href={`/user/settings`}>
 			{i18n("settings.profile")}
 		</a>
-		{(!(props.userDisabledFeatures?.contains "manage_credentials" "deletion")) ? (<>
+		{(!(props.userDisabledFeatures?.contains?.("manage_credentials", "deletion"))) ? (<>
 		<a className={`${(props.pageIsSettingsAccount) ? `active ` : ""}item`} href={`/user/settings/account`}>
 			{i18n("settings.account")}
 		</a>
@@ -22,7 +22,7 @@ export default function Navbar(props: Record<string, unknown>) {
 		<a className={`${(props.pageIsSettingsAppearance) ? `active ` : ""}item`} href={`/user/settings/appearance`}>
 			{i18n("settings.appearance")}
 		</a>
-		{(!(props.userDisabledFeatures?.contains "manage_mfa" "manage_credentials")) ? (<>
+		{(!(props.userDisabledFeatures?.contains?.("manage_mfa", "manage_credentials"))) ? (<>
 		<a className={`${(props.pageIsSettingsSecurity) ? `active ` : ""}item`} href={`/user/settings/security`}>
 			{i18n("settings.security")}
 		</a>
@@ -33,13 +33,13 @@ export default function Navbar(props: Record<string, unknown>) {
 		<a className={`${(props.pageIsSettingsApplications) ? `active ` : ""}item`} href={`/user/settings/applications`}>
 			{i18n("settings.applications")}
 		</a>
-		{(!(props.userDisabledFeatures?.contains "manage_ssh_keys" "manage_gpg_keys")) ? (<>
+		{(!(props.userDisabledFeatures?.contains?.("manage_ssh_keys", "manage_gpg_keys"))) ? (<>
 		<a className={`${(props.pageIsSettingsKeys) ? `active ` : ""}item`} href={`/user/settings/keys`}>
 			{i18n("settings.ssh_gpg_keys")}
 		</a>
 		</>) : null}
 		{(props.enableActions) ? (<>
-		<details className="item toggleable-item" {((props.pageIsUserSettingsActionsGeneral || props.pageIsSharedSettingsRunners || props.pageIsSharedSettingsSecrets || props.pageIsSharedSettingsVariables)) ? (<>open</>) : null}>
+		<details className="item toggleable-item" {...((props.pageIsUserSettingsActionsGeneral || props.pageIsSharedSettingsRunners || props.pageIsSharedSettingsSecrets || props.pageIsSharedSettingsVariables) ? {"open": true} : {})}>
 			<summary>{i18n("actions.actions")}</summary>
 			<div className="menu">
 				<a className={`${(props.pageIsUserSettingsActionsGeneral) ? `active ` : ""}item`} href={`/user/settings/actions/general`}>

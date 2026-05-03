@@ -12,7 +12,7 @@ export default function Instance(props: Record<string, unknown>) {
 		<input type="hidden" data-config-dyn-key={String("" ?? "")} data-config-value-json={String("" ?? "")} />
 		<div className="field">
 			<div className="ui checkbox tw-mb-2">
-				<input type="checkbox" name={`.AdminWebAccessOnly`} value="true" {...("$maintenanceMode.AdminWebAccessOnly" ? {"checked": true} : {})} data-config-value-type="boolean" />
+				<input type="checkbox" name={`.AdminWebAccessOnly`} value="true" {...(props.maintenanceMode?.adminWebAccessOnly ? {"checked": true} : {})} data-config-value-type="boolean" />
 				<label>{i18n("admin.config.instance_maintenance_mode.admin_web_access_only")}</label>
 			</div>
 		</div>
@@ -38,7 +38,7 @@ export default function Instance(props: Record<string, unknown>) {
 		<input type="hidden" data-config-dyn-key={String("" ?? "")} data-config-value-json={String("" ?? "")} />
 		<div className="field">
 			<div className="ui checkbox tw-mb-2">
-				<input type="checkbox" name={`.DisplayEnabled`} value="true" {...("$banner.DisplayEnabled" ? {"checked": true} : {})} data-config-value-type="boolean" />
+				<input type="checkbox" name={`.DisplayEnabled`} value="true" {...(props.banner?.displayEnabled ? {"checked": true} : {})} data-config-value-type="boolean" />
 				<label>{i18n("admin.config.instance_web_banner.enabled")}</label>
 			</div>
 			{/* template: shared/combomarkdowneditor */}

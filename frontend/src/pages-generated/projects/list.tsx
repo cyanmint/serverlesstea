@@ -51,7 +51,7 @@ export default function List(props: Record<string, unknown>) {
 		<li className="milestone-card">
 			<h3 className="flex-text-block tw-m-0 tw-gap-3">
 				{/* TODO: {{svg .IconName 16}} */}
-				<a className="muted tw-break-anywhere" href={String(props.link ctx ?? "")}>{item.title as any}</a>
+				<a className="muted tw-break-anywhere" href={String(props.link?.(ctx) ?? "")}>{item.title as any}</a>
 			</h3>
 			<div className="milestone-toolbar">
 				<div className="group">
@@ -66,13 +66,13 @@ export default function List(props: Record<string, unknown>) {
 				</div>
 				{((props.canWriteProjects && !(props.repository?.isArchived))) ? (<>
 				<div className="group">
-					<a className="flex-text-inline" href={`${String(props.link ctx ?? "")}/edit`}><span className="svg-icon" aria-label="octicon-pencil"></span>{i18n("repo.issues.label_edit")}</a>
+					<a className="flex-text-inline" href={`${String(props.link?.(ctx) ?? "")}/edit`}><span className="svg-icon" aria-label="octicon-pencil"></span>{i18n("repo.issues.label_edit")}</a>
 					{(item.isClosed) ? (<>
-						<a className="link-action flex-text-inline" href data-url={`${String(props.link ctx ?? "")}/open`}><span className="svg-icon" aria-label="octicon-check"></span>{i18n("repo.projects.open")}</a>
+						<a className="link-action flex-text-inline" href data-url={`${String(props.link?.(ctx) ?? "")}/open`}><span className="svg-icon" aria-label="octicon-check"></span>{i18n("repo.projects.open")}</a>
 					</>) : (<>
-						<a className="link-action flex-text-inline" href data-url={`${String(props.link ctx ?? "")}/close`}><span className="svg-icon" aria-label="octicon-skip"></span>{i18n("repo.projects.close")}</a>
+						<a className="link-action flex-text-inline" href data-url={`${String(props.link?.(ctx) ?? "")}/close`}><span className="svg-icon" aria-label="octicon-skip"></span>{i18n("repo.projects.close")}</a>
 					</>)}
-					<a className="link-action flex-text-inline tw-text-red" href data-modal-confirm="#repo-project-delete-modal" data-url={`${String(props.link ctx ?? "")}/delete`}><span className="svg-icon" aria-label="octicon-trash"></span>{i18n("repo.issues.label_delete")}</a>
+					<a className="link-action flex-text-inline tw-text-red" href data-modal-confirm="#repo-project-delete-modal" data-url={`${String(props.link?.(ctx) ?? "")}/delete`}><span className="svg-icon" aria-label="octicon-trash"></span>{i18n("repo.issues.label_delete")}</a>
 				</div>
 				</>) : null}
 			</div>

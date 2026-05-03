@@ -7,7 +7,7 @@ export default function Options(props: Record<string, unknown>) {
 <div className="inline field">
 	<label>{i18n("repo.migrate_options")}</label>
 	<div className="ui checkbox">
-		<input id="mirror" name="mirror" type="checkbox" {(props.mirror) ? (< /> checked</>) : null}>
+		<input id="mirror" name="mirror" type="checkbox" {...(props.mirror ? {"checked": true} : {})} />
 		<label>{i18n("repo.migrate_options_mirror_helper")}</label>
 	</div>
 </div>
@@ -16,7 +16,7 @@ export default function Options(props: Record<string, unknown>) {
 <div className="inline field">
 	<label></label>
 	<div className="ui checkbox">
-		<input id="lfs" name="lfs" type="checkbox" {(props.lfs) ? (< /> checked</>) : null}>
+		<input id="lfs" name="lfs" type="checkbox" {...(props.lfs ? {"checked": true} : {})} />
 		<label>{i18n("repo.migrate_options_lfs")}</label>
 	</div>
 	<span id="lfs_settings" className="tw-hidden">(<a id="lfs_settings_show" href="#">{i18n("repo.settings.advanced_settings")}</a>)</span>

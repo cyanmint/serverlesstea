@@ -9,7 +9,7 @@ export default function CommitStatuses(props: Record<string, unknown>) {
 			{/* template: repo/commit_status */}
 		</a>
 	</>) : (<>
-		<span className={`flex-text-inline ${String(props.additionalClasses ?? "")}`} data-global-init="initCommitStatuses" tabindex="0">
+		<span className={`flex-text-inline ${String(props.additionalClasses ?? "")}`} data-global-init="initCommitStatuses" tabIndex="0">
 			{/* template: repo/commit_status */}
 		</span>
 	</>)}

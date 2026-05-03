@@ -7,13 +7,13 @@ export default function Sidebar(props: Record<string, unknown>) {
 	<h4 className="ui top attached header flex-left-right">
 		<strong>{props.team?.name as any}</strong>
 		<div className="flex-text-block">
-			{(props.team?.isMember ctx $?.signedUser?.iD) ? (<>
+			{(props.team?.isMember?.(ctx, props.signedUser?.iD)) ? (<>
 				<button className="ui red mini compact button show-modal" data-modal="#org-member-leave-team"
-					data-modal-form.action={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName | PathEscape ?? "")}/action/leave?uid=${String(props.signedUser?.iD ?? "")}`}
+					{...{"data-modal-form.action": `${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName?.("|", "PathEscape") ?? "")}/action/leave?uid=${String(props.signedUser?.iD ?? "")}`}}
 					data-modal-to-leave-team-name={String(props.team?.name ?? "")}
 				>{i18n("org.teams.leave")}</button>
 			</>) : null} {(props.isOrganizationOwner) ? (<>
-				<form method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())} action={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName | PathEscape ?? "")}/action/join`}>
+				<form method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())} action={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName?.("|", "PathEscape") ?? "")}/action/join`}>
 					<input type="hidden" name="page" value="team" />
 					<button type="submit" className="ui primary mini compact button" name="uid" value={String(props.signedUser?.iD ?? "")}>{i18n("org.teams.join")}</button>
 				</form>
@@ -64,10 +64,10 @@ export default function Sidebar(props: Record<string, unknown>) {
 						</thead>
 						<tbody>
 							{((props.units) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								{(!("$unit.Type.UnitGlobalDisabled")) ? (<>
+								{(!(item.unit?.type?.unitGlobalDisabled)) ? (<>
 									<tr>
 										<td><strong>{/* TODO: {{ctx.Locale.Tr $unit.NameKey}} */}</strong></td>
-										<td>{(props.team?.unitAccessMode ctx $unit?.type === 0 -) ? (<>
+										<td>{(props.team?.unitAccessMode?.(ctx, item.unit?.type) === 0 -) ? (<>
 										{i18n("org.teams.none_access")}
 										{/* TODO: {{- else if or (eq $.Team.ID 0) (eq ($.Team.UnitAccessMode ctx $unit.Type) 1) -}} */}
 										{i18n("org.teams.read_access")}
@@ -85,7 +85,7 @@ export default function Sidebar(props: Record<string, unknown>) {
 
 	{(props.isOrganizationOwner) ? (<>
 		<div className="ui bottom attached segment">
-			<a className="ui small button" href={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName | PathEscape ?? "")}/edit`}><span className="svg-icon" aria-label="octicon-gear"></span> {i18n("org.teams.settings")}</a>
+			<a className="ui small button" href={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName?.("|", "PathEscape") ?? "")}/edit`}><span className="svg-icon" aria-label="octicon-gear"></span> {i18n("org.teams.settings")}</a>
 		</div>
 	</>) : null}
 </div>

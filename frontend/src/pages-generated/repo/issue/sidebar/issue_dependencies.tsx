@@ -3,7 +3,7 @@ import { i18n } from '../../../../lib/i18n'
 
 export default function IssueDependencies(props: Record<string, unknown>) {
   return (<>
-{(props.repository?.isDependenciesEnabled ctx) ? (<>
+{(props.repository?.isDependenciesEnabled?.(ctx)) ? (<>
 	<div className="divider"></div>
 
 	<div className="ui depending">
@@ -27,8 +27,8 @@ export default function IssueDependencies(props: Record<string, unknown>) {
 				{((props.blockingDependencies) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					<div className={`item dependency${(props.issue?.isClosed) ? ` is-closed` : ""} flex-left-right`}>
 						<div className="item-left tw-flex tw-justify-center tw-flex-col tw-flex-1 gt-ellipsis">
-							<a className="muted issue-dependency-title gt-ellipsis" href={String(props.issue?.link ?? "")} data-tooltip-content={`#${String(props.issue?.index ?? "")} ${String(props.issue?.title | ctx?.renderUtils?.renderEmoji ?? "")}`}>
-								#{item.issue?.index as any} {item.issue?.title | ctx?.renderUtils?.renderEmoji as any}
+							<a className="muted issue-dependency-title gt-ellipsis" href={String(props.issue?.link ?? "")} data-tooltip-content={`#${String(props.issue?.index ?? "")} ${String(props.issue?.title?.("|", "ctx.RenderUtils.RenderEmoji") ?? "")}`}>
+								#{item.issue?.index as any} {item.issue?.title?.("|", "ctx.RenderUtils.RenderEmoji") as any}
 							</a>
 							<div className="tw-text-xs gt-ellipsis" data-tooltip-content={`${String(props.repository?.ownerName ?? "")}/${String(props.repository?.name ?? "")}`}>
 								{item.repository?.ownerName as any}/{item.repository?.name as any}
@@ -61,8 +61,8 @@ export default function IssueDependencies(props: Record<string, unknown>) {
 				{((props.blockedByDependencies) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					<div className={`item dependency${(props.issue?.isClosed) ? ` is-closed` : ""} flex-left-right`}>
 						<div className="item-left tw-flex tw-justify-center tw-flex-col tw-flex-1 gt-ellipsis">
-							<a className="muted issue-dependency-title gt-ellipsis" href={String(props.issue?.link ?? "")} data-tooltip-content={`#${String(props.issue?.index ?? "")} ${String(props.issue?.title | ctx?.renderUtils?.renderEmoji ?? "")}`}>
-								#{item.issue?.index as any} {item.issue?.title | ctx?.renderUtils?.renderEmoji as any}
+							<a className="muted issue-dependency-title gt-ellipsis" href={String(props.issue?.link ?? "")} data-tooltip-content={`#${String(props.issue?.index ?? "")} ${String(props.issue?.title?.("|", "ctx.RenderUtils.RenderEmoji") ?? "")}`}>
+								#{item.issue?.index as any} {item.issue?.title?.("|", "ctx.RenderUtils.RenderEmoji") as any}
 							</a>
 							<div className="tw-text-xs gt-ellipsis" data-tooltip-content={`${String(props.repository?.ownerName ?? "")}/${String(props.repository?.name ?? "")}`}>
 								{item.repository?.ownerName as any}/{item.repository?.name as any}
@@ -85,8 +85,8 @@ export default function IssueDependencies(props: Record<string, unknown>) {
 							<div className="item-left tw-flex tw-justify-center tw-flex-col tw-flex-1 gt-ellipsis">
 								<div className="gt-ellipsis">
 									<span data-tooltip-content={String(i18n("repo.issues.dependency.no_permission.can_remove") ?? "")}><span className="svg-icon" aria-label="octicon-lock"></span></span>
-									<span className="gt-ellipsis issue-dependency-title" data-tooltip-content={`#${String(props.issue?.index ?? "")} ${String(props.issue?.title | ctx?.renderUtils?.renderEmoji ?? "")}`}>
-										#{item.issue?.index as any} {item.issue?.title | ctx?.renderUtils?.renderEmoji as any}
+									<span className="gt-ellipsis issue-dependency-title" data-tooltip-content={`#${String(props.issue?.index ?? "")} ${String(props.issue?.title?.("|", "ctx.RenderUtils.RenderEmoji") ?? "")}`}>
+										#{item.issue?.index as any} {item.issue?.title?.("|", "ctx.RenderUtils.RenderEmoji") as any}
 									</span>
 								</div>
 								<div className="tw-text-xs gt-ellipsis" data-tooltip-content={`${String(props.repository?.ownerName ?? "")}/${String(props.repository?.name ?? "")}`}>

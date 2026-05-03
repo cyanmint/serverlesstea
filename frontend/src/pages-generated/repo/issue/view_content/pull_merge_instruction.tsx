@@ -11,23 +11,23 @@ export default function PullMergeInstruction(props: Record<string, unknown>) {
 	<div className="tw-mt-2">
 		<div><h3>{i18n("repo.pulls.cmd_instruction_checkout_title")}</h3>{i18n("repo.pulls.cmd_instruction_checkout_desc")}</div>
 		{/* $localBranch */}
-		{("$pull.HeadRepo.ID" !== "$pull.BaseRepo.ID") ? (<>
+		{(props.pull?.headRepo?.iD !== props.pull?.baseRepo?.iD) ? (<>
 			{/* TODO: {{$localBranch = print $pull.HeadRepo.OwnerName "-" $pull.HeadBranch}} */}
 		</>) : null}
 		<div className="ui secondary segment tw-font-mono">
 			{/* $gitRemoteName */}
-			{("$pull.Flow" === 0) ? (<>
-			<div>git fetch -u {("$pull.HeadRepo.ID" !== "$pull.BaseRepo.ID") ? (<>{/* TODO: {{ctx.AppFullLink $pull.HeadRepo.Link}} */}</>) : (<>{/* $gitRemoteName */}</>)} {/* TODO: {{$pull.HeadBranch}} */}:{/* $localBranch */}</div>
+			{(props.pull?.flow === 0) ? (<>
+			<div>git fetch -u {(props.pull?.headRepo?.iD !== props.pull?.baseRepo?.iD) ? (<>{/* TODO: {{ctx.AppFullLink $pull.HeadRepo.Link}} */}</>) : (<>{/* $gitRemoteName */}</>)} {/* TODO: {{$pull.HeadBranch}} */}:{/* $localBranch */}</div>
 			</>) : (<>
 			<div>git fetch -u {/* $gitRemoteName */} {/* TODO: {{$pull.GetGitHeadRefName}} */}:{/* $localBranch */}</div>
 			</>)}
 			<div>git checkout {/* $localBranch */}</div>
 		</div>
-		{("$data.ShowMergeInstructions") ? (<>
+		{(props.data?.showMergeInstructions) ? (<>
 		<div>
 			<h3>{i18n("repo.pulls.cmd_instruction_merge_title")}</h3>
 			{i18n("repo.pulls.cmd_instruction_merge_desc")}
-			{(!("$data.AutodetectManualMerge")) ? (<>
+			{(!(props.data?.autodetectManualMerge)) ? (<>
 				<div>{i18n("repo.pulls.cmd_instruction_merge_warning")}</div>
 			</>) : null}
 		</div>

@@ -12,7 +12,7 @@ export default function Avatars(props: Record<string, unknown>) {
 		<dt>{i18n("admin.config.enable_gravatar")}</dt>
 		<dd>
 			<div className="ui toggle checkbox" data-tooltip-content={String(i18n("admin.config.enable_gravatar") ?? "")}>
-				<input type="checkbox" data-config-dyn-key={String("" ?? "")} data-config-value-type="flipped" {(!("$cfgOpt.Value ctx")) ? (< />checked</>) : null}><label></label>
+				<input type="checkbox" data-config-dyn-key={String("" ?? "")} data-config-value-type="flipped" {...(!(props.cfgOpt?.value?.(ctx)) ? {"checked": true} : {})} /><label></label>
 			</div>
 		</dd>
 
@@ -22,7 +22,7 @@ export default function Avatars(props: Record<string, unknown>) {
 		<dt>{i18n("admin.config.enable_federated_avatar")}</dt>
 		<dd>
 			<div className="ui toggle checkbox" data-tooltip-content={String(i18n("admin.config.enable_federated_avatar") ?? "")}>
-				<input type="checkbox" data-config-dyn-key={String("" ?? "")} data-config-value-type="boolean" {...("$cfgOpt.Value ctx" ? {"checked": true} : {})} /><label></label>
+				<input type="checkbox" data-config-dyn-key={String("" ?? "")} data-config-value-type="boolean" {...(props.cfgOpt?.value?.(ctx) ? {"checked": true} : {})} /><label></label>
 			</div>
 		</dd>
 	</dl>

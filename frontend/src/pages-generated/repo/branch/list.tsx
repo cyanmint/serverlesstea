@@ -139,13 +139,13 @@ export default function List(props: Record<string, unknown>) {
 											<span className="svg-icon" aria-label="octicon-git-pull-request"></span> {i18n("repo.branch.included")}
 										</span>
 								</>) : null} {((!(item.dBBranch?.isDeleted) && props.allowsPulls && item.commitsAhead > 0)) ? (<>
-									<a href={`${String(props.pullRequestCtx?.makeDefaultCompareLink ?.dBBranch?.name ?? "")}?expand=1`}>
+									<a href={`${String(props.pullRequestCtx?.makeDefaultCompareLink?.(props.dBBranch?.name) ?? "")}?expand=1`}>
 										<button id="new-pull-request" className="ui compact basic button tw-mr-0">{(props.canPull) ? (<>{i18n("repo.pulls.compare_changes")}</>) : (<>{i18n("action.compare_branch")}</>)}</button>
 									</a>
 									</>) : null}
 								</>) : null} {((item.latestPullRequest?.hasMerged && item.mergeMovedOn)) ? (<>
 									{((!(item.dBBranch?.isDeleted) && props.allowsPulls && item.commitsAhead > 0)) ? (<>
-									<a href={`${String(props.pullRequestCtx?.makeDefaultCompareLink ?.dBBranch?.name ?? "")}?expand=1`}>
+									<a href={`${String(props.pullRequestCtx?.makeDefaultCompareLink?.(props.dBBranch?.name) ?? "")}?expand=1`}>
 										<button id="new-pull-request" className="ui compact basic button tw-mr-0">{(props.canPull) ? (<>{i18n("repo.pulls.compare_changes")}</>) : (<>{i18n("action.compare_branch")}</>)}</button>
 									</a>
 									</>) : null}

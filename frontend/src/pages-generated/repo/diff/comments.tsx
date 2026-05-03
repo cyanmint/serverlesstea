@@ -62,7 +62,7 @@ export default function Comments(props: Record<string, unknown>) {
 			</div>
 		</div>
 		<div className="ui attached segment comment-body">
-			<div className="render-content markup" {((props.permission?.isAdmin || props.hasIssuesOrPullsWritePermission || (props.root?.isSigned && props.root?.signedUserID === item.posterID))) ? (<>data-can-edit="true"</>) : null}>
+			<div className="render-content markup" {...((props.permission?.isAdmin || props.hasIssuesOrPullsWritePermission || (props.root?.isSigned && props.root?.signedUserID === item.posterID)) ? {"data-can-edit": "true"} : {})}>
 			{(item.renderedContent) ? (<>
 				{item.renderedContent as any}
 			</>) : (<>
@@ -76,7 +76,7 @@ export default function Comments(props: Record<string, unknown>) {
 			</>) : null}
 		</div>
 		{/* $reactions */}
-		{("$reactions") ? (<>
+		{(reactions) ? (<>
 			{/* template: repo/issue/view_content/reactions */}
 		</>) : null}
 	</div>

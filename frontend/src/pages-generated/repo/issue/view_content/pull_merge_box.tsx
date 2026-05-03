@@ -4,10 +4,10 @@ import { i18n } from '../../../../lib/i18n'
 export default function PullMergeBox(props: Record<string, unknown>) {
   return (<>
 {/* $data */}
-{("$data.ShowMergeBox") ? (<>
+{(props.data?.showMergeBox) ? (<>
 <div className="timeline-item comment pull-merge-box"
 	data-global-init="initRepoPullMergeBox"
-	{("$data.ReloadingInterval") ? (<>
+	{(props.data?.reloadingInterval) ? (<>
 		data-pull-merge-box-reloading-interval={String("" ?? "")}
 		data-pull-link={String(props.issue?.link ?? "")}
 	</>) : null}
@@ -148,12 +148,12 @@ export default function PullMergeBox(props: Record<string, unknown>) {
 						<li>{item as any}</li>
 						</React.Fragment>))}
 					</ul>
-				</>) : null} {((props.enableStatusCheck && ("$requiredStatusCheckState.IsError" || "$requiredStatusCheckState.IsFailure"))) ? (<>
+				</>) : null} {((props.enableStatusCheck && (props.requiredStatusCheckState?.isError || props.requiredStatusCheckState?.isFailure))) ? (<>
 					<div className="item">
 						<span className="svg-icon" aria-label="octicon-x"></span>
 						{i18n("repo.pulls.required_status_check_failed")}
 					</div>
-				</>) : null} {((props.enableStatusCheck && !("$requiredStatusCheckState.IsSuccess"))) ? (<>
+				</>) : null} {((props.enableStatusCheck && !(props.requiredStatusCheckState?.isSuccess))) ? (<>
 					<div className="item">
 						<span className="svg-icon" aria-label="octicon-x"></span>
 						{i18n("repo.pulls.required_status_check_missing")}
@@ -172,8 +172,8 @@ export default function PullMergeBox(props: Record<string, unknown>) {
 				{/* $notAllOverridableChecksOk */}
 				{/* $canMergeNow */}
 
-				{("$canMergeNow") ? (<>
-					{("$notAllOverridableChecksOk") ? (<>
+				{(canMergeNow) ? (<>
+					{(notAllOverridableChecksOk) ? (<>
 						<div className="item">
 							<span className="svg-icon" aria-label="octicon-dot-fill"></span>
 							{i18n("repo.pulls.required_status_check_administrator")}
@@ -208,7 +208,7 @@ export default function PullMergeBox(props: Record<string, unknown>) {
 				</>) : null}
 
 				{(props.allowMerge) ? (<> {/* user is allowed to merge */}
-					{("$data.MergeFormProps") ? (<>
+					{(props.data?.mergeFormProps) ? (<>
 						<div className="divider"></div>
 						{/* TODO: {{$showGeneralMergeForm = true}} */}
 						{/* The merge form is a Vue component. After mounted, it has a button for choosing merge style, so make it have min-height to avoid layout shifting */}
@@ -265,7 +265,7 @@ export default function PullMergeBox(props: Record<string, unknown>) {
 						<li>{item as any}</li>
 						</React.Fragment>))}
 					</ul>
-				</>) : null} {((props.enableStatusCheck && !("$requiredStatusCheckState.IsSuccess"))) ? (<>
+				</>) : null} {((props.enableStatusCheck && !(props.requiredStatusCheckState?.isSuccess))) ? (<>
 					<div className="item tw-text-red">
 						<span className="svg-icon" aria-label="octicon-x"></span>
 						{i18n("repo.pulls.required_status_check_failed")}
@@ -294,7 +294,7 @@ export default function PullMergeBox(props: Record<string, unknown>) {
 			* - Merge the pull request branch locally and push the merged commit to Gitea
 			* - Make some conflicts between the base branch and the pull request branch
 			* Then the Manually Merged form will be shown in the merge form */}
-			{((props.stillCanManualMerge && !("$showGeneralMergeForm"))) ? (<>
+			{((props.stillCanManualMerge && !(showGeneralMergeForm))) ? (<>
 				<div className="divider"></div>
 				<form className="ui form form-fetch-action" action={`${String(props.issue?.link ?? "")}/merge`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>{/* another similar form is in PullRequestMergeForm.vue */}
 					<div className="field">
@@ -306,7 +306,7 @@ export default function PullMergeBox(props: Record<string, unknown>) {
 				</form>
 			</>) : null}
 
-			{("$data.ShowPullCommands") ? (<>
+			{(props.data?.showPullCommands) ? (<>
 				{/* template: repo/issue/view_content/pull_merge_instruction */}
 			</>) : null}
 		</div>

@@ -9,7 +9,7 @@ export default function ViewContent(props: Record<string, unknown>) {
 {/* template: repo/sub_menu */}
 <div className="repo-button-row">
 	<div className="repo-button-row-left">
-	{(!("$isTreePathRoot")) ? (<>
+	{(!(isTreePathRoot)) ? (<>
 		{/* template: repo/view_file_tree_toggle_button */}
 	</>) : null}
 
@@ -23,13 +23,13 @@ export default function ViewContent(props: Record<string, unknown>) {
 		</a>
 	</>) : null}
 
-	{(("$isTreePathRoot" && props.repository?.isTemplate)) ? (<>
+	{((isTreePathRoot && props.repository?.isTemplate)) ? (<>
 		<a role="button" className="ui primary compact button" href={`/repo/create?template_id=${String(props.repository?.iD ?? "")}`}>
 			{i18n("repo.use_template")}
 		</a>
 	</>) : null}
 
-	{(!("$isTreePathRoot")) ? (<>
+	{(!(isTreePathRoot)) ? (<>
 		{/* $treeNameIdxLast */}
 		<span className="breadcrumb">
 			<a className="section" href={`${String(props.repoLink ?? "")}/src/${String(props.refTypeNameSubURL ?? "")}`} title={String(props.repository?.name ?? "")}>{/* TODO: {{StringUtils.EllipsisString .Repository.Name 30}} */}</a>
@@ -65,25 +65,25 @@ export default function ViewContent(props: Record<string, unknown>) {
 					{/* TODO: {{$addFilePath = ""}} */}
 				</>)}
 			</>) : null}
-			<button className="ui dropdown basic compact jump button repo-add-file" {(!(props.repository?.canEnableEditor)) ? (<>disabled</>) : null}>
+			<button className="ui dropdown basic compact jump button repo-add-file" {...(!(props.repository?.canEnableEditor) ? {"disabled": true} : {})}>
 				{i18n("repo.editor.add_file")}
 				<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 				<div className="menu">
-					<a className="item" href={`${String(props.repoLink ?? "")}/_new/${String(props.branchName | PathEscapeSegments ?? "")}/`}>
+					<a className="item" href={`${String(props.repoLink ?? "")}/_new/${String(props.branchName?.("|", "PathEscapeSegments") ?? "")}/`}>
 						<span className="svg-icon" aria-label="octicon-file-added"></span>{i18n("repo.editor.new_file")}
 					</a>
 					{(props.repositoryUploadEnabled) ? (<>
-					<a className="item" href={`${String(props.repoLink ?? "")}/_upload/${String(props.branchName | PathEscapeSegments ?? "")}/`}>
+					<a className="item" href={`${String(props.repoLink ?? "")}/_upload/${String(props.branchName?.("|", "PathEscapeSegments") ?? "")}/`}>
 						<span className="svg-icon" aria-label="octicon-upload"></span>{i18n("repo.editor.upload_file")}
 					</a>
 					</>) : null}
-					<a className="item" href={`${String(props.repoLink ?? "")}/_diffpatch/${String(props.branchName | PathEscapeSegments ?? "")}/`}>
+					<a className="item" href={`${String(props.repoLink ?? "")}/_diffpatch/${String(props.branchName?.("|", "PathEscapeSegments") ?? "")}/`}>
 						<span className="svg-icon" aria-label="octicon-diff"></span>{i18n("repo.editor.patch")}
 					</a>
 				</div>
 			</button>
 
-			{((!(props.isViewFile) && !("$isTreePathRoot"))) ? (<>
+			{((!(props.isViewFile) && !(isTreePathRoot))) ? (<>
 			<button className="ui dropdown basic compact jump button tw-px-3" data-tooltip-content={String(i18n("repo.more_operations") ?? "")}>
 				<span className="svg-icon" aria-label="octicon-kebab-horizontal"></span>
 				<div className="menu">
@@ -95,9 +95,9 @@ export default function ViewContent(props: Record<string, unknown>) {
 						<a className="item muted archive-link" href={`${String(props.repoLink ?? "")}/archive/.zip?path=`} rel="nofollow"><span className="svg-icon" aria-label="octicon-file-zip"></span>{i18n("repo.download_directory_as")}</a>
 						<a className="item muted archive-link" href={`${String(props.repoLink ?? "")}/archive/.tar.gz?path=`} rel="nofollow"><span className="svg-icon" aria-label="octicon-file-zip"></span>{i18n("repo.download_directory_as")}</a>
 					</>) : null}
-					{((props.repository?.canContentChange && !("$isTreePathRoot"))) ? (<>
+					{((props.repository?.canContentChange && !(isTreePathRoot))) ? (<>
 						<div className="divider"></div>
-						<a className="item tw-text-danger" href={`${String(props.repoLink ?? "")}/_delete/${String(props.branchName | PathEscapeSegments ?? "")}/${String(props.treePath | PathEscapeSegments ?? "")}`}>
+						<a className="item tw-text-danger" href={`${String(props.repoLink ?? "")}/_delete/${String(props.branchName?.("|", "PathEscapeSegments") ?? "")}/${String(props.treePath?.("|", "PathEscapeSegments") ?? "")}`}>
 							<span className="svg-icon" aria-label="octicon-trash"></span>{i18n("repo.editor.delete_this_directory")}
 						</a>
 					</>) : null}
@@ -106,11 +106,11 @@ export default function ViewContent(props: Record<string, unknown>) {
 			</>) : null}
 		</>) : null}
 		{/* Only show clone panel in repository home page */}
-		{("$isTreePathRoot") ? (<>
+		{(isTreePathRoot) ? (<>
 			{/* template: repo/clone_panel */}
 		</>) : null}
-		{((!("$isTreePathRoot") && !(props.isViewFile) && !(props.isBlame))) ? (<>{/* IsViewDirectory (not home), TODO: split the templates, avoid using "if" tricks */}
-			<a className="ui compact button" href={`${String(props.repoLink ?? "")}/commits/${String(props.refTypeNameSubURL ?? "")}/${String(props.treePath | PathEscapeSegments ?? "")}`}>
+		{((!(isTreePathRoot) && !(props.isViewFile) && !(props.isBlame))) ? (<>{/* IsViewDirectory (not home), TODO: split the templates, avoid using "if" tricks */}
+			<a className="ui compact button" href={`${String(props.repoLink ?? "")}/commits/${String(props.refTypeNameSubURL ?? "")}/${String(props.treePath?.("|", "PathEscapeSegments") ?? "")}`}>
 				<span className="svg-icon" aria-label="octicon-history"></span>{i18n("repo.file_history")}
 			</a>
 		</>) : null}
@@ -121,7 +121,7 @@ export default function ViewContent(props: Record<string, unknown>) {
 </>) : null} {(props.isBlame) ? (<>
 	{/* template: repo/blame */}
 </>) : (<>{/* IsViewDirectory */}
-	{("$isTreePathRoot") ? (<>
+	{(isTreePathRoot) ? (<>
 		{/* template: repo/code/upstream_diverging_info */}
 	</>) : null}
 	{/* template: repo/view_list */}

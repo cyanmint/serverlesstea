@@ -39,11 +39,11 @@ export default function New(props: Record<string, unknown>) {
 						<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 						<div className="menu">
 							{((props.allowedUserVisibilityModes) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								{("$mode.IsPublic") ? (<>
+								{(item.mode?.isPublic) ? (<>
 									<div className="item" data-tooltip-content={String(i18n("settings.visibility.public_tooltip") ?? "")} data-value="0">{i18n("settings.visibility.public")}</div>
-								</>) : null} {("$mode.IsLimited") ? (<>
+								</>) : null} {(item.mode?.isLimited) ? (<>
 									<div className="item" data-tooltip-content={String(i18n("settings.visibility.limited_tooltip") ?? "")} data-value="1">{i18n("settings.visibility.limited")}</div>
-								</>) : null} {("$mode.IsPrivate") ? (<>
+								</>) : null} {(item.mode?.isPrivate) ? (<>
 									<div className="item" data-tooltip-content={String(i18n("settings.visibility.private_tooltip") ?? "")} data-value="2">{i18n("settings.visibility.private")}</div>
 								</>) : null}
 							</React.Fragment>))}

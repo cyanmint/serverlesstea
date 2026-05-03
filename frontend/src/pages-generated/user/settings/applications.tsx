@@ -16,7 +16,7 @@ export default function Applications(props: Record<string, unknown>) {
 				{((props.tokens) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					<div className="item">
 						<div className="item-leading">
-							<span className={`${(props.hasRecentActivity) ? `tw-text-green` : ""}`} {(item.hasRecentActivity) ? (<>data-tooltip-content={String(i18n("settings.token_state_desc") ?? "")}</>) : null}>
+							<span className={`${(props.hasRecentActivity) ? `tw-text-green` : ""}`} {...(item.hasRecentActivity ? {"data-tooltip-content": String(i18n("settings.token_state_desc") ?? "")} : {})}>
 								<span className="svg-icon" aria-label="fontawesome-send"></span>
 							</span>
 						</div>
@@ -41,7 +41,7 @@ export default function Applications(props: Record<string, unknown>) {
 								</ul>
 							</details>
 							<div className="item-body">
-								<i>{i18n("settings.added_on")} — <span className="svg-icon" aria-label="octicon-info"></span> {(item.hasUsed) ? (<>{i18n("settings.last_used")} <span {(item.hasRecentActivity) ? (<>className="tw-text-green"</>) : null}>{/* TODO: {{DateUtils.AbsoluteShort .UpdatedUnix}} */}</span></>) : (<>{i18n("settings.no_activity")}</>)}</i>
+								<i>{i18n("settings.added_on")} — <span className="svg-icon" aria-label="octicon-info"></span> {(item.hasUsed) ? (<>{i18n("settings.last_used")} <span {...(item.hasRecentActivity ? {"className": "tw-text-green"} : {})}>{/* TODO: {{DateUtils.AbsoluteShort .UpdatedUnix}} */}</span></>) : (<>{i18n("settings.no_activity")}</>)}</i>
 							</div>
 						</div>
 						<div className="item-trailing">
@@ -55,7 +55,7 @@ export default function Applications(props: Record<string, unknown>) {
 			</div>
 		</div>
 		<div className="ui bottom attached segment">
-			<details {((props.name || !(props.tokens))) ? (<>open</>) : null}>
+			<details {...((props.name || !(props.tokens)) ? {"open": true} : {})}>
 				<summary><h4 className="ui header tw-inline-block tw-my-2">{i18n("settings.generate_new_token")}</h4></summary>
 				<form className="ui form ignore-dirty" action={String(props.link ?? "")} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
 					<div className={`field ${(props.err_Name) ? `error` : ""}`}>

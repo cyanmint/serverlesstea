@@ -40,7 +40,7 @@ export default function Accountlinks(props: Record<string, unknown>) {
 					<span className="item-title" data-tooltip-content={String("" ?? "")}>
 						{/* TODO: {{$loginSource.Name}} */}
 					</span>
-					{("$loginSource.IsActive") ? (<>
+					{(item.loginSource?.isActive) ? (<>
 					<span className="flex-text-body tw-text-primary">{i18n("repo.settings.active")}</span>
 					</>) : null}
 				</div>

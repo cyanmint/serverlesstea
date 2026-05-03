@@ -78,7 +78,7 @@ export default function CommitForm(props: Record<string, unknown>) {
 				<label>{i18n("repo.editor.commit_email")}</label>
 				<select className="ui selection dropdown" name="commit_email">
 					{/* TODO: {{- range $email := .CommitCandidateEmails -}} */}
-						<option {...("$email" === props.commitDefaultEmail ? {"selected": true} : {})} value={String("" ?? "")}>{/* $email */}</option>
+						<option {...(email === props.commitDefaultEmail ? {"selected": true} : {})} value={String("" ?? "")}>{/* $email */}</option>
 					{/* TODO: {{- end -}} */}
 				</select>
 			</div>

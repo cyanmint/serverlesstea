@@ -29,8 +29,8 @@ end</code></pre></div>
 	{((props.packageDescriptor?.metadata?.requiredRubyVersion || props.packageDescriptor?.metadata?.requiredRubygemsVersion)) ? (<>
 		<h4 className="ui top attached header">{i18n("packages.requirements")}</h4>
 		<div className="ui attached segment">
-			{(props.packageDescriptor?.metadata?.requiredRubyVersion) ? (<><p>{i18n("packages.rubygems.required.ruby")}: {((props.packageDescriptor?.metadata?.requiredRubyVersion) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>{("$i" > 0) ? (<>, </>) : null}{/* TODO: {{$v.Restriction}} */}{/* TODO: {{$v.Version}} */}</React.Fragment>))}</p></>) : null}
-			{(props.packageDescriptor?.metadata?.requiredRubygemsVersion) ? (<><p>{i18n("packages.rubygems.required.rubygems")}: {((props.packageDescriptor?.metadata?.requiredRubygemsVersion) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>{("$i" > 0) ? (<>, </>) : null}{/* TODO: {{$v.Restriction}} */}{/* TODO: {{$v.Version}} */}</React.Fragment>))}</p></>) : null}
+			{(props.packageDescriptor?.metadata?.requiredRubyVersion) ? (<><p>{i18n("packages.rubygems.required.ruby")}: {((props.packageDescriptor?.metadata?.requiredRubyVersion) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>{(i > 0) ? (<>, </>) : null}{/* TODO: {{$v.Restriction}} */}{/* TODO: {{$v.Version}} */}</React.Fragment>))}</p></>) : null}
+			{(props.packageDescriptor?.metadata?.requiredRubygemsVersion) ? (<><p>{i18n("packages.rubygems.required.rubygems")}: {((props.packageDescriptor?.metadata?.requiredRubygemsVersion) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>{(i > 0) ? (<>, </>) : null}{/* TODO: {{$v.Restriction}} */}{/* TODO: {{$v.Version}} */}</React.Fragment>))}</p></>) : null}
 		</div>
 	</>) : null}
 	{((props.packageDescriptor?.metadata?.runtimeDependencies || props.packageDescriptor?.metadata?.developmentDependencies)) ? (<>

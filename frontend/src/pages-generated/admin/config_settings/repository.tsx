@@ -17,7 +17,7 @@ export default function Repository(props: Record<string, unknown>) {
 		</div>
 		<div className="field">
 			{/* TODO: OPEN-WITH-EDITOR-APP-JSON: use a simple textarea */}
-			<textarea name={String("" ?? "")}>{("$cfg.HasValue ctx") ? (<>{/* TODO: {{($cfg.Value ctx).ToTextareaString}} */}</>) : null}</textarea>
+			<textarea name={String("" ?? "")}>{(props.cfg?.hasValue?.(ctx)) ? (<>{/* TODO: {{($cfg.Value ctx).ToTextareaString}} */}</>) : null}</textarea>
 		</div>
 
 		{/* TODO: {{$cfg = .SystemConfig.Repository.GitGuideRemoteName}} */}

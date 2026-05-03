@@ -6,28 +6,28 @@ export default function CsvDiff(props: Record<string, unknown>) {
 <tr>
 	<td>
 		{/* $result */}
-		{("$result.Error") ? (<>
+		{(props.result?.error) ? (<>
 			<div className="ui center">{/* TODO: {{$result.Error}} */}</div>
-		</>) : null} {("$result.Sections") ? (<>
+		</>) : null} {(props.result?.sections) ? (<>
 			<table className="data-table">
 			{(($result.Sections) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-				<tbody {("$i" > 0) ? (<>className="section"</>) : null}>
+				<tbody {...(i > 0 ? {"className": "section"} : {})}>
 				{(($section.Rows) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					<tr>
-						{(("$i" === 0 && "$j" === 0)) ? (<>
+						{((i === 0 && j === 0)) ? (<>
 							<th className="line-num">{item.rowIdx as any}</th>
 							{(($row.Cells) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								{(!("$cell")) ? (<>
+								{(!(cell)) ? (<>
 									<th></th>
-								</>) : null} {("$cell.Type" === 2) ? (<>
+								</>) : null} {(item.cell?.type === 2) ? (<>
 									<th className="modified"><span className="removed-code">{item.leftCell as any}</span> <span className="added-code">{item.rightCell as any}</span></th>
-								</>) : null} {("$cell.Type" === 3) ? (<>
+								</>) : null} {(item.cell?.type === 3) ? (<>
 									<th className="added"><span className="added-code">{item.rightCell as any}</span></th>
-								</>) : null} {("$cell.Type" === 4) ? (<>
+								</>) : null} {(item.cell?.type === 4) ? (<>
 									<th className="removed"><span className="removed-code">{item.leftCell as any}</span></th>
-								</>) : null} {("$cell.Type" === 5) ? (<>
+								</>) : null} {(item.cell?.type === 5) ? (<>
 									<th className="moved">{item.rightCell as any}</th>
-								</>) : null} {("$cell.Type" === 6) ? (<>
+								</>) : null} {(item.cell?.type === 6) ? (<>
 									<th className="moved"><span className="removed-code">{item.leftCell as any}</span> <span className="added-code">{item.rightCell as any}</span></th>
 								</>) : (<>
 									<th>{item.rightCell as any}</th>
@@ -36,17 +36,17 @@ export default function CsvDiff(props: Record<string, unknown>) {
 						</>) : (<>
 							<td className="line-num">{(item.rowIdx) ? (<>{item.rowIdx as any}</>) : null}</td>
 							{(($row.Cells) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								{(!("$cell")) ? (<>
+								{(!(cell)) ? (<>
 									<td></td>
-								</>) : null} {("$cell.Type" === 2) ? (<>
+								</>) : null} {(item.cell?.type === 2) ? (<>
 									<td className="modified"><span className="removed-code">{item.leftCell as any}</span> <span className="added-code">{item.rightCell as any}</span></td>
-								</>) : null} {("$cell.Type" === 3) ? (<>
+								</>) : null} {(item.cell?.type === 3) ? (<>
 									<td className="added"><span className="added-code">{item.rightCell as any}</span></td>
-								</>) : null} {("$cell.Type" === 4) ? (<>
+								</>) : null} {(item.cell?.type === 4) ? (<>
 									<td className="removed"><span className="removed-code">{item.leftCell as any}</span></td>
-								</>) : null} {("$cell.Type" === 5) ? (<>
+								</>) : null} {(item.cell?.type === 5) ? (<>
 									<td className="moved">{item.rightCell as any}</td>
-								</>) : null} {("$cell.Type" === 6) ? (<>
+								</>) : null} {(item.cell?.type === 6) ? (<>
 									<td className="moved"><span className="removed-code">{item.leftCell as any}</span> <span className="added-code">{item.rightCell as any}</span></td>
 								</>) : (<>
 									<td>{item.rightCell as any}</td>

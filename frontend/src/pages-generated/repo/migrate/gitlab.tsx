@@ -25,7 +25,7 @@ export default function Gitlab(props: Record<string, unknown>) {
 
 				<div className={`inline field ${(props.err_Auth) ? `error` : ""}`}>
 					<label htmlFor="auth_token">{i18n("access_token")}</label>
-					<input id="auth_token" name="auth_token" type="password" autocomplete="new-password" value={String(props.auth_token ?? "")} {(!(props.auth_token)) ? (< />data-need-clear="true"</>) : null}>
+					<input id="auth_token" name="auth_token" type="password" autocomplete="new-password" value={String(props.auth_token ?? "")} {...(!(props.auth_token) ? {"data-need-clear": "true"} : {})} />
 					<a target="_blank" href="https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html"><span className="svg-icon" aria-label="octicon-question"></span></a>
 				</div>
 
@@ -79,18 +79,18 @@ export default function Gitlab(props: Record<string, unknown>) {
 						<input type="hidden" id="uid" name="uid" value={String(props.contextUser?.iD ?? "")} required />
 						<span className="text" title={String(props.contextUser?.name ?? "")}>
 							{/* TODO: {{ctx.AvatarUtils.Avatar .ContextUser 28 "mini"}} */}
-							{props.contextUser?.shortName 40 as any}
+							{props.contextUser?.shortName?.(40) as any}
 						</span>
 						<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 						<div className="menu" title={String(props.signedUser?.name ?? "")}>
 							<div className="item" data-value={String(props.signedUser?.iD ?? "")}>
 								{/* TODO: {{ctx.AvatarUtils.Avatar .SignedUser 28 "mini"}} */}
-								{props.signedUser?.shortName 40 as any}
+								{props.signedUser?.shortName?.(40) as any}
 							</div>
 							{((props.orgs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 								<div className="item" data-value={String(props.iD ?? "")} title={String(props.name ?? "")}>
 									{/* TODO: {{ctx.AvatarUtils.Avatar . 28 "mini"}} */}
-									{item.shortName 40 as any}
+									{item.shortName?.(40) as any}
 								</div>
 							</React.Fragment>))}
 						</div>

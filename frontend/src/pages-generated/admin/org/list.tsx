@@ -59,7 +59,7 @@ export default function List(props: Record<string, unknown>) {
 							<td>
 								<span className="username-display">
 									<a href={String("" ?? "")}>{/* TODO: {{$org.Name}} */}</a>
-									{("$org.FullName") ? (<><span className="username-fullname">({/* TODO: {{$org.FullName}} */})</span></>) : null}
+									{(item.org?.fullName) ? (<><span className="username-fullname">({/* TODO: {{$org.FullName}} */})</span></>) : null}
 								</span>
 								{(item.visibility?.isPrivate) ? (<>
 									<span className="tw-text-gold"><span className="svg-icon" aria-label="octicon-lock"></span></span>
@@ -75,7 +75,7 @@ export default function List(props: Record<string, unknown>) {
 							<td><a href={`${String(props.organisationLink ?? "")}/settings`} data-tooltip-content={String(i18n("edit") ?? "")}><span className="svg-icon" aria-label="octicon-pencil"></span></a></td>
 						</tr>
 					{/* else */}
-						<tr><td className="tw-text-center" colspan="7">{i18n("no_results_found")}</td></tr>
+						<tr><td className="tw-text-center" colSpan="7">{i18n("no_results_found")}</td></tr>
 					</React.Fragment>))}
 				</tbody>
 			</table>

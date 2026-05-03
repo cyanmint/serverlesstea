@@ -31,7 +31,7 @@ export default function Navbar(props: Record<string, unknown>) {
 		</a>
 		</>) : null}
 		{(props.enableActions) ? (<>
-		<details className="item toggleable-item" {((props.pageIsOrgSettingsActionsGeneral || props.pageIsSharedSettingsRunners || props.pageIsSharedSettingsSecrets || props.pageIsSharedSettingsVariables)) ? (<>open</>) : null}>
+		<details className="item toggleable-item" {...((props.pageIsOrgSettingsActionsGeneral || props.pageIsSharedSettingsRunners || props.pageIsSharedSettingsSecrets || props.pageIsSharedSettingsVariables) ? {"open": true} : {})}>
 			<summary>{i18n("actions.actions")}</summary>
 			<div className="menu">
 				<a className={`${(props.pageIsOrgSettingsActionsGeneral) ? `active ` : ""}item`} href={`${String(props.orgLink ?? "")}/settings/actions`}>

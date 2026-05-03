@@ -9,7 +9,7 @@ export default function New(props: Record<string, unknown>) {
 	<div className="ui container">
 		<div className="ui grid">
 			<div className="column">
-				<form className="ui form" action={`${(props.pageIsOrgTeamsNew) ? `${String(props.orgLink ?? "")}/teams/new` : `${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName | PathEscape ?? "")}/edit`}`} data-delete-url={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName | PathEscape ?? "")}/delete`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
+				<form className="ui form" action={`${(props.pageIsOrgTeamsNew) ? `${String(props.orgLink ?? "")}/teams/new` : `${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName?.("|", "PathEscape") ?? "")}/edit`}`} data-delete-url={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName?.("|", "PathEscape") ?? "")}/delete`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
 					<h3 className="ui top attached header">
 						{(props.pageIsOrgTeamsNew) ? (<>{i18n("org.create_new_team")}</>) : (<>{i18n("org.teams.settings")}</>)}
 					</h3>
@@ -34,7 +34,7 @@ export default function New(props: Record<string, unknown>) {
 								<br />
 								<div className="field">
 									<div className="ui radio checkbox">
-										<input type="radio" name="repo_access" value="specific" {(!(props.team?.includesAllRepositories)) ? (< />checked</>) : null}>
+										<input type="radio" name="repo_access" value="specific" {...(!(props.team?.includesAllRepositories) ? {"checked": true} : {})} />
 										<label>{i18n("org.teams.specific_repositories")}</label>
 										<span className="help">{i18n("org.teams.specific_repositories_helper")}</span>
 									</div>
@@ -60,7 +60,7 @@ export default function New(props: Record<string, unknown>) {
 								<br />
 								<div className="field">
 									<div className="ui radio checkbox">
-										<input type="radio" name="permission" value="read" {((props.pageIsOrgTeamsNew || props.team?.accessMode === 0 || props.team?.accessMode === 1 || props.team?.accessMode === 2)) ? (< />checked</>) : null}>
+										<input type="radio" name="permission" value="read" {...((props.pageIsOrgTeamsNew || props.team?.accessMode === 0 || props.team?.accessMode === 1 || props.team?.accessMode === 2) ? {"checked": true} : {})} />
 										<label>{i18n("org.teams.general_access")}</label>
 										<span className="help">{i18n("org.teams.general_access_helper")}</span>
 									</div>
@@ -91,29 +91,29 @@ export default function New(props: Record<string, unknown>) {
 									</thead>
 									<tbody>
 										{((props.units) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-											{("$unit.MaxPerm" >= 2) ? (<>
+											{(item.unit?.maxPerm >= 2) ? (<>
 												<tr>
 													<td>
-														<div {("$unit.Type.UnitGlobalDisabled") ? (<>className="field" data-tooltip-content={String(i18n("repo.unit_disabled") ?? "")}{/* TODO: {{- else -}} */}className="field"</>) : null}>
+														<div {(item.unit?.type?.unitGlobalDisabled) ? (<>className="field" data-tooltip-content={String(i18n("repo.unit_disabled") ?? "")}{/* TODO: {{- else -}} */}className="field"</>) : null}>
 															<div>
-																<label>{/* TODO: {{ctx.Locale.Tr $unit.NameKey}} */}{("$unit.Type.UnitGlobalDisabled") ? (<> {i18n("org.team_unit_disabled")}</>) : null}</label>
+																<label>{/* TODO: {{ctx.Locale.Tr $unit.NameKey}} */}{(item.unit?.type?.unitGlobalDisabled) ? (<> {i18n("org.team_unit_disabled")}</>) : null}</label>
 																<span className="help">{/* TODO: {{ctx.Locale.Tr $unit.DescKey}} */}</span>
 															</div>
 														</div>
 													</td>
 													<td className="tw-text-center">
 														<div className="ui radio checkbox">
-															<input type="radio" name={`unit_`} value="0"{(("$unit.Type.UnitGlobalDisabled" || props.team?.unitAccessMode ctx $unit?.type === 0)) ? (< /> checked</>) : null} title={String(i18n("org.teams.none_access") ?? "")}>
+															<input type="radio" name={`unit_`} value="0"{...((item.unit?.type?.unitGlobalDisabled || props.team?.unitAccessMode?.(ctx, item.unit?.type) === 0) ? {"checked": true} : {})} title={String(i18n("org.teams.none_access") ?? "")} />
 														</div>
 													</td>
 													<td className="tw-text-center">
 														<div className="ui radio checkbox">
-															<input type="radio" name={`unit_`} value="1"{((props.team?.iD === 0 || props.team?.unitAccessMode ctx $unit?.type === 1)) ? (< /> checked</>) : null} {...("$unit.Type.UnitGlobalDisabled" ? {"disabled": true} : {})} title={String(i18n("org.teams.read_access") ?? "")}>
+															<input type="radio" name={`unit_`} value="1"{...((props.team?.iD === 0 || props.team?.unitAccessMode?.(ctx, item.unit?.type) === 1) ? {"checked": true} : {})} {...(item.unit?.type?.unitGlobalDisabled ? {"disabled": true} : {})} title={String(i18n("org.teams.read_access") ?? "")} />
 														</div>
 													</td>
 													<td className="tw-text-center">
 														<div className="ui radio checkbox">
-															<input type="radio" name={`unit_`} value="2"{(props.team?.unitAccessMode ctx $unit?.type />= 2) ? (<> checked</>) : null} {...("$unit.Type.UnitGlobalDisabled" ? {"disabled": true} : {})} title={String(i18n("org.teams.write_access") ?? "")}>
+															<input type="radio" name={`unit_`} value="2"{...(props.team?.unitAccessMode?.(ctx, item.unit?.type) />= 2 ? {"checked": true} : {})} {...(item.unit?.type?.unitGlobalDisabled ? {"disabled": true} : {})} title={String(i18n("org.teams.write_access") ?? "")}>
 														</div>
 													</td>
 												</tr>
@@ -122,11 +122,11 @@ export default function New(props: Record<string, unknown>) {
 									</tbody>
 								</table>
 								{((props.units) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-									{("$unit.MaxPerm" < 2) ? (<>
-										<div {("$unit.Type.UnitGlobalDisabled") ? (<>className="field" data-tooltip-content={String(i18n("repo.unit_disabled") ?? "")}</>) : (<>className="field"</>)}>
+									{(item.unit?.maxPerm < 2) ? (<>
+										<div {(item.unit?.type?.unitGlobalDisabled) ? (<>className="field" data-tooltip-content={String(i18n("repo.unit_disabled") ?? "")}</>) : (<>className="field"</>)}>
 											<div className="ui checkbox">
-												<input type="checkbox" name={`unit_`} value="1"{((props.team?.iD === 0 || props.team?.unitAccessMode ctx $unit?.type === 1)) ? (< /> checked</>) : null} {...("$unit.Type.UnitGlobalDisabled" ? {"disabled": true} : {})}>
-												<label>{/* TODO: {{ctx.Locale.Tr $unit.NameKey}} */}{("$unit.Type.UnitGlobalDisabled") ? (<> {i18n("org.team_unit_disabled")}</>) : null}</label>
+												<input type="checkbox" name={`unit_`} value="1"{...((props.team?.iD === 0 || props.team?.unitAccessMode?.(ctx, item.unit?.type) === 1) ? {"checked": true} : {})} {...(item.unit?.type?.unitGlobalDisabled ? {"disabled": true} : {})} />
+												<label>{/* TODO: {{ctx.Locale.Tr $unit.NameKey}} */}{(item.unit?.type?.unitGlobalDisabled) ? (<> {i18n("org.team_unit_disabled")}</>) : null}</label>
 												<span className="help">{/* TODO: {{ctx.Locale.Tr $unit.DescKey}} */}</span>
 											</div>
 										</div>
@@ -141,7 +141,7 @@ export default function New(props: Record<string, unknown>) {
 							</>) : (<>
 								<button className="ui primary button">{i18n("org.teams.update_settings")}</button>
 								{(!(props.team?.lowerName === "owners")) ? (<>
-									<button className="ui red button delete-button" data-url={`${String(props.orgLink ?? "")}/teams/${String(props.team?.name | PathEscape ?? "")}/delete`}>{i18n("org.teams.delete_team")}</button>
+									<button className="ui red button delete-button" data-url={`${String(props.orgLink ?? "")}/teams/${String(props.team?.name?.("|", "PathEscape") ?? "")}/delete`}>{i18n("org.teams.delete_team")}</button>
 								</>) : null}
 							</>)}
 						</div>

@@ -25,7 +25,7 @@ export default function Git(props: Record<string, unknown>) {
 				</div>
 				<div className={`inline field ${(props.err_Auth) ? `error` : ""}`}>
 					<label htmlFor="auth_username">{i18n("username")}</label>
-					<input id="auth_username" name="auth_username" value={String(props.auth_username ?? "")} {(!(props.auth_username)) ? (< />data-need-clear="true"</>) : null}>
+					<input id="auth_username" name="auth_username" value={String(props.auth_username ?? "")} {...(!(props.auth_username) ? {"data-need-clear": "true"} : {})} />
 				</div>
 				<div className={`inline field ${(props.err_Auth) ? `error` : ""}`}>
 					<label htmlFor="auth_password">{i18n("password")}</label>
@@ -42,18 +42,18 @@ export default function Git(props: Record<string, unknown>) {
 						<input type="hidden" id="uid" name="uid" value={String(props.contextUser?.iD ?? "")} required />
 						<span className="text" title={String(props.contextUser?.name ?? "")}>
 							{/* TODO: {{ctx.AvatarUtils.Avatar .ContextUser}} */}
-							{props.contextUser?.shortName 40 as any}
+							{props.contextUser?.shortName?.(40) as any}
 						</span>
 						<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 						<div className="menu" title={String(props.signedUser?.name ?? "")}>
 							<div className="item" data-value={String(props.signedUser?.iD ?? "")}>
 								{/* TODO: {{ctx.AvatarUtils.Avatar .SignedUser}} */}
-								{props.signedUser?.shortName 40 as any}
+								{props.signedUser?.shortName?.(40) as any}
 							</div>
 							{((props.orgs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 								<div className="item" data-value={String(props.iD ?? "")} title={String(props.name ?? "")}>
 									{/* TODO: {{ctx.AvatarUtils.Avatar .}} */}
-									{item.shortName 40 as any}
+									{item.shortName?.(40) as any}
 								</div>
 							</React.Fragment>))}
 						</div>

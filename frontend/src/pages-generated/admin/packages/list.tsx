@@ -23,7 +23,7 @@ export default function List(props: Record<string, unknown>) {
 						<option value="">{i18n("packages.filter.type")}</option>
 						<option value="all">{i18n("packages.filter.type.all")}</option>
 						{((props.availableTypes) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-						<option{(props.packageType === "$type") ? (<> selected="selected"</>) : null} value={String("" ?? "")}>{/* TODO: {{$type.Name}} */}</option>
+						<option{...(props.packageType === type ? {"selected": "selected"} : {})} value={String("" ?? "")}>{/* TODO: {{$type.Name}} */}</option>
 						</React.Fragment>))}
 					</select>
 					{/* template: shared/search/button */}
@@ -78,13 +78,13 @@ export default function List(props: Record<string, unknown>) {
 							<td>{/* TODO: {{DateUtils.AbsoluteShort .Version.CreatedUnix}} */}</td>
 							<td>
 								<a className="tw-text-red show-modal" href data-modal="#admin-package-delete-modal"
-									data-modal-form.action={`${String(props.link ?? "")}/delete?page=${String(props.page?.paginater?.current ?? "")}&sort=${String(props.sortType ?? "")}&id=${String(props.version?.iD ?? "")}`}
+									{...{"data-modal-form.action": `${String(props.link ?? "")}/delete?page=${String(props.page?.paginater?.current ?? "")}&sort=${String(props.sortType ?? "")}&id=${String(props.version?.iD ?? "")}`}}
 									data-modal-package-name={String(props.package?.name ?? "")} data-modal-package-version={String(props.version?.version ?? "")}
 								><span className="svg-icon" aria-label="octicon-trash"></span></a>
 							</td>
 						</tr>
 					{/* else */}
-						<tr><td className="tw-text-center" colspan="10">{i18n("no_results_found")}</td></tr>
+						<tr><td className="tw-text-center" colSpan="10">{i18n("no_results_found")}</td></tr>
 					</React.Fragment>))}
 				</tbody>
 			</table>

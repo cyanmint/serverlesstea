@@ -7,15 +7,15 @@ export default function AssigneeList(props: Record<string, unknown>) {
 {/* $data */}
 {/* $listBaseLink */}
 {/* TODO: it seems that the code keeps checking $pageMeta.Issue and assumes that it might not exist, need to figure out why */}
-{/* $issueAssignees */}{("$pageMeta.Issue") ? (<>{/* TODO: {{$issueAssignees = $pageMeta.Issue.Assignees}} */}</>) : null}
+{/* $issueAssignees */}{(props.pageMeta?.issue) ? (<>{/* TODO: {{$issueAssignees = $pageMeta.Issue.Assignees}} */}</>) : null}
 <div className="divider"></div>
 <div className="issue-sidebar-combo" data-selection-mode="multiple" data-update-algo="diff"
-		{("$pageMeta.Issue") ? (<>data-update-url={`/issues/assignee?issue_ids=`}</>) : null}
+		{...(props.pageMeta?.issue ? {"data-update-url": `/issues/assignee?issue_ids=`} : {})}
 >
 	<input className="combo-value" name="assignee_ids" type="hidden" value={String("" ?? "")} />
-	<div className={`ui dropdown full-width ${(!("$pageMeta.CanModifyIssueOrPull")) ? `disabled` : ""}`}>
+	<div className={`ui dropdown full-width ${(!(props.pageMeta?.canModifyIssueOrPull)) ? `disabled` : ""}`}>
 		<a className="fixed-text muted">
-			<strong>{i18n("repo.issues.new.assignees")}</strong> {("$pageMeta.CanModifyIssueOrPull") ? (<><span className="svg-icon" aria-label="octicon-gear"></span></>) : null}
+			<strong>{i18n("repo.issues.new.assignees")}</strong> {(props.pageMeta?.canModifyIssueOrPull) ? (<><span className="svg-icon" aria-label="octicon-gear"></span></>) : null}
 		</a>
 		<div className="menu">
 			<div className="ui icon search input">
@@ -35,7 +35,7 @@ export default function AssigneeList(props: Record<string, unknown>) {
 		</div>
 	</div>
 	<div className="ui relaxed list muted-links flex-items-block">
-		<span className={`item empty-list ${("$issueAssignees") ? `tw-hidden` : ""}`}>{i18n("repo.issues.new.no_assignees")}</span>
+		<span className={`item empty-list ${(issueAssignees) ? `tw-hidden` : ""}`}>{i18n("repo.issues.new.no_assignees")}</span>
 		{(((undefined /* $issueAssignees */)) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 			<a className="item" href={`?assignee=${String(props.iD ?? "")}`}>
 				{/* TODO: {{ctx.AvatarUtils.Avatar . 20}} */} {item.getDisplayName as any}

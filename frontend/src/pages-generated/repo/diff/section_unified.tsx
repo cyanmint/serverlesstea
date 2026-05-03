@@ -17,15 +17,15 @@ export default function SectionUnified(props: Record<string, unknown>) {
 	{(($section.Lines) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 		<tr className={`${String(props.getHTMLDiffLineType ?? "")}-code nl- ol-`} data-line-type={String(props.getHTMLDiffLineType ?? "")}>
 			{(item.getType === 4) ? (<>
-				{("$diffBlobExcerptData") ? (<>
-					<td colspan="2" className="lines-num">{/* TODO: {{$line.RenderBlobExcerptButtons $file.NameHash $diffBlobExcerptData}} */}</td>
+				{(diffBlobExcerptData) ? (<>
+					<td colSpan="2" className="lines-num">{/* TODO: {{$line.RenderBlobExcerptButtons $file.NameHash $diffBlobExcerptData}} */}</td>
 				</>) : (<>
 					{/* when DiffBlobExcerptData is not available (code file preview, pull conversation diff comment), do not show the expansion arrows */}
-					<td colspan="2" className="lines-num"></td>
+					<td colSpan="2" className="lines-num"></td>
 				</>)}
 			</>) : (<>
-				<td className="lines-num lines-num-old" data-line-num={`${("$line.LeftIdx") ? `` : ""}`}><span rel={`${("$line.LeftIdx") ? `diff-L` : ""}`}></span></td>
-				<td className="lines-num lines-num-new" data-line-num={`${("$line.RightIdx") ? `` : ""}`}><span rel={`${("$line.RightIdx") ? `diff-R` : ""}`}></span></td>
+				<td className="lines-num lines-num-old" data-line-num={`${(props.line?.leftIdx) ? `` : ""}`}><span rel={`${(props.line?.leftIdx) ? `diff-L` : ""}`}></span></td>
+				<td className="lines-num lines-num-new" data-line-num={`${(props.line?.rightIdx) ? `` : ""}`}><span rel={`${(props.line?.rightIdx) ? `diff-R` : ""}`}></span></td>
 			</>)}
 			{/* $inlineDiff */}
 			<td className="lines-escape">
@@ -35,9 +35,9 @@ export default function SectionUnified(props: Record<string, unknown>) {
 			{(item.getType === 4) ? (<>
 				<td className="chroma lines-code blob-hunk">{/* template: repo/diff/section_code */}</td>
 			</>) : (<>
-				<td className={`chroma lines-code${(!("$line.RightIdx")) ? ` lines-code-old` : ""}`}>
+				<td className={`chroma lines-code${(!(props.line?.rightIdx)) ? ` lines-code-old` : ""}`}>
 					{/* TODO: {{- if and $.root.SignedUserID $.root.PageIsPullFiles -}} */}
-						<button type="button" aria-label={String(i18n("repo.diff.comment.add_line_comment") ?? "")} className={`ui primary button add-code-comment add-code-comment-${("$line.RightIdx") ? `right` : `left`}${(!("$line.CanComment")) ? ` tw-invisible` : ""}`} data-side={`${("$line.RightIdx") ? `right` : `left`}`} data-idx={`${("$line.RightIdx") ? `` : ``}`}>
+						<button type="button" aria-label={String(i18n("repo.diff.comment.add_line_comment") ?? "")} className={`ui primary button add-code-comment add-code-comment-${(props.line?.rightIdx) ? `right` : `left`}${(!(props.line?.canComment)) ? ` tw-invisible` : ""}`} data-side={`${(props.line?.rightIdx) ? `right` : `left`}`} data-idx={`${(props.line?.rightIdx) ? `` : ``}`}>
 							{/* TODO: {{- svg "octicon-plus" -}} */}
 						</button>
 					{/* TODO: {{- end -}} */}
@@ -45,9 +45,9 @@ export default function SectionUnified(props: Record<string, unknown>) {
 				</td>
 			</>)}
 		</tr>
-		{("$line.Comments") ? (<>
+		{(item.line?.comments) ? (<>
 			<tr className="add-comment" data-line-type={String(props.getHTMLDiffLineType ?? "")}>
-				<td className="add-comment-left add-comment-right" colspan="5">
+				<td className="add-comment-left add-comment-right" colSpan="5">
 					{/* template: repo/diff/conversation */}
 				</td>
 			</tr>

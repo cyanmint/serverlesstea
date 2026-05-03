@@ -9,7 +9,7 @@ export default function Account(props: Record<string, unknown>) {
 			{i18n("settings.password")}
 		</h4>
 		<div className="ui attached segment">
-			{((!(props.userDisabledFeatures?.contains "manage_credentials") && (props.signedUser?.isLocal || props.signedUser?.isOAuth2))) ? (<>
+			{((!(props.userDisabledFeatures?.contains?.("manage_credentials")) && (props.signedUser?.isLocal || props.signedUser?.isOAuth2))) ? (<>
 			<form className="ui form ignore-dirty" action={`/user/settings/account`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
 				{/* template: base/disable_form_autofill */}
 				{(props.signedUser?.isPasswordSet) ? (<>
@@ -39,13 +39,13 @@ export default function Account(props: Record<string, unknown>) {
 			</>)}
 		</div>
 
-		{(!(props.userDisabledFeatures?.contains "manage_credentials")) ? (<>
+		{(!(props.userDisabledFeatures?.contains?.("manage_credentials"))) ? (<>
 		<h4 className="ui top attached header">
 			{i18n("settings.manage_emails")}
 		</h4>
 		<div className="ui attached segment">
 			<div className="ui list flex-items-block">
-				{(!(props.userDisabledFeatures?.contains "manage_credentials")) ? (<>
+				{(!(props.userDisabledFeatures?.contains?.("manage_credentials"))) ? (<>
 					{((props.emails) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 						<div className="item tw-flex-wrap">
 							<div className="content tw-flex-1">
@@ -91,14 +91,14 @@ export default function Account(props: Record<string, unknown>) {
 		</div>
 		</>) : null}
 
-		{(!(props.userDisabledFeatures?.contains "manage_credentials")) ? (<>
+		{(!(props.userDisabledFeatures?.contains?.("manage_credentials"))) ? (<>
 		<div className="ui bottom attached segment">
 			<form className="ui form" action={`/user/settings/account/email`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
 				<div className={`required field ${(props.err_Email) ? `error` : ""}`}>
 					<label htmlFor="email">{i18n("settings.add_new_email")}</label>
-					<input id="email" name="email" type="email" required {(!(props.canAddEmails)) ? (< />disabled</>) : null}>
+					<input id="email" name="email" type="email" required {...(!(props.canAddEmails) ? {"disabled": true} : {})} />
 				</div>
-				<button className="ui primary button" {(!(props.canAddEmails)) ? (<>disabled</>) : null}>
+				<button className="ui primary button" {...(!(props.canAddEmails) ? {"disabled": true} : {})}>
 					{i18n("settings.add_email")}
 				</button>
 			</form>
@@ -109,7 +109,7 @@ export default function Account(props: Record<string, unknown>) {
 		</div>
 		</>) : null}
 
-		{(!(props.userDisabledFeatures?.contains "deletion")) ? (<>
+		{(!(props.userDisabledFeatures?.contains?.("deletion"))) ? (<>
 		<h4 className="ui top attached error header">
 			{i18n("settings.delete_account")}
 		</h4>

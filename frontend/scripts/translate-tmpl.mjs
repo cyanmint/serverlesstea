@@ -76,12 +76,10 @@ function convertTemplate(src, relTsx) {
     t.type === 'text' ? processText(t.value) : processAction(t.value, state)
   ).join('')
 
-  // 5. Post-process: fix conditional boolean attrs inside open tags
-  //    {(cond) ? (<>ATTR</>) : null}  →  {...(cond ? {ATTR: true} : {})}
-  body = body.replace(
-    /\{\(([^)]+)\) \? \(<>([\w-]+)<\/>\) : null\}/g,
-    (_, cond, attr) => `{...(${cond} ? {"${attr}": true} : {})}`
-  )
+  // 5. Post-process: fix conditional boolean/value attrs inside open tags
+  //    {(cond) ? (<>ATTR</>) : null}  →  {...(cond ? {"ATTR": true/val} : {})}
+  //    Handles conditions with nested parens and attribute=value patterns.
+  body = fixConditionalAttrs(body)
 
   // 6. Post-process: self-close void elements (must run on full body because
   //    tokens like {{if}}checked{{end}} can split the tag across multiple tokens)
@@ -91,6 +89,12 @@ function convertTemplate(src, relTsx) {
       (m, a) => `<${tag}${a||''} />`
     )
   }
+
+  // 7. Post-process: convert attribute names containing dots to spread syntax.
+  //    Dots are invalid in JSX attribute names but valid in HTML data-* names.
+  //    e.g. data-modal-form.action={expr}  →  {...{"data-modal-form.action": expr}}
+  //         data-x.y="val"                 →  {...{"data-x.y": "val"}}
+  body = fixDottedAttrNames(body)
 
   // 5. Compute component name and import depth
   const parts    = relTsx.replace(/\.tsx$/, '').split('/')
@@ -256,12 +260,18 @@ function tokenize(src) {
 // ── HTML text fixes ──────────────────────────────────────────────────────────
 function processText(text) {
   return text
+    // Strip DOCTYPE (invalid in JSX)
+    .replace(/<!DOCTYPE[^>]*>/gi, '')
     // Convert HTML comments to JSX comments
     .replace(/<!--([\s\S]*?)-->/g, (_, c) => `{/* ${c.replace(/\*\//g, '* /').trim()} */}`)
     // HTML attrs not already handled by preProcessDynamicAttrs (static values)
     .replace(/\bclass=/g,    'className=')
     .replace(/\bfor=/g,      'htmlFor=')
     .replace(/\bchecked(?=[\s/>])/g, 'defaultChecked')
+    .replace(/\bcolspan=/gi,  'colSpan=')
+    .replace(/\browspan=/gi,  'rowSpan=')
+    .replace(/\btabindex=/gi, 'tabIndex=')
+    .replace(/\baccesskey=/gi,'accessKey=')
     // Void element self-closing is handled in the full-body post-process step.
     // form action → data-action
     .replace(/\baction="([^"]*)"/g, 'data-action="$1"')
@@ -323,15 +333,15 @@ function processAction(a, state) {
 
   // ── Control flow ─────────────────────────────────────────────────────────
 
-  if (/^if\s/.test(a)) {
-    const cond = convertCond(a.slice(3).trim(), state.rangeDepth > 0)
+  if (/^if[\s(]/.test(a)) {
+    const cond = convertCond(a.slice(2).trim(), state.rangeDepth > 0)
     state.stack.push({ type: 'if', phase: 'then', cond })
     return `{(${cond}) ? (<>`
   }
 
-  if (/^else if\s/.test(a)) {
+  if (/^else if[\s(]/.test(a)) {
     const top  = state.stack[state.stack.length - 1]
-    const cond = convertCond(a.slice(8).trim(), state.rangeDepth > 0)
+    const cond = convertCond(a.slice(7).trim(), state.rangeDepth > 0)
     if (top?.type === 'if') {
       top.cond  = cond
       top.phase = 'then'
@@ -387,19 +397,59 @@ function processAction(a, state) {
 // Convert a field expression (.X, $.X, .X.Y.Z, or literal) to JS
 function convertField(expr, inRange) {
   expr = expr.trim()
+  let prefix, restStr
   if (expr.startsWith('$.')) {
-    const parts = expr.slice(2).split('.')
-    return 'props.' + parts.map(lcFirst).join('?.')
+    prefix  = 'props'
+    restStr = expr.slice(2)
+  } else if (expr.startsWith('.')) {
+    prefix  = inRange ? 'item' : 'props'
+    restStr = expr.slice(1)
+    if (!restStr) return prefix
+  } else if (/^\$\w+$/.test(expr)) {
+    return `(undefined /* ${expr} */)`
+  } else {
+    return expr
   }
-  if (expr.startsWith('.')) {
-    const rest = expr.slice(1)
-    if (rest === '') return inRange ? 'item' : 'props'
-    const parts = rest.split('.')
-    const base  = inRange ? 'item' : 'props'
-    return base + '.' + parts.map(lcFirst).join('?.')
+
+  // Split by '.' to get parts, but a part may contain method call args after a space.
+  // Example: ".Team.UnitAccessMode ctx $unit.Type" splits to ["Team", "UnitAccessMode ctx $unit", "Type"]
+  // When a part contains a space, everything from the space onward (plus remaining parts) are args.
+  const rawParts  = restStr.split('.')
+  const jsParts   = []
+  let   argSuffix = ''
+
+  for (let i = 0; i < rawParts.length; i++) {
+    const part     = rawParts[i]
+    const spaceIdx = findUnquotedSpace(part)
+    if (spaceIdx !== -1) {
+      // Method call: this part has args after a space
+      const methodName    = part.slice(0, spaceIdx)
+      const argsFromPart  = part.slice(spaceIdx + 1)
+      // Remaining rawParts (e.g., from "$unit.Type" split earlier) are also part of the args
+      const remainingDots = rawParts.slice(i + 1)
+      const argsStr       = remainingDots.length > 0
+        ? argsFromPart + '.' + remainingDots.join('.')
+        : argsFromPart
+      jsParts.push(lcFirst(methodName))
+      const jsArgs = parseArgs(argsStr).map(a => convertVal(a, inRange)).join(', ')
+      argSuffix = `?.(${jsArgs})`
+      break
+    }
+    jsParts.push(lcFirst(part))
   }
-  if (/^\$\w+$/.test(expr)) return `(undefined /* ${expr} */)`
-  return expr
+
+  return prefix + (jsParts.length > 0 ? '.' + jsParts.join('?.') : '') + argSuffix
+}
+
+// Find the index of the first space that is NOT inside single or double quotes.
+function findUnquotedSpace(s) {
+  let inQuote = false, quoteChar = ''
+  for (let i = 0; i < s.length; i++) {
+    if (!inQuote && (s[i] === '"' || s[i] === "'")) { inQuote = true; quoteChar = s[i] }
+    else if (inQuote && s[i] === quoteChar)          { inQuote = false }
+    else if (!inQuote && s[i] === ' ')               { return i }
+  }
+  return -1
 }
 
 // Split "lhs rhs" where lhs may be a balanced parenthesised group
@@ -423,6 +473,14 @@ function splitBinArgs(str) {
 function convertCond(cond, inRange, depth = 0) {
   if (depth > 30) return 'true /* depth limit */'
   cond = cond.trim()
+
+  // call FUNC ARG1 ARG2... — function/method call
+  if (cond.startsWith('call ')) {
+    const args   = parseArgs(cond.slice(5).trim())
+    const fn     = args[0]
+    const jsArgs = args.slice(1).map(a => convertVal(a, inRange)).join(', ')
+    return `${convertVal(fn, inRange)}?.(${jsArgs})`
+  }
 
   // eq / ne / gt / lt / ge / le — use splitBinArgs to handle (func arg) correctly
   for (const [op, jsOp] of [['eq','==='],['ne','!=='],['gt','>'],['lt','<'],['ge','>='],['le','<=']]) {
@@ -468,7 +526,18 @@ function convertVal(v, inRange) {
   if (/^\d/.test(v))                           return v
   if (v === 'true' || v === 'false')           return v
   if (v === 'nil' || v === 'null')             return 'null'
+  if (v === 'ctx')                             return 'ctx'  // Go template context object
   if (/^\.[A-Za-z_]/.test(v) || /^\$\./.test(v)) return convertField(v, inRange)
+  // Local variable with path or method call: $varName.Path.etcOrMethod args
+  if (/^\$[A-Za-z_]\w*\./.test(v)) {
+    const dot  = v.indexOf('.')
+    const base = lcFirst(v.slice(1, dot))
+    const rest = v.slice(dot + 1)
+    // Re-use convertField by treating the var as a top-level field
+    return convertField('.' + base + '.' + rest, inRange)
+  }
+  // Local variable (just $varName) → varName
+  if (/^\$[A-Za-z_]\w*$/.test(v)) return lcFirst(v.slice(1))
   // Do NOT call convertCond here — that causes infinite recursion for partial-paren inputs
   return `"${v}"`  // unknown literal → stringify
 }
@@ -487,7 +556,184 @@ function parseArgs(str) {
   return args
 }
 
-// ── Utilities ─────────────────────────────────────────────────────────────────
+// ── Post-process: fix attribute names containing dots ─────────────────────────
+// JSX doesn't allow dots in attribute names.
+// data-x.y={expr}   →  {...{"data-x.y": expr}}
+// data-x.y="val"    →  {...{"data-x.y": "val"}}
+function fixDottedAttrNames(body) {
+  // Match attr-name-with.dot= where the name starts with a letter/digit
+  const ATTR_RE = /\b([\w][\w-]*\.[\w.-]+)=/g
+  let result = '', i = 0, match
+  ATTR_RE.lastIndex = 0
+  while ((match = ATTR_RE.exec(body)) !== null) {
+    result += body.slice(i, match.index)
+    const attr     = match[1]
+    const valStart = match.index + match[0].length
+    let spread
+    if (body[valStart] === '"') {
+      // Static quoted string
+      const endQ = body.indexOf('"', valStart + 1)
+      if (endQ === -1) { result += match[0]; i = match.index + match[0].length; continue }
+      spread = `{...{"${attr}": ${body.slice(valStart, endQ + 1)}}}`
+      i = endQ + 1
+    } else if (body[valStart] === '{') {
+      // JSX expression — scan to matching }
+      let depth = 0, j = valStart
+      while (j < body.length) {
+        if (body[j] === '{')      depth++
+        else if (body[j] === '}') { depth--; if (depth === 0) break }
+        j++
+      }
+      const jsExpr = body.slice(valStart + 1, j)
+      spread = `{...{"${attr}": ${jsExpr}}}`
+      i = j + 1
+    } else {
+      // Unexpected: keep as-is
+      result += match[0]; i = match.index + match[0].length; continue
+    }
+    result += spread
+    ATTR_RE.lastIndex = i
+  }
+  result += body.slice(i)
+  return result
+}
+
+
+// Converts conditional attribute fragments from both ternary (if) and && (with) forms:
+//   {(COND) ? (<>ATTRS</>) : null}   →   {...(COND ? {ATTRS} : {})}
+//   {(EXPR) && (<>ATTRS</>) }        →   {...(EXPR ? {ATTRS} : {})}
+// Handles conditions with nested parentheses, multiple attrs, attr=value patterns.
+function fixConditionalAttrs(body) {
+  const PATTERNS = [
+    { open: ' ? (<>', close: '</>) : null}' },
+    { open: ' && (<>', close: '</>) }'     },
+  ]
+  let result = '', i = 0
+  while (i < body.length) {
+    const idx = body.indexOf('{(', i)
+    if (idx === -1) { result += body.slice(i); break }
+    result += body.slice(i, idx)
+
+    // Find matching ) for the outer ( of the condition expression
+    let depth = 0, j = idx + 1
+    while (j < body.length) {
+      if (body[j] === '(') depth++
+      else if (body[j] === ')') { depth--; if (depth === 0) break }
+      j++
+    }
+
+    // Detect which pattern follows: ' ? (<>' or ' && (<>'
+    const pat = PATTERNS.find(p => body.slice(j + 1, j + 1 + p.open.length) === p.open)
+    if (!pat) {
+      result += body[idx]; i = idx + 1; continue
+    }
+
+    const cond    = body.slice(idx + 2, j)
+    const fragEnd = findMatchingFragClose(body, j + 1, pat.open, pat.close)
+    if (fragEnd === -1) { result += body[idx]; i = idx + 1; continue }
+
+    const content = body.slice(j + 1 + pat.open.length, fragEnd).trim()
+    const attrs   = parseHtmlAttrs(content)
+
+    if (attrs) {
+      result += conditionalAttrSpread(cond, attrs)
+      i = fragEnd + pat.close.length
+    } else {
+      // Content position — emit '{' and continue scanning so nested attr patterns are converted
+      result += body[idx]
+      i = idx + 1
+    }
+  }
+  return result
+}
+
+// Find the closing FRAG_CLOSE that matches the FRAG_OPEN at position `start`.
+// Counts nesting: each FRAG_OPEN encountered increments depth, each FRAG_CLOSE decrements.
+function findMatchingFragClose(body, start, FRAG_OPEN, FRAG_CLOSE) {
+  let depth = 1
+  let i     = start + FRAG_OPEN.length
+  while (i < body.length && depth > 0) {
+    const openIdx  = body.indexOf(FRAG_OPEN,  i)
+    const closeIdx = body.indexOf(FRAG_CLOSE, i)
+    if (closeIdx === -1) return -1
+    if (openIdx !== -1 && openIdx < closeIdx) {
+      depth++
+      i = openIdx + FRAG_OPEN.length
+    } else {
+      depth--
+      if (depth === 0) return closeIdx
+      i = closeIdx + FRAG_CLOSE.length
+    }
+  }
+  return -1
+}
+
+// Parse HTML attribute list from JSX body text.
+// Returns [{name, jsVal}] if content is entirely valid HTML attrs, or null otherwise.
+// Supports:  boolean "open"  |  string attr="val"  |  JSX expr attr={expr}
+function parseHtmlAttrs(s) {
+  if (!s || s.includes('<') || s.includes('\n')) return null
+  const attrs = []
+  let i = 0
+  while (i < s.length) {
+    while (i < s.length && (s[i] === ' ' || s[i] === '\t')) i++
+    if (i >= s.length) break
+    if (!/[a-zA-Z]/.test(s[i])) return null  // unexpected character
+    // Read attribute name (allow hyphen and colon for data-* and aria-*)
+    let name = ''
+    while (i < s.length && /[\w:-]/.test(s[i])) { name += s[i++] }
+    if (!name) return null
+    // Determine value
+    if (i >= s.length || s[i] === ' ' || s[i] === '\t') {
+      attrs.push({ name, jsVal: 'true' })
+    } else if (s[i] === '=') {
+      i++  // skip '='
+      if (i >= s.length) return null
+      if (s[i] === '"') {
+        const endQ = s.indexOf('"', i + 1)
+        if (endQ === -1) return null
+        attrs.push({ name, jsVal: s.slice(i, endQ + 1) })
+        i = endQ + 1
+      } else if (s[i] === '{') {
+        // JSX expression — find matching }
+        let depth = 0, j = i
+        while (j < s.length) {
+          if (s[j] === '{')      depth++
+          else if (s[j] === '}') { depth--; if (depth === 0) break }
+          j++
+        }
+        attrs.push({ name, jsVal: s.slice(i + 1, j) })
+        i = j + 1
+      } else {
+        return null  // unexpected value syntax
+      }
+    } else {
+      return null  // unexpected character after attr name
+    }
+  }
+  return attrs.length > 0 ? attrs : null
+}
+
+// Builds a JSX spread expression for a set of conditional attributes.
+// e.g. cond='props.open', attrs=[{name:"open",jsVal:"true"}]
+//      → {...(props.open ? {"open": true} : {})}
+function conditionalAttrSpread(cond, attrs) {
+  const obj = attrs.map(({ name, jsVal }) => `"${name}": ${jsVal}`).join(', ')
+  return `{...(${cond} ? {${obj}} : {})}`
+}
+
+// Extracts a JS expression from a JSX attribute value token.
+// "string"  → "string"     (JS string literal, kept as-is)
+// {expr}    → expr         (JSX expression, outer braces stripped)
+// `tmpl`    → `tmpl`       (template literal, kept as-is)
+function extractJsExpr(raw) {
+  if (raw.startsWith('"') && raw.endsWith('"'))   return raw
+  if (raw.startsWith('`') && raw.endsWith('`'))   return raw
+  if (raw.startsWith('{') && raw.endsWith('}'))   return raw.slice(1, -1)
+  return JSON.stringify(raw)
+}
+
+
 function toPascalCase(str) {
   return str
     .replace(/[-_](.)/g, (_, c) => c.toUpperCase())

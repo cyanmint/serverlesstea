@@ -43,7 +43,7 @@ export default function CommitsList(props: Record<string, unknown>) {
 					<td className="message">
 						<span className="message-wrapper">
 						{(props.pageIsWiki) ? (<>
-							<span className={`commit-summary ${(props.parentCount > 1) ? ` grey text` : ""}`} title={String(props.summary ?? "")}>{item.summary | ctx?.renderUtils?.renderEmoji as any}</span>
+							<span className={`commit-summary ${(props.parentCount > 1) ? ` grey text` : ""}`} title={String(props.summary ?? "")}>{item.summary?.("|", "ctx.RenderUtils.RenderEmoji") as any}</span>
 						</>) : (<>
 							{/* $commitLink */}
 							<span className={`commit-summary ${(props.parentCount > 1) ? ` grey text` : ""}`} title={String(props.summary ?? "")}>{/* TODO: {{ctx.RenderUtils.RenderCommitMessageLinkSubject .Message $commitLink $.Repository}} */}</span>

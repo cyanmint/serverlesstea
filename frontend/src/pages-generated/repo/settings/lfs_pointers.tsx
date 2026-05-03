@@ -41,7 +41,7 @@ export default function LfsPointers(props: Record<string, unknown>) {
 								</a>
 							</td>
 							<td>
-								<a {((item.exists && item.inRepo)) ? (<>href={`${String(props.lFSFilesLink ?? "")}/show/${String(props.oid ?? "")}`} rel="nofollow" target="_blank"</>) : null} title={String(props.oid ?? "")} className="ui button tw-font-mono">
+								<a {...((item.exists && item.inRepo) ? {"href": `${String(props.lFSFilesLink ?? "")}/show/${String(props.oid ?? "")}`, "rel": "nofollow", "target": "_blank"} : {})} title={String(props.oid ?? "")} className="ui button tw-font-mono">
 									{/* TODO: {{ShortSha .Oid}} */}
 								</a>
 							</td>

@@ -6,8 +6,8 @@ export default function Commits(props: Record<string, unknown>) {
 <div id="rev-container">
 	<ul id="rev-list">
 		{((props.graph?.commits) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-			<li {("$commit.Rev") ? (<>id={`commit-`}</>) : null} data-flow={String("" ?? "")}>
-				{("$commit.OnlyRelation") ? (<>
+			<li {...(item.commit?.rev ? {"id": `commit-`} : {})} data-flow={String("" ?? "")}>
+				{(item.commit?.onlyRelation) ? (<>
 					<span></span>
 				</>) : (<>
 					{/* every field must be in a span to get correctly styled */}
@@ -22,20 +22,20 @@ export default function Commits(props: Record<string, unknown>) {
 					<span className="commit-refs flex-text-inline">
 						{(($commit.Refs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 							{/* $refGroup */}
-							{("$refGroup" === "pull") ? (<>
+							{(refGroup === "pull") ? (<>
 								{((!(props.hidePRRefs) || "SliceUtils.Contains $.SelectedBranches .Name")) ? (<>
 									{/* it's intended to use issues not pulls, if it's a pull you will get redirected */}
-									<a className="ui basic tiny button" href={`${String(props.repoLink ?? "")}/${(props.repository?.unitEnabled ctx ctx?.consts?.repoUnitTypePullRequests) ? `pulls` : `issues`}/${String(props.shortName|PathEscape ?? "")}`}>
+									<a className="ui basic tiny button" href={`${String(props.repoLink ?? "")}/${(props.repository?.unitEnabled?.(ctx, "ctx.Consts.RepoUnitTypePullRequests")) ? `pulls` : `issues`}/${String(props.shortName|PathEscape ?? "")}`}>
 										<span className="svg-icon" aria-label="octicon-git-pull-request"></span> #{item.shortName as any}
 									</a>
 								</>) : null}
-							</>) : null} {("$refGroup" === "tags") ? (<>
+							</>) : null} {(refGroup === "tags") ? (<>
 								{/* TODO: {{- template "repo/tag/name" dict "AdditionalClasses" "tag-label" "RepoLink" $.Repository.Link "TagName" .ShortName -}} */}
-							</>) : null} {("$refGroup" === "remotes") ? (<>
+							</>) : null} {(refGroup === "remotes") ? (<>
 								<a className="ui basic tiny button" href={`${String(props.repoLink ?? "")}/src/commit/`}>
 									<span className="svg-icon" aria-label="octicon-cross-reference"></span> {item.shortName as any}
 								</a>
-							</>) : null} {("$refGroup" === "heads") ? (<>
+							</>) : null} {(refGroup === "heads") ? (<>
 								<a className="ui basic tiny button" href={`${String(props.repoLink ?? "")}/src/branch/${String(props.shortName|PathEscape ?? "")}`}>
 									<span className="svg-icon" aria-label="octicon-git-branch"></span> {item.shortName as any}
 								</a>
@@ -46,7 +46,7 @@ export default function Commits(props: Record<string, unknown>) {
 					</span>
 
 					<span className="flex-text-inline tw-text-12">
-						{("$commit.User") ? (<>
+						{(item.commit?.user) ? (<>
 							{/* TODO: {{ctx.AvatarUtils.Avatar $commit.User 18}} */}
 							{/* TODO: {{$commit.User.GetShortDisplayNameLinkHTML}} */}
 						</>) : (<>

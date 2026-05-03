@@ -22,7 +22,7 @@ export default function List(props: Record<string, unknown>) {
 								<span className="flex-text-inline" data-tooltip-content={String(props.errMsg ?? "")}><span className="svg-icon" aria-label="octicon-alert"></span></span>
 							</>) : null}
 
-							{(props.actionsConfig?.isWorkflowDisabled ?.entry?.name) ? (<>
+							{(props.actionsConfig?.isWorkflowDisabled?.(item.entry?.name)) ? (<>
 								<div className="ui red label">{i18n("disabled")}</div>
 							</>) : null}
 						</a>

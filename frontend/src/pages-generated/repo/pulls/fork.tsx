@@ -18,20 +18,20 @@ export default function Fork(props: Record<string, unknown>) {
 						<input type="hidden" id="uid" name="uid" value={String(props.contextUser?.iD ?? "")} required />
 						<span className="text" title={String(props.contextUser?.name ?? "")}>
 							{/* TODO: {{ctx.AvatarUtils.Avatar .ContextUser 28 "mini"}} */}
-							{props.contextUser?.shortName 40 as any}
+							{props.contextUser?.shortName?.(40) as any}
 						</span>
 						<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 						<div className="menu">
 							{(props.canForkToUser) ? (<>
 								<div className="item" data-value={String(props.signedUser?.iD ?? "")} title={String(props.signedUser?.name ?? "")}>
 									{/* TODO: {{ctx.AvatarUtils.Avatar .SignedUser 28 "mini"}} */}
-									{props.signedUser?.shortName 40 as any}
+									{props.signedUser?.shortName?.(40) as any}
 								</div>
 							</>) : null}
 							{((props.orgs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 								<div className="item" data-value={String(props.iD ?? "")} title={String(props.name ?? "")}>
 									{/* TODO: {{ctx.AvatarUtils.Avatar . 28 "mini"}} */}
-									{item.shortName 40 as any}
+									{item.shortName?.(40) as any}
 								</div>
 							</React.Fragment>))}
 						</div>

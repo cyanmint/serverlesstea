@@ -52,13 +52,13 @@ export default function List(props: Record<string, unknown>) {
 						<tr>
 							<td>{item.iD as any}</td>
 							<td>
-								<a href={`${String(props.link ?? "")}/slug/${String(props.slug | PathEscape ?? "")}`}>{item.slug as any}</a>
+								<a href={`${String(props.link ?? "")}/slug/${String(props.slug?.("|", "PathEscape") ?? "")}`}>{item.slug as any}</a>
 							</td>
 							<td className="gt-ellipsis tw-max-w-48">{item.description as any}</td>
 							<td>
 								<div className="tw-flex tw-gap-2">
-									<a href={`${String(props.link ?? "")}/slug/${String(props.slug | PathEscape ?? "")}`} data-tooltip-content={String(i18n("admin.badges.details") ?? "")}><span className="svg-icon" aria-label="octicon-star"></span></a>
-									<a href={`${String(props.link ?? "")}/slug/${String(props.slug | PathEscape ?? "")}/edit`} data-tooltip-content={String(i18n("edit") ?? "")}><span className="svg-icon" aria-label="octicon-pencil"></span></a>
+									<a href={`${String(props.link ?? "")}/slug/${String(props.slug?.("|", "PathEscape") ?? "")}`} data-tooltip-content={String(i18n("admin.badges.details") ?? "")}><span className="svg-icon" aria-label="octicon-star"></span></a>
+									<a href={`${String(props.link ?? "")}/slug/${String(props.slug?.("|", "PathEscape") ?? "")}/edit`} data-tooltip-content={String(i18n("edit") ?? "")}><span className="svg-icon" aria-label="octicon-pencil"></span></a>
 								</div>
 							</td>
 						</tr>

@@ -48,7 +48,7 @@ export default function LfsLocks(props: Record<string, unknown>) {
 						</tr>
 					{/* else */}
 						<tr>
-							<td colspan="4">{i18n("repo.settings.lfs_locks_no_locks")}</td>
+							<td colSpan="4">{i18n("repo.settings.lfs_locks_no_locks")}</td>
 						</tr>
 					</React.Fragment>))}
 				</tbody>

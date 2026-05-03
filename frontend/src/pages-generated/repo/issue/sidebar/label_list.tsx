@@ -7,15 +7,15 @@ export default function LabelList(props: Record<string, unknown>) {
 {/* $data */}
 {/* $listBaseLink */}
 <div className="issue-sidebar-combo" data-selection-mode="multiple" data-update-algo="diff"
-		{("$pageMeta.Issue") ? (<>data-update-url={`/issues/labels?issue_ids=`}</>) : null}
+		{...(props.pageMeta?.issue ? {"data-update-url": `/issues/labels?issue_ids=`} : {})}
 >
 	<input className="combo-value" name="label_ids" type="hidden" value={String("" ?? "")} />
-	<div className={`ui dropdown full-width ${(!("$pageMeta.CanModifyIssueOrPull")) ? `disabled` : ""}`}>
+	<div className={`ui dropdown full-width ${(!(props.pageMeta?.canModifyIssueOrPull)) ? `disabled` : ""}`}>
 		<a className="fixed-text muted">
-			<strong>{i18n("repo.issues.new.labels")}</strong> {("$pageMeta.CanModifyIssueOrPull") ? (<><span className="svg-icon" aria-label="octicon-gear"></span></>) : null}
+			<strong>{i18n("repo.issues.new.labels")}</strong> {(props.pageMeta?.canModifyIssueOrPull) ? (<><span className="svg-icon" aria-label="octicon-gear"></span></>) : null}
 		</a>
 		<div className="menu">
-			{(!("$data.AllLabels")) ? (<>
+			{(!(props.data?.allLabels)) ? (<>
 				<div className="item disabled">{i18n("repo.issues.new.no_items")}</div>
 			</>) : (<>
 				<div className="ui icon search input">
@@ -28,17 +28,17 @@ export default function LabelList(props: Record<string, unknown>) {
 					{/* $previousExclusiveScope */}
 					{(($data.RepoLabels) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 						{/* $exclusiveScope */}
-						{(("$previousExclusiveScope" !== "_no_scope" && "$previousExclusiveScope" !== "$exclusiveScope")) ? (<>
+						{((previousExclusiveScope !== "_no_scope" && previousExclusiveScope !== exclusiveScope)) ? (<>
 							<div className="divider" data-scope={String(props.exclusiveScope ?? "")}></div>
 						</>) : null}
 						{/* TODO: {{$previousExclusiveScope = $exclusiveScope}} */}
 						{/* template: repo/issue/sidebar/label_list_item */}
 					
-					${(("$data.RepoLabels" && "$data.OrgLabels")) ? `<div className=`}divider"></div></React.Fragment>))}
+					${((props.data?.repoLabels && props.data?.orgLabels)) ? `<div className=`}divider"></div></React.Fragment>))}
 					{/* TODO: {{$previousExclusiveScope = "_no_scope"}} */}
 					{(($data.OrgLabels) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 						{/* $exclusiveScope */}
-						{(("$previousExclusiveScope" !== "_no_scope" && "$previousExclusiveScope" !== "$exclusiveScope")) ? (<>
+						{((previousExclusiveScope !== "_no_scope" && previousExclusiveScope !== exclusiveScope)) ? (<>
 							<div className="divider" data-scope={String(props.exclusiveScope ?? "")}></div>
 						</>) : null}
 						{/* TODO: {{$previousExclusiveScope = $exclusiveScope}} */}
@@ -50,7 +50,7 @@ export default function LabelList(props: Record<string, unknown>) {
 	</div>
 
 	<div className=`}ui list labels-list">
-		<span className={`item empty-list ${("$data.SelectedLabelIDs") ? `tw-hidden` : ""}`}>{i18n("repo.issues.new.no_labels")}</span>
+		<span className={`item empty-list ${(props.data?.selectedLabelIDs) ? `tw-hidden` : ""}`}>{i18n("repo.issues.new.no_labels")}</span>
 		{(($data.AllLabels) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 			{(item.isChecked) ? (<>
 				<a className="item" href={`?labels=${String(props.iD ?? "")}`}>

@@ -21,7 +21,7 @@ export default function Issuelist(props: Record<string, unknown>) {
 			<div className="item-main">
 				<div className="item-header">
 					<div className="item-title">
-						<a className="tw-no-underline issue-title" href={`${(props.link) ? `${String(props.link ?? "")}` : `${String(props.link ?? "")}/${String(props.index ?? "")}`}`}>{item.title | ctx?.renderUtils?.renderIssueSimpleTitle as any}</a>
+						<a className="tw-no-underline issue-title" href={`${(props.link) ? `${String(props.link ?? "")}` : `${String(props.link ?? "")}/${String(props.index ?? "")}`}`}>{item.title?.("|", "ctx.RenderUtils.RenderIssueSimpleTitle") as any}</a>
 						{(item.isPull) ? (<>
 							{("index $.CommitStatuses .PullRequest.ID") ? (<>
 								{/* template: repo/commit_statuses */}
@@ -36,7 +36,7 @@ export default function Issuelist(props: Record<string, unknown>) {
 					{(item.totalTrackedTime) ? (<>
 					<div className="tw-text-text-light flex-text-block">
 							<span className="svg-icon" aria-label="octicon-clock"></span>
-							{item.totalTrackedTime | Sec2Hour as any}
+							{item.totalTrackedTime?.("|", "Sec2Hour") as any}
 					</div>
 					</>) : null}
 				</div>
@@ -94,7 +94,7 @@ export default function Issuelist(props: Record<string, unknown>) {
 						</a>
 					</>) : null}
 					{/* $tasks */}
-					{("$tasks" > 0) ? (<>
+					{(tasks > 0) ? (<>
 						{/* $tasksDone */}
 						<span className="checklist flex-text-inline">
 							<span className="svg-icon" aria-label="octicon-checklist"></span>{/* $tasksDone */} / {/* $tasks */}
@@ -103,7 +103,7 @@ export default function Issuelist(props: Record<string, unknown>) {
 					</>) : null}
 					{(item.deadlineUnix !== 0) ? (<>
 						<span className="due-date flex-text-inline" data-tooltip-content={String(i18n("repo.issues.due_date") ?? "")}>
-							<span{(item.isOverdue) ? (<> className="tw-text-red"</>) : null}>
+							<span{...(item.isOverdue ? {"className": "tw-text-red"} : {})}>
 								<span className="svg-icon" aria-label="octicon-calendar"></span>
 								{/* TODO: {{DateUtils.AbsoluteShort .DeadlineUnix}} */}
 							</span>
@@ -113,19 +113,19 @@ export default function Issuelist(props: Record<string, unknown>) {
 						{/* $approveOfficial */}
 						{/* $rejectOfficial */}
 						{/* $waitingOfficial */}
-						{("$approveOfficial" > 0) ? (<>
+						{(approveOfficial > 0) ? (<>
 							<span className="approvals green flex-text-inline">
 								<span className="svg-icon" aria-label="octicon-check"></span>
 								{/* TODO: {{ctx.Locale.TrN $approveOfficial "repo.pulls.approve_count_1" "repo.pulls.approve_count_n" $approveOfficial}} */}
 							</span>
 						</>) : null}
-						{("$rejectOfficial" > 0) ? (<>
+						{(rejectOfficial > 0) ? (<>
 							<span className="rejects red flex-text-inline">
 								<span className="svg-icon" aria-label="octicon-diff"></span>
 								{/* TODO: {{ctx.Locale.TrN $rejectOfficial "repo.pulls.reject_count_1" "repo.pulls.reject_count_n" $rejectOfficial}} */}
 							</span>
 						</>) : null}
-						{("$waitingOfficial" > 0) ? (<>
+						{(waitingOfficial > 0) ? (<>
 							<span className="waiting flex-text-inline">
 								<span className="svg-icon" aria-label="octicon-eye"></span>
 								{/* TODO: {{ctx.Locale.TrN $waitingOfficial "repo.pulls.waiting_count_1" "repo.pulls.waiting_count_n" $waitingOfficial}} */}

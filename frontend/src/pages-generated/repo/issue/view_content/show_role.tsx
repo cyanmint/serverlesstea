@@ -9,8 +9,8 @@ export default function ShowRole(props: Record<string, unknown>) {
 	</div>
 </>) : null}
 {(props.showRole?.roleInRepo) ? (<>
-	<div className="ui basic label role-label" data-tooltip-content={String(props.showRole?.roleInRepo?.localeHelper ctx?.locale ?? "")}>
-		{props.showRole?.roleInRepo?.localeString ctx?.locale as any}
+	<div className="ui basic label role-label" data-tooltip-content={String(props.showRole?.roleInRepo?.localeHelper?.("ctx.Locale") ?? "")}>
+		{props.showRole?.roleInRepo?.localeString?.("ctx.Locale") as any}
 	</div>
 </>) : null}
 

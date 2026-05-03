@@ -35,14 +35,14 @@ export default function ProtectedBranch(props: Record<string, unknown>) {
 				<h5 className="ui dividing header">{i18n("repo.settings.event_push")}</h5>
 				<div className="field">
 					<div className="ui radio checkbox">
-						<input name="enable_push" type="radio" value="none" className="toggle-target-disabled" data-target="#whitelist_box" {(!(props.rule?.canPush)) ? (< />checked</>) : null}>
+						<input name="enable_push" type="radio" value="none" className="toggle-target-disabled" data-target="#whitelist_box" {...(!(props.rule?.canPush) ? {"checked": true} : {})} />
 						<label>{i18n("repo.settings.protect_disable_push")}</label>
 						<p className="help">{i18n("repo.settings.protect_disable_push_desc")}</p>
 					</div>
 				</div>
 				<div className="field">
 					<div className="ui radio checkbox">
-						<input name="enable_push" type="radio" value="all" className="toggle-target-disabled" data-target="#whitelist_box" {((props.rule?.canPush && !(props.rule?.enableWhitelist))) ? (< />checked</>) : null}>
+						<input name="enable_push" type="radio" value="all" className="toggle-target-disabled" data-target="#whitelist_box" {...((props.rule?.canPush && !(props.rule?.enableWhitelist)) ? {"checked": true} : {})} />
 						<label>{i18n("repo.settings.protect_enable_push")}</label>
 						<p className="help">{i18n("repo.settings.protect_enable_push_desc")}</p>
 					</div>
@@ -50,7 +50,7 @@ export default function ProtectedBranch(props: Record<string, unknown>) {
 				<div className="grouped fields">
 					<div className="field">
 						<div className="ui radio checkbox">
-							<input name="enable_push" type="radio" value="whitelist" className="toggle-target-enabled" data-target="#whitelist_box" {((props.rule?.canPush && props.rule?.enableWhitelist)) ? (< />checked</>) : null}>
+							<input name="enable_push" type="radio" value="whitelist" className="toggle-target-enabled" data-target="#whitelist_box" {...((props.rule?.canPush && props.rule?.enableWhitelist) ? {"checked": true} : {})} />
 							<label>{i18n("repo.settings.protect_whitelist_committers")}</label>
 							<p className="help">{i18n("repo.settings.protect_whitelist_committers_desc")}</p>
 						</div>
@@ -105,14 +105,14 @@ export default function ProtectedBranch(props: Record<string, unknown>) {
 				<h5 className="ui dividing header">{i18n("repo.settings.event_force_push")}</h5>
 				<div className="field">
 					<div className="ui radio checkbox">
-						<input type="radio" name="enable_force_push" value="none" className="toggle-target-disabled" data-target="#force_push_allowlist_box" {(!(props.rule?.canForcePush)) ? (< />checked</>) : null}>
+						<input type="radio" name="enable_force_push" value="none" className="toggle-target-disabled" data-target="#force_push_allowlist_box" {...(!(props.rule?.canForcePush) ? {"checked": true} : {})} />
 						<label>{i18n("repo.settings.protect_disable_force_push")}</label>
 						<p className="help">{i18n("repo.settings.protect_disable_force_push_desc")}</p>
 					</div>
 				</div>
 				<div className="field">
 					<div className="ui radio checkbox">
-						<input type="radio" name="enable_force_push" value="all" className="toggle-target-disabled" data-target="#force_push_allowlist_box" {((props.rule?.canForcePush && !(props.rule?.enableForcePushAllowlist))) ? (< />checked</>) : null}>
+						<input type="radio" name="enable_force_push" value="all" className="toggle-target-disabled" data-target="#force_push_allowlist_box" {...((props.rule?.canForcePush && !(props.rule?.enableForcePushAllowlist)) ? {"checked": true} : {})} />
 						<label>{i18n("repo.settings.protect_enable_force_push_all")}</label>
 						<p className="help">{i18n("repo.settings.protect_enable_force_push_all_desc")}</p>
 					</div>
@@ -120,7 +120,7 @@ export default function ProtectedBranch(props: Record<string, unknown>) {
 				<div className="grouped fields">
 					<div className="field">
 						<div className="ui radio checkbox">
-							<input type="radio" name="enable_force_push" value="whitelist" className="toggle-target-enabled" data-target="#force_push_allowlist_box" {((props.rule?.canForcePush && props.rule?.enableForcePushAllowlist)) ? (< />checked</>) : null}>
+							<input type="radio" name="enable_force_push" value="whitelist" className="toggle-target-enabled" data-target="#force_push_allowlist_box" {...((props.rule?.canForcePush && props.rule?.enableForcePushAllowlist) ? {"checked": true} : {})} />
 							<label>{i18n("repo.settings.protect_enable_force_push_allowlist")}</label>
 							<p className="help">{i18n("repo.settings.protect_enable_force_push_allowlist_desc")}</p>
 						</div>
@@ -264,7 +264,7 @@ export default function ProtectedBranch(props: Record<string, unknown>) {
 				<div className="grouped fields">
 					<div className="field">
 						<div className="ui radio checkbox">
-							<input name="enable_merge_whitelist" type="radio" value="false" className="toggle-target-disabled" data-target="#merge_whitelist_box" {(!(props.rule?.enableMergeWhitelist)) ? (< />checked</>) : null}>
+							<input name="enable_merge_whitelist" type="radio" value="false" className="toggle-target-disabled" data-target="#merge_whitelist_box" {...(!(props.rule?.enableMergeWhitelist) ? {"checked": true} : {})} />
 							<label>{i18n("repo.settings.protect_enable_merge")}</label>
 							<p className="help">{i18n("repo.settings.protect_enable_merge_desc")}</p>
 						</div>

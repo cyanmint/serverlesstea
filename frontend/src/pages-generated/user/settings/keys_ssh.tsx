@@ -46,7 +46,7 @@ export default function KeysSsh(props: Record<string, unknown>) {
 		{((props.keys) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 			<div className="item">
 				<div className="item-leading">
-					<span className={`${(props.hasRecentActivity) ? `tw-text-green` : ""}`} {(item.hasRecentActivity) ? (<>data-tooltip-content={String(i18n("settings.key_state_desc") ?? "")}</>) : null}><span className="svg-icon" aria-label="octicon-key"></span></span>
+					<span className={`${(props.hasRecentActivity) ? `tw-text-green` : ""}`} {...(item.hasRecentActivity ? {"data-tooltip-content": String(i18n("settings.key_state_desc") ?? "")} : {})}><span className="svg-icon" aria-label="octicon-key"></span></span>
 				</div>
 				<div className="item-main">
 						{(item.verified) ? (<>
@@ -57,11 +57,11 @@ export default function KeysSsh(props: Record<string, unknown>) {
 								{item.fingerprint as any}
 						</div>
 						<div className="item-body">
-								<i>{i18n("settings.added_on")} —	<span className="svg-icon" aria-label="octicon-info"></span> {(item.hasUsed) ? (<>{i18n("settings.last_used")} <span {(item.hasRecentActivity) ? (<>className="tw-text-green"</>) : null}>{/* TODO: {{DateUtils.AbsoluteShort .UpdatedUnix}} */}</span></>) : (<>{i18n("settings.no_activity")}</>)}</i>
+								<i>{i18n("settings.added_on")} —	<span className="svg-icon" aria-label="octicon-info"></span> {(item.hasUsed) ? (<>{i18n("settings.last_used")} <span {...(item.hasRecentActivity ? {"className": "tw-text-green"} : {})}>{/* TODO: {{DateUtils.AbsoluteShort .UpdatedUnix}} */}</span></>) : (<>{i18n("settings.no_activity")}</>)}</i>
 						</div>
 				</div>
 				<div className="item-trailing">
-					<button className={`ui red tiny button delete-button${("index $.ExternalKeys $index") ? ` disabled` : ""}`} data-modal-id="delete-ssh" data-url={`${String(props.link ?? "")}/delete?type=ssh`} data-id={String(props.iD ?? "")}{("index $.ExternalKeys $index") ? (<> title={String(i18n("settings.ssh_externally_managed") ?? "")}</>) : null}>
+					<button className={`ui red tiny button delete-button${("index $.ExternalKeys $index") ? ` disabled` : ""}`} data-modal-id="delete-ssh" data-url={`${String(props.link ?? "")}/delete?type=ssh`} data-id={String(props.iD ?? "")}{...("index $.ExternalKeys $index" ? {"title": String(i18n("settings.ssh_externally_managed") ?? "")} : {})}>
 						{i18n("settings.delete_key")}
 					</button>
 					{((!(item.verified) && props.verifyingFingerprint !== item.fingerprint)) ? (<>

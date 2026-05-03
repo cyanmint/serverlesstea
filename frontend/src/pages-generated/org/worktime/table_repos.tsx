@@ -14,7 +14,7 @@ export default function TableRepos(props: Record<string, unknown>) {
 		{((props.worktimeSumResult) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 		<tr>
 			<td><span className="svg-icon" aria-label="octicon-repo"></span> <a href={`${String(props.org?.homeLink ?? "")}//issues`}>{item.repoName as any}</a></td>
-			<td><span className="svg-icon" aria-label="octicon-clock"></span> {item.sumTime | Sec2Hour as any}</td>
+			<td><span className="svg-icon" aria-label="octicon-clock"></span> {item.sumTime?.("|", "Sec2Hour") as any}</td>
 		</tr>
 		{/* else */}
 			{/* template: org/worktime/empty_placeholder */}

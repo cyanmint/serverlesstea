@@ -78,7 +78,7 @@ export default function Container(props: Record<string, unknown>) {
 	{/* a container manifest may contain sub manifests, so here we try to display some information of the sub manifest,
 		not perfect, just better than before */}
 	{/* $imageMetadata */}
-	{("$imageMetadata.ImageLayers") ? (<>
+	{(props.imageMetadata?.imageLayers) ? (<>
 		<h4 className="ui top attached header flex-text-block">
 			{i18n("packages.container.layers")}
 			{/* only show the platform if the image metadata is not the package's, which means that it is a sub manifest */}
@@ -100,7 +100,7 @@ export default function Container(props: Record<string, unknown>) {
 			</table>
 		</div>
 	</>) : null}
-	{("$imageMetadata.Labels") ? (<>
+	{(props.imageMetadata?.labels) ? (<>
 		<h4 className="ui top attached header">{i18n("packages.container.labels")}</h4>
 		<div className="ui attached segment">
 			<table className="ui very basic compact table tw-font-mono">

@@ -8,7 +8,7 @@ export default function VariableList(props: Record<string, unknown>) {
 	<div className="ui right">
 		<button className="ui primary tiny button show-modal"
 			data-modal="#edit-variable-modal"
-			data-modal-form.action={`${String(props.link ?? "")}/new`}
+			{...{"data-modal-form.action": `${String(props.link ?? "")}/new`}}
 			data-modal-header={String(i18n("actions.variables.creation") ?? "")}
 			data-modal-dialog-variable-name=""
 			data-modal-dialog-variable-data=""
@@ -44,7 +44,7 @@ export default function VariableList(props: Record<string, unknown>) {
 				<button className="btn interact-bg tw-p-2 show-modal"
 					data-tooltip-content={String(i18n("actions.variables.edit") ?? "")}
 					data-modal="#edit-variable-modal"
-					data-modal-form.action={`${String(props.link ?? "")}/${String(props.iD ?? "")}/edit`}
+					{...{"data-modal-form.action": `${String(props.link ?? "")}/${String(props.iD ?? "")}/edit`}}
 					data-modal-header={String(i18n("actions.variables.edit") ?? "")}
 					data-modal-dialog-variable-name={String(props.name ?? "")}
 					data-modal-dialog-variable-data={String(props.data ?? "")}

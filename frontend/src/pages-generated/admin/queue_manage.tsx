@@ -31,7 +31,7 @@ export default function QueueManage(props: Record<string, unknown>) {
 						<td>{props.queue?.getWorkerMaxNumber as any}</td>
 						<td>
 							{/* $sum */}
-							{("$sum" < 0) ? (<>
+							{(sum < 0) ? (<>
 								-
 							</>) : (<>
 								{/* $sum */}

@@ -3,7 +3,7 @@ import { i18n } from '../../../lib/i18n'
 
 export default function Star(props: Record<string, unknown>) {
   return (<>
-<div className="ui labeled button" {(!(props.isSigned)) ? (<>data-tooltip-content={String(i18n("repo.star_guest_user") ?? "")}</>) : null}>
+<div className="ui labeled button" {...(!(props.isSigned) ? {"data-tooltip-content": String(i18n("repo.star_guest_user") ?? "")} : {})}>
 	{/* $buttonText */}
 	{(props.isStaringRepo) ? (<>{/* TODO: {{$buttonText = ctx.Locale.Tr "repo.unstar"}} */}</>) : null}
 	<a role="button" className="ui compact small basic button" aria-label={String("" ?? "")}

@@ -7,7 +7,7 @@
     "dev:server": "wrangler dev",
     "build": "npm run build:server && npm run build:frontend",
     "build:server": "tsc --noEmit -p server/tsconfig.json",
-    "build:frontend": "vite build frontend --config frontend/vite.config.ts",
+    "build:frontend": "node frontend/scripts/translate-tmpl.mjs && vite build frontend --config frontend/vite.config.ts",
     "type-check": "npm run type-check:server && npm run type-check:frontend",
     "type-check:server": "tsc --noEmit -p server/tsconfig.json",
     "type-check:frontend": "tsc --noEmit -p frontend/tsconfig.json",

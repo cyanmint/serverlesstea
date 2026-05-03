@@ -5,14 +5,14 @@ export default function Terraform(props: Record<string, unknown>) {
   return (<>
 {(props.packageDescriptor?.package?.type === "terraform") ? (<>
 	{/* $data */}
-	{("$data.IsLatestVersion") ? (<>
+	{(props.data?.isLatestVersion) ? (<>
 		<div className="divider"></div>
 		<div className="item tw-flex tw-flex-col tw-gap-2">
 			<div>
 				<strong>{i18n("packages.terraform.lock_status")}</strong>
 			</div>
 			<div>
-				{("$data.TerraformLock") ? (<>
+				{(props.data?.terraformLock) ? (<>
 					<div className="flex-text-block">
 						<span className="svg-icon" aria-label="octicon-lock"></span>
 						<span>{i18n("packages.terraform.locked_by")}</span>

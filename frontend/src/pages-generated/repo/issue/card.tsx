@@ -6,7 +6,7 @@ export default function Card(props: Record<string, unknown>) {
 {(props.issue) && (<>
 	{(props.page?.project?.cardType === 1) ? (<>{/* Images and Text */}
 		{/* $attachments */}
-		{("$attachments") ? (<>
+		{(attachments) ? (<>
 		<div className="card-attachment-images">
 			{(((undefined /* $attachments */)) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				<img loading="lazy" src={String(props.downloadURL ?? "")} alt={String(props.name ?? "")} />
@@ -19,7 +19,7 @@ export default function Card(props: Record<string, unknown>) {
 			<div className="issue-card-icon">
 				{/* template: shared/issueicon */}
 			</div>
-			<a className="issue-card-title muted issue-title tw-break-anywhere" href={String(props.link ?? "")}>{props.title | ctx?.renderUtils?.renderIssueSimpleTitle as any}</a>
+			<a className="issue-card-title muted issue-title tw-break-anywhere" href={String(props.link ?? "")}>{props.title?.("|", "ctx.RenderUtils.RenderIssueSimpleTitle") as any}</a>
 			{((props.isPinnedIssueCard && props.page?.isRepoAdmin)) ? (<>
 				<a role="button" className="issue-card-unpin muted flex-text-inline" data-tooltip-content={i18n("repo.issues.unpin")} data-issue-id={String(props.iD ?? "")} data-unpin-url={`${String(props.page?.link ?? "")}/unpin/${String(props.index ?? "")}`}>
 					<span className="svg-icon" aria-label="octicon-x"></span>
@@ -58,7 +58,7 @@ export default function Card(props: Record<string, unknown>) {
 		</React.Fragment>))}
 		</>) : null}
 		{/* $tasks */}
-		{("$tasks" > 0) ? (<>
+		{(tasks > 0) ? (<>
 			<div className="meta tw-my-1">
 				<span className="svg-icon" aria-label="octicon-checklist"></span>
 				<span className="tw-align-middle">{props.getTasksDone as any} / {/* $tasks */}</span>

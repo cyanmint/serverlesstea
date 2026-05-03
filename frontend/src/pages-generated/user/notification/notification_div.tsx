@@ -10,15 +10,15 @@ export default function NotificationDiv(props: Record<string, unknown>) {
 		{/* $pageTypeIsRead */}
 		<div className="flex-left-right tw-mb-[--page-spacing]">
 			<div className="small-menu-items ui compact tiny menu">
-				<a className={`${(!("$pageTypeIsRead")) ? `active` : ""} item`} href={`/notifications?type=unread`}>
+				<a className={`${(!(pageTypeIsRead)) ? `active` : ""} item`} href={`/notifications?type=unread`}>
 					{i18n("notification.unread")}
-					<div className={`notifications-unread-count ui label ${(!("$notificationUnreadCount")) ? `tw-hidden` : ""}`}>{/* $notificationUnreadCount */}</div>
+					<div className={`notifications-unread-count ui label ${(!(notificationUnreadCount)) ? `tw-hidden` : ""}`}>{/* $notificationUnreadCount */}</div>
 				</a>
-				<a className={`${("$pageTypeIsRead") ? `active` : ""} item`} href={`/notifications?type=read`}>
+				<a className={`${(pageTypeIsRead) ? `active` : ""} item`} href={`/notifications?type=read`}>
 					{i18n("notification.read")}
 				</a>
 			</div>
-			{((!("$pageTypeIsRead") && "$notificationUnreadCount")) ? (<>
+			{((!(pageTypeIsRead) && notificationUnreadCount)) ? (<>
 				<form action={`/notifications/purge`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
 					<button className="ui mini button primary tw-mr-0" title={String(i18n("notification.mark_all_as_read") ?? "")}>
 						<span className="svg-icon" aria-label="octicon-checklist"></span>
@@ -30,7 +30,7 @@ export default function NotificationDiv(props: Record<string, unknown>) {
 			{((props.notifications) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				<div className="notifications-item" id={`notification_`} data-status={String("" ?? "")}>
 					<div className="tw-self-start tw-mt-[2px]">
-						{("$one.Issue") ? (<>
+						{(item.one?.issue) ? (<>
 							{/* template: shared/issueicon */}
 						</>) : (<>
 							<span className="svg-icon" aria-label="octicon-repo"></span>
@@ -38,13 +38,13 @@ export default function NotificationDiv(props: Record<string, unknown>) {
 					</div>
 					<a className="notifications-link silenced tw-flex-1" href={String("" ?? "")}>
 						<div className="flex-text-block tw-text-[0.95em]">
-							{/* TODO: {{$one.Repository.FullName}} */} {("$one.Issue") ? (<><span className="tw-text-text-light-3">#{/* TODO: {{$one.Issue.Index}} */}</span></>) : null}
-							{("$one.Status" === "$statusPinned") ? (<>
+							{/* TODO: {{$one.Repository.FullName}} */} {(item.one?.issue) ? (<><span className="tw-text-text-light-3">#{/* TODO: {{$one.Issue.Index}} */}</span></>) : null}
+							{(item.one?.status === statusPinned) ? (<>
 								<span className="svg-icon" aria-label="octicon-pin"></span>
 							</>) : null}
 						</div>
 						<div className="tw-text-16 tw-py-0.5">
-							{("$one.Issue") ? (<>
+							{(item.one?.issue) ? (<>
 								{/* TODO: {{$one.Issue.Title | ctx.RenderUtils.RenderIssueSimpleTitle}} */}
 							</>) : (<>
 								{/* TODO: {{$one.Repository.FullName}} */}
@@ -52,7 +52,7 @@ export default function NotificationDiv(props: Record<string, unknown>) {
 						</div>
 					</a>
 					<div className="notifications-updated flex-text-inline">
-						{("$one.Issue") ? (<>
+						{(item.one?.issue) ? (<>
 							{/* TODO: {{DateUtils.TimeSince $one.Issue.UpdatedUnix}} */}
 						</>) : (<>
 							{/* TODO: {{DateUtils.TimeSince $one.UpdatedUnix}} */}
@@ -62,20 +62,20 @@ export default function NotificationDiv(props: Record<string, unknown>) {
 								data-fetch-sync="$body #notification_div"
 					>
 						<input type="hidden" name="notification_id" value={String("" ?? "")} />
-						{("$one.Status" !== "$statusPinned") ? (<>
+						{(item.one?.status !== statusPinned) ? (<>
 							<button className="btn interact-bg tw-p-2" data-tooltip-content={String(i18n("notification.pin") ?? "")}
 											name="notification_action" value="pin"
 							>
 								<span className="svg-icon" aria-label="octicon-pin"></span>
 							</button>
 						</>) : null}
-						{(("$one.Status" === "$statusUnread" || "$one.Status" === "$statusPinned")) ? (<>
+						{((item.one?.status === statusUnread || item.one?.status === statusPinned)) ? (<>
 							<button className="btn interact-bg tw-p-2" data-tooltip-content={String(i18n("notification.mark_as_read") ?? "")}
 											name="notification_action" value="mark_as_read"
 							>
 								<span className="svg-icon" aria-label="octicon-check"></span>
 							</button>
-						</>) : null} {("$one.Status" === "$statusRead") ? (<>
+						</>) : null} {(item.one?.status === statusRead) ? (<>
 							<button className="btn interact-bg tw-p-2" data-tooltip-content={String(i18n("notification.mark_as_unread") ?? "")}
 											name="notification_action" value="mark_as_unread"
 							>
@@ -87,7 +87,7 @@ export default function NotificationDiv(props: Record<string, unknown>) {
 			{/* else */}
 				<div className="empty-placeholder">
 					<span className="svg-icon" aria-label="octicon-inbox"></span>
-					{("$pageTypeIsRead") ? (<>
+					{(pageTypeIsRead) ? (<>
 						{i18n("notification.no_read")}
 					</>) : (<>
 						{i18n("notification.no_unread")}

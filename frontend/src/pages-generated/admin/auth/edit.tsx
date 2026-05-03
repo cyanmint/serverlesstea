@@ -120,17 +120,17 @@ export default function Edit(props: Record<string, unknown>) {
 					<div className="inline field">
 						<div className="ui checkbox">
 							<label htmlFor="ssh_keys_are_verified"><strong>{i18n("admin.auths.ssh_keys_are_verified")}</strong></label>
-							<input id="ssh_keys_are_verified" name="ssh_keys_are_verified" type="checkbox" {...("$cfg.SSHKeysAreVerified" ? {"checked": true} : {})} />
+							<input id="ssh_keys_are_verified" name="ssh_keys_are_verified" type="checkbox" {...(props.cfg?.sSHKeysAreVerified ? {"checked": true} : {})} />
 						</div>
 					</div>
 					{/* ldap group begin */}
 					<div className="inline field">
 						<div className="ui checkbox">
 							<label><strong>{i18n("admin.auths.enable_ldap_groups")}</strong></label>
-							<input type="checkbox" name="groups_enabled" className="js-ldap-group-toggle" {...("$cfg.GroupsEnabled" ? {"checked": true} : {})} />
+							<input type="checkbox" name="groups_enabled" className="js-ldap-group-toggle" {...(props.cfg?.groupsEnabled ? {"checked": true} : {})} />
 						</div>
 					</div>
-					<div id="ldap-group-options" className={`ui segment secondary ${(!("$cfg.GroupsEnabled")) ? `tw-hidden` : ""}`}>
+					<div id="ldap-group-options" className={`ui segment secondary ${(!(props.cfg?.groupsEnabled)) ? `tw-hidden` : ""}`}>
 						<div className="field">
 							<label>{i18n("admin.auths.group_search_base")}</label>
 							<input name="group_dn" value={String("" ?? "")} placeholder="ou=group,dc=mydomain,dc=com" />
@@ -153,7 +153,7 @@ export default function Edit(props: Record<string, unknown>) {
 						</div>
 						<div className="ui checkbox">
 							<label>{i18n("admin.auths.map_group_to_team_removal")}</label>
-							<input name="group_team_map_removal" type="checkbox" {...("$cfg.GroupTeamMapRemoval" ? {"checked": true} : {})} />
+							<input name="group_team_map_removal" type="checkbox" {...(props.cfg?.groupTeamMapRemoval ? {"checked": true} : {})} />
 						</div>
 					</div>
 					{/* ldap group end */}
@@ -162,24 +162,24 @@ export default function Edit(props: Record<string, unknown>) {
 						<div className="inline field">
 							<div className="ui checkbox">
 								<label htmlFor="use_paged_search"><strong>{i18n("admin.auths.use_paged_search")}</strong></label>
-								<input id="use_paged_search" name="use_paged_search" type="checkbox" {...("$cfg.UsePagedSearch" ? {"checked": true} : {})} />
+								<input id="use_paged_search" name="use_paged_search" type="checkbox" {...(props.cfg?.usePagedSearch ? {"checked": true} : {})} />
 							</div>
 						</div>
-						<div className={`field required search-page-size${(!("$cfg.UsePagedSearch")) ? ` tw-hidden` : ""}`}>
+						<div className={`field required search-page-size${(!(props.cfg?.usePagedSearch)) ? ` tw-hidden` : ""}`}>
 							<label htmlFor="search_page_size">{i18n("admin.auths.search_page_size")}</label>
-							<input id="search_page_size" name="search_page_size" value={`${("$cfg.UsePagedSearch") ? `` : ""}`} />
+							<input id="search_page_size" name="search_page_size" value={`${(props.cfg?.usePagedSearch) ? `` : ""}`} />
 						</div>
 						<div className="inline field">
 							<div className="ui checkbox">
 								<label><strong>{i18n("admin.auths.attributes_in_bind")}</strong></label>
-								<input name="attributes_in_bind" type="checkbox" {...("$cfg.AttributesInBind" ? {"checked": true} : {})} />
+								<input name="attributes_in_bind" type="checkbox" {...(props.cfg?.attributesInBind ? {"checked": true} : {})} />
 							</div>
 						</div>
 					</>) : null}
 					<div className="inline field">
 						<div className="ui checkbox">
 							<label htmlFor="allow_deactivate_all"><strong>{i18n("admin.auths.allow_deactivate_all")}</strong></label>
-							<input id="allow_deactivate_all" name="allow_deactivate_all" type="checkbox" {...("$cfg.AllowDeactivateAll" ? {"checked": true} : {})} />
+							<input id="allow_deactivate_all" name="allow_deactivate_all" type="checkbox" {...(props.cfg?.allowDeactivateAll ? {"checked": true} : {})} />
 						</div>
 					</div>
 				</>) : null}
@@ -211,14 +211,14 @@ export default function Edit(props: Record<string, unknown>) {
 					<div className="field">
 						<div className="ui checkbox">
 							<label htmlFor="force_smtps"><strong>{i18n("admin.auths.force_smtps")}</strong></label>
-							<input id="force_smtps" name="force_smtps" type="checkbox" {...("$cfg.ForceSMTPS" ? {"checked": true} : {})} />
+							<input id="force_smtps" name="force_smtps" type="checkbox" {...(props.cfg?.forceSMTPS ? {"checked": true} : {})} />
 						</div>
 						<p className="help">{i18n("admin.auths.force_smtps_helper")}</p>
 					</div>
 					<div className={`has-tls inline field ${(!(props.hasTLS)) ? `tw-hidden` : ""}`}>
 						<div className="ui checkbox">
 							<label><strong>{i18n("admin.auths.skip_tls_verify")}</strong></label>
-							<input name="skip_verify" type="checkbox" {...("$cfg.SkipVerify" ? {"checked": true} : {})} />
+							<input name="skip_verify" type="checkbox" {...(props.cfg?.skipVerify ? {"checked": true} : {})} />
 						</div>
 					</div>
 					<div className="field">
@@ -229,7 +229,7 @@ export default function Edit(props: Record<string, unknown>) {
 					<div className="inline field">
 						<div className="ui checkbox">
 							<label htmlFor="disable_helo"><strong>{i18n("admin.auths.disable_helo")}</strong></label>
-							<input id="disable_helo" name="disable_helo" type="checkbox" {...("$cfg.DisableHelo" ? {"checked": true} : {})} />
+							<input id="disable_helo" name="disable_helo" type="checkbox" {...(props.cfg?.disableHelo ? {"checked": true} : {})} />
 						</div>
 					</div>
 					<div className="field">
@@ -287,28 +287,28 @@ export default function Edit(props: Record<string, unknown>) {
 					<div className="oauth2_use_custom_url inline field">
 						<div className="ui checkbox">
 							<label><strong>{i18n("admin.auths.oauth2_use_custom_url")}</strong></label>
-							<input id="oauth2_use_custom_url" name="oauth2_use_custom_url" type="checkbox" {...("$cfg.CustomURLMapping" ? {"checked": true} : {})} />
+							<input id="oauth2_use_custom_url" name="oauth2_use_custom_url" type="checkbox" {...(props.cfg?.customURLMapping ? {"checked": true} : {})} />
 						</div>
 					</div>
 					<div className="oauth2_use_custom_url_field oauth2_auth_url required field">
 						<label htmlFor="oauth2_auth_url">{i18n("admin.auths.oauth2_authURL")}</label>
-						<input id="oauth2_auth_url" name="oauth2_auth_url" value={`${("$cfg.CustomURLMapping") ? `` : ""}`} />
+						<input id="oauth2_auth_url" name="oauth2_auth_url" value={`${(props.cfg?.customURLMapping) ? `` : ""}`} />
 					</div>
 					<div className="oauth2_use_custom_url_field oauth2_token_url required field">
 						<label htmlFor="oauth2_token_url">{i18n("admin.auths.oauth2_tokenURL")}</label>
-						<input id="oauth2_token_url" name="oauth2_token_url" value={`${("$cfg.CustomURLMapping") ? `` : ""}`} />
+						<input id="oauth2_token_url" name="oauth2_token_url" value={`${(props.cfg?.customURLMapping) ? `` : ""}`} />
 					</div>
 					<div className="oauth2_use_custom_url_field oauth2_profile_url required field">
 						<label htmlFor="oauth2_profile_url">{i18n("admin.auths.oauth2_profileURL")}</label>
-						<input id="oauth2_profile_url" name="oauth2_profile_url" value={`${("$cfg.CustomURLMapping") ? `` : ""}`} />
+						<input id="oauth2_profile_url" name="oauth2_profile_url" value={`${(props.cfg?.customURLMapping) ? `` : ""}`} />
 					</div>
 					<div className="oauth2_use_custom_url_field oauth2_email_url required field">
 						<label htmlFor="oauth2_email_url">{i18n("admin.auths.oauth2_emailURL")}</label>
-						<input id="oauth2_email_url" name="oauth2_email_url" value={`${("$cfg.CustomURLMapping") ? `` : ""}`} />
+						<input id="oauth2_email_url" name="oauth2_email_url" value={`${(props.cfg?.customURLMapping) ? `` : ""}`} />
 					</div>
 					<div className="oauth2_use_custom_url_field oauth2_tenant required field">
 						<label htmlFor="oauth2_tenant">{i18n("admin.auths.oauth2_tenant")}</label>
-						<input id="oauth2_tenant" name="oauth2_tenant" value={`${("$cfg.CustomURLMapping") ? `` : ""}`} />
+						<input id="oauth2_tenant" name="oauth2_tenant" value={`${(props.cfg?.customURLMapping) ? `` : ""}`} />
 					</div>
 
 					{((props.oAuth2Providers) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
@@ -325,7 +325,7 @@ export default function Edit(props: Record<string, unknown>) {
 
 					<div className="field">
 						<label htmlFor="oauth2_scopes">{i18n("admin.auths.oauth2_scopes")}</label>
-						<input id="oauth2_scopes" name="oauth2_scopes" value={`${("$cfg.Scopes") ? `` : ""}`} />
+						<input id="oauth2_scopes" name="oauth2_scopes" value={`${(props.cfg?.scopes) ? `` : ""}`} />
 					</div>
 					<div className="field">
 						<label>{i18n("admin.auths.oauth2_full_name_claim_name")}</label>
@@ -368,7 +368,7 @@ export default function Edit(props: Record<string, unknown>) {
 					</div>
 					<div className="ui checkbox">
 						<label>{i18n("admin.auths.oauth2_map_group_to_team_removal")}</label>
-						<input name="oauth2_group_team_map_removal" type="checkbox" {...("$cfg.GroupTeamMapRemoval" ? {"checked": true} : {})} />
+						<input name="oauth2_group_team_map_removal" type="checkbox" {...(props.cfg?.groupTeamMapRemoval ? {"checked": true} : {})} />
 					</div>
 				</>) : null}
 
@@ -378,21 +378,21 @@ export default function Edit(props: Record<string, unknown>) {
 					<div className="field">
 						<div className="ui checkbox">
 							<label htmlFor="sspi_auto_create_users"><strong>{i18n("admin.auths.sspi_auto_create_users")}</strong></label>
-							<input id="sspi_auto_create_users" name="sspi_auto_create_users" className="sspi-auto-create-users" type="checkbox" {...("$cfg.AutoCreateUsers" ? {"checked": true} : {})} />
+							<input id="sspi_auto_create_users" name="sspi_auto_create_users" className="sspi-auto-create-users" type="checkbox" {...(props.cfg?.autoCreateUsers ? {"checked": true} : {})} />
 							<p className="help">{i18n("admin.auths.sspi_auto_create_users_helper")}</p>
 						</div>
 					</div>
 					<div className="field">
 						<div className="ui checkbox">
 							<label htmlFor="sspi_auto_activate_users"><strong>{i18n("admin.auths.sspi_auto_activate_users")}</strong></label>
-							<input id="sspi_auto_activate_users" name="sspi_auto_activate_users" className="sspi-auto-activate-users" type="checkbox" {...("$cfg.AutoActivateUsers" ? {"checked": true} : {})} />
+							<input id="sspi_auto_activate_users" name="sspi_auto_activate_users" className="sspi-auto-activate-users" type="checkbox" {...(props.cfg?.autoActivateUsers ? {"checked": true} : {})} />
 							<p className="help">{i18n("admin.auths.sspi_auto_activate_users_helper")}</p>
 						</div>
 					</div>
 					<div className="field">
 						<div className="ui checkbox">
 							<label htmlFor="sspi_strip_domain_names"><strong>{i18n("admin.auths.sspi_strip_domain_names")}</strong></label>
-							<input id="sspi_strip_domain_names" name="sspi_strip_domain_names" className="sspi-strip-domain-names" type="checkbox" {...("$cfg.StripDomainNames" ? {"checked": true} : {})} />
+							<input id="sspi_strip_domain_names" name="sspi_strip_domain_names" className="sspi-strip-domain-names" type="checkbox" {...(props.cfg?.stripDomainNames ? {"checked": true} : {})} />
 							<p className="help">{i18n("admin.auths.sspi_strip_domain_names_helper")}</p>
 						</div>
 					</div>
@@ -406,11 +406,11 @@ export default function Edit(props: Record<string, unknown>) {
 						<div className="ui language selection dropdown" id="sspi_default_language">
 							<input name="sspi_default_language" type="hidden" value={String("" ?? "")} />
 							<span className="svg-icon" aria-label="octicon-triangle-down"></span>
-							<div className="text">{((props.allLangs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>{("$cfg.DefaultLanguage" === item.lang) ? (<>{item.name as any}</>) : null}</React.Fragment>))}</div>
+							<div className="text">{((props.allLangs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>{(item.cfg?.defaultLanguage === item.lang) ? (<>{item.name as any}</>) : null}</React.Fragment>))}</div>
 							<div className="menu">
 								<div className={`item${(!(props.sSPIDefaultLanguage)) ? ` active selected` : ""}`} data-value="">-</div>
 							{((props.allLangs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								<div className={`item${("$cfg.DefaultLanguage" === props.lang) ? ` active selected` : ""}`} data-value={String(props.lang ?? "")}>{item.name as any}</div>
+								<div className={`item${(props.cfg?.defaultLanguage === props.lang) ? ` active selected` : ""}`} data-value={String(props.lang ?? "")}>{item.name as any}</div>
 							</React.Fragment>))}
 							</div>
 						</div>

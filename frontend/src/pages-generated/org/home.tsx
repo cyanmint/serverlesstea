@@ -67,7 +67,7 @@ export default function Home(props: Record<string, unknown>) {
 					{/* gap 8px below is specifically chosen to make sure a full line of avatars can exactly fit the segment width */}
 					<div className="ui attached segment flex-text-block tw-flex-wrap tw-gap-[8px]">
 						{((props.orgOverviewMembers) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-							{((props.isOrganizationMember || "call $.IsPublicMember $memberUser.ID")) ? (<>
+							{((props.isOrganizationMember || props.isPublicMember?.(item.memberUser?.iD))) ? (<>
 								{/* template: shared/user/avatarlink */}
 							</>) : null}
 						</React.Fragment>))}
@@ -82,10 +82,10 @@ export default function Home(props: Record<string, unknown>) {
 						<div className="flex-relaxed-list">
 						{((props.orgOverviewTeams) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 							<div>
-								<a href={`${String(props.orgLink ?? "")}/teams/${String(props.lowerName | PathEscape ?? "")}`}><strong>{item.name as any}</strong></a>
+								<a href={`${String(props.orgLink ?? "")}/teams/${String(props.lowerName?.("|", "PathEscape") ?? "")}`}><strong>{item.name as any}</strong></a>
 								<p className="tw-text-text-light">
-									<a className="muted" href={`${String(props.orgLink ?? "")}/teams/${String(props.lowerName | PathEscape ?? "")}`}><strong>{item.numMembers as any}</strong> {i18n("org.lower_members")}</a> ·
-									<a className="muted" href={`${String(props.orgLink ?? "")}/teams/${String(props.lowerName | PathEscape ?? "")}/repositories`}><strong>{item.numRepos as any}</strong> {i18n("org.lower_repositories")}</a>
+									<a className="muted" href={`${String(props.orgLink ?? "")}/teams/${String(props.lowerName?.("|", "PathEscape") ?? "")}`}><strong>{item.numMembers as any}</strong> {i18n("org.lower_members")}</a> ·
+									<a className="muted" href={`${String(props.orgLink ?? "")}/teams/${String(props.lowerName?.("|", "PathEscape") ?? "")}/repositories`}><strong>{item.numRepos as any}</strong> {i18n("org.lower_repositories")}</a>
 								</p>
 							</div>
 						</React.Fragment>))}

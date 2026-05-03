@@ -30,14 +30,14 @@ export default function Notice(props: Record<string, unknown>) {
 						<td className="view-detail"><a href="#"><span className="svg-icon" aria-label="octicon-note"></span></a></td>
 					</tr>
 				{/* else */}
-					<tr><td className="tw-text-center" colspan="6">{i18n("no_results_found")}</td></tr>
+					<tr><td className="tw-text-center" colSpan="6">{i18n("no_results_found")}</td></tr>
 				</React.Fragment>))}
 			</tbody>
 			{(props.notices) ? (<>
 				<tfoot>
 						<tr>
 							<th></th>
-							<th colspan="5">
+							<th colSpan="5">
 								<form className="tw-float-right" method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())} action={`/-/admin/notices/empty`}>
 									<button type="submit" className="ui red small button">{i18n("admin.notices.delete_all")}</button>
 								</form>

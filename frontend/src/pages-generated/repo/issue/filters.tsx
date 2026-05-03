@@ -14,7 +14,7 @@ export default function Filters(props: Record<string, unknown>) {
 			<div className="ui compact tiny secondary menu">
 				<span className="item" data-tooltip-content='{i18n("tracked_time_summary")}'>
 					<span className="svg-icon" aria-label="octicon-clock"></span>
-					{props.totalTrackedTime | Sec2Hour as any}
+					{props.totalTrackedTime?.("|", "Sec2Hour") as any}
 				</span>
 			</div>
 		</>) : null}

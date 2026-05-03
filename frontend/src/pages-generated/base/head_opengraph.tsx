@@ -7,15 +7,15 @@ export default function HeadOpengraph(props: Record<string, unknown>) {
 {(props.pageIsUserProfile) ? (<>
 	<meta property="og:title" content={String(props.contextUser?.displayName ?? "")} />
 	<meta property="og:type" content="profile" />
-	<meta property="og:image" content={String(props.contextUser?.avatarLink ctx ?? "")} />
-	<meta property="og:url" content={String(props.contextUser?.hTMLURL ctx ?? "")} />
+	<meta property="og:image" content={String(props.contextUser?.avatarLink?.(ctx) ?? "")} />
+	<meta property="og:url" content={String(props.contextUser?.hTMLURL?.(ctx) ?? "")} />
 	{(props.contextUser?.description) ? (<>
 		<meta property="og:description" content={String("" ?? "")} />
 	</>) : null}
 </>) : null} {(props.repository) ? (<>
 	{(props.issue) ? (<>
 		<meta property="og:title" content={String(props.issue?.title ?? "")} />
-		<meta property="og:url" content={String(props.issue?.hTMLURL ctx ?? "")} />
+		<meta property="og:url" content={String(props.issue?.hTMLURL?.(ctx) ?? "")} />
 		{(props.issue?.content) ? (<>
 			<meta property="og:description" content={String("" ?? "")} />
 		</>) : null}
@@ -31,16 +31,16 @@ export default function HeadOpengraph(props: Record<string, unknown>) {
 		</>) : null}
 	</>) : (<>
 		<meta property="og:title" content={String(props.repository?.name ?? "")} />
-		<meta property="og:url" content={String(props.repository?.hTMLURL ctx ?? "")} />
+		<meta property="og:url" content={String(props.repository?.hTMLURL?.(ctx) ?? "")} />
 		{(props.repository?.description) ? (<>
 			<meta property="og:description" content={String("" ?? "")} />
 		</>) : null}
 	</>)}
 	<meta property="og:type" content="object" />
-	{(props.repository?.avatarLink ctx) ? (<>
-		<meta property="og:image" content={String(props.repository?.avatarLink ctx ?? "")} />
+	{(props.repository?.avatarLink?.(ctx)) ? (<>
+		<meta property="og:image" content={String(props.repository?.avatarLink?.(ctx) ?? "")} />
 	</>) : (<>
-		<meta property="og:image" content={String(props.repository?.owner?.avatarLink ctx ?? "")} />
+		<meta property="og:image" content={String(props.repository?.owner?.avatarLink?.(ctx) ?? "")} />
 	</>)}
 </>) : (<>
 	<meta property="og:title" content={String("" ?? "")} />

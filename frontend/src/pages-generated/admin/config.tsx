@@ -324,7 +324,7 @@ export default function Config(props: Record<string, unknown>) {
 
 				{((props.loggers) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 					<dt>{i18n("admin.config.logger_name_fmt")}</dt>
-					{("$loggerDetail.IsEnabled") ? (<>
+					{(item.loggerDetail?.isEnabled) ? (<>
 						<dd><pre className="tw-m-0">{/* TODO: {{$loggerDetail.EventWriters | JsonUtils.EncodeToString | JsonUtils.PrettyIndent}} */}</pre></dd>
 					</>) : (<>
 						<dd>{i18n("admin.config.disabled_logger")}</dd>

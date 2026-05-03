@@ -115,7 +115,7 @@ export default function List(props: Record<string, unknown>) {
 							</td>
 						</tr>
 					{/* else */}
-						<tr className="no-results-row"><td className="tw-text-center" colspan="9">{i18n("no_results_found")}</td></tr>
+						<tr className="no-results-row"><td className="tw-text-center" colSpan="9">{i18n("no_results_found")}</td></tr>
 					</React.Fragment>))}
 				</tbody>
 			</table>

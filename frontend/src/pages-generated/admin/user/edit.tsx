@@ -45,11 +45,11 @@ export default function Edit(props: Record<string, unknown>) {
 						<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 						<div className="menu">
 							{((props.allowedUserVisibilityModes) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-								{("$mode.IsPublic") ? (<>
+								{(item.mode?.isPublic) ? (<>
 									<div className="item" data-tooltip-content={String(i18n("settings.visibility.public_tooltip") ?? "")} data-value="0">{i18n("settings.visibility.public")}</div>
-								</>) : null} {("$mode.IsLimited") ? (<>
+								</>) : null} {(item.mode?.isLimited) ? (<>
 									<div className="item" data-tooltip-content={String(i18n("settings.visibility.limited_tooltip") ?? "")} data-value="1">{i18n("settings.visibility.limited")}</div>
-								</>) : null} {("$mode.IsPrivate") ? (<>
+								</>) : null} {(item.mode?.isPrivate) ? (<>
 									<div className="item" data-tooltip-content={String(i18n("settings.visibility.private_tooltip") ?? "")} data-value="2">{i18n("settings.visibility.private")}</div>
 								</>) : null}
 							</React.Fragment>))}
@@ -180,7 +180,7 @@ export default function Edit(props: Record<string, unknown>) {
 				{(!(props.disableGravatar)) ? (<>
 				<div className="inline field">
 					<div className="ui radio checkbox">
-						<input name="source" value="lookup" type="radio" {(!(props.user?.useCustomAvatar)) ? (< />checked</>) : null}>
+						<input name="source" value="lookup" type="radio" {...(!(props.user?.useCustomAvatar) ? {"checked": true} : {})} />
 						<label>{i18n("settings.lookup_avatar_by_mail")}</label>
 					</div>
 				</div>

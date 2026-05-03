@@ -21,19 +21,19 @@ export default function Search(props: Record<string, unknown>) {
 				<label className="item"><input type="radio" name="clear-filter" /> {i18n("filter.clear")}</label>
 				<div className="divider"></div>
 				<label className="item"><input type="radio" name="archived" {...(props.isArchived?.value ? {"checked": true} : {})} value="1" /> {i18n("filter.is_archived")}</label>
-				<label className="item"><input type="radio" name="archived" {(!(props.isArchived?.valueOrDefault true)) ? (< />checked</>) : null} value="0"> {i18n("filter.not_archived")}</label>
+				<label className="item"><input type="radio" name="archived" {...(!(props.isArchived?.valueOrDefault?.(true)) ? {"checked": true} : {})} value="0" /> {i18n("filter.not_archived")}</label>
 				<div className="divider"></div>
 				<label className="item"><input type="radio" name="fork" {...(props.isFork?.value ? {"checked": true} : {})} value="1" /> {i18n("filter.is_fork")}</label>
-				<label className="item"><input type="radio" name="fork" {(!(props.isFork?.valueOrDefault true)) ? (< />checked</>) : null} value="0"> {i18n("filter.not_fork")}</label>
+				<label className="item"><input type="radio" name="fork" {...(!(props.isFork?.valueOrDefault?.(true)) ? {"checked": true} : {})} value="0" /> {i18n("filter.not_fork")}</label>
 				<div className="divider"></div>
 				<label className="item"><input type="radio" name="mirror" {...(props.isMirror?.value ? {"checked": true} : {})} value="1" /> {i18n("filter.is_mirror")}</label>
-				<label className="item"><input type="radio" name="mirror" {(!(props.isMirror?.valueOrDefault true)) ? (< />checked</>) : null} value="0"> {i18n("filter.not_mirror")}</label>
+				<label className="item"><input type="radio" name="mirror" {...(!(props.isMirror?.valueOrDefault?.(true)) ? {"checked": true} : {})} value="0" /> {i18n("filter.not_mirror")}</label>
 				<div className="divider"></div>
 				<label className="item"><input type="radio" name="template" {...(props.isTemplate?.value ? {"checked": true} : {})} value="1" /> {i18n("filter.is_template")}</label>
-				<label className="item"><input type="radio" name="template" {(!(props.isTemplate?.valueOrDefault true)) ? (< />checked</>) : null} value="0"> {i18n("filter.not_template")}</label>
+				<label className="item"><input type="radio" name="template" {...(!(props.isTemplate?.valueOrDefault?.(true)) ? {"checked": true} : {})} value="0" /> {i18n("filter.not_template")}</label>
 				<div className="divider"></div>
 				<label className="item"><input type="radio" name="private" {...(props.isPrivate?.value ? {"checked": true} : {})} value="1" /> {i18n("filter.private")}</label>
-				<label className="item"><input type="radio" name="private" {(!(props.isPrivate?.valueOrDefault true)) ? (< />checked</>) : null} value="0"> {i18n("filter.public")}</label>
+				<label className="item"><input type="radio" name="private" {...(!(props.isPrivate?.valueOrDefault?.(true)) ? {"checked": true} : {})} value="0" /> {i18n("filter.public")}</label>
 			</div>
 		</div>
 		{/* Sort */}

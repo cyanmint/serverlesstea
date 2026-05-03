@@ -31,7 +31,7 @@ export default function Cron(props: Record<string, unknown>) {
 							<td>{/* TODO: {{DateUtils.FullTime .Next}} */}</td>
 							<td>{(item.prev?.year > 1) ? (<>{/* TODO: {{DateUtils.FullTime .Prev}} */}</>) : (<>-</>)}</td>
 							<td>{item.execTimes as any}</td>
-							<td {(item.status !== "") ? (<>data-tooltip-content={String(props.formatLastMessage ctx?.locale ?? "")}</>) : null} >{(item.status === "") ? (<>—</>) : (<>{/* TODO: {{svg (Iif (eq .Status "finished") "octicon-check" "octicon-x") 16}} */}</>)}</td>
+							<td {...(item.status !== "" ? {"data-tooltip-content": String(props.formatLastMessage?.("ctx.Locale") ?? "")} : {})} >{(item.status === "") ? (<>—</>) : (<>{/* TODO: {{svg (Iif (eq .Status "finished") "octicon-check" "octicon-x") 16}} */}</>)}</td>
 						</tr>
 					</React.Fragment>))}
 				</tbody>

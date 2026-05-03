@@ -45,7 +45,7 @@ export default function Codecommit(props: Record<string, unknown>) {
 				<div className="inline field">
 					<label>{i18n("repo.migrate_options")}</label>
 					<div className="ui checkbox">
-						<input id="mirror" name="mirror" type="checkbox" {(props.mirror) ? (< /> checked</>) : null}>
+						<input id="mirror" name="mirror" type="checkbox" {...(props.mirror ? {"checked": true} : {})} />
 						<label>{i18n("repo.migrate_options_mirror_helper")}</label>
 					</div>
 				</div>
@@ -69,18 +69,18 @@ export default function Codecommit(props: Record<string, unknown>) {
 						<input type="hidden" id="uid" name="uid" value={String(props.contextUser?.iD ?? "")} required />
 						<span className="text" title={String(props.contextUser?.name ?? "")}>
 							{/* TODO: {{ctx.AvatarUtils.Avatar .ContextUser 28 "mini"}} */}
-							{props.contextUser?.shortName 40 as any}
+							{props.contextUser?.shortName?.(40) as any}
 						</span>
 						<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 						<div className="menu" title={String(props.signedUser?.name ?? "")}>
 							<div className="item" data-value={String(props.signedUser?.iD ?? "")}>
 								{/* TODO: {{ctx.AvatarUtils.Avatar .SignedUser 28 "mini"}} */}
-								{props.signedUser?.shortName 40 as any}
+								{props.signedUser?.shortName?.(40) as any}
 							</div>
 							{((props.orgs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 								<div className="item" data-value={String(props.iD ?? "")} title={String(props.name ?? "")}>
 									{/* TODO: {{ctx.AvatarUtils.Avatar . 28 "mini"}} */}
-									{item.shortName 40 as any}
+									{item.shortName?.(40) as any}
 								</div>
 							</React.Fragment>))}
 						</div>

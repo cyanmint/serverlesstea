@@ -25,7 +25,7 @@ export default function Gitea(props: Record<string, unknown>) {
 
 				<div className={`inline field ${(props.err_Auth) ? `error` : ""}`}>
 					<label htmlFor="auth_token">{i18n("access_token")}</label>
-					<input id="auth_token" name="auth_token" type="password" autocomplete="new-password" value={String(props.auth_token ?? "")} {(!(props.auth_token)) ? (< /> data-need-clear="true" </>) : null}>
+					<input id="auth_token" name="auth_token" type="password" autocomplete="new-password" value={String(props.auth_token ?? "")} {...(!(props.auth_token) ? {"data-need-clear": "true"} : {})} />
 					<a target="_blank" href="https://docs.gitea.com/development/api-usage"><span className="svg-icon" aria-label="octicon-question"></span></a>
 				</div>
 
@@ -34,7 +34,7 @@ export default function Gitea(props: Record<string, unknown>) {
 				<div className="inline field">
 					<label>{i18n("repo.migrate_items")}</label>
 					<div className="ui checkbox">
-						<input name="wiki" type="checkbox" {(props.wiki) ? (< /> checked</>) : null}>
+						<input name="wiki" type="checkbox" {...(props.wiki ? {"checked": true} : {})} />
 						<label>{i18n("repo.migrate_items_wiki")}</label>
 					</div>
 				</div>
@@ -44,29 +44,29 @@ export default function Gitea(props: Record<string, unknown>) {
 					<div className="inline field">
 						<label></label>
 						<div className="ui checkbox">
-							<input name="labels" type="checkbox" {(props.labels) ? (< /> checked</>) : null}>
+							<input name="labels" type="checkbox" {...(props.labels ? {"checked": true} : {})} />
 							<label>{i18n("repo.migrate_items_labels")}</label>
 						</div>
 						<div className="ui checkbox">
-							<input name="issues" type="checkbox" {(props.issues) ? (< /> checked</>) : null}>
+							<input name="issues" type="checkbox" {...(props.issues ? {"checked": true} : {})} />
 							<label>{i18n("repo.migrate_items_issues")}</label>
 						</div>
 					</div>
 					<div className="inline field">
 						<label></label>
 						<div className="ui checkbox">
-							<input name="pull_requests" type="checkbox" {(props.pull_requests) ? (< /> checked</>) : null}>
+							<input name="pull_requests" type="checkbox" {...(props.pull_requests ? {"checked": true} : {})} />
 							<label>{i18n("repo.migrate_items_pullrequests")}</label>
 						</div>
 						<div className="ui checkbox">
-							<input name="releases" type="checkbox" {(props.releases) ? (< /> checked</>) : null}>
+							<input name="releases" type="checkbox" {...(props.releases ? {"checked": true} : {})} />
 							<label>{i18n("repo.migrate_items_releases")}</label>
 						</div>
 					</div>
 					<div className="inline field">
 						<label></label>
 						<div className="ui checkbox">
-							<input name="milestones" type="checkbox" {(props.milestones) ? (< /> checked</>) : null}>
+							<input name="milestones" type="checkbox" {...(props.milestones ? {"checked": true} : {})} />
 							<label>{i18n("repo.migrate_items_milestones")}</label>
 						</div>
 					</div>
@@ -80,18 +80,18 @@ export default function Gitea(props: Record<string, unknown>) {
 						<input type="hidden" id="uid" name="uid" value={String(props.contextUser?.iD ?? "")} required />
 						<span className="text" title={String(props.contextUser?.name ?? "")}>
 							{/* TODO: {{ctx.AvatarUtils.Avatar .ContextUser}} */}
-							{props.contextUser?.shortName 40 as any}
+							{props.contextUser?.shortName?.(40) as any}
 						</span>
 						<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 						<div className="menu" title={String(props.signedUser?.name ?? "")}>
 							<div className="item" data-value={String(props.signedUser?.iD ?? "")}>
 								{/* TODO: {{ctx.AvatarUtils.Avatar .SignedUser}} */}
-								{props.signedUser?.shortName 40 as any}
+								{props.signedUser?.shortName?.(40) as any}
 							</div>
 							{((props.orgs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 							<div className="item" data-value={String(props.iD ?? "")} title={String(props.name ?? "")}>
 								{/* TODO: {{ctx.AvatarUtils.Avatar .}} */}
-								{item.shortName 40 as any}
+								{item.shortName?.(40) as any}
 							</div>
 							</React.Fragment>))}
 						</div>
@@ -109,7 +109,7 @@ export default function Gitea(props: Record<string, unknown>) {
 							<input name="private" type="checkbox" defaultChecked disabled />
 							<label>{i18n("repo.visibility_helper_forced")}</label>
 						</>) : (<>
-							<input name="private" type="checkbox" {(props.private) ? (< /> checked</>) : null}>
+							<input name="private" type="checkbox" {...(props.private ? {"checked": true} : {})} />
 							<label>{i18n("repo.visibility_helper")}</label>
 						</>)}
 					</div>

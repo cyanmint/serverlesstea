@@ -16,7 +16,7 @@ export default function CommitPage(props: Record<string, unknown>) {
 						<a className="ui primary tiny button" href={String(props.sourcePath ?? "")}>
 							{i18n("repo.diff.browse_source")}
 						</a>
-						{((props.permission?.canWrite ctx?.consts?.repoUnitTypeCode && !(props.repository?.isArchived) && !(props.isDeleted))) ? (<>{/* TODO: {{- /* * / -}} */}
+						{((props.permission?.canWrite?.("ctx.Consts.RepoUnitTypeCode") && !(props.repository?.isArchived) && !(props.isDeleted))) ? (<>{/* TODO: {{- /* * / -}} */}
 							<div className="ui dropdown primary tiny button">
 								{i18n("repo.commit.operations")}
 								<span className="svg-icon" aria-label="octicon-triangle-down"></span>

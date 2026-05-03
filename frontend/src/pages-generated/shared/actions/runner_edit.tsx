@@ -13,7 +13,7 @@ export default function RunnerEdit(props: Record<string, unknown>) {
 			<div className="runner-basic-info">
 				<div className="field tw-inline-block tw-mr-4">
 					<label>{i18n("actions.runners.status")}</label>
-					<span className={`ui ${(props.runner?.isOnline) ? `green` : `basic`} label`}>{props.runner?.statusLocaleName ctx?.locale as any}</span>
+					<span className={`ui ${(props.runner?.isOnline) ? `green` : `basic`} label`}>{props.runner?.statusLocaleName?.("ctx.Locale") as any}</span>
 				</div>
 				<div className="field tw-inline-block tw-mr-4">
 					<label>{i18n("actions.runners.availability")}</label>
@@ -39,7 +39,7 @@ export default function RunnerEdit(props: Record<string, unknown>) {
 				</div>
 				<div className="field tw-inline-block tw-mr-4">
 					<label>{i18n("actions.runners.owner_type")}</label>
-					<span data-tooltip-content={String(props.runner?.belongsToOwnerName ?? "")}>{props.runner?.belongsToOwnerType?.localeString ctx?.locale as any}</span>
+					<span data-tooltip-content={String(props.runner?.belongsToOwnerName ?? "")}>{props.runner?.belongsToOwnerType?.localeString?.("ctx.Locale") as any}</span>
 				</div>
 			</div>
 
@@ -81,7 +81,7 @@ export default function RunnerEdit(props: Record<string, unknown>) {
 				{((props.tasks) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				<tr>
 					<td><a href={String(props.getRunLink ?? "")} target="_blank">{item.iD as any}</a></td>
-					<td><span className={`ui label task-status-${String(props.status?.string ?? "")}`}>{item.status?.localeString ctx?.locale as any}</span></td>
+					<td><span className={`ui label task-status-${String(props.status?.string ?? "")}`}>{item.status?.localeString?.("ctx.Locale") as any}</span></td>
 					<td><a href={String(props.getRepoLink ?? "")} target="_blank">{item.getRepoName as any}</a></td>
 					<td>
 						<a className="ui sha label" href={String(props.getCommitLink ?? "")} target="_blank">{/* TODO: {{ShortSha .CommitSHA}} */}</a>
@@ -93,7 +93,7 @@ export default function RunnerEdit(props: Record<string, unknown>) {
 				</React.Fragment>))}
 				{(!(props.tasks)) ? (<>
 				<tr>
-					<td colspan="5">{i18n("actions.runners.task_list.no_tasks")}</td>
+					<td colSpan="5">{i18n("actions.runners.task_list.no_tasks")}</td>
 				</tr>
 				</>) : null}
 			</tbody>

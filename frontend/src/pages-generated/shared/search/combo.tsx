@@ -15,7 +15,7 @@ export default function Combo(props: Record<string, unknown>) {
 	{(props.searchModes) ? (<>
 		{/* $selected */}
 		{((props.searchModes) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-			{("$mode.ModeValue" === props.selectedSearchMode) ? (<>
+			{(item.mode?.modeValue === props.selectedSearchMode) ? (<>
 				{/* TODO: {{$selected = $mode}} */}
 			</>) : null}
 		</React.Fragment>))}

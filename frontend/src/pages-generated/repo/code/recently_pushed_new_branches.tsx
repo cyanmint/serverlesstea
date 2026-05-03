@@ -6,7 +6,7 @@ export default function RecentlyPushedNewBranches(props: Record<string, unknown>
 {/* Template Attributes:
 * RecentBranchesPromptData */}
 {/* $data */}
-{("$data") ? (<>
+{(data) ? (<>
 	{(($data.RecentlyPushedNewBranches) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 	<div className="ui positive message flex-text-block">
 		<div className="tw-flex-1">

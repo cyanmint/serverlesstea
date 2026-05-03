@@ -48,7 +48,7 @@ export default function New(props: Record<string, unknown>) {
 			<div className="ui selection dropdown">
 				<span className="svg-icon" aria-label="octicon-triangle-down"></span>
 				{((props.cardTypes) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-					{((props.card_type === "$element.CardType" || (!(props.pageIsEditProjects) && "$element.CardType" === 1))) ? (<>
+					{((props.card_type === item.element?.cardType || (!(props.pageIsEditProjects) && item.element?.cardType === 1))) ? (<>
 						<input type="hidden" name="card_type" value={String("" ?? "")} />
 						<div className="default text">{/* TODO: {{ctx.Locale.Tr $element.Translation}} */}</div>
 					</>) : null}

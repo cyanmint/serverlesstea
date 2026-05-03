@@ -10,7 +10,7 @@ export default function TabMenu(props: Record<string, unknown>) {
 			{/* template: shared/misc/tabtitle */}
 			<span className="ui small label">{props.issue?.numComments as any}</span>
 		</a>
-		<a className={`item ${(props.pageIsPullCommits) ? `active` : ""}`} {(props.numCommits) ? (<>href={`${String(props.issue?.link ?? "")}/commits`}</>) : null}>
+		<a className={`item ${(props.pageIsPullCommits) ? `active` : ""}`} {...(props.numCommits ? {"href": `${String(props.issue?.link ?? "")}/commits`} : {})}>
 			<span className="svg-icon" aria-label="octicon-git-commit"></span>
 			{/* template: shared/misc/tabtitle */}
 			<span className="ui small label">{(props.numCommits) ? (<>{props.numCommits as any}</>) : (<>-</>)}</span>

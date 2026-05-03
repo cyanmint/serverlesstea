@@ -7,7 +7,7 @@ export default function Navbar(props: Record<string, unknown>) {
 	<div className="ui fluid vertical menu">
 		<div className="header item">{i18n("admin.settings")}</div>
 
-		<details className="item toggleable-item" {((props.pageIsAdminDashboard || props.pageIsAdminSelfCheck)) ? (<>open</>) : null}>
+		<details className="item toggleable-item" {...((props.pageIsAdminDashboard || props.pageIsAdminSelfCheck) ? {"open": true} : {})}>
 			<summary>{i18n("admin.maintenance")}</summary>
 			<div className="menu">
 				<a className={`${(props.pageIsAdminDashboard) ? `active ` : ""}item`} href={`/-/admin`}>
@@ -18,7 +18,7 @@ export default function Navbar(props: Record<string, unknown>) {
 				</a>
 			</div>
 		</details>
-		<details className="item toggleable-item" {((props.pageIsAdminUsers || props.pageIsAdminBadges || props.pageIsAdminEmails || props.pageIsAdminOrganizations || props.pageIsAdminAuthentications)) ? (<>open</>) : null}>
+		<details className="item toggleable-item" {...((props.pageIsAdminUsers || props.pageIsAdminBadges || props.pageIsAdminEmails || props.pageIsAdminOrganizations || props.pageIsAdminAuthentications) ? {"open": true} : {})}>
 			<summary>{i18n("admin.identity_access")}</summary>
 			<div className="menu">
 				<a className={`${(props.pageIsAdminAuthentications) ? `active ` : ""}item`} href={`/-/admin/auths`}>
@@ -38,7 +38,7 @@ export default function Navbar(props: Record<string, unknown>) {
 				</a>
 			</div>
 		</details>
-		<details className="item toggleable-item" {((props.pageIsAdminRepositories || (props.enablePackages && props.pageIsAdminPackages))) ? (<>open</>) : null}>
+		<details className="item toggleable-item" {...((props.pageIsAdminRepositories || (props.enablePackages && props.pageIsAdminPackages)) ? {"open": true} : {})}>
 			<summary>{i18n("admin.assets")}</summary>
 			<div className="menu">
 				{(props.enablePackages) ? (<>
@@ -53,7 +53,7 @@ export default function Navbar(props: Record<string, unknown>) {
 		</details>
 		{/* Webhooks and OAuth can be both disabled here, so add this if statement to display different ui */}
 		{((!("DisableWebhooks") && props.enableOAuth2)) ? (<>
-			<details className="item toggleable-item" {((props.pageIsAdminDefaultHooks || props.pageIsAdminSystemHooks || props.pageIsAdminApplications)) ? (<>open</>) : null}>
+			<details className="item toggleable-item" {...((props.pageIsAdminDefaultHooks || props.pageIsAdminSystemHooks || props.pageIsAdminApplications) ? {"open": true} : {})}>
 				<summary>{i18n("admin.integrations")}</summary>
 				<div className="menu">
 					<a className={`${(props.pageIsAdminApplications) ? `active ` : ""}item`} href={`/-/admin/applications`}>
@@ -77,7 +77,7 @@ export default function Navbar(props: Record<string, unknown>) {
 			</>) : null}
 		</>)}
 		{(props.enableActions) ? (<>
-		<details className="item toggleable-item" {((props.pageIsSharedSettingsRunners || props.pageIsSharedSettingsVariables)) ? (<>open</>) : null}>
+		<details className="item toggleable-item" {...((props.pageIsSharedSettingsRunners || props.pageIsSharedSettingsVariables) ? {"open": true} : {})}>
 			<summary>{i18n("actions.actions")}</summary>
 			<div className="menu">
 				<a className={`${(props.pageIsSharedSettingsRunners) ? `active ` : ""}item`} href={`/-/admin/actions/runners`}>
@@ -89,7 +89,7 @@ export default function Navbar(props: Record<string, unknown>) {
 			</div>
 		</details>
 		</>) : null}
-		<details className="item toggleable-item" {((props.pageIsAdminConfig)) ? (<>open</>) : null}>
+		<details className="item toggleable-item" {...((props.pageIsAdminConfig) ? {"open": true} : {})}>
 			<summary>{i18n("admin.config")}</summary>
 			<div className="menu">
 				<a className={`${(props.pageIsAdminConfigSummary) ? `active ` : ""}item`} href={`/-/admin/config`}>
@@ -103,7 +103,7 @@ export default function Navbar(props: Record<string, unknown>) {
 		<a className={`${(props.pageIsAdminNotices) ? `active ` : ""}item`} href={`/-/admin/notices`}>
 			{i18n("admin.notices")}
 		</a>
-		<details className="item toggleable-item" {((props.pageIsAdminMonitorStats || props.pageIsAdminMonitorCron || props.pageIsAdminMonitorQueue || props.pageIsAdminMonitorTrace)) ? (<>open</>) : null}>
+		<details className="item toggleable-item" {...((props.pageIsAdminMonitorStats || props.pageIsAdminMonitorCron || props.pageIsAdminMonitorQueue || props.pageIsAdminMonitorTrace) ? {"open": true} : {})}>
 			<summary>{i18n("admin.monitor")}</summary>
 			<div className="menu">
 				<a className={`${(props.pageIsAdminMonitorStats) ? `active ` : ""}item`} href={`/-/admin/monitor/stats`}>

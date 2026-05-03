@@ -8,7 +8,7 @@ export default function Fork(props: Record<string, unknown>) {
 	{/* template: repo/header */}
 	<div className="ui container">
 		{/* alert */}
-		<form className="ui form form-fetch-action" method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())} action={`${String(props.repoLink ?? "")}/_fork/${String(props.branchName | PathEscapeSegments ?? "")}`}>
+		<form className="ui form form-fetch-action" method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())} action={`${String(props.repoLink ?? "")}/_fork/${String(props.branchName?.("|", "PathEscapeSegments") ?? "")}`}>
 			<div className="tw-text-center">
 				<div className="tw-my-[40px]">
 					<h3>{i18n("repo.editor.fork_create")}</h3>

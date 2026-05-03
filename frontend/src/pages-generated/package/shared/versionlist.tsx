@@ -8,16 +8,16 @@ export default function Versionlist(props: Record<string, unknown>) {
 	<div className="ui small fluid action input">
 		{/* template: shared/search/input */}
 		<select className="ui small dropdown" name="sort">
-			<option value="version_asc"{(props.sort === "version_asc") ? (<> selected="selected"</>) : null}>{i18n("filter.string.asc")}</option>
-			<option value="version_desc"{(props.sort === "version_desc") ? (<> selected="selected"</>) : null}>{i18n("filter.string.desc")}</option>
-			<option value="created_asc"{(props.sort === "created_asc") ? (<> selected="selected"</>) : null}>{i18n("repo.issues.filter_sort.oldest")}</option>
-			<option value="created_desc"{((props.sort === "" || props.sort === "created_desc")) ? (<> selected="selected"</>) : null}>{i18n("repo.issues.filter_sort.latest")}</option>
+			<option value="version_asc"{...(props.sort === "version_asc" ? {"selected": "selected"} : {})}>{i18n("filter.string.asc")}</option>
+			<option value="version_desc"{...(props.sort === "version_desc" ? {"selected": "selected"} : {})}>{i18n("filter.string.desc")}</option>
+			<option value="created_asc"{...(props.sort === "created_asc" ? {"selected": "selected"} : {})}>{i18n("repo.issues.filter_sort.oldest")}</option>
+			<option value="created_desc"{...((props.sort === "" || props.sort === "created_desc") ? {"selected": "selected"} : {})}>{i18n("repo.issues.filter_sort.latest")}</option>
 		</select>
 		{(props.packageDescriptor?.package?.type === "container") ? (<>
 		<select className="ui small dropdown" name="tagged">
 			{/* $isTagged */}
-			<option value="tagged"{("$isTagged") ? (<> selected="selected"</>) : null}>{i18n("packages.filter.container.tagged")}</option>
-			<option value="untagged"{(!("$isTagged")) ? (<> selected="selected"</>) : null}>{i18n("packages.filter.container.untagged")}</option>
+			<option value="tagged"{...(isTagged ? {"selected": "selected"} : {})}>{i18n("packages.filter.container.tagged")}</option>
+			<option value="untagged"{...(!(isTagged) ? {"selected": "selected"} : {})}>{i18n("packages.filter.container.untagged")}</option>
 		</select>
 		</>) : null}
 		{/* template: shared/search/button */}

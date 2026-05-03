@@ -75,86 +75,86 @@ export default function Appearance(props: Record<string, unknown>) {
 			<form className="ui form" action={`${String(props.link ?? "")}/hidden_comments`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
 				<div className="inline field">
 					<div className="ui checkbox" data-tooltip-content={String(i18n("settings.hidden_comment_types.ref_tooltip") ?? "")}>
-						<input name="reference" type="checkbox" {/* TODO: {{if(call .IsCommentTypeGroupChecked "reference")}} */}checked />
+						<input name="reference" type="checkbox" {...(props.isCommentTypeGroupChecked?.("reference") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_reference")}</label>
 					</div>
 				</div>
 				<div className="inline field">
 					<div className="ui checkbox">
-						<input name="label" type="checkbox" {...("call .IsCommentTypeGroupChecked "label"" ? {"checked": true} : {})} />
+						<input name="label" type="checkbox" {...(props.isCommentTypeGroupChecked?.("label") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_label")}</label>
 					</div>
 				</div>
 				<div className="inline field">
 					<div className="ui checkbox">
-						<input name="milestone" type="checkbox" {...("call .IsCommentTypeGroupChecked "milestone"" ? {"checked": true} : {})} />
+						<input name="milestone" type="checkbox" {...(props.isCommentTypeGroupChecked?.("milestone") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_milestone")}</label>
 					</div>
 				</div>
 				<div className="inline field">
 					<div className="ui checkbox">
-						<input name="assignee" type="checkbox" {...("call .IsCommentTypeGroupChecked "assignee"" ? {"checked": true} : {})} />
+						<input name="assignee" type="checkbox" {...(props.isCommentTypeGroupChecked?.("assignee") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_assignee")}</label>
 					</div>
 				</div>
 				<div className="inline field">
 					<div className="ui checkbox">
-						<input name="title" type="checkbox" {...("call .IsCommentTypeGroupChecked "title"" ? {"checked": true} : {})} />
+						<input name="title" type="checkbox" {...(props.isCommentTypeGroupChecked?.("title") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_title")}</label>
 					</div>
 				</div>
 				<div className="inline field">
 					<div className="ui checkbox">
-						<input name="branch" type="checkbox" {...("call .IsCommentTypeGroupChecked "branch"" ? {"checked": true} : {})} />
+						<input name="branch" type="checkbox" {...(props.isCommentTypeGroupChecked?.("branch") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_branch")}</label>
 					</div>
 				</div>
 				<div className="inline field">
 					<div className="ui checkbox">
-						<input name="time_tracking" type="checkbox" {...("call .IsCommentTypeGroupChecked "time_tracking"" ? {"checked": true} : {})} />
+						<input name="time_tracking" type="checkbox" {...(props.isCommentTypeGroupChecked?.("time_tracking") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_time_tracking")}</label>
 					</div>
 				</div>
 				<div className="inline field">
 					<div className="ui checkbox">
-						<input name="deadline" type="checkbox" {...("call .IsCommentTypeGroupChecked "deadline"" ? {"checked": true} : {})} />
+						<input name="deadline" type="checkbox" {...(props.isCommentTypeGroupChecked?.("deadline") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_deadline")}</label>
 					</div>
 				</div>
 				<div className="inline field">
 					<div className="ui checkbox">
-						<input name="dependency" type="checkbox" {...("call .IsCommentTypeGroupChecked "dependency"" ? {"checked": true} : {})} />
+						<input name="dependency" type="checkbox" {...(props.isCommentTypeGroupChecked?.("dependency") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_dependency")}</label>
 					</div>
 				</div>
 				<div className="inline field">
 					<div className="ui checkbox">
-						<input name="lock" type="checkbox" {...("call .IsCommentTypeGroupChecked "lock"" ? {"checked": true} : {})} />
+						<input name="lock" type="checkbox" {...(props.isCommentTypeGroupChecked?.("lock") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_lock")}</label>
 					</div>
 				</div>
 				<div className="inline field">
 					<div className="ui checkbox">
-						<input name="review_request" type="checkbox" {...("call .IsCommentTypeGroupChecked "review_request"" ? {"checked": true} : {})} />
+						<input name="review_request" type="checkbox" {...(props.isCommentTypeGroupChecked?.("review_request") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_review_request")}</label>
 					</div>
 				</div>
 
 				<div className="inline field">
 					<div className="ui checkbox">
-						<input name="pull_request_push" type="checkbox" {...("call .IsCommentTypeGroupChecked "pull_request_push"" ? {"checked": true} : {})} />
+						<input name="pull_request_push" type="checkbox" {...(props.isCommentTypeGroupChecked?.("pull_request_push") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_pull_request_push")}</label>
 					</div>
 				</div>
 				<div className="inline field">
 					<div className="ui checkbox">
-						<input name="project" type="checkbox" {...("call .IsCommentTypeGroupChecked "project"" ? {"checked": true} : {})} />
+						<input name="project" type="checkbox" {...(props.isCommentTypeGroupChecked?.("project") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_project")}</label>
 					</div>
 				</div>
 				<div className="inline field">
 					<div className="ui checkbox" data-tooltip-content={String(i18n("settings.hidden_comment_types.issue_ref_tooltip") ?? "")}>
-						<input name="issue_ref" type="checkbox" {...("call .IsCommentTypeGroupChecked "issue_ref"" ? {"checked": true} : {})} />
+						<input name="issue_ref" type="checkbox" {...(props.isCommentTypeGroupChecked?.("issue_ref") ? {"checked": true} : {})} />
 						<label>{i18n("settings.comment_type_group_issue_ref")}</label>
 					</div>
 				</div>

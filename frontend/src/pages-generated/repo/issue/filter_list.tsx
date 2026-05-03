@@ -26,8 +26,8 @@ export default function FilterList(props: Record<string, unknown>) {
 			<i className="icon"><span className="svg-icon" aria-label="octicon-search"></span></i>
 			<input type="text" placeholder={String(i18n("repo.issues.filter_project") ?? "")} />
 		</div>
-		<a className={`item ${("$showAllProjects") ? `selected` : ""}`} href={String("" ?? "")}>{i18n("repo.issues.filter_project_all")}</a>
-		<a className={`item ${("$showNoProjectSelected") ? `selected` : ""}`} href={String("" ?? "")}>{i18n("repo.issues.filter_project_none")}</a>
+		<a className={`item ${(showAllProjects) ? `selected` : ""}`} href={String("" ?? "")}>{i18n("repo.issues.filter_project_all")}</a>
+		<a className={`item ${(showNoProjectSelected) ? `selected` : ""}`} href={String("" ?? "")}>{i18n("repo.issues.filter_project_none")}</a>
 		{(props.openProjects) ? (<>
 			<div className="divider"></div>
 			<div className="header">
@@ -36,7 +36,7 @@ export default function FilterList(props: Record<string, unknown>) {
 			{((props.openProjects) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				{/* $toggle */}
 				{/* FIXME: ISSUE-MULTIPLE-PROJECTS-FILTER: no multiple project filter support yet. If the support comes, here it should use "&project=${toggle.ToggledIDs}" */}
-				<a className={`item ${("$toggle.IsIncluded") ? `selected` : ""}`} href={String("" ?? "")}>
+				<a className={`item ${(props.toggle?.isIncluded) ? `selected` : ""}`} href={String("" ?? "")}>
 					{/* TODO: {{svg $project.IconName}} */}<span className="gt-ellipsis">{/* TODO: {{$project.Title}} */}</span>
 				</a>
 			</React.Fragment>))}
@@ -49,7 +49,7 @@ export default function FilterList(props: Record<string, unknown>) {
 			{((props.closedProjects) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				{/* $toggle */}
 				{/* FIXME: ISSUE-MULTIPLE-PROJECTS-FILTER: no multiple project filter support yet. If the support comes, here it should use "&project=${toggle.ToggledIDs}" */}
-				<a className={`item ${("$toggle.IsIncluded") ? `selected` : ""}`} href={String("" ?? "")}>
+				<a className={`item ${(props.toggle?.isIncluded) ? `selected` : ""}`} href={String("" ?? "")}>
 					{/* TODO: {{svg $project.IconName}} */}<span className="gt-ellipsis">{/* TODO: {{$project.Title}} */}</span>
 				</a>
 			</React.Fragment>))}
@@ -102,7 +102,7 @@ export default function FilterList(props: Record<string, unknown>) {
 			<div className="header">{i18n("repo.issues.filter_label")}</div>
 			{((props.exclusiveLabelScopes) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				{/* $sortType */}
-				<a className={`${(props.sortType === "$sortType") ? `active ` : ""}item`} href={String("" ?? "")}>{/* $scope */}</a>
+				<a className={`${(props.sortType === sortType) ? `active ` : ""}item`} href={String("" ?? "")}>{/* $scope */}</a>
 			</React.Fragment>))}
 		</>) : null}
 	</div>

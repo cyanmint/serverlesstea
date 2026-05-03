@@ -32,7 +32,7 @@ export default function Lfs(props: Record<string, unknown>) {
 					</tr>
 				{/* else */}
 					<tr>
-						<td colspan="4">{i18n("repo.settings.lfs_no_lfs_files")}</td>
+						<td colSpan="4">{i18n("repo.settings.lfs_no_lfs_files")}</td>
 					</tr>
 				</React.Fragment>))}
 			</tbody>

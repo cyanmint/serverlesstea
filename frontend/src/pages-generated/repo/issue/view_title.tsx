@@ -22,7 +22,7 @@ export default function ViewTitle(props: Record<string, unknown>) {
 			<span className="index">#{props.issue?.index as any}</span>
 		</h1>
 		<div className="issue-title-buttons">
-			{("$canEditIssueTitle") ? (<>
+			{(canEditIssueTitle) ? (<>
 			<button id="issue-title-edit-show" className="ui small basic button">{i18n("repo.issues.edit")}</button>
 			</>) : null}
 			{(!(props.issue?.isPull)) ? (<>
@@ -30,7 +30,7 @@ export default function ViewTitle(props: Record<string, unknown>) {
 			</>) : null}
 		</div>
 	</div>
-	{("$canEditIssueTitle") ? (<>
+	{(canEditIssueTitle) ? (<>
 	<form className="ui form issue-title tw-hidden" id="issue-title-editor">
 		<div className="ui input tw-flex-1">
 			<input name="title" value={String(props.issue?.title ?? "")} data-old-title={String(props.issue?.title ?? "")} maxlength="255" autocomplete="off" />
@@ -83,7 +83,7 @@ export default function ViewTitle(props: Record<string, unknown>) {
 						{props.issue?.originalAuthor as any}
 						<span className="pull-desc">{i18n("repo.pulls.merged_title_desc")}</span>
 					</>) : (<>
-						<a {(props.issue?.pullRequest?.merger?.iD > 0) ? (<>href={String(props.issue?.pullRequest?.merger?.homeLink ?? "")}</>) : null}>{props.issue?.pullRequest?.merger?.getDisplayName as any}</a>
+						<a {...(props.issue?.pullRequest?.merger?.iD > 0 ? {"href": String(props.issue?.pullRequest?.merger?.homeLink ?? "")} : {})}>{props.issue?.pullRequest?.merger?.getDisplayName as any}</a>
 						<span className="pull-desc">{i18n("repo.pulls.merged_title_desc")}</span>
 					</>)}
 				</>) : (<>
@@ -91,7 +91,7 @@ export default function ViewTitle(props: Record<string, unknown>) {
 						<span id="pull-desc-display" className="pull-desc">{props.issue?.originalAuthor as any} {i18n("repo.pulls.title_desc")}</span>
 					</>) : (<>
 						<span id="pull-desc-display" className="pull-desc">
-							<a {(props.issue?.poster?.iD > 0) ? (<>href={String(props.issue?.poster?.homeLink ?? "")}</>) : null}>{props.issue?.poster?.getDisplayName as any}</a>
+							<a {...(props.issue?.poster?.iD > 0 ? {"href": String(props.issue?.poster?.homeLink ?? "")} : {})}>{props.issue?.poster?.getDisplayName as any}</a>
 							{i18n("repo.pulls.title_desc")}
 						</span>
 					</>)}
@@ -116,7 +116,7 @@ export default function ViewTitle(props: Record<string, unknown>) {
 									{((props.branches) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 										{/* $sameBase */}
 										{/* $differentBranch */}
-										{(("$sameBase" || "$differentBranch")) ? (<>
+										{((sameBase || differentBranch)) ? (<>
 											<div className={`item ${(props.baseBranch === ".") ? `selected` : ""}`} data-branch={String("" ?? "")}>{props.baseName as any}:{item as any}</div>
 										</>) : null}
 									</React.Fragment>))}

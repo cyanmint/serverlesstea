@@ -28,9 +28,9 @@ export default function ViewList(props: Record<string, unknown>) {
 			{/* $submoduleFile */}
 			<div className="repo-file-cell name muted-links">
 				{/* TODO: {{index $.FileIcons $entry.Name}} */}
-				{("$entry.IsSubModule") ? (<>
+				{(item.entry?.isSubModule) ? (<>
 					{/* $submoduleLink */}
-					{("$submoduleLink") ? (<>
+					{(submoduleLink) ? (<>
 						<a className="entry-name" href={String("" ?? "")} title={String("" ?? "")}>{/* TODO: {{$entry.Name}} */}</a>
 						@ <a className="tw-text-primary" href={String("" ?? "")}>{/* TODO: {{ShortSha $submoduleFile.RefID}} */}</a>
 					</>) : (<>
@@ -38,12 +38,12 @@ export default function ViewList(props: Record<string, unknown>) {
 						@ {/* TODO: {{ShortSha $submoduleFile.RefID}} */}
 					</>)}
 				</>) : (<>
-					{("$entry.IsDir") ? (<>
+					{(item.entry?.isDir) ? (<>
 						{/* $subJumpablePathName */}
 						<a className="entry-name" href={`${String(props.treeLink ?? "")}/`} title={String("" ?? "")}>
 							{/* $subJumpablePathFields */}
 							{/* $subJumpablePathFieldLast */}
-							{("$subJumpablePathFieldLast" === 0) ? (<>
+							{(subJumpablePathFieldLast === 0) ? (<>
 								{/* $subJumpablePathName */}
 							</>) : (<>
 								{/* $subJumpablePathPrefixes */}
@@ -52,21 +52,21 @@ export default function ViewList(props: Record<string, unknown>) {
 						</a>
 					</>) : (<>
 						<a className="entry-name" href={`${String(props.treeLink ?? "")}/`} title={String("" ?? "")}>{/* TODO: {{$entry.Name}} */}</a>
-						{("$entry.IsLink") ? (<>
+						{(item.entry?.isLink) ? (<>
 							<a className="entry-symbol-link flex-text-inline" data-tooltip-content title={String(i18n("repo.find_file.follow_symlink") ?? "")} href={`${String(props.treeLink ?? "")}/?follow_symlink=1`}><span className="svg-icon" aria-label="octicon-link"></span></a>
 						</>) : null}
 					</>)}
 				</>)}
 			</div>
-			<div className={`repo-file-cell message commit-summary ${(!("$commit")) ? `notready` : ""}`}>
-				{("$commit") ? (<>
+			<div className={`repo-file-cell message commit-summary ${(!(commit)) ? `notready` : ""}`}>
+				{(commit) ? (<>
 					{/* $commitLink */}
 					{/* TODO: {{ctx.RenderUtils.RenderCommitMessageLinkSubject $commit.Message $commitLink $.Repository}} */}
 				</>) : (<>
 					… {/* will be loaded again by LastCommitLoaderURL */}
 				</>)}
 			</div>
-			<div className="repo-file-cell age">{("$commit") ? (<>{/* TODO: {{DateUtils.TimeSince $commit.Committer.When}} */}</>) : null}</div>
+			<div className="repo-file-cell age">{(commit) ? (<>{/* TODO: {{DateUtils.TimeSince $commit.Committer.When}} */}</>) : null}</div>
 		</div>
 	</React.Fragment>))}
 </div>

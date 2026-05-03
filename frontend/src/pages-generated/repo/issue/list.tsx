@@ -29,12 +29,12 @@ export default function List(props: Record<string, unknown>) {
 				{(props.pageIsIssueList) ? (<>
 					<a className="ui small primary button issue-list-new" href={`${String(props.repoLink ?? "")}/issues/new${(props.newIssueChooseTemplate) ? `/choose` : ""}`}>{i18n("repo.issues.new")}</a>
 				</>) : (<>
-					<a className={`ui small primary button new-pr-button issue-list-new ${(!(props.pullRequestCtx?.canCreateNewPull)) ? `disabled` : ""}`} href={String(props.pullRequestCtx?.makeDefaultCompareLink ?.repository?.defaultBranch ?? "")}>{i18n("repo.pulls.new")}</a>
+					<a className={`ui small primary button new-pr-button issue-list-new ${(!(props.pullRequestCtx?.canCreateNewPull)) ? `disabled` : ""}`} href={String(props.pullRequestCtx?.makeDefaultCompareLink?.(props.repository?.defaultBranch) ?? "")}>{i18n("repo.pulls.new")}</a>
 				</>)}
 			</>) : (<>
 				{/* archived, view compare page only */}
 				{(!(props.pageIsIssueList)) ? (<>
-					<a className="ui small primary small button issue-list-new" href={String(props.pullRequestCtx?.makeDefaultCompareLink ?.repository?.defaultBranch ?? "")}>{i18n("action.compare_commits_general")}</a>
+					<a className="ui small primary small button issue-list-new" href={String(props.pullRequestCtx?.makeDefaultCompareLink?.(props.repository?.defaultBranch) ?? "")}>{i18n("action.compare_commits_general")}</a>
 				</>) : null}
 			</>)}
 		</div>
@@ -49,7 +49,7 @@ export default function List(props: Record<string, unknown>) {
 					<div className="ui compact tiny secondary menu">
 						<span className="item" data-tooltip-content='{i18n("tracked_time_summary")}'>
 							<span className="svg-icon" aria-label="octicon-clock"></span>
-							{props.totalTrackedTime | Sec2Hour as any}
+							{props.totalTrackedTime?.("|", "Sec2Hour") as any}
 						</span>
 					</div>
 				</>) : null}

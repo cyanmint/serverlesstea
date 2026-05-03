@@ -10,7 +10,7 @@ export default function PermissionsTableUnit(props: Record<string, unknown>) {
 	</td>
 	<td className="tw-text-center">
 		<div className="ui radio checkbox">
-			<input type="radio" name={`max_unit_access_mode_${String(props.unitType ?? "")}`} value="none" {(!(props.unitAccessMode)) ? (< />checked</>) : null} title={String(i18n("org.teams.none_access") ?? "")}>
+			<input type="radio" name={`max_unit_access_mode_${String(props.unitType ?? "")}`} value="none" {...(!(props.unitAccessMode) ? {"checked": true} : {})} title={String(i18n("org.teams.none_access") ?? "")} />
 			<label></label>
 		</div>
 	</td>

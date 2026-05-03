@@ -22,7 +22,7 @@ export default function Navbar(props: Record<string, unknown>) {
 				{i18n("repo.settings.hooks")}
 			</a>
 		</>) : null}
-		{(props.repository?.unitEnabled ctx ctx?.consts?.repoUnitTypeCode) ? (<>
+		{(props.repository?.unitEnabled?.(ctx, "ctx.Consts.RepoUnitTypeCode")) ? (<>
 			<a className={`${(props.pageIsSettingsBranches) ? `active ` : ""}item`} href={`${String(props.repoLink ?? "")}/settings/branches`}>
 				{i18n("repo.settings.branches")}
 			</a>
@@ -43,13 +43,13 @@ export default function Navbar(props: Record<string, unknown>) {
 				</a>
 			</>) : null}
 		</>) : null}
-		<details className="item toggleable-item" {((props.pageIsSharedSettingsRunners || props.pageIsSharedSettingsSecrets || props.pageIsSharedSettingsVariables || props.pageIsActionsSettingsGeneral)) ? (<>open</>) : null}>
+		<details className="item toggleable-item" {...((props.pageIsSharedSettingsRunners || props.pageIsSharedSettingsSecrets || props.pageIsSharedSettingsVariables || props.pageIsActionsSettingsGeneral) ? {"open": true} : {})}>
 			<summary>{i18n("actions.actions")}</summary>
 			<div className="menu">
 				<a className={`${(props.pageIsActionsSettingsGeneral) ? `active ` : ""}item`} href={`${String(props.repoLink ?? "")}/settings/actions/general`}>
 					{i18n("actions.general")}
 				</a>
-				{((props.enableActions && props.permission?.canRead ctx?.consts?.repoUnitTypeActions)) ? (<>
+				{((props.enableActions && props.permission?.canRead?.("ctx.Consts.RepoUnitTypeActions"))) ? (<>
 				<a className={`${(props.pageIsSharedSettingsRunners) ? `active ` : ""}item`} href={`${String(props.repoLink ?? "")}/settings/actions/runners`}>
 					{i18n("actions.runners")}
 				</a>
