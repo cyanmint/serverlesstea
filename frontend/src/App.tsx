@@ -1,12 +1,13 @@
-import React, { Suspense } from 'react'
 import { MemoryRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useMemo, useRef } from 'react'
+import type { ComponentType } from 'react'
 
-const pageModules = import.meta.glob('./pages-generated/**/*.tsx')
+type PageModule = { default: ComponentType }
+const pageModules = import.meta.glob<PageModule>('./pages-generated/**/*.tsx', { eager: true })
 
 function toPageKey(pathname: string): string | null {
   const clean = pathname.replace(/^\/+|\/+$/g, '')
-  if (!clean) return 'home'
+  if (!clean) return 'install'
 
   const parts = clean.split('/')
   if (clean === 'explore/repos' || clean === 'explore/users' || clean === 'install') return clean
@@ -18,12 +19,10 @@ function toPageKey(pathname: string): string | null {
   return clean
 }
 
-function lazyPageFromPath(pathname: string) {
+function pageFromPath(pathname: string): ComponentType | null {
   const key = toPageKey(pathname)
   if (!key) return null
-  const importer = pageModules[`./pages-generated/${key}.tsx`]
-  if (!importer) return null
-  return React.lazy(importer as () => Promise<{ default: React.ComponentType }>)
+  return pageModules[`./pages-generated/${key}.tsx`]?.default ?? null
 }
 
 const NotFound = () => <div className="tw-p-8">404 – Page not found</div>
@@ -62,7 +61,7 @@ function QuerySync() {
 
 function PathRenderer() {
   const { pathname } = useLocation()
-  const Comp = useMemo(() => lazyPageFromPath(pathname), [pathname])
+  const Comp = useMemo(() => pageFromPath(pathname), [pathname])
   if (!Comp) return <NotFound />
   return <Comp />
 }
@@ -71,11 +70,9 @@ export default function App() {
   return (
     <MemoryRouter initialEntries={[queryToPath()]}>
       <QuerySync />
-      <Suspense fallback={<div className="tw-p-8">Loading…</div>}>
-        <Routes>
-          <Route path="*" element={<PathRenderer />} />
-        </Routes>
-      </Suspense>
+      <Routes>
+        <Route path="*" element={<PathRenderer />} />
+      </Routes>
     </MemoryRouter>
   )
 }
