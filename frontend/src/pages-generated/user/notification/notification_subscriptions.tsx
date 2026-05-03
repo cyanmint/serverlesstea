@@ -34,7 +34,7 @@ export default function NotificationSubscriptions(props: Record<string, unknown>
 						</div>
 					</div>
 					<div className="ui secondary menu tw-m-0">
-							{/* Type */}
+							{'{'}/* Type */{'}'}
 								<div className="ui dropdown type jump item">
 									<span className="text">
 										{i18n("repo.issues.filter_type")}
@@ -47,7 +47,7 @@ export default function NotificationSubscriptions(props: Record<string, unknown>
 									</div>
 								</div>
 
-							{/* Sort */}
+							{'{'}/* Sort */{'}'}
 							<div className="ui dropdown type jump item">
 								<span className="text">
 									{i18n("repo.issues.filter_sort")}

@@ -24,7 +24,7 @@ export default function CommitsListSmall(props: Record<string, unknown>) {
 			{/* TODO: {{ctx.RenderUtils.RenderCommitMessageLinkSubject .Message $commitLink $.comment.Issue.PullRequest.BaseRepo}} */}
 		</span>
 
-		{("IsMultilineCommitMessage .Message") ? (<>
+		{((true /* TODO: IsMultilineCommitMessage .Message */)) ? (<>
 			<button className="ui button ellipsis-button show-panel toggle" data-panel={`[data-singular-commit-body-htmlFor='']`}>...</button>
 		</>) : null}
 
@@ -33,7 +33,7 @@ export default function CommitsListSmall(props: Record<string, unknown>) {
 			{/* template: repo/commit_sign_badge */}
 		</span>
 	</div>
-	{("IsMultilineCommitMessage .Message") ? (<>
+	{((true /* TODO: IsMultilineCommitMessage .Message */)) ? (<>
 	<pre className="commit-body tw-ml-[33px] tw-hidden" data-singular-commit-body-htmlFor={String("" ?? "")}>
 		{/* TODO: {{ctx.RenderUtils.RenderCommitBody .Message $.comment.Issue.PullRequest.BaseRepo}} */}
 	</pre>

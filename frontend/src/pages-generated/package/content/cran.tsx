@@ -10,7 +10,7 @@ export default function Cran(props: Record<string, unknown>) {
 		<div className="ui form">
 			<div className="field">
 				<label><span className="svg-icon" aria-label="octicon-code"></span> {i18n("packages.cran.registry")}</label>
-				<div className="markup"><pre className="code-block"><code>options("repos" = c(getOption("repos"), c(gitea={`/api/packages/${String(props.packageDescriptor?.owner?.name ?? "")}/cran`})))</code></pre></div>
+				<div className="markup"><pre className="code-block"><code>options("repos" = c(getOption("repos"), c(gitea={'{'}`/api/packages/${'{'}String(props.packageDescriptor?.owner?.name ?? ""){'}'}/cran`{'}'})))</code></pre></div>
 			</div>
 			<div className="field">
 				<label><span className="svg-icon" aria-label="octicon-terminal"></span> {i18n("packages.cran.install")}</label>

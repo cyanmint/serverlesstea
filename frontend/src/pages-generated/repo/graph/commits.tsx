@@ -24,8 +24,8 @@ export default function Commits(props: Record<string, unknown>) {
 						{(($commit.Refs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 							{/* $refGroup */}
 							{(props.refGroup === "pull") ? (<>
-								{((!(props.hidePRRefs) || "SliceUtils.Contains $.SelectedBranches .Name")) ? (<>
-									{/* it's intended to use issues not pulls, if it's a pull you will get redirected */}
+								{((!(props.hidePRRefs) || (true /* TODO: SliceUtils.Contains $.SelectedBranches .Name */))) ? (<>
+									{'{'}/* it's intended to use issues not pulls, if it's a pull you will get redirected */{'}'}
 									<a className="ui basic tiny button" href={`${String(props.repoLink ?? "")}/${(props.repository?.unitEnabled?.(ctx, "ctx.Consts.RepoUnitTypePullRequests")) ? `pulls` : `issues`}/${String(props.shortName|PathEscape ?? "")}`}>
 										<span className="svg-icon" aria-label="octicon-git-pull-request"></span> #{item.shortName as any}
 									</a>
@@ -41,7 +41,7 @@ export default function Commits(props: Record<string, unknown>) {
 									<span className="svg-icon" aria-label="octicon-git-branch"></span> {item.shortName as any}
 								</a>
 							</>) : (<>
-								{/* Unknown ref type .Name */}
+								{'{'}/* Unknown ref type .Name */{'}'}
 							</>)}
 						</React.Fragment>))}
 					</span>

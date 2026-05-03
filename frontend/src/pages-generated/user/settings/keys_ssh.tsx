@@ -62,7 +62,7 @@ export default function KeysSsh(props: Record<string, unknown>) {
 						</div>
 				</div>
 				<div className="item-trailing">
-					<button className={`ui red tiny button delete-button${("index $.ExternalKeys $index") ? ` disabled` : ""}`} data-modal-id="delete-ssh" data-url={`${String(props.link ?? "")}/delete?type=ssh`} data-id={String(props.iD ?? "")}{...("index $.ExternalKeys $index" ? {"title": String(i18n("settings.ssh_externally_managed") ?? "")} : {})}>
+					<button className={`ui red tiny button delete-button${((true /* TODO: index $.ExternalKeys $index */)) ? ` disabled` : ""}`} data-modal-id="delete-ssh" data-url={`${String(props.link ?? "")}/delete?type=ssh`} data-id={String(props.iD ?? "")}{...((true /* TODO: index $.ExternalKeys $index */) ? {"title": String(i18n("settings.ssh_externally_managed") ?? "")} : {})}>
 						{i18n("settings.delete_key")}
 					</button>
 					{((!(item.verified) && props.verifyingFingerprint !== item.fingerprint)) ? (<>

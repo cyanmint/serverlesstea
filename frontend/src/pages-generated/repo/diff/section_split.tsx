@@ -7,14 +7,14 @@ export default function SectionSplit(props: Record<string, unknown>) {
 {/* $file */}
 {/* $diffBlobExcerptData */}
 <colgroup>
-	<col width="50">
-	<col width="10">
-	<col width="10">
-	<col>
-	<col width="50">
-	<col width="10">
-	<col width="10">
-	<col>
+	<col width="50" />
+	<col width="10" />
+	<col width="10" />
+	<col />
+	<col width="50" />
+	<col width="10" />
+	<col width="10" />
+	<col />
 </colgroup>
 {(($file.Sections) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 	{(($section.Lines) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>

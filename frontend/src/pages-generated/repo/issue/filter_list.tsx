@@ -16,7 +16,7 @@ export default function FilterList(props: Record<string, unknown>) {
 {/* template: repo/issue/filter_item_milestone */}
 </>) : null}
 
-{/* Project */}
+{'{'}/* Project */{'}'}
 <div className={`item ui dropdown jump project-filter ${(!((props.openProjects || props.closedProjects))) ? `disabled` : ""}`}>
 	<span className="text">
 		{i18n("repo.issues.filter_project")}
@@ -64,7 +64,7 @@ export default function FilterList(props: Record<string, unknown>) {
 {/* template: repo/issue/filter_item_user_assign */}
 
 {(props.isSigned) ? (<>
-	{/* Type */}
+	{'{'}/* Type */{'}'}
 	<div className="item ui dropdown jump">
 		<span className="text">
 			{i18n("repo.issues.filter_type")}
@@ -83,7 +83,7 @@ export default function FilterList(props: Record<string, unknown>) {
 	</div>
 </>) : null}
 
-{/* Sort */}
+{'{'}/* Sort */{'}'}
 <div className="item ui dropdown jump">
 	<span className="text">
 		{i18n("repo.issues.filter_sort")}

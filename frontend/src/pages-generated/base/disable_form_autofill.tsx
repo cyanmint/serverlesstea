@@ -9,7 +9,7 @@ export default function DisableFormAutofill(props: Record<string, unknown>) {
 2. We have 'areYouSure' confirm dialog if a user leaves a pages without submit.
 Autofill will make the form changed even if the user didn't input anything. Then the user keeps seeing annoying confirm dialog.
 
-In history, Gitea put '<input className="fake" type="password" />' in forms to bypass the autofill,
+In history, Gitea put '<input class="fake" type="password" />' in forms to bypass the autofill,
 but there were still many forms suffered the autofill problem.
 
 Now we improve it.

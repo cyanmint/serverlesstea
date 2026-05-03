@@ -14,7 +14,7 @@ export default function List(props: Record<string, unknown>) {
 				<form className="ui form ignore-dirty tw-flex-1">
 					{/* template: shared/search/combo */}
 				</form>
-				{/* Sort */}
+				{'{'}/* Sort */{'}'}
 				<div className="ui dropdown type jump item tw-mr-0">
 					<span className="text">
 						{i18n("repo.issues.filter_sort")}

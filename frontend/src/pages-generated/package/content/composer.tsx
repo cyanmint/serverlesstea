@@ -10,13 +10,13 @@ export default function Composer(props: Record<string, unknown>) {
 		<div className="ui form">
 			<div className="field">
 				<label><span className="svg-icon" aria-label="octicon-code"></span> {i18n("packages.composer.registry")}</label>
-				<div className="markup"><pre className="code-block"><code>{
-	"repositories": [{
+				<div className="markup"><pre className="code-block"><code>{'{'}
+	"repositories": [{'{'}
 			"type": "composer",
 			"url": "{/* TODO: {{ctx.AppFullLink}} */}/api/packages/{props.packageDescriptor?.owner?.name as any}/composer"
-		}
+		{'}'}
 	]
-}</code></pre></div>
+{'}'}</code></pre></div>
 			</div>
 			<div className="field">
 				<label><span className="svg-icon" aria-label="octicon-terminal"></span> {i18n("packages.composer.install")}</label>

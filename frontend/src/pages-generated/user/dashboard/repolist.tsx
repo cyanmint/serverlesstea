@@ -5,7 +5,7 @@ import { i18n } from '../../../lib/i18n'
 export default function Repolist(props: Record<string, unknown>) {
   return (<>
 <script nonce={String("" ?? "")} type="module">
-const data = {
+const data = {'{'}
 	...window.config.pageData.dashboardRepoList, // it only contains searchLimit and uid
 
 	isMirrorsEnabled: {props.mirrorsEnabled as any},
@@ -48,14 +48,14 @@ const data = {
 
 	textOrgVisibilityLimited: {i18n("org.settings.visibility.limited_shortname")},
 	textOrgVisibilityPrivate: {i18n("org.settings.visibility.private_shortname")},
-};
+{'}'};
 
 {(props.team) ? (<>
 data.teamId = {props.team?.iD as any};
 </>) : null}
 
 {(!(props.contextUser?.isOrganization)) ? (<>
-data.organizations = [{((props.orgs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>{'name': {item.name as any}, 'full_name': {item.fullName as any}, 'num_repos': {item.numRepos as any}, 'org_visibility': {item.visibility as any}},</React.Fragment>))}];
+data.organizations = [{((props.orgs) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>{'{'}'name': {item.name as any}, 'full_name': {item.fullName as any}, 'num_repos': {item.numRepos as any}, 'org_visibility': {item.visibility as any}{'}'},</React.Fragment>))}];
 data.isOrganization = false;
 data.organizationsTotalCount = {props.userOrgsCount as any};
 data.canCreateOrganization = {props.signedUser?.canCreateOrganization as any};

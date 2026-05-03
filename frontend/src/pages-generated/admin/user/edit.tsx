@@ -16,7 +16,7 @@ export default function Edit(props: Record<string, unknown>) {
 					<label htmlFor="user_name">{i18n("username")}</label>
 					<input id="user_name" name="user_name" value={String(props.user?.name ?? "")} maxlength="40" />
 				</div>
-				{/* Types and name */}
+				{'{'}/* Types and name */{'}'}
 				<div className={`inline required field ${(props.err_LoginType) ? `error` : ""}`}>
 					<label>{i18n("admin.users.auth_source")}</label>
 					<div className="ui selection type dropdown">

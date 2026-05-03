@@ -4,9 +4,9 @@ import { i18n } from '../../../lib/i18n'
 
 export default function Status(props: Record<string, unknown>) {
   return (<>
-{/* This template should be kept the same as web_src/js/components/ActionRunStatus.vue
+{'{'}/* This template should be kept the same as web_src/js/components/ActionRunStatus.vue
 	Please also update the vue file above if this template is modified.
-	action status accepted: success, skipped, waiting, blocked, running, failure, cancelled, unknown */}
+	action status accepted: success, skipped, waiting, blocked, running, failure, cancelled, unknown */{'}'}
 {/* $size */}
 {/* $className */}
 <span data-tooltip-content={String("" ?? "")}>

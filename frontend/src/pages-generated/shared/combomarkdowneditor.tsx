@@ -81,9 +81,9 @@ export default function Combomarkdowneditor(props: Record<string, unknown>) {
 			>{props.textareaContent as any}</textarea>
 		</text-expander>
 		<script nonce={String("" ?? "")}>
-			if (window.localUserSettings.getBoolean('markdown-editor-monospace')) {
+			if (window.localUserSettings.getBoolean('markdown-editor-monospace')) {'{'}
 				document.querySelector('.markdown-text-editor').classList.add('tw-font-mono');
-			}
+			{'}'}
 		</script>
 	</div>
 	<div className="ui tab" data-tab-panel="markdown-previewer">

@@ -5,7 +5,7 @@ import { i18n } from '../../lib/i18n'
 export default function CommitStatuses(props: Record<string, unknown>) {
   return (<>
 {(props.statuses) ? (<>
-	{(("len .Statuses" === 1 && props.status?.targetURL)) ? (<>
+	{(((true /* TODO: len .Statuses */) === 1 && props.status?.targetURL)) ? (<>
 		<a className={`flex-text-inline tw-no-underline ${String(props.additionalClasses ?? "")}`} data-global-init="initCommitStatuses" href={String(props.status?.targetURL ?? "")}>
 			{/* template: repo/commit_status */}
 		</a>

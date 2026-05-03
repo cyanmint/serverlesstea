@@ -12,7 +12,7 @@ export default function New(props: Record<string, unknown>) {
 		<div className="ui attached segment">
 			<form className="ui form" action={String(props.link ?? "")} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
 				{/* template: base/disable_form_autofill */}
-				{/* Types and name */}
+				{'{'}/* Types and name */{'}'}
 				<div className={`inline required field ${(props.err_LoginType) ? `error` : ""}`}>
 					<label>{i18n("admin.users.auth_source")}</label>
 					<div className="ui selection type dropdown">
@@ -76,7 +76,7 @@ export default function New(props: Record<string, unknown>) {
 					</div>
 				</div>
 
-				{/* Send register notify e-mail */}
+				{'{'}/* Send register notify e-mail */{'}'}
 				{(props.canSendEmail) ? (<>
 					<div className="inline field">
 						<div className="ui checkbox">

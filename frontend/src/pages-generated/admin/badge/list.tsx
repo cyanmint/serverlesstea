@@ -17,9 +17,9 @@ export default function List(props: Record<string, unknown>) {
 				<div className="tw-flex-1">
 					{/* template: shared/search/combo */}
 				</div>
-				{/* Right Menu */}
+				{'{'}/* Right Menu */{'}'}
 				<div className="ui secondary menu tw-m-0">
-					{/* Sort Menu Item */}
+					{'{'}/* Sort Menu Item */{'}'}
 					<div className="ui dropdown type jump item">
 						<span className="text">
 							{i18n("repo.issues.filter_sort")}

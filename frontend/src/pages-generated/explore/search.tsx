@@ -12,7 +12,7 @@ export default function Search(props: Record<string, unknown>) {
 			{/* template: shared/search/combo */}
 		</>)}
 	</form>
-	{/* Sort */}
+	{'{'}/* Sort */{'}'}
 	<div className="ui small dropdown type jump item tw-mr-0">
 		<span className="text">
 			{i18n("repo.issues.filter_sort")}

@@ -9,13 +9,7 @@ export default function Fork(props: Record<string, unknown>) {
 	{...(!(props.isSigned) ? {"data-tooltip-content": String(i18n("repo.fork_guest_user") ?? "")} : {})} {...(props.canNotForkOwn ? {"data-tooltip-content": String(i18n("repo.fork_from_self") ?? "")} : {})}
 >
 	<a role="button" className={`ui compact small basic button ${(props.showForkModal) ? `show-modal` : ""}`}
-		{...(!(props.isSigned) ? {"href": `/user/login`} : {})} {(props.showForkModal) ? (<>{/* see backend comment for this logic */}
-			href="#" data-modal="#fork-repo-modal"
-		</>) : null} {...("len $.UserAndOrgForks" === 1 ? {"href": `/`} : {})} {(props.canNotForkOwn) ? (<>
-			href="#"
-		</>) : (<>
-			href={`${String(props.repoLink ?? "")}/fork`}
-		</>)}
+		{...(!(props.isSigned) ? {"href": `/user/login`} : {})} {...(props.showForkModal ? {"href": "#", "data-modal": "#fork-repo-modal"} : {})} {...((true /* TODO: len $.UserAndOrgForks */) === 1 ? {"href": `/`} : {})} {...(props.canNotForkOwn ? {"href": "#"} : {"href": `${String(props.repoLink ?? "")}/fork`})}
 	>
 		<span className="svg-icon" aria-label="octicon-repo-forked"></span><span className="text not-mobile">{i18n("repo.fork")}</span>
 	</a>

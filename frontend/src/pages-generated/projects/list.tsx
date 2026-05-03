@@ -23,14 +23,14 @@ export default function List(props: Record<string, unknown>) {
 {/* alert */}
 
 <div className="list-header">
-	{/* Search */}
+	{'{'}/* Search */{'}'}
 	<form className="list-header-search ui form ignore-dirty">
 		<input type="hidden" name="state" value={String(props.state ?? "")} />
 		{/* template: shared/search/combo */}
 	</form>
 
 	<div className="list-header-filters ui secondary menu tw-m-0">
-		{/* Sort */}
+		{'{'}/* Sort */{'}'}
 		<div className="item ui small dropdown jump">
 			<span className="text">
 				{i18n("repo.issues.filter_sort")}

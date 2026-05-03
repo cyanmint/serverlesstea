@@ -13,8 +13,8 @@ export default function Attachments(props: Record<string, unknown>) {
 		<div className="tw-flex">
 			<div className="tw-flex-1 tw-p-2">
 				<a target="_blank" href={String(props.downloadURL ?? "")} title={String(i18n("repo.issues.attachment.open_tab") ?? "")}>
-					{("FilenameIsImage .Name") ? (<>
-						{(!("StringUtils.Contains (StringUtils.ToString $.RenderedContent) .UUID")) ? (<>
+					{((true /* TODO: FilenameIsImage .Name */)) ? (<>
+						{(!((true /* TODO: StringUtils.Contains (StringUtils.ToString $.RenderedContent */))) ? (<>
 							{/* TODO: {{$hasThumbnails = true}} */}
 						</>) : null}
 						<span className="svg-icon" aria-label="octicon-file"></span>
@@ -34,8 +34,8 @@ export default function Attachments(props: Record<string, unknown>) {
 		<div className="divider"></div>
 		<div className="ui small thumbnails">
 			{((props.attachments) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-				{("FilenameIsImage .Name") ? (<>
-					{(!("StringUtils.Contains (StringUtils.ToString $.RenderedContent) .UUID")) ? (<>
+				{((true /* TODO: FilenameIsImage .Name */)) ? (<>
+					{(!((true /* TODO: StringUtils.Contains (StringUtils.ToString $.RenderedContent */))) ? (<>
 					<a target="_blank" href={String(props.downloadURL ?? "")}>
 						<img loading="lazy" alt={String(props.name ?? "")} src={String(props.downloadURL ?? "")} title={String(i18n("repo.issues.attachment.open_tab") ?? "")} />
 					</a>

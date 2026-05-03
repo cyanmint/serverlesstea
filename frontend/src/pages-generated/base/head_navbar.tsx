@@ -6,18 +6,18 @@ export default function HeadNavbar(props: Record<string, unknown>) {
   return (<>
 <nav id="navbar" aria-label={String(i18n("aria.navbar") ?? "")}>
 	<div className="navbar-left">
-		{/* the logo */}
+		{'{'}/* the logo */{'}'}
 		<a className="item" id="navbar-logo" href={`/`} aria-label={`${(props.isSigned) ? `${i18n("dashboard")}` : `${i18n("home_title")}`}`}>
 			<img width="30" height="30" src={`/img/logo.svg`} alt={String(i18n("logo") ?? "")} aria-hidden="true" />
 		</a>
 
-		{/* mobile right menu, it must be here because in mobile view, each item is a flex column, the first item is a full row column */}
+		{'{'}/* mobile right menu, it must be here because in mobile view, each item is a flex column, the first item is a full row column */{'}'}
 		<div className="ui secondary menu navbar-mobile-right only-mobile">
 			{/* template: base/head_navbar_icons */}
 			<button className="item ui icon mini button tw-m-0" id="navbar-expand-toggle" aria-label={String(i18n("home.nav_menu") ?? "")}><span className="svg-icon" aria-label="octicon-three-bars"></span></button>
 		</div>
 
-		{/* navbar links non-mobile */}
+		{'{'}/* navbar links non-mobile */{'}'}
 		{((props.isSigned && props.mustChangePassword)) ? (<>
 			{/* No links */}
 		</>) : null} {(props.isSigned) ? (<>
@@ -46,7 +46,7 @@ export default function HeadNavbar(props: Record<string, unknown>) {
 		</>) : null}
 	</div>
 
-	{/* the full dropdown menus */}
+	{'{'}/* the full dropdown menus */{'}'}
 	<div className="navbar-right">
 		{((props.isSigned && props.mustChangePassword)) ? (<>
 			<div className="ui dropdown jump item" data-tooltip-content={String(i18n("user_profile_and_more") ?? "")}>
@@ -65,8 +65,8 @@ export default function HeadNavbar(props: Record<string, unknown>) {
 						<span className="svg-icon" aria-label="octicon-sign-out"></span>
 						{i18n("sign_out")}
 					</a>
-				</div>{/* end content avatar menu */}
-			</div>{/* end dropdown avatar menu */}
+				</div>{'{'}/* end content avatar menu */{'}'}
+			</div>{'{'}/* end dropdown avatar menu */{'}'}
 		</>) : null} {(props.isSigned) ? (<>
 			{/* template: base/head_navbar_icons */}
 			<div className="ui dropdown jump item" data-tooltip-content={String(i18n("create_new") ?? "")}>
@@ -89,8 +89,8 @@ export default function HeadNavbar(props: Record<string, unknown>) {
 						<span className="svg-icon" aria-label="octicon-organization"></span> {i18n("new_org")}
 					</a>
 					</>) : null}
-				</div>{/* end content create new menu */}
-			</div>{/* end dropdown menu create new */}
+				</div>{'{'}/* end content create new menu */{'}'}
+			</div>{'{'}/* end dropdown menu create new */{'}'}
 
 			<div className="ui dropdown jump item" data-tooltip-content={String(i18n("user_profile_and_more") ?? "")}>
 				<span className="text tw-flex tw-items-center">
@@ -141,8 +141,8 @@ export default function HeadNavbar(props: Record<string, unknown>) {
 						<span className="svg-icon" aria-label="octicon-sign-out"></span>
 						{i18n("sign_out")}
 					</a>
-				</div>{/* end content avatar menu */}
-			</div>{/* end dropdown avatar menu */}
+				</div>{'{'}/* end content avatar menu */{'}'}
+			</div>{'{'}/* end dropdown avatar menu */{'}'}
 		</>) : (<>
 			{(props.showRegistrationButton) ? (<>
 				<a className={`item${(props.pageIsSignUp) ? ` active` : ""}`} href={`/user/sign_up`}>
@@ -155,7 +155,7 @@ export default function HeadNavbar(props: Record<string, unknown>) {
 				<span className="tw-ml-1">{i18n("sign_in")}</span>
 			</a>
 		</>)}
-	</div>{/* end full right menu */}
+	</div>{'{'}/* end full right menu */{'}'}
 
 	{/* $activeStopwatch */}
 	{(props.activeStopwatch) ? (<>

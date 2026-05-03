@@ -17,7 +17,7 @@ export default function Install(props: Record<string, unknown>) {
 				<p>{i18n("install.docker_helper")}</p>
 
 				<form className="ui form" action={`/`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
-					{/* Database Settings */}
+					{'{'}/* Database Settings */{'}'}
 					<h4 className="ui dividing header">{i18n("install.db_title")}</h4>
 					<p>{i18n("install.require_db_desc")}</p>
 					<div className={`inline required field ${(props.err_DbType) ? `error` : ""}`}>
@@ -106,7 +106,7 @@ export default function Install(props: Record<string, unknown>) {
 					</div>
 					</>) : null}
 
-					{/* General Settings */}
+					{'{'}/* General Settings */{'}'}
 					<h4 className="ui dividing header">{i18n("install.general_title")}</h4>
 					<div className={`inline required field ${(props.err_AppName) ? `error` : ""}`}>
 						<label htmlFor="app_name">{i18n("install.app_name")}</label>
@@ -161,10 +161,10 @@ export default function Install(props: Record<string, unknown>) {
 						<span className="help">{i18n("install.enable_update_checker_helper")}</span>
 					</div>
 
-					{/* Optional Settings */}
+					{'{'}/* Optional Settings */{'}'}
 					<h4 className="ui dividing header">{i18n("install.optional_title")}</h4>
 					<div>
-						{/* Email */}
+						{'{'}/* Email */{'}'}
 						<details className="optional field">
 							<summary className={`right-content tw-py-2${(props.err_SMTP) ? ` tw-text-red` : ""}`}>
 								{i18n("install.email_title")}
@@ -204,7 +204,7 @@ export default function Install(props: Record<string, unknown>) {
 							</div>
 						</details>
 
-						{/* Server and other services */}
+						{'{'}/* Server and other services */{'}'}
 						<details className="optional field">
 							<summary className={`right-content tw-py-2${(props.err_Services) ? ` tw-text-red` : ""}`}>
 								{i18n("install.server_service_title")}
@@ -284,7 +284,7 @@ export default function Install(props: Record<string, unknown>) {
 							</div>
 						</details>
 
-						{/* Admin */}
+						{'{'}/* Admin */{'}'}
 						<details className="optional field">
 							<summary className={`right-content tw-py-2${(props.err_Admin) ? ` tw-text-red` : ""}`}>
 								{i18n("install.admin_title")}
@@ -312,7 +312,7 @@ export default function Install(props: Record<string, unknown>) {
 					<div className="divider"></div>
 
 					{(props.envConfigKeys) ? (<>
-					{/* Environment Config */}
+					{'{'}/* Environment Config */{'}'}
 					<h4 className="ui dividing header">{i18n("install.env_config_keys")}</h4>
 					<div className="inline field">
 						<div className="right-content">

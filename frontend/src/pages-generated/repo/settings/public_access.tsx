@@ -36,7 +36,7 @@ export default function PublicAccess(props: Record<string, unknown>) {
 						<td className="tw-text-center"><label><input type="radio" name={String("" ?? "")} value={String("" ?? "")} /></label></td>
 						<td className="tw-text-center"><label><input type="radio" name={String("" ?? "")} value={String("" ?? "")} /></label></td>
 						<td className="tw-text-center">
-							{("SliceUtils.Contains $ua.PublicAccessTypes $paEveryoneWrite") ? (<>
+							{((true /* TODO: SliceUtils.Contains $ua.PublicAccessTypes $paEveryoneWrite */)) ? (<>
 								<label><input type="radio" name={String("" ?? "")} value={String("" ?? "")} /></label>
 							</>) : (<>
 								-

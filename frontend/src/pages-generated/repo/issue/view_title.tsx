@@ -62,18 +62,18 @@ export default function ViewTitle(props: Record<string, unknown>) {
 			{(props.issue?.isPull) ? (<>
 				{/* $headHref */}
 				{(props.headBranchLink) ? (<>
-					{/* TODO: {{$headHref = HTMLFormat '<a href="%s">%s</a> <button className="btn interact-fg" data-tooltip-content="%s" data-clipboard-text="%s">%s</button>' .HeadBranchLink $headHref (ctx.Locale.Tr "copy_branch") .HeadTarget (svg "octicon-copy" 14)}} */}
+					{/* TODO: {{$headHref = HTMLFormat '<a href="%s">%s</a> <button class="btn interact-fg" data-tooltip-content="%s" data-clipboard-text="%s">%s</button>' .HeadBranchLink $headHref (ctx.Locale.Tr "copy_branch") .HeadTarget (svg "octicon-copy" 14)}} */}
 				</>) : (<>
 					{(props.issue?.pullRequest?.isAgitFlow) ? (<>
-						{/* TODO: {{$headHref = HTMLFormat '%s <a href="%s" target="_blank"><span className="ui label basic tiny" data-tooltip-content="%s">AGit</span></a>' $headHref "https://docs.gitea.com/usage/agit" (ctx.Locale.Tr "repo.pull.agit_documentation")}} */}
+						{/* TODO: {{$headHref = HTMLFormat '%s <a href="%s" target="_blank"><span class="ui label basic tiny" data-tooltip-content="%s">AGit</span></a>' $headHref "https://docs.gitea.com/usage/agit" (ctx.Locale.Tr "repo.pull.agit_documentation")}} */}
 					</>) : (<>
-						{/* TODO: {{$headHref = HTMLFormat '<span className="tw-line-through" data-tooltip-content="%s">%s</span>' (ctx.Locale.Tr "form.target_branch_not_exist") $headHref}} */}
+						{/* TODO: {{$headHref = HTMLFormat '<span class="tw-line-through" data-tooltip-content="%s">%s</span>' (ctx.Locale.Tr "form.target_branch_not_exist") $headHref}} */}
 					</>)}
 				</>)}
 				{/* $baseHref */}
 				{(props.baseBranchLink) ? (<>
 					{(props.baseBranchNotExist) ? (<>
-						{/* TODO: {{$baseHref = HTMLFormat '<span className="tw-line-through" data-tooltip-content="%s">%s</span>' (ctx.Locale.Tr "form.target_branch_not_exist") $baseHref}} */}
+						{/* TODO: {{$baseHref = HTMLFormat '<span class="tw-line-through" data-tooltip-content="%s">%s</span>' (ctx.Locale.Tr "form.target_branch_not_exist") $baseHref}} */}
 					</>) : (<>
 						{/* TODO: {{$baseHref = HTMLFormat '<a href="%s">%s</a>' .BaseBranchLink $baseHref}} */}
 					</>)}

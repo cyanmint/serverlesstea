@@ -9,7 +9,7 @@ export default function IssueManagement(props: Record<string, unknown>) {
 
 	{/* Pin issue */}
 	{((props.pinEnabled || props.issue?.isPinned)) ? (<>
-		<form className="tw-mt-1 form-fetch-action single-button-form" method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())} {(props.newPinAllowed) ? (<>action={`${String(props.issue?.link ?? "")}/pin`}</>) : (<>data-tooltip-content={String(i18n("repo.issues.max_pinned") ?? "")}</>)}>
+		<form className="tw-mt-1 form-fetch-action single-button-form" method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())} {...(props.newPinAllowed ? {"action": `${String(props.issue?.link ?? "")}/pin`} : {"data-tooltip-content": String(i18n("repo.issues.max_pinned") ?? "")})}>
 			<button className={`fluid ui button ${(!(props.newPinAllowed)) ? `disabled` : ""}`}>
 				{(!(props.issue?.isPinned)) ? (<>
 					<span className="svg-icon" aria-label="octicon-pin"></span>

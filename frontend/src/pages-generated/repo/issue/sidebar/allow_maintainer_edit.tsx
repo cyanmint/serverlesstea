@@ -11,12 +11,7 @@ export default function AllowMaintainerEdit(props: Record<string, unknown>) {
 	{/* $allowToChange */}
 	<div className="divider"></div>
 	<div className={`ui checkbox ${(!(props.allowToChange)) ? `disabled` : ""} loading-icon-2px`}
-			{(props.allowToChange) ? (<>
-			id="allow-edits-from-maintainers"
-			data-url={String(props.issue?.link ?? "")}
-			data-tooltip-content={String(i18n("repo.pulls.allow_edits_from_maintainers_desc") ?? "")}
-			data-prompt-error={String(i18n("repo.pulls.allow_edits_from_maintainers_err") ?? "")}
-			</>) : null}
+			{...(props.allowToChange ? {"id": "allow-edits-from-maintainers", "data-url": String(props.issue?.link ?? ""), "data-tooltip-content": String(i18n("repo.pulls.allow_edits_from_maintainers_desc") ?? ""), "data-prompt-error": String(i18n("repo.pulls.allow_edits_from_maintainers_err") ?? "")} : {})}
 	>
 		<label><strong>{i18n("repo.pulls.allow_edits_from_maintainers")}</strong></label>
 		<input type="checkbox" {...(props.issue?.pullRequest?.allowMaintainerEdit ? {"checked": true} : {})} {...(!(props.allowToChange) ? {"disabled": true} : {})} />

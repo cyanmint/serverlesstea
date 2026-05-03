@@ -5,7 +5,7 @@ import { i18n } from '../../../../lib/i18n'
 export default function LabelEditModal(props: Record<string, unknown>) {
   return (<>
 <div className="ui small modal" id="issue-label-edit-modal"
-		data-current-page-link={String(props.link ?? "")}{/* will be used to construct "new label" and "edit label" URLs */}
+		data-current-page-link={String(props.link ?? "")}
 		data-text-new-label={String(i18n("repo.issues.new_label") ?? "")}
 		data-text-edit-label={String(i18n("repo.issues.label_modify") ?? "")}
 >
@@ -55,7 +55,7 @@ export default function LabelEditModal(props: Record<string, unknown>) {
 			<div className="field">
 				<label htmlFor="color">{i18n("repo.issues.label_color")}</label>
 				<div className="color-picker-combo" data-global-init="initColorPicker">
-					{/* the "#" is optional because backend NormalizeColor is able to handle it, API also accepts both formats, and it is easier for users to directly copy-paste a hex value */}
+					{'{'}/* the "#" is optional because backend NormalizeColor is able to handle it, API also accepts both formats, and it is easier for users to directly copy-paste a hex value */{'}'}
 					<input name="color" value="#70c24a" placeholder="#c320f6" required pattern="^#?([\dA-Fa-f]{3}|[\dA-Fa-f]{6})$" maxlength="7" />
 					{/* template: repo/issue/label_precolors */}
 				</div>

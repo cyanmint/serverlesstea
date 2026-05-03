@@ -39,7 +39,7 @@ export default function Members(props: Record<string, unknown>) {
 									</div>
 								</div>
 								<div className="item-trailing">
-									{((props.isOrganizationOwner && !((props.team?.isOwnerTeam && "len $.Team.Members" === 1)))) ? (<>
+									{((props.isOrganizationOwner && !((props.team?.isOwnerTeam && (true /* TODO: len $.Team.Members */) === 1)))) ? (<>
 										<form>
 											<button className="ui red button delete-button" data-modal-id="remove-team-member"
 												data-url={`${String(props.orgLink ?? "")}/teams/${String(props.team?.lowerName?.("|", "PathEscape") ?? "")}/action/remove`} data-datauid={String(props.iD ?? "")}

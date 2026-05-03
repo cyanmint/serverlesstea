@@ -18,7 +18,7 @@ export default function Box(props: Record<string, unknown>) {
 					// Default to true if unset
 					const diffTreeVisible = window.localUserSettings.getBoolean('diff_file_tree_visible', true);
 					const diffTreeBtn = document.querySelector('.diff-toggle-file-tree-button');
-					const diffTreeIcon = `.octicon-sidebar-${diffTreeVisible ? 'expand' : 'collapse'}`;
+					const diffTreeIcon = `.octicon-sidebar-${'{'}diffTreeVisible ? 'expand' : 'collapse'{'}'}`;
 					diffTreeBtn.querySelector(diffTreeIcon).classList.remove('tw-hidden');
 					diffTreeBtn.setAttribute('data-tooltip-content', diffTreeBtn.getAttribute(diffTreeVisible ? 'data-hide-text' : 'data-show-text'));
 				</script>

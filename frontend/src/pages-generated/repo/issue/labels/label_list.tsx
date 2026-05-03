@@ -7,7 +7,7 @@ export default function LabelList(props: Record<string, unknown>) {
 <h4 className="ui top attached header">
 	{i18n("repo.issues.label_count")}
 	<div className="ui right">
-		{/* Sort */}
+		{'{'}/* Sort */{'}'}
 		<div className="item ui jump dropdown tw-py-2">
 			<span className="text">
 				{i18n("repo.issues.filter_sort")}
@@ -20,7 +20,7 @@ export default function LabelList(props: Record<string, unknown>) {
 				<a className={`${(props.sortType === "mostissues") ? `active ` : ""}item`} href={`?sort=mostissues&state=${String(props.state ?? "")}`}>{i18n("repo.milestones.filter_sort.most_issues")}</a>
 			</div>
 		</div>
-	</div> {/* filter menu */}
+	</div> {'{'}/* filter menu */{'}'}
 </h4>
 
 <div className="ui attached segment">

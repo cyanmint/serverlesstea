@@ -8,13 +8,7 @@ export default function Watch(props: Record<string, unknown>) {
 	{/* $buttonText */}
 	{(props.isWatchingRepo) ? (<>{/* TODO: {{$buttonText = ctx.Locale.Tr "repo.unwatch"}} */}</>) : null}
 	<a role="button" className="ui compact small basic button" aria-label={String("" ?? "")}
-		{(props.isSigned) ? (<>
-			data-fetch-method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}
-			data-fetch-url={`${String(props.repoLink ?? "")}/action/${(props.isWatchingRepo) ? `unwatch` : `watch`}`}
-			data-fetch-sync="$closest(.ui.labeled.button)"
-		</>) : (<>
-			href={`/user/login`}
-		</>)}
+		{...(props.isSigned ? {"data-fetch-method": "post", "onSubmit": (props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault()), "data-fetch-url": `${String(props.repoLink ?? "")}/action/${(props.isWatchingRepo) ? `unwatch` : `watch`}`, "data-fetch-sync": "$closest(.ui.labeled.button)"} : {"href": `/user/login`})}
 	>
 		<span className="svg-icon" aria-label="octicon-eye"></span>
 		<span className="not-mobile" aria-hidden="true">{props.buttonText as any}</span>

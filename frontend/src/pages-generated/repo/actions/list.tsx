@@ -34,7 +34,7 @@ export default function List(props: Record<string, unknown>) {
 				<div className="ui top attached header flex-left-right">
 					<strong>{/* TODO: {{ctx.Locale.TrN .Page.Paginater.Total "actions.runs.workflow_run_count_1" "actions.runs.workflow_run_count_n" .Page.Paginater.Total}} */}</strong>
 					<div className="ui secondary filter menu flex-text-block tw-m-0">
-						{/* Actor */}
+						{'{'}/* Actor */{'}'}
 						<div className={`ui${(!(props.actors)) ? ` disabled` : ""} dropdown jump item`}>
 							<span className="text">{i18n("actions.runs.actor")}</span>
 							<span className="svg-icon" aria-label="octicon-triangle-down"></span>
@@ -53,7 +53,7 @@ export default function List(props: Record<string, unknown>) {
 								</React.Fragment>))}
 							</div>
 						</div>
-						{/* Status */}
+						{'{'}/* Status */{'}'}
 						<div className="ui dropdown jump item">
 							<span className="text">{i18n("actions.runs.status")}</span>
 							<span className="svg-icon" aria-label="octicon-triangle-down"></span>

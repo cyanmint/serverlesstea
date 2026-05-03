@@ -27,7 +27,7 @@ export default function Gogs(props: Record<string, unknown>) {
 				<div className={`inline field ${(props.err_Auth) ? `error` : ""}`}>
 					<label htmlFor="auth_token">{i18n("access_token")}</label>
 					<input id="auth_token" name="auth_token" type="password" autocomplete="new-password" value={String(props.auth_token ?? "")} {...(!(props.auth_token) ? {"data-need-clear": "true"} : {})} />
-					<!-- <a target="_blank" href="https://docs.gitea.com/development/api-usage"><span className="svg-icon" aria-label="octicon-question"></span></a> -->
+					{'{'}/* <a target="_blank" href="https://docs.gitea.com/development/api-usage"><span className="svg-icon" aria-label="octicon-question"></span></a> */{'}'}
 				</div>
 
 				{/* template: repo/migrate/options */}
@@ -60,7 +60,7 @@ export default function Gogs(props: Record<string, unknown>) {
 							<label>{i18n("repo.migrate_items_milestones")}</label>
 						</div>
 					</div>
-					<!-- Gogs do not support it
+					{'{'}/* Gogs do not support it
 					<div className="inline field">
 						<label></label>
 						<div className="ui checkbox">
@@ -71,8 +71,7 @@ export default function Gogs(props: Record<string, unknown>) {
 							<input name="releases" type="checkbox" {...(props.releases ? {"checked": true} : {})} />
 							<label>{i18n("repo.migrate_items_releases")}</label>
 						</div>
-					</div>
-					-->
+					</div> */{'}'}
 				</div>
 
 				<div className="divider"></div>

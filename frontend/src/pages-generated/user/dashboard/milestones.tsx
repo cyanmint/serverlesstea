@@ -17,7 +17,7 @@ export default function Milestones(props: Record<string, unknown>) {
 					</div>
 					<div className="divider"></div>
 					{((props.repos) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-						{($Repo := .) && (<>
+						{(item) && (<>
 							<a className={`${("." === props.repo?.iD) ? `active` : ""} repo name item`} href={`?repos=[
 								
 										
@@ -59,7 +59,7 @@ export default function Milestones(props: Record<string, unknown>) {
 						{/* template: shared/search/combo */}
 					</form>
 					<div className="list-header-filters">
-						{/* Sort */}
+						{'{'}/* Sort */{'}'}
 						<div className="item ui dropdown jump">
 							<span className="text">
 								{i18n("repo.issues.filter_sort")}

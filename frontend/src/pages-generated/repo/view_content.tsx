@@ -60,7 +60,7 @@ export default function ViewContent(props: Record<string, unknown>) {
 		{(props.refFullName?.isBranch) ? (<>
 			{/* $addFilePath */}
 			{(props.isViewFile) ? (<>
-				{("len .TreeNames" > 1) ? (<>
+				{((true /* TODO: len .TreeNames */) > 1) ? (<>
 					{/* TODO: {{$addFilePath = StringUtils.Join (slice .TreeNames 0 (Eval (len .TreeNames) "-" 1)) "/"}} */}
 				</>) : (<>
 					{/* TODO: {{$addFilePath = ""}} */}
@@ -106,7 +106,7 @@ export default function ViewContent(props: Record<string, unknown>) {
 			</button>
 			</>) : null}
 		</>) : null}
-		{/* Only show clone panel in repository home page */}
+		{'{'}/* Only show clone panel in repository home page */{'}'}
 		{(props.isTreePathRoot) ? (<>
 			{/* template: repo/clone_panel */}
 		</>) : null}

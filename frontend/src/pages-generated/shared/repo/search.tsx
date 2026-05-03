@@ -14,7 +14,7 @@ export default function Search(props: Record<string, unknown>) {
 			{/* template: shared/search/input */}
 			{/* template: shared/search/button */}
 		</div>
-		{/* Filter */}
+		{'{'}/* Filter */{'}'}
 		<div className="item ui small dropdown jump">
 			<span className="text">{i18n("filter_title")}</span>
 			<span className="svg-icon" aria-label="octicon-triangle-down"></span>
@@ -37,7 +37,7 @@ export default function Search(props: Record<string, unknown>) {
 				<label className="item"><input type="radio" name="private" {...(!(props.isPrivate?.valueOrDefault?.(true)) ? {"checked": true} : {})} value="0" /> {i18n("filter.public")}</label>
 			</div>
 		</div>
-		{/* Sort */}
+		{'{'}/* Sort */{'}'}
 		<div className="item ui small dropdown jump">
 			<span className="text">{i18n("repo.issues.filter_sort")}</span>
 			<span className="svg-icon" aria-label="octicon-triangle-down"></span>

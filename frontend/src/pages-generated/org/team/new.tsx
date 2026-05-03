@@ -95,7 +95,7 @@ export default function New(props: Record<string, unknown>) {
 											{(item.unit?.maxPerm >= 2) ? (<>
 												<tr>
 													<td>
-														<div {(item.unit?.type?.unitGlobalDisabled) ? (<>className="field" data-tooltip-content={String(i18n("repo.unit_disabled") ?? "")}</>) : (<>className="field"</>)}>
+														<div {...(item.unit?.type?.unitGlobalDisabled ? {"className": "field", "data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {"className": "field"})}>
 															<div>
 																<label>{/* TODO: {{ctx.Locale.Tr $unit.NameKey}} */}{(item.unit?.type?.unitGlobalDisabled) ? (<> {i18n("org.team_unit_disabled")}</>) : null}</label>
 																<span className="help">{/* TODO: {{ctx.Locale.Tr $unit.DescKey}} */}</span>
@@ -124,7 +124,7 @@ export default function New(props: Record<string, unknown>) {
 								</table>
 								{((props.units) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 									{(item.unit?.maxPerm < 2) ? (<>
-										<div {(item.unit?.type?.unitGlobalDisabled) ? (<>className="field" data-tooltip-content={String(i18n("repo.unit_disabled") ?? "")}</>) : (<>className="field"</>)}>
+										<div {...(item.unit?.type?.unitGlobalDisabled ? {"className": "field", "data-tooltip-content": String(i18n("repo.unit_disabled") ?? "")} : {"className": "field"})}>
 											<div className="ui checkbox">
 												<input type="checkbox" name={`unit_`} value="1"{...((props.team?.iD === 0 || props.team?.unitAccessMode?.(ctx, item.unit?.type) === 1) ? {"checked": true} : {})} {...(item.unit?.type?.unitGlobalDisabled ? {"disabled": true} : {})} />
 												<label>{/* TODO: {{ctx.Locale.Tr $unit.NameKey}} */}{(item.unit?.type?.unitGlobalDisabled) ? (<> {i18n("org.team_unit_disabled")}</>) : null}</label>

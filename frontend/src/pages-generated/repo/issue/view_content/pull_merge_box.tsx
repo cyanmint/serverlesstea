@@ -8,10 +8,7 @@ export default function PullMergeBox(props: Record<string, unknown>) {
 {(props.data?.showMergeBox) ? (<>
 <div className="timeline-item comment pull-merge-box"
 	data-global-init="initRepoPullMergeBox"
-	{(props.data?.reloadingInterval) ? (<>
-		data-pull-merge-box-reloading-interval={String("" ?? "")}
-		data-pull-link={String(props.issue?.link ?? "")}
-	</>) : null}
+	{...(props.data?.reloadingInterval ? {"data-pull-merge-box-reloading-interval": String("" ?? ""), "data-pull-link": String(props.issue?.link ?? "")} : {})}
 >
 	{/* $statusCheckData */}
 	{/* $requiredStatusCheckState */}

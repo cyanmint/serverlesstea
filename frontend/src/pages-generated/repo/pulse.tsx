@@ -6,7 +6,7 @@ export default function Pulse(props: Record<string, unknown>) {
   return (<>
 <h2 className="ui header activity-header">
 	<span>{/* TODO: {{DateUtils.AbsoluteLong .DateFrom}} */} - {/* TODO: {{DateUtils.AbsoluteLong .DateUntil}} */}</span>
-	{/* Period */}
+	{'{'}/* Period */{'}'}
 	<div className="ui floating dropdown jump">
 		<div className="ui basic compact button">
 			{i18n("repo.activity.period.filter_label")} <strong>{props.periodText as any}</strong>

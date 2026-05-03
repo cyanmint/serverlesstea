@@ -74,7 +74,7 @@ export default function CommitForm(props: Record<string, unknown>) {
 				</div>
 			</>) : null}
 		</div>
-		{((props.commitCandidateEmails && "len .CommitCandidateEmails" > 1)) ? (<>
+		{((props.commitCandidateEmails && (true /* TODO: len .CommitCandidateEmails */) > 1)) ? (<>
 			<div className="field">
 				<label>{i18n("repo.editor.commit_email")}</label>
 				<select className="ui selection dropdown" name="commit_email">

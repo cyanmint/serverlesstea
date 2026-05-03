@@ -25,14 +25,14 @@ export default function CommitPage(props: Record<string, unknown>) {
 									<div className="header">{i18n("repo.commit.operations")}</div>
 									<div className="divider"></div>
 									<div className="item show-create-branch-modal"
-										data-content={String(i18n("repo.branch.new_branch_from") ?? "")} {/* used by the form */}
+										data-content={String(i18n("repo.branch.new_branch_from") ?? "")}
 										data-branch-from={String("" ?? "")}
 										data-branch-from-urlcomponent={String(props.commitID ?? "")}
 										data-modal="#create-branch-modal">
 										{i18n("repo.branch.create_branch_operation")}
 									</div>
 									<div className="item show-create-branch-modal"
-										data-content={String(i18n("repo.branch.new_branch_from") ?? "")} {/* used by the form */}
+										data-content={String(i18n("repo.branch.new_branch_from") ?? "")}
 										data-branch-from={String("" ?? "")}
 										data-branch-from-urlcomponent={String(props.commitID ?? "")}
 										data-modal="#create-tag-modal"
@@ -119,7 +119,7 @@ export default function CommitPage(props: Record<string, unknown>) {
 					</div>
 				</>) : null}
 			</div>
-			{("IsMultilineCommitMessage .Commit.Message") ? (<>
+			{((true /* TODO: IsMultilineCommitMessage .Commit.Message */)) ? (<>
 				<pre className="commit-body">{/* TODO: {{ctx.RenderUtils.RenderCommitBody .Commit.Message $.Repository}} */}</pre>
 			</>) : null}
 			{/* template: repo/commit_load_branches_and_tags */}

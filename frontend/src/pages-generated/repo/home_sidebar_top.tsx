@@ -37,7 +37,7 @@ export default function HomeSidebarTop(props: Record<string, unknown>) {
 			<button id="manage_topic" className="btn interact-fg tw-mb-2 tw-text-12">{i18n("repo.topic.manage_topics")}</button>
 			<div className="ui form tw-hidden tw-my-2" id="topic_edit">
 				<div className="ui fluid multiple search selection dropdown tw-flex-wrap tw-flex-1">
-					<input type="hidden" name="topics" value={`${String(props.name ?? "")}${("Eval $i "+" 1 "<" (len $.Topics)") ? `,` : ""}`} />
+					<input type="hidden" name="topics" value={`${String(props.name ?? "")}${((true /* TODO: Eval $i "+" 1 "<" (len $.Topics) */)) ? `,` : ""}`} />
 					{((props.topics) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 						{/* keep the same layout as Fomantic UI generated labels */}
 						<a className="ui label transition visible tw-cursor-default tw-inline-block repo-topic" data-value={String(props.name ?? "")}>{item.name as any}<span className="svg-icon" aria-label="octicon-x"></span></a>
@@ -59,7 +59,7 @@ export default function HomeSidebarTop(props: Record<string, unknown>) {
 
 		{(props.detectedRepoLicenses) ? (<>
 			<a className="flex-text-block muted" href={`${String(props.repoLink ?? "")}/src/${String(props.repository?.defaultBranch ?? "")}/`} title={String("" ?? "")}>
-				<span className="svg-icon" aria-label="octicon-law"></span> {("len .DetectedRepoLicenses" === 1) ? (<>{/* TODO: {{index .DetectedRepoLicenses 0}} */}</>) : (<>{i18n("repo.multiple_licenses")}</>)}
+				<span className="svg-icon" aria-label="octicon-law"></span> {((true /* TODO: len .DetectedRepoLicenses */) === 1) ? (<>{/* TODO: {{index .DetectedRepoLicenses 0}} */}</>) : (<>{i18n("repo.multiple_licenses")}</>)}
 			</a>
 		</>) : null}
 

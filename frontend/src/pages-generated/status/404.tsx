@@ -2,7 +2,7 @@
 import React from 'react'
 import { i18n } from '../../lib/i18n'
 
-export default function 404(props: Record<string, unknown>) {
+export default function Page404(props: Record<string, unknown>) {
   return (<>
 
 <div role="main" aria-label={String(props.title ?? "")} className={`page-content ${(props.isRepo) ? `repository` : ""}`}>

@@ -8,11 +8,11 @@ export default function SectionUnified(props: Record<string, unknown>) {
 {/* this tmpl is also used by the PR Conversation page, so "DiffBlobExcerptData" may not exist */}
 {/* $diffBlobExcerptData */}
 <colgroup>
-	<col width="50">
-	<col width="50">
-	<col width="10">
-	<col width="10">
-	<col>
+	<col width="50" />
+	<col width="50" />
+	<col width="10" />
+	<col width="10" />
+	<col />
 </colgroup>
 {(($file.Sections) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 	{(($section.Lines) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>

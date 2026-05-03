@@ -77,7 +77,7 @@ export default function Issues(props: Record<string, unknown>) {
 							{/* template: repo/issue/filter_item_user_fetch */}
 						</>) : null}
 
-						{/* Sort */}
+						{'{'}/* Sort */{'}'}
 						<div className="item ui small dropdown jump">
 							<span className="text tw-whitespace-nowrap">
 								{i18n("repo.issues.filter_sort")}

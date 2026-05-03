@@ -45,7 +45,7 @@ export default function List(props: Record<string, unknown>) {
 		<div id="issue-actions" className="issue-list-toolbar tw-hidden">
 			<div className="issue-list-toolbar-left">
 				{/* template: repo/issue/openclose */}
-				{/* Total Tracked Time */}
+				{'{'}/* Total Tracked Time */{'}'}
 				{(props.totalTrackedTime) ? (<>
 					<div className="ui compact tiny secondary menu">
 						<span className="item" data-tooltip-content='{i18n("tracked_time_summary")}'>

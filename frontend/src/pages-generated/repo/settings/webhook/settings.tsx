@@ -25,10 +25,10 @@ export default function Settings(props: Record<string, unknown>) {
 	</div>
 </div>
 
-{/* Authorization Header */}
+{'{'}/* Authorization Header */{'}'}
 {(props.useAuthorizationHeader) ? (<>
 	{/* $attributeValid */}
-	{(!(props.attributeValid)) ? (<><div className="ui error message">Invalid UseAuthorizationHeader: {props.useAuthorizationHeader as any}}</div></>) : null}
+	{(!(props.attributeValid)) ? (<><div className="ui error message">Invalid UseAuthorizationHeader: {props.useAuthorizationHeader as any}{'}'}</div></>) : null}
 	{/* $required */}
 	<div className={`field ${(props.required) ? `required` : ""}`}>
 		<label>{i18n("repo.settings.authorization_header")}</label>
@@ -37,21 +37,21 @@ export default function Settings(props: Record<string, unknown>) {
 			<span className="help">{i18n("repo.settings.authorization_header_desc")}</span>
 		</>) : null}
 	</div>
-</>) : null{'}'}
+</>) : null}
 
-{/* Secret */}
+{'{'}/* Secret */{'}'}
 {(props.useRequestSecret) ? (<>
 	{/* $attributeValid */}
-	{(!(props.attributeValid)) ? (<><div className="ui error message">Invalid UseRequestSecret: {props.useRequestSecret as any}}</div></>) : null}
+	{(!(props.attributeValid)) ? (<><div className="ui error message">Invalid UseRequestSecret: {props.useRequestSecret as any}{'}'}</div></>) : null}
 	{/* $required */}
 	<div className={`field ${(props.required) ? `required` : ""}`}>
 		<label>{i18n("repo.settings.secret")}</label>
 		<input name="secret" type="password" value={String(props.webhook?.secret ?? "")} autocomplete="off" {...(props.required ? {"required": true} : {})} />
 		<span className="help">{i18n("repo.settings.webhook_secret_desc")}</span>
 	</div>
-</>) : null{'}'}
+</>) : null}
 
-{/* Branch filter */}
+{'{'}/* Branch filter */{'}'}
 <div className="field">
 	<label>{i18n("repo.settings.branch_filter")}</label>
 	<input name="branch_filter" type="text" value={String("" ?? "")} />
@@ -61,8 +61,8 @@ export default function Settings(props: Record<string, unknown>) {
 		{i18n("repo.settings.branch_filter_desc_doc")}
 		<ul>
 			<li><code>main</code></li>
-			<li><code>{main,feature/*}</code></li>
-			<li><code>{refs/heads/feature/*,refs/tags/release/*}</code></li>
+			<li><code>{'{'}main,feature/*{'}'}</code></li>
+			<li><code>{'{'}refs/heads/feature/*,refs/tags/release/*{'}'}</code></li>
 		</ul>
 	</span>
 </div>
@@ -91,11 +91,11 @@ export default function Settings(props: Record<string, unknown>) {
 	</div>
 
 	<div className={`events fields ui grid ${(!(props.webhook?.chooseEvents)) ? `tw-hidden` : ""}`}>
-		{/* Repository Events */}
+		{'{'}/* Repository Events */{'}'}
 		<div className="fourteen wide column">
 			<label>{i18n("repo.settings.event_header_repository")}</label>
 		</div>
-		{/* Create */}
+		{'{'}/* Create */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -105,7 +105,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Delete */}
+		{'{'}/* Delete */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -115,7 +115,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Fork */}
+		{'{'}/* Fork */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -125,7 +125,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Push */}
+		{'{'}/* Push */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -135,7 +135,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Repository */}
+		{'{'}/* Repository */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -145,7 +145,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Release */}
+		{'{'}/* Release */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -155,7 +155,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Package */}
+		{'{'}/* Package */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -166,7 +166,7 @@ export default function Settings(props: Record<string, unknown>) {
 			</div>
 		</div>
 
-		{/* Wiki */}
+		{'{'}/* Wiki */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -177,7 +177,7 @@ export default function Settings(props: Record<string, unknown>) {
 			</div>
 		</div>
 
-		{/* Status */}
+		{'{'}/* Status */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -188,11 +188,11 @@ export default function Settings(props: Record<string, unknown>) {
 			</div>
 		</div>
 
-		{/* Issue Events */}
+		{'{'}/* Issue Events */{'}'}
 		<div className="fourteen wide column">
 			<label>{i18n("repo.settings.event_header_issue")}</label>
 		</div>
-		{/* Issues */}
+		{'{'}/* Issues */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -202,7 +202,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Issue Assign */}
+		{'{'}/* Issue Assign */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -212,7 +212,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Issue Label */}
+		{'{'}/* Issue Label */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -222,7 +222,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Issue Milestone */}
+		{'{'}/* Issue Milestone */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -232,7 +232,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Issue Comment */}
+		{'{'}/* Issue Comment */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -243,11 +243,11 @@ export default function Settings(props: Record<string, unknown>) {
 			</div>
 		</div>
 
-		{/* Pull Request Events */}
+		{'{'}/* Pull Request Events */{'}'}
 		<div className="fourteen wide column">
 			<label>{i18n("repo.settings.event_header_pull_request")}</label>
 		</div>
-		{/* Pull Request */}
+		{'{'}/* Pull Request */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -257,7 +257,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Pull Request Assign */}
+		{'{'}/* Pull Request Assign */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -267,7 +267,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Pull Request Label */}
+		{'{'}/* Pull Request Label */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -277,7 +277,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Pull Request Milestone */}
+		{'{'}/* Pull Request Milestone */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -287,7 +287,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Pull Request Comment */}
+		{'{'}/* Pull Request Comment */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -297,7 +297,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Pull Request Review */}
+		{'{'}/* Pull Request Review */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -307,7 +307,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Pull Request Sync */}
+		{'{'}/* Pull Request Sync */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -317,7 +317,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Pull Request Review Request */}
+		{'{'}/* Pull Request Review Request */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -327,11 +327,11 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Workflow Events */}
+		{'{'}/* Workflow Events */{'}'}
 		<div className="fourteen wide column">
 			<label>{i18n("repo.settings.event_header_workflow")}</label>
 		</div>
-		{/* Workflow Run Event */}
+		{'{'}/* Workflow Run Event */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">
@@ -341,7 +341,7 @@ export default function Settings(props: Record<string, unknown>) {
 				</div>
 			</div>
 		</div>
-		{/* Workflow Job Event */}
+		{'{'}/* Workflow Job Event */{'}'}
 		<div className="seven wide column">
 			<div className="field">
 				<div className="ui checkbox">

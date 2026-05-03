@@ -9,10 +9,10 @@ export default function OwnerGeneralSettings(props: Record<string, unknown>) {
 </h4>
 <div className="ui attached segment">
 	<form className="ui form form-fetch-action " action={String(props.link ?? "")} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
-		{/* Cross-Repository Access */}
+		{'{'}/* Cross-Repository Access */{'}'}
 		<div className="help">{i18n("actions.general.cross_repo_desc")}</div>
 
-		{/* Allowed Repositories List */}
+		{'{'}/* Allowed Repositories List */{'}'}
 		<div className="field tw-mt-4">
 			<h5 className="ui header">
 				{i18n("actions.general.cross_repo_target_repos")}

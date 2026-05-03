@@ -30,7 +30,7 @@ export default function Edit(props: Record<string, unknown>) {
 					</div>
 				</div>
 
-				{/* LDAP and DLDAP */}
+				{'{'}/* LDAP and DLDAP */{'}'}
 				{((props.source?.isLDAP || props.source?.isDLDAP)) ? (<>
 					{/* $cfg */}
 					<div className={`inline required field ${(props.err_SecurityProtocol) ? `error` : ""}`}>
@@ -124,7 +124,7 @@ export default function Edit(props: Record<string, unknown>) {
 							<input id="ssh_keys_are_verified" name="ssh_keys_are_verified" type="checkbox" {...(props.cfg?.sSHKeysAreVerified ? {"checked": true} : {})} />
 						</div>
 					</div>
-					{/* ldap group begin */}
+					{'{'}/* ldap group begin */{'}'}
 					<div className="inline field">
 						<div className="ui checkbox">
 							<label><strong>{i18n("admin.auths.enable_ldap_groups")}</strong></label>
@@ -157,7 +157,7 @@ export default function Edit(props: Record<string, unknown>) {
 							<input name="group_team_map_removal" type="checkbox" {...(props.cfg?.groupTeamMapRemoval ? {"checked": true} : {})} />
 						</div>
 					</div>
-					{/* ldap group end */}
+					{'{'}/* ldap group end */{'}'}
 
 					{(props.source?.isLDAP) ? (<>
 						<div className="inline field">
@@ -185,7 +185,7 @@ export default function Edit(props: Record<string, unknown>) {
 					</div>
 				</>) : null}
 
-				{/* SMTP */}
+				{'{'}/* SMTP */{'}'}
 				{(props.source?.isSMTP) ? (<>
 					{/* $cfg */}
 					<div className="inline required field">
@@ -240,7 +240,7 @@ export default function Edit(props: Record<string, unknown>) {
 					</div>
 				</>) : null}
 
-				{/* PAM */}
+				{'{'}/* PAM */{'}'}
 				{(props.source?.isPAM) ? (<>
 					{/* $cfg */}
 					<div className="required field">
@@ -253,7 +253,7 @@ export default function Edit(props: Record<string, unknown>) {
 					</div>
 				</>) : null}
 
-				{/* OAuth2 */}
+				{'{'}/* OAuth2 */{'}'}
 				{(props.source?.isOAuth2) ? (<>
 					{/* $cfg */}
 					<div className="inline required field">
@@ -373,7 +373,7 @@ export default function Edit(props: Record<string, unknown>) {
 					</div>
 				</>) : null}
 
-				{/* SSPI */}
+				{'{'}/* SSPI */{'}'}
 				{(props.source?.isSSPI) ? (<>
 					{/* $cfg */}
 					<div className="field">

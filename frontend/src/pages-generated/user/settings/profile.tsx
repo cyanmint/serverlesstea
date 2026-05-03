@@ -48,7 +48,7 @@ export default function Profile(props: Record<string, unknown>) {
 				</div>
 
 				<div className="divider"></div>
-				{/* private block */}
+				{'{'}/* private block */{'}'}
 
 				<div className="field" id="privacy-user-settings">
 					<label><strong>{i18n("settings.privacy")}</strong></label>

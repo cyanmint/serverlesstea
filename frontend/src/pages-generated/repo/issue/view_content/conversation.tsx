@@ -4,12 +4,12 @@ import { i18n } from '../../../../lib/i18n'
 
 export default function Conversation(props: Record<string, unknown>) {
   return (<>
-{/* TODO: {{/* FIXME: DIFF-CONVERSATION-DATA: in the future this template should be refactor to avoid called by {{... "." $}} */}
+{/* FIXME: DIFF-CONVERSATION-DATA: in the future this template should be refactor to avoid called by {{... "." $}}
 At the moment, two kinds of request handler call this template:
 * ExcerptBlob -> blob_excerpt.tmpl -> this
 * Other compare and diff pages -> ... -> {section_unified.tmpl|section_split.tmpl} -> this)
-The variables in "ctx.Data" are different in each case, making this template fragile, hard to read and maintain. */}}
-{("len .comments") ? (<>
+The variables in "ctx.Data" are different in each case, making this template fragile, hard to read and maintain. */}
+{((true /* TODO: len .comments */)) ? (<>
 	{/* $comment */}
 	{/* $invalid */}
 	{/* $resolved */}

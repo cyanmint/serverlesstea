@@ -10,7 +10,7 @@ export default function History(props: Record<string, unknown>) {
 		{i18n("repo.settings.recent_deliveries")}
 		{(props.permission?.isAdmin) ? (<>
 			<div className="ui right">
-				{/* the button is wrapped with a span because the tooltip doesn't show on hover if we put data-tooltip-content directly on the button */}
+				{'{'}/* the button is wrapped with a span because the tooltip doesn't show on hover if we put data-tooltip-content directly on the button */{'}'}
 				<span data-tooltip-content={`${((props.isNew || props.webhook?.isActive)) ? `${i18n("repo.settings.webhook.test_delivery_desc")}` : `${i18n("repo.settings.webhook.test_delivery_desc_disabled")}`}`}>
 					<button className={`ui tiny button${(!((props.isNew || props.webhook?.isActive))) ? ` disabled` : ""}`} id="test-delivery" data-link={`${String(props.link ?? "")}/test`}>
 						<span className="text">{i18n("repo.settings.webhook.test_delivery")}</span>

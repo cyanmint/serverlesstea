@@ -52,7 +52,7 @@ export default function Navbar(props: Record<string, unknown>) {
 				</a>
 			</div>
 		</details>
-		{/* Webhooks and OAuth can be both disabled here, so add this if statement to display different ui */}
+		{'{'}/* Webhooks and OAuth can be both disabled here, so add this if statement to display different ui */{'}'}
 		{((!("DisableWebhooks") && props.enableOAuth2)) ? (<>
 			<details className="item toggleable-item" {...((props.pageIsAdminDefaultHooks || props.pageIsAdminSystemHooks || props.pageIsAdminApplications) ? {"open": true} : {})}>
 				<summary>{i18n("admin.integrations")}</summary>

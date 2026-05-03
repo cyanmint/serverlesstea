@@ -4,7 +4,7 @@ import { i18n } from '../../lib/i18n'
 
 export default function CloneButtons(props: Record<string, unknown>) {
   return (<>
-{/* there is always at least one button (guaranteed by context/repo.go) */}
+{'{'}/* there is always at least one button (guaranteed by context/repo.go) */{'}'}
 <div className="ui action small input clone-buttons-combo">
 	{(props.cloneButtonShowHTTPS) ? (<>
 		<button className="ui small button repo-clone-https" data-link={String(props.cloneButtonOriginLink?.hTTPS ?? "")}>HTTPS</button>

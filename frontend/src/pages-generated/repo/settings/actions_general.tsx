@@ -6,7 +6,7 @@ export default function ActionsGeneral(props: Record<string, unknown>) {
   return (<>
 {/* $isActionsEnabled */}
 <div className="repo-setting-content">
-	{/* Enable/Disable Actions Section (First) */}
+	{'{'}/* Enable/Disable Actions Section (First) */{'}'}
 	<h4 className="ui top attached header">
 		{i18n("actions.general.enable_actions")}
 	</h4>
@@ -30,13 +30,13 @@ export default function ActionsGeneral(props: Record<string, unknown>) {
 	</div>
 
 {(props.isActionsEnabled) ? (<>
-	{/* Token Permissions Section */}
+	{'{'}/* Token Permissions Section */{'}'}
 	<h4 className="ui top attached header">
 		{i18n("actions.general.permissions")}
 	</h4>
 	<div className="ui attached segment">
 		<form className="ui form" action={`${String(props.repoLink ?? "")}/settings/actions/general/token_permissions`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())} data-global-init="initRepoActionsPermissionsForm">
-			{/* Override Owner Configuration */}
+			{'{'}/* Override Owner Configuration */{'}'}
 			<div className="field">
 				<div className="ui checkbox">
 					<input type="checkbox" name="override_owner_config" {...(props.overrideOwnerConfig ? {"checked": true} : {})} />
@@ -62,11 +62,11 @@ export default function ActionsGeneral(props: Record<string, unknown>) {
 
 {(props.isActionsEnabled) ? (<>
 	{(props.repository?.isPrivate) ? (<>
-	{/* Collaborative Owners Section */}
+	{'{'}/* Collaborative Owners Section */{'}'}
 	<h4 className="ui top attached header">
 		{i18n("actions.general.collaborative_owners_management")}
 	</h4>
-	{("len .CollaborativeOwners") ? (<>
+	{((true /* TODO: len .CollaborativeOwners */)) ? (<>
 	<div className="ui attached segment">
 		<div className="flex-divided-list items-with-main">
 			{((props.collaborativeOwners) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>

@@ -12,7 +12,7 @@ export default function New(props: Record<string, unknown>) {
 		<div className="ui attached segment">
 			<form className="ui form" action={String(props.link ?? "")} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
 				{/* template: base/disable_form_autofill */}
-				{/* Types and name */}
+				{'{'}/* Types and name */{'}'}
 				<div className={`inline required field ${(props.err_Type) ? `error` : ""}`}>
 					<label>{i18n("admin.auths.auth_type")}</label>
 					<div className="ui selection type dropdown">
@@ -31,13 +31,13 @@ export default function New(props: Record<string, unknown>) {
 					<input id="auth_name" name="name" value={String(props.name ?? "")} autofocus required />
 				</div>
 
-				{/* LDAP and DLDAP */}
+				{'{'}/* LDAP and DLDAP */{'}'}
 				{/* template: admin/auth/source/ldap */}
 
-				{/* SMTP */}
+				{'{'}/* SMTP */{'}'}
 				{/* template: admin/auth/source/smtp */}
 
-				{/* PAM */}
+				{'{'}/* PAM */{'}'}
 				<div className={`pam required field ${(!(props.type === 4)) ? `tw-hidden` : ""}`}>
 					<label htmlFor="pam_service_name">{i18n("admin.auths.pam_service_name")}</label>
 					<input id="pam_service_name" name="pam_service_name" value={String(props.pam_service_name ?? "")} />
@@ -52,10 +52,10 @@ export default function New(props: Record<string, unknown>) {
 					</div>
 				</div>
 
-				{/* OAuth2 */}
+				{'{'}/* OAuth2 */{'}'}
 				{/* template: admin/auth/source/oauth */}
 
-				{/* SSPI */}
+				{'{'}/* SSPI */{'}'}
 				{/* template: admin/auth/source/sspi */}
 
 				<div className="ldap field">

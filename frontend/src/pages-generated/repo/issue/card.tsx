@@ -49,7 +49,7 @@ export default function Card(props: Record<string, unknown>) {
 		</div>
 		</>) : null}
 		{(props.page?.linkedPRs) ? (<>
-		{((index $.Page.LinkedPRs .ID) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+		{((props.page?.linkedPRs?.[props.iD]) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 		<div className="meta tw-my-1">
 			<a href={`${String(props.repo?.link ?? "")}/pulls/${String(props.index ?? "")}`}>
 				<span className={`tw-m-0 ${(props.pullRequest?.hasMerged) ? `tw-text-purpletw-text-red` : `tw-text-green`}`}><span className="svg-icon" aria-label="octicon-git-merge"></span></span>

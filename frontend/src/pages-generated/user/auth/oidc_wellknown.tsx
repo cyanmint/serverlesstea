@@ -4,7 +4,7 @@ import { i18n } from '../../../lib/i18n'
 
 export default function OidcWellknown(props: Record<string, unknown>) {
   return (<>
-{
+{'{'}
     "issuer": "{props.oidcIssuer as any}",
     "authorization_endpoint": "{props.oidcBaseUrl as any}/login/oauth/authorize",
     "token_endpoint": "{props.oidcBaseUrl as any}/login/oauth/access_token",
@@ -52,7 +52,7 @@ export default function OidcWellknown(props: Record<string, unknown>) {
         "authorization_code",
         "refresh_token"
     ]
-}
+{'}'}
 
   </>)
 }

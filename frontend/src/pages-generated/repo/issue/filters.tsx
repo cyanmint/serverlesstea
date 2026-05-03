@@ -10,7 +10,7 @@ export default function Filters(props: Record<string, unknown>) {
 			<input type="checkbox" autocomplete="off" className="issue-checkbox-all tw-mr-4" title={String(i18n("repo.issues.action_check_all") ?? "")} />
 		</>) : null}
 		{/* template: repo/issue/openclose */}
-		{/* Total Tracked Time */}
+		{'{'}/* Total Tracked Time */{'}'}
 		{(props.totalTrackedTime) ? (<>
 			<div className="ui compact tiny secondary menu">
 				<span className="item" data-tooltip-content='{i18n("tracked_time_summary")}'>

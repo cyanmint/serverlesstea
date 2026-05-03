@@ -2,7 +2,7 @@
 import React from 'react'
 import { i18n } from '../../lib/i18n'
 
-export default function 500(props: Record<string, unknown>) {
+export default function Page500(props: Record<string, unknown>) {
   return (<>
 {/* This page should only depend the minimal template functions/variables, to avoid triggering new panics.
 * base template functions: AppName, AssetUrlPrefix, AssetURI, AppSubUrl
@@ -60,7 +60,7 @@ export default function 500(props: Record<string, unknown>) {
 		And this page shouldn't include any other JS file, avoid duplicate JS execution (still due to the partial rendering). */}
 	<script nonce={String("" ?? "")} type="module">
 		const embedded = document.querySelector('.page-content .page-content.status-page-500');
-		if (embedded) {
+		if (embedded) {'{'}
 			// move the 500 error page content to main view
 			const embeddedParent = embedded.parentNode;
 			let main = document.querySelector('.page-content');
@@ -68,7 +68,7 @@ export default function 500(props: Record<string, unknown>) {
 			main.prepend(document.createElement('hr'));
 			main.prepend(embedded);
 			embeddedParent.remove(); // remove the unrelated 500-page elements (eg: the duplicate nav bar)
-		}
+		{'}'}
 	</script>
 </body>
 </html>

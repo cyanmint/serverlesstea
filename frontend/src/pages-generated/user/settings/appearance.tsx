@@ -7,7 +7,7 @@ export default function Appearance(props: Record<string, unknown>) {
 {/* template: user/settings/layout_head */}
 	<div className="user-setting-content">
 
-		{/* Theme */}
+		{'{'}/* Theme */{'}'}
 		<h4 className="ui top attached header">
 			{i18n("settings.manage_themes")}
 		</h4>
@@ -41,7 +41,7 @@ export default function Appearance(props: Record<string, unknown>) {
 			</form>
 		</div>
 
-		{/* Language */}
+		{'{'}/* Language */{'}'}
 		<h4 className="ui top attached header">
 			{i18n("settings.language")}
 		</h4>
@@ -65,7 +65,7 @@ export default function Appearance(props: Record<string, unknown>) {
 			</form>
 		</div>
 
-		{/* Shown comment event types */}
+		{'{'}/* Shown comment event types */{'}'}
 		<h4 className="ui top attached header">
 			{i18n("settings.hidden_comment_types")}
 		</h4>

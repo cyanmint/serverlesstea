@@ -23,14 +23,14 @@ export default function LfsLocks(props: Record<string, unknown>) {
 					{((props.lFSLocks) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 						<tr>
 							<td>
-								{("index $.Linkable $index") ? (<>
+								{((true /* TODO: index $.Linkable $index */)) ? (<>
 									<span className="svg-icon" aria-label="octicon-file"></span>
 								<a href={`${String(props.repoLink ?? "")}/src/branch//`} title={String("" ?? "")}>{/* TODO: {{$lock.Path}} */}</a>
 								</>) : (<>
 									<span className="svg-icon" aria-label="octicon-diff"></span>
 								<span data-tooltip-content={String(i18n("repo.settings.lfs_lock_file_no_exist") ?? "")}>{/* TODO: {{$lock.Path}} */}</span>
 								</>)}
-								{(!("index $.Lockables $index")) ? (<>
+								{(!((true /* TODO: index $.Lockables $index */))) ? (<>
 									<span data-tooltip-content={String(i18n("repo.settings.lfs_noattribute") ?? "")}><span className="svg-icon" aria-label="octicon-alert"></span></span>
 								</>) : null}
 							</td>

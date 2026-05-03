@@ -20,7 +20,7 @@ export default function Milestones(props: Record<string, unknown>) {
 
 		{/* template: repo/issue/filters */}
 
-		{/* milestone list */}
+		{'{'}/* milestone list */{'}'}
 		<div className="milestone-list">
 			{((props.milestones) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 				<li className="milestone-card">

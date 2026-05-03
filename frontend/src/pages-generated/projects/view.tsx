@@ -114,7 +114,7 @@ export default function View(props: Record<string, unknown>) {
 				</div>
 				<div className="divider"{...(item.color ? {"style": `color:  !important`} : {})}></div>
 				<div className="ui cards" data-url={`${String(props.link ?? "")}/${String(props.iD ?? "")}`} data-project={String(props.project?.iD ?? "")} data-board={String(props.iD ?? "")} id={`board_${String(props.iD ?? "")}`}>
-					{(((index $.IssuesMap .ID)) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+					{((props.issuesMap?.[item.iD]) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 						<div className={`issue-card tw-break-anywhere ${(props.canWriteProject) ? `tw-cursor-grab` : ""}`} data-issue={String(props.iD ?? "")}>
 							{/* template: repo/issue/card */}
 						</div>

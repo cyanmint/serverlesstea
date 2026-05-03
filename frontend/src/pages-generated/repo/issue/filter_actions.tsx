@@ -6,7 +6,7 @@ export default function FilterActions(props: Record<string, unknown>) {
   return (<>
 <div className="ui secondary filter menu">
 	{(!(props.repository?.isArchived)) ? (<>
-		{/* Action Button */}
+		{'{'}/* Action Button */{'}'}
 		{((props.isShowClosed?.has && props.isShowClosed?.value)) ? (<>
 			<button className="ui primary basic button issue-action" data-data-action="open" data-url={`${String(props.repoLink ?? "")}/issues/status`}>{i18n("repo.issues.action_open")}</button>
 		</>) : null} {((props.isShowClosed?.has && !(props.isShowClosed?.value))) ? (<>
@@ -18,7 +18,7 @@ export default function FilterActions(props: Record<string, unknown>) {
 				data-action-delete-confirm={String(i18n("confirm_delete_selected") ?? "")}
 			>{i18n("repo.issues.delete")}</button>
 		</>) : null}
-	{/* Labels */}
+	{'{'}/* Labels */{'}'}
 		<div className={`ui ${(!(props.labels)) ? `disabled` : ""} dropdown jump item`}>
 			<span className="text">
 				{i18n("repo.issues.action_label")}
@@ -36,14 +36,14 @@ export default function FilterActions(props: Record<string, unknown>) {
 					</>) : null}
 					{/* TODO: {{$previousExclusiveScope = $exclusiveScope}} */}
 					<div className="item issue-action flex-left-right" data-data-action="toggle" data-element-id={String(props.iD ?? "")} data-url={`${String(props.repoLink ?? "")}/issues/labels`}>
-						{("SliceUtils.Contains $.SelLabelIDs .ID") ? (<>{/* TODO: {{svg (Iif $exclusiveScope "octicon-dot-fill" "octicon-check")}} */}</>) : null} {/* TODO: {{ctx.RenderUtils.RenderLabel .}} */}
+						{((true /* TODO: SliceUtils.Contains $.SelLabelIDs .ID */)) ? (<>{/* TODO: {{svg (Iif $exclusiveScope "octicon-dot-fill" "octicon-check")}} */}</>) : null} {/* TODO: {{ctx.RenderUtils.RenderLabel .}} */}
 						{/* template: repo/issue/labels/label_archived */}
 					</div>
 				</React.Fragment>))}
 			</div>
 		</div>
 
-		{/* Milestone */}
+		{'{'}/* Milestone */{'}'}
 		<div className={`ui ${(!((props.openMilestones || props.closedMilestones))) ? `disabled` : ""} dropdown jump item`}>
 			<span className="text">
 				{i18n("repo.issues.action_milestone")}
@@ -74,7 +74,7 @@ export default function FilterActions(props: Record<string, unknown>) {
 			</div>
 		</div>
 
-		{/* Projects */}
+		{'{'}/* Projects */{'}'}
 		<div className={`ui${(!((props.openProjects || props.closedProjects))) ? ` disabled` : ""} dropdown jump item`}>
 			<span className="text">
 				{i18n("repo.projects")}
@@ -109,7 +109,7 @@ export default function FilterActions(props: Record<string, unknown>) {
 			</div>
 		</div>
 
-		{/* Assignees */}
+		{'{'}/* Assignees */{'}'}
 		<div className={`ui ${(!(props.assignees)) ? `disabled` : ""} dropdown jump item`}>
 			<span className="text">
 				{i18n("repo.issues.action_assignee")}

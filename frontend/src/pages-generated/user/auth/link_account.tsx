@@ -8,7 +8,7 @@ export default function LinkAccount(props: Record<string, unknown>) {
 <div role="main" aria-label={String(props.title ?? "")} className="page-content user link-account">
 	<overflow-menu className="ui secondary pointing tabular top attached borderless menu secondary-nav">
 		<div className="overflow-menu-items tw-justify-center" data-global-init="initTabSwitcher">
-			{/* TODO handle .ShowRegistrationButton once other login bugs are fixed */}
+			{'{'}/* TODO handle .ShowRegistrationButton once other login bugs are fixed */{'}'}
 			{(!(props.allowOnlyInternalRegistration)) ? (<>
 				<a className={`item ${(!(props.user_exists)) ? `active` : ""}`} data-tab="auth-link-signup-tab">
 					{i18n("auth.oauth_signup_tab")}

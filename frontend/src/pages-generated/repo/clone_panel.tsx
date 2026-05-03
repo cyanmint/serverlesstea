@@ -13,7 +13,7 @@ export default function ClonePanel(props: Record<string, unknown>) {
 	<div className="flex-text-block clone-panel-field"><span className="svg-icon" aria-label="octicon-terminal"></span> Clone</div>
 
 	<div className="clone-panel-tab">
-		{/* there is always at least one button (guaranteed by context/repo.go) */}
+		{'{'}/* there is always at least one button (guaranteed by context/repo.go) */{'}'}
 		{(props.cloneButtonShowHTTPS) ? (<>
 			<button className="item repo-clone-https" data-link={String(props.cloneButtonOriginLink?.hTTPS ?? "")}>HTTPS</button>
 		</>) : null}

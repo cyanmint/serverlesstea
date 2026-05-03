@@ -93,14 +93,14 @@ export default function Tags(props: Record<string, unknown>) {
 											{((item.allowlistUserIDs || (props.owner?.isOrganization && item.allowlistTeamIDs))) ? (<>
 												{/* $userIDs */}
 												{((props.users) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-													{("SliceUtils.Contains $userIDs .ID") ? (<>
+													{((true /* TODO: SliceUtils.Contains $userIDs .ID */)) ? (<>
 														<a className="ui basic label" href={String(props.homeLink ?? "")}>{/* TODO: {{ctx.AvatarUtils.Avatar . 26}} */} {item.getDisplayName as any}</a>
 													</>) : null}
 												</React.Fragment>))}
 												{(props.owner?.isOrganization) ? (<>
 													{/* $teamIDs */}
 													{((props.teams) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
-														{("SliceUtils.Contains $teamIDs .ID") ? (<>
+														{((true /* TODO: SliceUtils.Contains $teamIDs .ID */)) ? (<>
 															<a className="ui basic label" href={`${String(props.owner?.organisationLink ?? "")}/teams/`}>{item.name as any}</a>
 														</>) : null}
 													</React.Fragment>))}

@@ -92,7 +92,7 @@ export default function Ldap(props: Record<string, unknown>) {
 			<input id="ssh_keys_are_verified" name="ssh_keys_are_verified" type="checkbox" {...(props.ssh_keys_are_verified ? {"checked": true} : {})} />
 		</div>
 	</div>
-	{/* ldap group begin */}
+	{'{'}/* ldap group begin */{'}'}
 	<div className="inline field">
 		<div className="ui checkbox">
 			<label><strong>{i18n("admin.auths.enable_ldap_groups")}</strong></label>
@@ -125,7 +125,7 @@ export default function Ldap(props: Record<string, unknown>) {
 			<input name="group_team_map_removal" type="checkbox" {...(props.group_team_map_removal ? {"checked": true} : {})} />
 		</div>
 	</div>
-	{/* ldap group end */}
+	{'{'}/* ldap group end */{'}'}
 
 	<div className={`ldap inline field ${(!(props.type === 2)) ? `tw-hidden` : ""}`}>
 		<div className="ui checkbox">

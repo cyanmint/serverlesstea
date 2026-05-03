@@ -2,7 +2,7 @@
 import React from 'react'
 import { i18n } from '../../lib/i18n'
 
-export default function 503(props: Record<string, unknown>) {
+export default function Page503(props: Record<string, unknown>) {
   return (<>
 
 <div role="main" aria-label="503 Service Unavailable" className="page-content">

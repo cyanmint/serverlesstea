@@ -4,7 +4,7 @@ import { i18n } from '../../../lib/i18n'
 
 export default function Conversation(props: Record<string, unknown>) {
   return (<>
-{("len .comments") ? (<>
+{((true /* TODO: len .comments */)) ? (<>
 	{/* $comment */}
 	{/* $resolved */}
 	{/* $invalid */}
@@ -19,8 +19,8 @@ export default function Conversation(props: Record<string, unknown>) {
 					<span className="svg-icon" aria-label="octicon-check"></span>
 					<b>{/* TODO: {{$resolveDoer.Name}} */}</b> {i18n("repo.issues.review.resolved_by")}
 					{(props.invalid) ? (<>
-						{/* We only handle the case $resolved=true and $invalid=true in this template because if the comment is not resolved it has the outdated label in the comments area (not the header above).
-						The case $resolved=false and $invalid=true is handled in repo/diff/comments.tmpl */}
+						{'{'}/* We only handle the case $resolved=true and $invalid=true in this template because if the comment is not resolved it has the outdated label in the comments area (not the header above).
+						The case $resolved=false and $invalid=true is handled in repo/diff/comments.tmpl */{'}'}
 						<a href={String("" ?? "")} className="ui label basic small tw-ml-2" data-tooltip-content={String(i18n("repo.issues.review.outdated_description") ?? "")}>
 							{i18n("repo.issues.review.outdated")}
 						</a>

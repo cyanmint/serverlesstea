@@ -35,13 +35,13 @@ export default function Members(props: Record<string, unknown>) {
 							{(!(props.publicOnly)) ? (<>
 							<div>
 								{i18n("org.members.member_role")}
-								<strong className="flex-text-inline">{("index $.MembersIsUserOrgOwner .ID") ? (<><span className="svg-icon" aria-label="octicon-shield-lock"></span> {i18n("org.members.owner")}</>) : (<>{i18n("org.members.member")}</>)}</strong>
+								<strong className="flex-text-inline">{((true /* TODO: index $.MembersIsUserOrgOwner .ID */)) ? (<><span className="svg-icon" aria-label="octicon-shield-lock"></span> {i18n("org.members.owner")}</>) : (<>{i18n("org.members.member")}</>)}</strong>
 							</div>
 							</>) : null}
 							{(props.isOrganizationOwner) ? (<>
 							<div>
 								{i18n("admin.users.2fa")}:
-								{("index $.MembersTwoFaStatus .ID") ? (<>
+								{((true /* TODO: index $.MembersTwoFaStatus .ID */)) ? (<>
 									<span className="tw-text-green tw-flex"><span className="svg-icon" aria-label="octicon-check"></span></span>
 								</>) : (<>
 									<span className="svg-icon" aria-label="octicon-x"></span>

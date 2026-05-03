@@ -31,6 +31,14 @@ const SKIP_FILES    = new Set([
   'user/settings/layout_footer.tmpl',
   'repo/settings/layout_head.tmpl',
   'repo/settings/layout_footer.tmpl',
+  // HTML tags that intentionally span multiple {{if}} blocks — inherently
+  // unbalanced JSX; skip rather than emit broken fragments.
+  'repo/commit_sign_badge.tmpl',
+  // SVG graph template with complex Go template math/eval functions
+  // that cannot be statically translated.
+  'repo/graph/svgcontainer.tmpl',
+  // HTML tags that span across {{if}} block boundaries in the original template
+  'repo/issue/view_content/comments.tmpl',
 ])
 
 let written = 0
@@ -43,6 +51,26 @@ function main() {
     process.exit(1)
   }
   mkdirSync(OUT_DIR, { recursive: true })
+
+  // Collect the set of .tsx files that will be (re-)generated this run
+  const willGenerate = new Set(
+    collectFiles(TEMPLATES_DIR, '').map(r => r.replace(/\.tmpl$/, '.tsx'))
+  )
+
+  // Delete any .tsx files in OUT_DIR that are no longer generated (stale files
+  // from skipped templates or renamed sources).
+  function cleanStale(dir, rel) {
+    for (const name of readdirSync(dir)) {
+      const fullRel = rel ? `${rel}/${name}` : name
+      const full = join(dir, name)
+      if (statSync(full).isDirectory()) { cleanStale(full, fullRel); continue }
+      if (name.endsWith('.tsx') && !willGenerate.has(fullRel)) {
+        rmSync(full)
+      }
+    }
+  }
+  if (existsSync(OUT_DIR)) cleanStale(OUT_DIR, '')
+
   for (const relPath of collectFiles(TEMPLATES_DIR, '')) {
     processFile(relPath)
   }
@@ -81,14 +109,22 @@ function convertTemplate(src, relTsx) {
   // 1. Strip CSRF inputs
   src = src.replace(/<input[^>]*name=["']_csrf["'][^>]*\/?>/gi, '')
 
+  // 1b. Strip HTML comments that may contain {{ }} actions — converting them
+  //     to JSX comments now ensures the tokenizer sees a clean text token.
+  //     The content is preserved inside {/* */} so intent is not lost.
+  src = src.replace(/<!--([\s\S]*?)-->/g, (_, c) => `{/* ${c.replace(/\*\//g, '* /').trim()} */}`)
+
   // 2. Pre-process dynamic attribute values (those containing {{ }})
   src = preProcessDynamicAttrs(src)
 
   // 3. Tokenize remaining {{ }} blocks
   const tokens = tokenize(src)
 
-  // 4. Convert tokens
+  // 4. Convert tokens — thread `inTag` state so processText knows whether the
+  //    current token starts inside an HTML opening tag (attribute context) or
+  //    in text content.
   const state = { stack: [], rangeDepth: 0, suppressDepth: 0 }
+  let inTagCtx = false  // true when previous output ended inside an open tag
   let body  = tokens.map(t => {
     if (state.suppressDepth > 0) {
       // We're inside an {{if false}}...{{end}} block. Only watch for 'end'
@@ -105,7 +141,18 @@ function convertTemplate(src, relTsx) {
       }
       return ''
     }
-    return t.type === 'text' ? processText(t.value) : processAction(t.value, state)
+    if (t.type === 'text') {
+      const out = processText(t.value, inTagCtx)
+      // Update inTag context: does the processed text end inside an open tag?
+      inTagCtx = endsInsideOpenTag(out, inTagCtx)
+      return out
+    }
+    // Action tokens produce inline JSX — preserve the current inTag context
+    // because Go template actions can appear inside opening HTML tags (e.g.
+    // conditional attributes like <div {{if .Foo}}class="x"{{end}}>).
+    // The processAction output never contains raw HTML `>` that would close a
+    // tag, so inTagCtx is unchanged.
+    return processAction(t.value, state)
   }).join('')
 
   // 5. Post-process: fix conditional boolean/value attrs inside open tags
@@ -117,7 +164,7 @@ function convertTemplate(src, relTsx) {
   //    tokens like {{if}}checked{{end}} can split the tag across multiple tokens).
   //    Uses an expression-aware scan so `>` inside JSX `{...}` is not mistaken
   //    for the end of the element.
-  for (const tag of ['br', 'hr', 'img', 'input', 'link', 'meta']) {
+  for (const tag of ['area', 'br', 'col', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr']) {
     body = selfCloseVoidTag(body, tag)
   }
 
@@ -125,12 +172,7 @@ function convertTemplate(src, relTsx) {
   //    (TypeScript's JSX parser only allows {…spread} inside open tags).
   body = stripInlineJsxComments(body)
 
-  // 8. Post-process: escape bare { and } in JSX text-content positions.
-  //    Inside element content (between > and <), a lone { starts a JSX
-  //    expression — escape template literals like JSON examples in <code> blocks.
-  body = escapeBareBracesInContent(body)
-
-  // 9. Post-process: convert attribute names containing dots to spread syntax.
+  // 8. Post-process: convert attribute names containing dots to spread syntax.
   //    Dots are invalid in JSX attribute names but valid in HTML data-* names.
   //    e.g. data-modal-form.action={expr}  →  {...{"data-modal-form.action": expr}}
   //         data-x.y="val"                 →  {...{"data-x.y": "val"}}
@@ -164,9 +206,25 @@ function preProcessDynamicAttrs(src) {
   let i   = 0
 
   while (i < src.length) {
-    // Find next =" (start of potential attribute value)
+    // Skip over {{ }} blocks — do NOT process attribute patterns inside them
+    if (src[i] === '{' && src[i + 1] === '{') {
+      const end = src.indexOf('}}', i + 2)
+      if (end === -1) { out += src.slice(i); break }
+      out += src.slice(i, end + 2)
+      i    = end + 2
+      continue
+    }
+
+    // Find next =" (start of potential attribute value) — stop at the next {{ }}
+    const nextAction = src.indexOf('{{', i)
     const eq = src.indexOf('="', i)
     if (eq === -1) { out += src.slice(i); break }
+    // If the next {{ }} comes before the =" , output text up to it and loop
+    if (nextAction !== -1 && nextAction < eq) {
+      out += src.slice(i, nextAction)
+      i    = nextAction
+      continue
+    }
 
     // Walk back from eq to find the attribute name
     let ns = eq - 1
@@ -290,6 +348,16 @@ function tokenize(src) {
     const s = src.indexOf('{{', i)
     if (s === -1) { if (i < src.length) tokens.push({ type: 'text', value: src.slice(i) }); break }
     if (s > i)    tokens.push({ type: 'text', value: src.slice(i, s) })
+    // Handle Go template comments {{/* ... */}} specially:
+    // they can contain {{ and }} so we scan for */}} rather than just }}
+    if (src[s + 2] === '/' && src[s + 3] === '*') {
+      const endComment = src.indexOf('*/}}', s + 4)
+      if (endComment === -1) { tokens.push({ type: 'text', value: src.slice(s) }); break }
+      const commentBody = src.slice(s + 2, endComment + 2)  // includes /* ... */
+      tokens.push({ type: 'action', value: commentBody.trim() })
+      i = endComment + 4  // skip past */}}
+      continue
+    }
     const e = src.indexOf('}}', s + 2)
     if (e === -1) { tokens.push({ type: 'text', value: src.slice(s) }); break }
     tokens.push({ type: 'action', value: src.slice(s + 2, e).trim().replace(/^-\s*/, '').replace(/\s*-$/, '').trim() })
@@ -299,11 +367,12 @@ function tokenize(src) {
 }
 
 // ── HTML text fixes ──────────────────────────────────────────────────────────
-function processText(text) {
-  return text
+function processText(text, startInTag = false) {
+  text = text
     // Strip DOCTYPE (invalid in JSX)
     .replace(/<!DOCTYPE[^>]*>/gi, '')
-    // Convert HTML comments to JSX comments
+    // HTML comments are converted before tokenization (step 1b), but handle any
+    // residual single-token comments here as a safety net.
     .replace(/<!--([\s\S]*?)-->/g, (_, c) => `{/* ${c.replace(/\*\//g, '* /').trim()} */}`)
     // HTML attrs not already handled by preProcessDynamicAttrs (static values)
     .replace(/\bclass=/g,    'className=')
@@ -321,6 +390,68 @@ function processText(text) {
       /\bmethod="post"/gi,
       'method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}'
     )
+
+  // Escape literal { and } in HTML text content (not inside HTML tags).
+  // In text tokens, all { } are raw HTML characters unless they appear inside
+  // a tag's attribute area. JSX expressions in text positions come from
+  // processAction, not processText — so we can safely escape all text-content
+  // braces here.  Pass startInTag so continuation tokens (after {{if}} inside
+  // a tag) are handled correctly.
+  return escapeTextContentBraces(text, startInTag)
+}
+
+// Walk `text` and escape `{` / `}` that appear OUTSIDE of an HTML tag
+// (i.e., not inside `<tagname ... >`).  Characters inside tags (attributes,
+// JSX attribute expressions like `{expr}`) are passed through unchanged.
+// `startInTag`: true when the text begins inside an already-open HTML tag
+// (continuation after a Go template action inside a tag).
+function escapeTextContentBraces(text, startInTag = false) {
+  let result = ''
+  let i = 0
+  let inTag = startInTag  // true between `<` and the matching `>`
+  let attrExprDepth = 0   // depth of `{...}` expressions inside a tag
+
+  while (i < text.length) {
+    const c = text[i]
+
+    if (inTag) {
+      if (c === '{') { attrExprDepth++; result += c; i++; continue }
+      if (c === '}') { if (attrExprDepth > 0) attrExprDepth--; result += c; i++; continue }
+      if (attrExprDepth === 0 && c === '>') { inTag = false; result += c; i++; continue }
+      result += c; i++; continue
+    }
+
+    // Text content position
+    if (c === '<') {
+      // Enter inTag state for ANY tag (opening or closing — both have a `>`)
+      inTag = true
+      result += c; i++; continue
+    }
+    if (c === '{') { result += "{'{'}" ; i++; continue }
+    if (c === '}') { result += "{'}'}"; i++; continue }
+    result += c; i++
+  }
+  return result
+}
+
+// Compute whether `text` ends inside an open HTML tag.
+// Used to thread the inTag context between processText calls.
+function endsInsideOpenTag(text, startInTag) {
+  let inTag = startInTag
+  let attrExprDepth = 0
+  let i = 0
+  while (i < text.length) {
+    const c = text[i]
+    if (inTag) {
+      if (c === '{') { attrExprDepth++; i++; continue }
+      if (c === '}') { if (attrExprDepth > 0) attrExprDepth--; i++; continue }
+      if (attrExprDepth === 0 && c === '>') { inTag = false; i++; continue }
+      i++; continue
+    }
+    if (c === '<') { inTag = true; i++; continue }
+    i++
+  }
+  return inTag
 }
 
 // ── Action token converter ────────────────────────────────────────────────────
@@ -426,9 +557,13 @@ function processAction(a, state) {
   }
 
   if (/^with\s/.test(a)) {
-    const expr = convertField(a.slice(5).trim(), state.rangeDepth > 0)
+    let expr = a.slice(5).trim()
+    // Strip "with $var := .Foo" → just use ".Foo" as the condition
+    const withAssign = expr.match(/^\$\w+\s*:=\s*(.+)$/)
+    if (withAssign) expr = withAssign[1].trim()
+    const cond = convertField(expr, state.rangeDepth > 0)
     state.stack.push({ type: 'with' })
-    return `{(${expr}) && (<>`
+    return `{(${cond}) && (<>`
   }
 
   // SVG helper
@@ -445,6 +580,20 @@ function processAction(a, state) {
 // Convert a field expression (.X, $.X, .X.Y.Z, or literal) to JS
 function convertField(expr, inRange) {
   expr = expr.trim()
+
+  // Strip outer parentheses (e.g. from `range (index ...)`)
+  if (expr.startsWith('(') && expr.endsWith(')')) {
+    return convertField(expr.slice(1, -1).trim(), inRange)
+  }
+
+  // Handle Go built-in `index MAP KEY` → MAP[KEY]
+  const indexMatch = expr.match(/^index\s+(\S+)\s+(.+)$/)
+  if (indexMatch) {
+    const mapExpr = convertField(indexMatch[1], inRange)
+    const keyExpr = convertField(indexMatch[2].trim(), inRange)
+    return `${mapExpr}?.[${keyExpr}]`
+  }
+
   let prefix, restStr
   if (expr.startsWith('$.')) {
     prefix  = 'props'
@@ -587,6 +736,9 @@ function convertVal(v, inRange) {
   // Local variable (just $varName) → props.varName (it's a template-local var, treat as prop)
   if (/^\$[A-Za-z_]\w*$/.test(v)) return `props.${lcFirst(v.slice(1))}`
   // Do NOT call convertCond here — that causes infinite recursion for partial-paren inputs
+  // If the value contains spaces, it's a complex expression/function call we can't convert;
+  // emit a safe TODO rather than a broken string literal.
+  if (v.includes(' ')) return `(true /* TODO: ${v.replace(/\*\//g, '* /').slice(0, 60)} */)`
   return `"${v}"`  // unknown literal → stringify
 }
 
@@ -694,8 +846,8 @@ function selfCloseVoidTag(body, tag) {
 // tags, not JSX comments. Strip single-line JSX comment expressions that appear
 // between the start `<tagName` and the matching closing `>` of the open tag.
 function stripInlineJsxComments(body) {
-  // Matches a single-line JSX comment that does NOT span newlines.
-  const COMMENT_RE = /\s*\{\/\*[^*\n]*\*\/\}/g
+  // Matches a JSX comment (may be inline or multi-line within a tag).
+  const COMMENT_RE = /\s*\{\/\*[\s\S]*?\*\/\}/g
   let result = ''
   let i = 0
   // Simple scan: detect `<identifier` to start an open-tag region
@@ -705,7 +857,7 @@ function stripInlineJsxComments(body) {
   while ((match = OPEN_TAG_RE.exec(body)) !== null) {
     result += body.slice(i, match.index)
     const tagBodyStart = match.index
-    // Find end of open tag (expression-aware, same logic as selfCloseVoidTag)
+    // Find end of open tag (expression-aware)
     let j = tagBodyStart + match[0].length
     let depth = 0
     let endIdx = -1
@@ -713,7 +865,6 @@ function stripInlineJsxComments(body) {
       const c = body[j]
       if (c === '{') { depth++; j++; continue }
       if (c === '}') { depth--; j++; continue }
-      if (c === '\n' && depth === 0) break  // don't scan across newlines for safety
       if (depth === 0 && c === '>') { endIdx = j; break }
       j++
     }
@@ -737,72 +888,85 @@ function stripInlineJsxComments(body) {
 // A literal `{` in JSX text content (between `>` and `<`) starts a JS
 // expression. Escape them so that raw text like JSON examples in <code> blocks
 // is treated as literal characters.
-// We walk the body character-by-character, tracking whether we're "inside" a
-// JSX element opening (between `<tag` and `>`) or inside a JSX expression
-// `{...}`. Only bare `{` and `}` in TEXT positions are escaped.
+//
+// Our translator only emits intentional `{` in text positions whose content
+// starts with one of these characters (from processAction):
+//   '/' → {/* comment */}
+//   '(' → {(cond) ? ...}, {((items) as any[])...map(...)}
+//   'p' → {props.field as any}
+//   'i' → {item as any} / {item.field as any}
+//   't' → {true}
+//   'f' → {false}
+//   '.' → {...spread} (rare)
+// Any `{` followed by anything else in text content is a raw HTML brace and
+// must be escaped.
 function escapeBareBracesInContent(body) {
+  // Characters that start an intentional JSX expression emitted by processAction
+  const SAFE_AFTER_BRACE = new Set(['/', '(', 'p', 'i', 't', 'f', '.'])
+
   let result = ''
   let i = 0
-  let inOpenTag = false   // true while scanning element attributes (between `<name` and `>`)
-  let exprDepth = 0       // depth inside JSX {…} expressions
+  let inOpenTag = false  // true while inside `<tagname ... >` (attribute zone)
+  let exprDepth = 0      // nesting depth inside JSX {…} expressions
 
   while (i < body.length) {
     const c = body[i]
 
     if (inOpenTag) {
-      // Inside an opening tag — look for `>` that closes it (expression-aware)
+      // Attribute zone — pass through; track { } depth to find the closing >
       if (c === '{') { exprDepth++; result += c; i++; continue }
-      if (c === '}') { exprDepth--; result += c; i++; continue }
+      if (c === '}') { if (exprDepth > 0) exprDepth--; result += c; i++; continue }
       if (exprDepth === 0 && c === '>') { inOpenTag = false; result += c; i++; continue }
       result += c; i++; continue
     }
 
-    // Text / content position
+    // Content / text zone
     if (exprDepth > 0) {
-      // Inside a JSX expression — pass through as-is
+      // Inside an intentional JSX expression — pass everything through
       if (c === '{') { exprDepth++; result += c; i++; continue }
-      if (c === '}') {
-        exprDepth--
-        result += c; i++; continue
-      }
+      if (c === '}') { exprDepth--; result += c; i++; continue }
       result += c; i++; continue
     }
 
     // Outermost text content
     if (c === '<') {
-      // Check if this starts an open tag (not a closing tag or fragment)
-      // Don't enter inOpenTag for `</ ` or `<>` or `</>`
       const next = body[i + 1]
+      // Only enter attribute zone for opening tags (not </ or <> or <!)
       if (next !== '/' && next !== '>' && next !== '!') inOpenTag = true
       result += c; i++; continue
     }
+
     if (c === '{') {
-      // Bare `{` in text content — could be a JSX expression starter (fine) or
-      // a literal from the template. We only escape it if the next non-space
-      // char is NOT a valid JSX expression opener (/, *, letter, digit, `).
-      // Simple heuristic: if the char immediately after `{` is a space or
-      // newline and there's no matching `}` on the same "level", escape it.
-      // Easier heuristic: always treat `{` in text as JSX expression start
-      // (they are!). So we just track depth and let them through.
-      exprDepth++; result += c; i++; continue
-    }
-    if (c === '}') {
-      if (exprDepth > 0) {
-        exprDepth--; result += c; i++; continue
+      const next = body[i + 1] ?? ''
+      if (SAFE_AFTER_BRACE.has(next)) {
+        // Intentional JSX expression — let it through and track depth
+        exprDepth++; result += c; i++; continue
       }
-      // Unmatched `}` in text content — escape it
+      // Raw text brace — escape it
+      result += "{'{'}"
+      i++; continue
+    }
+
+    if (c === '}' && exprDepth === 0) {
+      // Unmatched closing brace in text content — escape it
       result += "{'}'}"; i++; continue
     }
+
     result += c; i++
   }
   return result
 }
 
 function fixConditionalAttrs(body) {
-  const PATTERNS = [
+  const ONE_BRANCH_PATTERNS = [
     { open: ' ? (<>', close: '</>) : null}' },
     { open: ' && (<>', close: '</>) }'     },
   ]
+  // Two-branch ternary: {(cond) ? (<>thenAttrs</>) : (<>elseAttrs</>)}
+  const TWO_BRANCH_OPEN  = ' ? (<>'
+  const TWO_BRANCH_MID   = '</>) : (<>'
+  const TWO_BRANCH_CLOSE = '</>)}'
+
   let result = '', i = 0
   while (i < body.length) {
     const idx = body.indexOf('{(', i)
@@ -817,11 +981,31 @@ function fixConditionalAttrs(body) {
       j++
     }
 
-    // Detect which pattern follows: ' ? (<>' or ' && (<>'
-    const pat = PATTERNS.find(p => body.slice(j + 1, j + 1 + p.open.length) === p.open)
-    if (!pat) {
-      result += body[idx]; i = idx + 1; continue
+    // --- Try two-branch ternary first (so it takes precedence over one-branch) ---
+    if (body.slice(j + 1, j + 1 + TWO_BRANCH_OPEN.length) === TWO_BRANCH_OPEN) {
+      const thenEnd = body.indexOf(TWO_BRANCH_MID, j + 1 + TWO_BRANCH_OPEN.length)
+      if (thenEnd !== -1) {
+        const elseEnd = body.indexOf(TWO_BRANCH_CLOSE, thenEnd + TWO_BRANCH_MID.length)
+        if (elseEnd !== -1) {
+          const thenContent = body.slice(j + 1 + TWO_BRANCH_OPEN.length, thenEnd).trim()
+          const elseContent = body.slice(thenEnd + TWO_BRANCH_MID.length, elseEnd).trim()
+          const thenAttrs = parseHtmlAttrs(thenContent)
+          const elseAttrs = parseHtmlAttrs(elseContent)
+          if (thenAttrs && elseAttrs) {
+            const cond = body.slice(idx + 2, j)
+            result += conditionalAttrSpread2(cond, thenAttrs, elseAttrs)
+            i = elseEnd + TWO_BRANCH_CLOSE.length
+            continue
+          }
+        }
+      }
     }
+
+    // --- Try one-branch patterns ---
+    const pat = ONE_BRANCH_PATTERNS.find(
+      p => body.slice(j + 1, j + 1 + p.open.length) === p.open
+    )
+    if (!pat) { result += body[idx]; i = idx + 1; continue }
 
     const cond    = body.slice(idx + 2, j)
     const fragEnd = findMatchingFragClose(body, j + 1, pat.open, pat.close)
@@ -866,20 +1050,27 @@ function findMatchingFragClose(body, start, FRAG_OPEN, FRAG_CLOSE) {
 // Parse HTML attribute list from JSX body text.
 // Returns [{name, jsVal}] if content is entirely valid HTML attrs, or null otherwise.
 // Supports:  boolean "open"  |  string attr="val"  |  JSX expr attr={expr}
+// Multi-line attribute lists (separated by \n with optional whitespace) are allowed.
 function parseHtmlAttrs(s) {
-  if (!s || s.includes('<') || s.includes('\n')) return null
+  if (!s || s.includes('<')) return null
   const attrs = []
   let i = 0
   while (i < s.length) {
-    while (i < s.length && (s[i] === ' ' || s[i] === '\t')) i++
+    while (i < s.length && (s[i] === ' ' || s[i] === '\t' || s[i] === '\n' || s[i] === '\r')) i++
     if (i >= s.length) break
+    // Skip JSX comments {/* ... */}
+    if (s[i] === '{' && s.slice(i, i + 3) === '{/*') {
+      const end = s.indexOf('*/}', i + 3)
+      if (end === -1) return null
+      i = end + 3; continue
+    }
     if (!/[a-zA-Z]/.test(s[i])) return null  // unexpected character
     // Read attribute name (allow hyphen and colon for data-* and aria-*)
     let name = ''
     while (i < s.length && /[\w:-]/.test(s[i])) { name += s[i++] }
     if (!name) return null
     // Determine value
-    if (i >= s.length || s[i] === ' ' || s[i] === '\t') {
+    if (i >= s.length || s[i] === ' ' || s[i] === '\t' || s[i] === '\n' || s[i] === '\r') {
       attrs.push({ name, jsVal: 'true' })
     } else if (s[i] === '=') {
       i++  // skip '='
@@ -917,6 +1108,15 @@ function conditionalAttrSpread(cond, attrs) {
   return `{...(${cond} ? {${obj}} : {})}`
 }
 
+// Builds a JSX spread expression for a two-branch ternary conditional attribute.
+// e.g. cond, thenAttrs=[{name:"className",jsVal:'"field"'},{...}], elseAttrs=[...]
+//      → {...(cond ? {"className": "field", ...} : {"className": "other", ...})}
+function conditionalAttrSpread2(cond, thenAttrs, elseAttrs) {
+  const thenObj = thenAttrs.map(({ name, jsVal }) => `"${name}": ${jsVal}`).join(', ')
+  const elseObj = elseAttrs.map(({ name, jsVal }) => `"${name}": ${jsVal}`).join(', ')
+  return `{...(${cond} ? {${thenObj}} : {${elseObj}})}`
+}
+
 // Extracts a JS expression from a JSX attribute value token.
 // "string"  → "string"     (JS string literal, kept as-is)
 // {expr}    → expr         (JSX expression, outer braces stripped)
@@ -930,9 +1130,11 @@ function extractJsExpr(raw) {
 
 
 function toPascalCase(str) {
-  return str
+  const name = str
     .replace(/[-_](.)/g, (_, c) => c.toUpperCase())
     .replace(/^(.)/, c => c.toUpperCase())
+  // Identifiers must not start with a digit
+  return /^\d/.test(name) ? `Page${name}` : name
 }
 
 function lcFirst(str) {

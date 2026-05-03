@@ -50,15 +50,15 @@ export default function CommitsList(props: Record<string, unknown>) {
 							<span className={`commit-summary ${(props.parentCount > 1) ? ` grey text` : ""}`} title={String(props.summary ?? "")}>{/* TODO: {{ctx.RenderUtils.RenderCommitMessageLinkSubject .Message $commitLink $.Repository}} */}</span>
 						</>)}
 						</span>
-						{("IsMultilineCommitMessage .Message") ? (<>
+						{((true /* TODO: IsMultilineCommitMessage .Message */)) ? (<>
 						<button className="ui button ellipsis-button" aria-expanded="false" data-global-click="onRepoEllipsisButtonClick">...</button>
 						</>) : null}
 						{/* template: repo/commit_statuses */}
-						{("IsMultilineCommitMessage .Message") ? (<>
+						{((true /* TODO: IsMultilineCommitMessage .Message */)) ? (<>
 						<pre className="commit-body tw-hidden">{/* TODO: {{ctx.RenderUtils.RenderCommitBody .Message $.Repository}} */}</pre>
 						</>) : null}
 						{(props.commitsTagsMap) ? (<>
-							{(((index $.CommitsTagsMap .ID.String)) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+							{((props.commitsTagsMap?.[item.iD?.string]) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
 								{/* template: repo/tag/name */}
 							</React.Fragment>))}
 						</>) : null}

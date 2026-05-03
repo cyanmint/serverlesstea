@@ -24,7 +24,7 @@ export default function Issuelist(props: Record<string, unknown>) {
 					<div className="item-title">
 						<a className="tw-no-underline issue-title" href={`${(props.link) ? `${String(props.link ?? "")}` : `${String(props.link ?? "")}/${String(props.index ?? "")}`}`}>{item.title?.("|", "ctx.RenderUtils.RenderIssueSimpleTitle") as any}</a>
 						{(item.isPull) ? (<>
-							{("index $.CommitStatuses .PullRequest.ID") ? (<>
+							{((true /* TODO: index $.CommitStatuses .PullRequest.ID */)) ? (<>
 								{/* template: repo/commit_statuses */}
 							</>) : null}
 						</>) : null}
@@ -77,7 +77,7 @@ export default function Issuelist(props: Record<string, unknown>) {
 						</div>
 					</>) : null}
 					{((item.milestone && props.listType !== "milestone")) ? (<>
-						<a className="milestone flex-text-inline tw-max-w-[300px]" {(props.repoLink) ? (<>href={`${String(props.repoLink ?? "")}/milestone/${String(props.milestone?.iD ?? "")}`}</>) : (<>href={`${String(props.repo?.link ?? "")}/milestone/${String(props.milestone?.iD ?? "")}`}</>)}>
+						<a className="milestone flex-text-inline tw-max-w-[300px]" {...(props.repoLink ? {"href": `${String(props.repoLink ?? "")}/milestone/${String(props.milestone?.iD ?? "")}`} : {"href": `${String(props.repo?.link ?? "")}/milestone/${String(props.milestone?.iD ?? "")}`})}>
 							<span className="svg-icon" aria-label="octicon-milestone"></span>
 							<span className="gt-ellipsis">{item.milestone?.name as any}</span>
 						</a>
@@ -89,7 +89,7 @@ export default function Issuelist(props: Record<string, unknown>) {
 						</a>
 					</React.Fragment>))}
 					{(item.ref) ? (<>{/* TODO: RemoveIssueRef: see "repo/issue/branch_selector_field.tmpl" */}
-						<a className="ref flex-text-inline tw-max-w-[300px]" {(props.repoLink) ? (<>href={String("" ?? "")}</>) : (<>href={`${String(props.repo?.link ?? "")}`}</>)}>
+						<a className="ref flex-text-inline tw-max-w-[300px]" {...(props.repoLink ? {"href": String("" ?? "")} : {"href": `${String(props.repo?.link ?? "")}`})}>
 							<span className="svg-icon" aria-label="octicon-git-branch"></span>
 							<span className="gt-ellipsis">{/* TODO: {{index $.IssueRefEndNames .ID}} */}</span>
 						</a>

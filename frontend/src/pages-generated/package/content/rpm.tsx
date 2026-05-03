@@ -10,7 +10,7 @@ export default function Rpm(props: Record<string, unknown>) {
 		<div className="ui form">
 			<div className="field">
 				<label><span className="svg-icon" aria-label="octicon-terminal"></span> {i18n("packages.rpm.registry")}</label>
-				<div className="markup"><pre className="code-block"><code>{("len .Groups" > 1) ? (<>
+				<div className="markup"><pre className="code-block"><code>{((true /* TODO: len .Groups */) > 1) ? (<>
 # {i18n("packages.rpm.repository.multiple_groups")}
 
 </>) : null}

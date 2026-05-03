@@ -6,11 +6,7 @@ export default function ViewList(props: Record<string, unknown>) {
   return (<>
 {/* use grid layout, still use the old ID because there are many other CSS styles depending on this ID */}
 <div id="repo-files-table"
-	{(props.hasFilesWithoutLatestCommit) ? (<>
-		data-fetch-url={String(props.lastCommitLoaderURL ?? "")}
-		data-fetch-trigger="load" data-fetch-sync="$morph"
-		data-fetch-indicator=".repo-file-cell.notready.message"
-	</>) : null}
+	{...(props.hasFilesWithoutLatestCommit ? {"data-fetch-url": String(props.lastCommitLoaderURL ?? ""), "data-fetch-trigger": "load", "data-fetch-sync": "$morph", "data-fetch-indicator": ".repo-file-cell.notready.message"} : {})}
 >
 	<div className="repo-file-line repo-file-last-commit">
 		{/* template: repo/latest_commit */}

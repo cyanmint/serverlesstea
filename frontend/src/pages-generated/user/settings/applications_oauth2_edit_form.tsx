@@ -27,7 +27,7 @@ export default function ApplicationsOauth2EditForm(props: Record<string, unknown
 		</div>
 	</>)}
 	<div className="item">
-		{/* TODO add regenerate secret functionality * / */}
+		{'{'}/* TODO add regenerate secret functionality * / */{'}'}
 		<form className="ui form ignore-dirty" action={`${String(props.formActionPath ?? "")}/regenerate_secret`} method="post" onSubmit={(props.onSubmit as any) ?? ((e: React.FormEvent) => e.preventDefault())}>
 			{i18n("settings.oauth2_regenerate_secret_hint")}
 			<button className="ui mini button tw-ml-2" type="submit">{i18n("settings.oauth2_regenerate_secret")}</button>

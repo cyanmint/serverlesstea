@@ -4,7 +4,7 @@ import { i18n } from '../../lib/i18n'
 
 export default function CommitStatus(props: Record<string, unknown>) {
   return (<>
-{/* make sure this matches the color logic in web_src/js/components/DashboardRepoList.vue */}
+{'{'}/* make sure this matches the color logic in web_src/js/components/DashboardRepoList.vue */{'}'}
 {(props.state === "pending") ? (<>
 	<span className="svg-icon" aria-label="octicon-dot-fill"></span>
 </>) : null}

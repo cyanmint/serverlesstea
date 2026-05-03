@@ -4,7 +4,7 @@ import { i18n } from '../../../../lib/i18n'
 
 export default function FilterList(props: Record<string, unknown>) {
   return (<>
-{/* Sort */}
+{'{'}/* Sort */{'}'}
 <div className="item ui small dropdown jump">
 	<span className="text">
 		{i18n("repo.issues.filter_sort")}

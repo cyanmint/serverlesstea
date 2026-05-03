@@ -24,7 +24,7 @@ export default function LatestCommit(props: Record<string, unknown>) {
 
 	{/* $commitLink */}
 	<span className="grey commit-summary" title={String(props.latestCommit?.summary ?? "")}><span className="message-wrapper">{/* TODO: {{ctx.RenderUtils.RenderCommitMessageLinkSubject .LatestCommit.Message $commitLink $.Repository}} */}</span>
-		{("IsMultilineCommitMessage .LatestCommit.Message") ? (<>
+		{((true /* TODO: IsMultilineCommitMessage .LatestCommit.Message */)) ? (<>
 			<button className="ui button ellipsis-button" aria-expanded="false" data-global-click="onRepoEllipsisButtonClick">...</button>
 			<pre className="commit-body tw-hidden">{/* TODO: {{ctx.RenderUtils.RenderCommitBody .LatestCommit.Message $.Repository}} */}</pre>
 		</>) : null}
