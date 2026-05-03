@@ -1,0 +1,27 @@
+import React from 'react'
+import { i18n } from '../../../lib/i18n'
+
+export default function RubygemsDependencies(props: Record<string, unknown>) {
+  return (<>
+{(props.dependencies) ? (<>
+<p><strong>{props.title as any}</strong></p>
+<table className="ui single line very basic table">
+	<thead>
+		<tr>
+			<th className="eleven wide">{i18n("packages.dependency.id")}</th>
+			<th className="five wide">{i18n("packages.dependency.version")}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{((props.dependencies) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+		<tr>
+			<td>{item.name as any}</td>
+			<td>{((item.version) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>{("$i" > 0) ? (<>, </>) : null}{/* TODO: {{$v.Restriction}} */}{/* TODO: {{$v.Version}} */}</React.Fragment>))}</td>
+		</tr>
+		</React.Fragment>))}
+	</tbody>
+</table>
+</>) : null}
+
+  </>)
+}

@@ -1,0 +1,26 @@
+import React from 'react'
+import { i18n } from '../../../lib/i18n'
+
+export default function TableMembers(props: Record<string, unknown>) {
+  return (<>
+<table className="ui table">
+	<thead>
+		<tr>
+			<th>{i18n("org.members.member")}</th>
+			<th>{i18n("org.worktime.time")}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{((props.worktimeSumResult) as any[] ?? []).map((item: any, _i: number) => (<React.Fragment key={_i}>
+		<tr>
+			<td><span className="svg-icon" aria-label="octicon-person"></span> <a href={`/`}>{item.userName as any}</a></td>
+			<td><span className="svg-icon" aria-label="octicon-clock"></span> {item.sumTime | Sec2Hour as any}</td>
+		</tr>
+		{/* else */}
+			{/* template: org/worktime/empty_placeholder */}
+		</React.Fragment>))}
+	</tbody>
+</table>
+
+  </>)
+}
