@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { listOrgTeams } from '../../api/client'
+import { listOrgTeams } from '../../../api/client'
 
 interface Team { id: string; name: string; permission: string }
 

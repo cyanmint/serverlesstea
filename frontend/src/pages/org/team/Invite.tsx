@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { addTeamMember } from '../../api/client'
+import { addTeamMember } from '../../../api/client'
 
 export default function OrgTeamInvite() {
   const { org, teamname } = useParams<{ org: string; teamname: string }>()

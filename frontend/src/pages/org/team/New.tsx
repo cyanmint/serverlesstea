@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { createOrgTeam } from '../../api/client'
+import { createOrgTeam } from '../../../api/client'
 
 export default function OrgTeamNew() {
   const { org } = useParams<{ org: string }>()

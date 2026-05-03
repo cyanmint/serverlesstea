@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { listRepos } from '../../api/client'
+import { listRepos } from '../../../api/client'
 
 interface Repo { id: string; name: string; owner_username: string; is_private: number }
 

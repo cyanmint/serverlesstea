@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { getOrgTeam, addTeamMember } from '../../api/client'
+import { getOrgTeam, addTeamMember } from '../../../api/client'
 
 interface Member { id: string; username: string; role?: string }
 interface TeamDetail { id: string; name: string; permission: string; members?: Member[] }
