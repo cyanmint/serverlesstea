@@ -24,6 +24,8 @@ import MilestonesPage from './pages/MilestonesPage'
 import WikiPage from './pages/WikiPage'
 import ExploreUsers from './pages/ExploreUsers'
 import ExploreCode from './pages/ExploreCode'
+import TemplatesIndex from './pages/TemplatesIndex'
+import TemplateView from './pages/TemplateView'
 
 // ── new template-derived pages ───────────────────────────────────────────────
 import Install from './pages/Install'
@@ -448,6 +450,10 @@ export default function App() {
 
           {/* ── webhook ─────────────────────────────────────────────────── */}
           <Route path="/-/webhooks/new" element={<WebhookNew />} />
+
+          {/* ── template previews ────────────────────────────────────────── */}
+          <Route path="/_templates" element={<TemplatesIndex />} />
+          <Route path="/_templates/*" element={<TemplateView />} />
 
           {/* ── user profile ────────────────────────────────────────────── */}
           <Route path="/:username" element={<UserProfile />} />

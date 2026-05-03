@@ -2,64 +2,497 @@
   "version": 1,
   "endpoints": [
     {
-      "name": "register",
       "method": "POST",
-      "path": "/api/auth/register",
-      "requiredBy": "frontend/src/api/client.ts",
-      "sample": {
-        "body": {
-          "username": "alice",
-          "email": "alice@example.com",
-          "password": "password123"
-        }
-      }
+      "path": "/api/auth/register"
     },
     {
-      "name": "login",
       "method": "POST",
-      "path": "/api/auth/login",
-      "requiredBy": "frontend/src/api/client.ts",
-      "sample": {
-        "body": {
-          "email": "alice@example.com",
-          "password": "password123"
-        }
-      }
+      "path": "/api/auth/login"
     },
     {
-      "name": "refreshToken",
       "method": "POST",
-      "path": "/api/auth/refresh",
-      "requiredBy": "frontend/src/api/client.ts",
-      "sample": {
-        "body": {
-          "refreshToken": "token-placeholder"
-        }
-      }
+      "path": "/api/auth/refresh"
     },
     {
-      "name": "listRepos",
+      "method": "POST",
+      "path": "/api/auth/change-password"
+    },
+    {
       "method": "GET",
-      "path": "/api/repos",
+      "path": "/api/users"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/:username"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/users/:username"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/tree/:ref"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/blob/:ref/:path{.*}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/commits/:ref"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/diff/:sha"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/repos/:owner/:repo"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/collaborators"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/repos/:owner/:repo/collaborators/:username"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo/collaborators/:username"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/issues"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos/:owner/:repo/issues"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/issues/:number"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/repos/:owner/:repo/issues/:number"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos/:owner/:repo/issues/:number/comments"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/repos/:owner/:repo/issues/:number/comments/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo/issues/:number/comments/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/labels"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos/:owner/:repo/labels"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/repos/:owner/:repo/labels/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo/labels/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/milestones"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos/:owner/:repo/milestones"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/milestones/:id"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/repos/:owner/:repo/milestones/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo/milestones/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/releases"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos/:owner/:repo/releases"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/releases/:id"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/repos/:owner/:repo/releases/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo/releases/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/wiki"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos/:owner/:repo/wiki"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/wiki/:title"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo/wiki/:title"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/branches"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/tags"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/users"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/admin/users/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/users"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/admin/users/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/repos"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/orgs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/user/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/internal/check-access"
+    },
+    {
+      "method": "POST",
+      "path": "/api/orgs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/orgs/:orgname"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/orgs/:orgname"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/orgs/:orgname"
+    },
+    {
+      "method": "GET",
+      "path": "/api/orgs/:orgname/members"
+    },
+    {
+      "method": "POST",
+      "path": "/api/orgs/:orgname/members"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/orgs/:orgname/members/:username"
+    },
+    {
+      "method": "GET",
+      "path": "/api/orgs/:orgname/teams"
+    },
+    {
+      "method": "POST",
+      "path": "/api/orgs/:orgname/teams"
+    },
+    {
+      "method": "GET",
+      "path": "/api/orgs/:orgname/teams/:teamname"
+    },
+    {
+      "method": "POST",
+      "path": "/api/orgs/:orgname/teams/:teamname/members"
+    },
+    {
+      "method": "GET",
+      "path": "/api/orgs/user/memberships"
+    },
+    {
+      "method": "GET",
+      "path": "/api/orgs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/user/keys"
+    },
+    {
+      "method": "POST",
+      "path": "/api/user/keys"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/user/keys/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/notifications"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/notifications/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/dashboard/issues"
+    },
+    {
+      "method": "GET",
+      "path": "/api/dashboard/milestones"
+    },
+    {
+      "method": "ALL",
+      "path": "/git/*"
+    }
+  ],
+  "frontendRequiredEndpoints": [
+    {
+      "name": "addCollaborator",
+      "method": "PUT",
+      "path": "/api/repos/{owner}/{repo}/collaborators/{username}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "addIssueComment",
+      "method": "POST",
+      "path": "/api/repos/{owner}/{repo}/issues/{number}/comments",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "addOrgMember",
+      "method": "POST",
+      "path": "/api/orgs/{orgname}/members",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "addSshKey",
+      "method": "POST",
+      "path": "/api/user/keys",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "addTeamMember",
+      "method": "POST",
+      "path": "/api/orgs/{orgname}/teams/{teamname}/members",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "adminConfig",
+      "method": "GET",
+      "path": "/api/admin/config",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "adminCreateUser",
+      "method": "POST",
+      "path": "/api/admin/users",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "adminDeleteUser",
+      "method": "DELETE",
+      "path": "/api/admin/users/{id}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "adminGetStats",
+      "method": "GET",
+      "path": "/api/admin/stats",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "adminGetUser",
+      "method": "GET",
+      "path": "/api/admin/user/{id}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "adminListOrgs",
+      "method": "GET",
+      "path": "/api/admin/orgs",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "adminListRepos",
+      "method": "GET",
+      "path": "/api/admin/repos",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "adminListUsers",
+      "method": "GET",
+      "path": "/api/admin/users",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "adminUpdateUser",
+      "method": "PUT",
+      "path": "/api/admin/users/{id}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "changePassword",
+      "method": "POST",
+      "path": "/api/auth/change-password",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "createFile",
+      "method": "POST",
+      "path": "/api/repos/{owner}/{repo}/contents/{path}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "createIssue",
+      "method": "POST",
+      "path": "/api/repos/{owner}/{repo}/issues",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "createLabel",
+      "method": "POST",
+      "path": "/api/repos/{owner}/{repo}/labels",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "createMilestone",
+      "method": "POST",
+      "path": "/api/repos/{owner}/{repo}/milestones",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "createOrg",
+      "method": "POST",
+      "path": "/api/orgs",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "createOrgTeam",
+      "method": "POST",
+      "path": "/api/orgs/{orgname}/teams",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "createRelease",
+      "method": "POST",
+      "path": "/api/repos/{owner}/{repo}/releases",
       "requiredBy": "frontend/src/api/client.ts"
     },
     {
       "name": "createRepo",
       "method": "POST",
       "path": "/api/repos",
-      "requiredBy": "frontend/src/api/client.ts",
-      "sample": {
-        "body": {
-          "name": "demo",
-          "description": "demo repository",
-          "is_private": false
-        }
-      }
+      "requiredBy": "frontend/src/api/client.ts"
     },
     {
-      "name": "getRepo",
-      "method": "GET",
-      "path": "/api/repos/{owner}/{repo}",
+      "name": "createWikiPage",
+      "method": "POST",
+      "path": "/api/repos/{owner}/{repo}/wiki",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "deleteFile",
+      "method": "DELETE",
+      "path": "/api/repos/{owner}/{repo}/contents/{path}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "deleteIssueComment",
+      "method": "DELETE",
+      "path": "/api/repos/{owner}/{repo}/issues/{number}/comments/{commentId}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "deleteLabel",
+      "method": "DELETE",
+      "path": "/api/repos/{owner}/{repo}/labels/{id}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "deleteMilestone",
+      "method": "DELETE",
+      "path": "/api/repos/{owner}/{repo}/milestones/{id}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "deleteOrg",
+      "method": "DELETE",
+      "path": "/api/orgs/{orgname}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "deleteRelease",
+      "method": "DELETE",
+      "path": "/api/repos/{owner}/{repo}/releases/{id}",
       "requiredBy": "frontend/src/api/client.ts"
     },
     {
@@ -69,9 +502,21 @@
       "requiredBy": "frontend/src/api/client.ts"
     },
     {
-      "name": "getRepoTree",
-      "method": "GET",
-      "path": "/api/repos/{owner}/{repo}/tree/{ref}",
+      "name": "deleteSshKey",
+      "method": "DELETE",
+      "path": "/api/user/keys/{id}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "deleteWikiPage",
+      "method": "DELETE",
+      "path": "/api/repos/{owner}/{repo}/wiki/{title}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "editIssueComment",
+      "method": "PATCH",
+      "path": "/api/repos/{owner}/{repo}/issues/{number}/comments/{commentId}",
       "requiredBy": "frontend/src/api/client.ts"
     },
     {
@@ -87,9 +532,33 @@
       "requiredBy": "frontend/src/api/client.ts"
     },
     {
+      "name": "getDashboardIssues",
+      "method": "GET",
+      "path": "/api/dashboard/issues",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getDashboardMilestones",
+      "method": "GET",
+      "path": "/api/dashboard/milestones",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
       "name": "getDiff",
       "method": "GET",
       "path": "/api/repos/{owner}/{repo}/diff/{sha}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getFileContents",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/blob/{ref}/{path}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getIssue",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/issues/{number}",
       "requiredBy": "frontend/src/api/client.ts"
     },
     {
@@ -99,101 +568,233 @@
       "requiredBy": "frontend/src/api/client.ts"
     },
     {
+      "name": "getMilestone",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/milestones/{id}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getNotifications",
+      "method": "GET",
+      "path": "/api/notifications",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getOrg",
+      "method": "GET",
+      "path": "/api/orgs/{orgname}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getOrgTeam",
+      "method": "GET",
+      "path": "/api/orgs/{orgname}/teams/{teamname}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getRelease",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/releases/{id}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getRepo",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "getRepoTree",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/tree/{ref}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
       "name": "getUser",
       "method": "GET",
       "path": "/api/users/{username}",
       "requiredBy": "frontend/src/api/client.ts"
     },
     {
-      "name": "updateUser",
-      "method": "PUT",
-      "path": "/api/users/{username}",
-      "requiredBy": "frontend/src/api/client.ts",
-      "sample": {
-        "body": {
-          "display_name": "Alice"
-        }
-      }
-    },
-    {
-      "name": "adminListUsers",
+      "name": "getWikiPage",
       "method": "GET",
-      "path": "/api/admin/users",
+      "path": "/api/repos/{owner}/{repo}/wiki/{title}",
       "requiredBy": "frontend/src/api/client.ts"
     },
     {
-      "name": "adminUpdateUser",
+      "name": "listBranches",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/branches",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "listCollaborators",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/collaborators",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "listIssues",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/issues",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "listLabels",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/labels",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "listMilestones",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/milestones",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "listMyOrgs",
+      "method": "GET",
+      "path": "/api/orgs/user/memberships",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "listOrgMembers",
+      "method": "GET",
+      "path": "/api/orgs/{orgname}/members",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "listOrgTeams",
+      "method": "GET",
+      "path": "/api/orgs/{orgname}/teams",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "listReleases",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/releases",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "listRepos",
+      "method": "GET",
+      "path": "/api/repos",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "listSshKeys",
+      "method": "GET",
+      "path": "/api/user/keys",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "listTags",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/tags",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "listUsers",
+      "method": "GET",
+      "path": "/api/users",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "listWikiPages",
+      "method": "GET",
+      "path": "/api/repos/{owner}/{repo}/wiki",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/api/auth/login",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "markNotificationRead",
+      "method": "PATCH",
+      "path": "/api/notifications/{id}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "register",
+      "method": "POST",
+      "path": "/api/auth/register",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "removeCollaborator",
+      "method": "DELETE",
+      "path": "/api/repos/{owner}/{repo}/collaborators/{username}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "removeOrgMember",
+      "method": "DELETE",
+      "path": "/api/orgs/{orgname}/members/{username}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "searchOrgs",
+      "method": "GET",
+      "path": "/api/orgs",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "searchUsers",
+      "method": "GET",
+      "path": "/api/users",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "updateFile",
       "method": "PUT",
-      "path": "/api/admin/users/{id}",
-      "requiredBy": "frontend/src/api/client.ts",
-      "sample": {
-        "body": {
-          "display_name": "Admin",
-          "is_admin": true
-        }
-      }
+      "path": "/api/repos/{owner}/{repo}/contents/{path}",
+      "requiredBy": "frontend/src/api/client.ts"
     },
     {
-      "name": "gitInfoRefsUploadPack",
-      "method": "GET",
-      "path": "/git/{owner}/{repo}.git/info/refs?service=git-upload-pack",
-      "requiredBy": "git-client"
+      "name": "updateIssue",
+      "method": "PATCH",
+      "path": "/api/repos/{owner}/{repo}/issues/{number}",
+      "requiredBy": "frontend/src/api/client.ts"
     },
     {
-      "name": "gitInfoRefsReceivePack",
-      "method": "GET",
-      "path": "/git/{owner}/{repo}.git/info/refs?service=git-receive-pack",
-      "requiredBy": "git-client"
+      "name": "updateLabel",
+      "method": "PATCH",
+      "path": "/api/repos/{owner}/{repo}/labels/{id}",
+      "requiredBy": "frontend/src/api/client.ts"
     },
     {
-      "name": "gitUploadPack",
-      "method": "POST",
-      "path": "/git/{owner}/{repo}.git/git-upload-pack",
-      "requiredBy": "git-client"
+      "name": "updateMilestone",
+      "method": "PATCH",
+      "path": "/api/repos/{owner}/{repo}/milestones/{id}",
+      "requiredBy": "frontend/src/api/client.ts"
     },
     {
-      "name": "gitReceivePack",
-      "method": "POST",
-      "path": "/git/{owner}/{repo}.git/git-receive-pack",
-      "requiredBy": "git-client"
+      "name": "updateOrg",
+      "method": "PATCH",
+      "path": "/api/orgs/{orgname}",
+      "requiredBy": "frontend/src/api/client.ts"
     },
-    { "name": "listIssues", "method": "GET", "path": "/api/repos/{owner}/{repo}/issues", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "createIssue", "method": "POST", "path": "/api/repos/{owner}/{repo}/issues", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "listLabels", "method": "GET", "path": "/api/repos/{owner}/{repo}/labels", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "createLabel", "method": "POST", "path": "/api/repos/{owner}/{repo}/labels", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "updateLabel", "method": "PATCH", "path": "/api/repos/{owner}/{repo}/labels/{id}", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "deleteLabel", "method": "DELETE", "path": "/api/repos/{owner}/{repo}/labels/{id}", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "listMilestones", "method": "GET", "path": "/api/repos/{owner}/{repo}/milestones", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "createMilestone", "method": "POST", "path": "/api/repos/{owner}/{repo}/milestones", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "getMilestone", "method": "GET", "path": "/api/repos/{owner}/{repo}/milestones/{id}", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "updateMilestone", "method": "PATCH", "path": "/api/repos/{owner}/{repo}/milestones/{id}", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "deleteMilestone", "method": "DELETE", "path": "/api/repos/{owner}/{repo}/milestones/{id}", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "listReleases", "method": "GET", "path": "/api/repos/{owner}/{repo}/releases", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "createRelease", "method": "POST", "path": "/api/repos/{owner}/{repo}/releases", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "getRelease", "method": "GET", "path": "/api/repos/{owner}/{repo}/releases/{id}", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "updateRelease", "method": "PATCH", "path": "/api/repos/{owner}/{repo}/releases/{id}", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "deleteRelease", "method": "DELETE", "path": "/api/repos/{owner}/{repo}/releases/{id}", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "listWikiPages", "method": "GET", "path": "/api/repos/{owner}/{repo}/wiki", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "createWikiPage", "method": "POST", "path": "/api/repos/{owner}/{repo}/wiki", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "listBranches", "method": "GET", "path": "/api/repos/{owner}/{repo}/branches", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "listTags", "method": "GET", "path": "/api/repos/{owner}/{repo}/tags", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "updateRepo", "method": "PATCH", "path": "/api/repos/{owner}/{repo}", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "listCollaborators", "method": "GET", "path": "/api/repos/{owner}/{repo}/collaborators", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "addCollaborator", "method": "PUT", "path": "/api/repos/{owner}/{repo}/collaborators/{username}", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "removeCollaborator", "method": "DELETE", "path": "/api/repos/{owner}/{repo}/collaborators/{username}", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "createOrg", "method": "POST", "path": "/api/orgs", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "listSshKeys", "method": "GET", "path": "/api/user/keys", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "addSshKey", "method": "POST", "path": "/api/user/keys", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "deleteSshKey", "method": "DELETE", "path": "/api/user/keys/{id}", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "changePassword", "method": "POST", "path": "/api/auth/change-password", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "listUsers", "method": "GET", "path": "/api/users", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "getNotifications", "method": "GET", "path": "/api/notifications", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "markNotificationRead", "method": "PATCH", "path": "/api/notifications/{id}", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "getDashboardIssues", "method": "GET", "path": "/api/dashboard/issues", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "getDashboardMilestones", "method": "GET", "path": "/api/dashboard/milestones", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "adminConfig", "method": "GET", "path": "/api/admin/config", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "adminCreateUser", "method": "POST", "path": "/api/admin/users", "requiredBy": "frontend/src/api/client.ts" },
-    { "name": "adminDeleteUser", "method": "DELETE", "path": "/api/admin/users/{id}", "requiredBy": "frontend/src/api/client.ts" }
+    {
+      "name": "updateRelease",
+      "method": "PATCH",
+      "path": "/api/repos/{owner}/{repo}/releases/{id}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "updateRepo",
+      "method": "PATCH",
+      "path": "/api/repos/{owner}/{repo}",
+      "requiredBy": "frontend/src/api/client.ts"
+    },
+    {
+      "name": "updateUser",
+      "method": "PUT",
+      "path": "/api/users/{username}",
+      "requiredBy": "frontend/src/api/client.ts"
+    }
   ],
   "stubResponseMarkers": [
     "not implemented",
