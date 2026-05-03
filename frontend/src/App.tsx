@@ -1,23 +1,30 @@
 import React, { Suspense } from 'react'
 import { MemoryRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
-const ROUTES: Array<{ path: string; gen: string }> = [
-  { path: '/install', gen: 'install' },
-  { path: '/explore/repos', gen: 'explore/repos' },
-  { path: '/explore/users', gen: 'explore/users' },
-  { path: '/:owner/:repo/commits/:branch', gen: 'repo/commits' },
-  { path: '/:owner/:repo/src/:branch/*', gen: 'repo/view_file' },
-  { path: '/:owner/:repo', gen: 'repo/home' },
-  { path: '/:username', gen: 'user/profile' },
-  { path: '/', gen: 'home' },
-]
+const pageModules = import.meta.glob('./pages-generated/**/*.tsx')
 
-function lazyPage(gen: string) {
-  return React.lazy(() => import(`./pages-generated/${gen}.tsx`))
+function toPageKey(pathname: string): string | null {
+  const clean = pathname.replace(/^\/+|\/+$/g, '')
+  if (!clean) return 'home'
+
+  const parts = clean.split('/')
+  if (clean === 'explore/repos' || clean === 'explore/users' || clean === 'install') return clean
+  if (parts.length === 2) return 'repo/home'
+  if (parts.length >= 4 && parts[2] === 'commits') return 'repo/commits'
+  if (parts.length >= 4 && parts[2] === 'src') return 'repo/view_file'
+  if (parts.length === 1) return 'user/profile'
+
+  return clean
 }
 
-const lazyComponents = Object.fromEntries(ROUTES.map(({ gen }) => [gen, lazyPage(gen)]))
+function lazyPageFromPath(pathname: string) {
+  const key = toPageKey(pathname)
+  if (!key) return null
+  const importer = pageModules[`./pages-generated/${key}.tsx`]
+  if (!importer) return null
+  return React.lazy(importer as () => Promise<{ default: React.ComponentType }>)
+}
 
 const NotFound = () => <div className="tw-p-8">404 – Page not found</div>
 
@@ -53,17 +60,20 @@ function QuerySync() {
   return null
 }
 
+function PathRenderer() {
+  const { pathname } = useLocation()
+  const Comp = useMemo(() => lazyPageFromPath(pathname), [pathname])
+  if (!Comp) return <NotFound />
+  return <Comp />
+}
+
 export default function App() {
   return (
     <MemoryRouter initialEntries={[queryToPath()]}>
       <QuerySync />
       <Suspense fallback={<div className="tw-p-8">Loading…</div>}>
         <Routes>
-          {ROUTES.map(({ path, gen }) => {
-            const Comp = lazyComponents[gen]
-            return <Route key={gen} path={path} element={<Comp />} />
-          })}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<PathRenderer />} />
         </Routes>
       </Suspense>
     </MemoryRouter>
