@@ -2,7 +2,7 @@ name: Frontend Pages Deploy
 
 on:
   push:
-    branches: ["default", "copilot/**"]
+    branches: ["default", "copilot/**", "codex/**"]
     paths:
       - "frontend/**"
       - "package.json"
