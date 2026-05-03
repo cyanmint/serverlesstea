@@ -13,5 +13,17 @@
     "jsx": "react-jsx",
     "strict": true
   },
-  "include": ["src"]
+  "include": [
+    "src/main.tsx",
+    "src/App.tsx",
+    "src/vite-env.d.ts",
+    "src/pages-generated/home.tsx",
+    "src/pages-generated/install.tsx",
+    "src/pages-generated/explore/repos.tsx",
+    "src/pages-generated/explore/users.tsx",
+    "src/pages-generated/repo/commits.tsx",
+    "src/pages-generated/repo/view_file.tsx",
+    "src/pages-generated/repo/home.tsx",
+    "src/pages-generated/user/profile.tsx"
+  ]
 }
