@@ -144,6 +144,7 @@ function convertTemplate(src, relTsx) {
   const i18nPath = '../'.repeat(depth + 1) + 'lib/i18n'
 
   return [
+    `// @ts-nocheck`,
     `import React from 'react'`,
     `import { i18n } from '${i18nPath}'`,
     ``,
