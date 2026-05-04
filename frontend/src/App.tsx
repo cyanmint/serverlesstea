@@ -1,29 +1,44 @@
-import React, { Suspense } from 'react'
 import { MemoryRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useMemo, useRef } from 'react'
+import type { ComponentType } from 'react'
 
-const pageModules = import.meta.glob('./pages-generated/**/*.tsx')
+type PageModule = { default: ComponentType }
+const pageModules = import.meta.glob<PageModule>('./pages-generated/**/*.tsx', { eager: true })
+const moduleKeys = new Set(Object.keys(pageModules).map((key) => key.replace('./pages-generated/', '').replace('.tsx', '')))
 
 function toPageKey(pathname: string): string | null {
   const clean = pathname.replace(/^\/+|\/+$/g, '')
-  if (!clean) return 'home'
+
+  if (!clean) {
+    if (moduleKeys.has('user/dashboard/dashboard')) return 'user/dashboard/dashboard'
+    if (moduleKeys.has('user/dashboard/feeds')) return 'user/dashboard/feeds'
+    return 'user/auth/signin'
+  }
+
+  if (moduleKeys.has(clean)) return clean
+
+  const aliases: Record<string, string> = {
+    login: 'user/auth/signin',
+    signin: 'user/auth/signin',
+    register: 'user/auth/signup',
+    signup: 'user/auth/signup',
+    'user/login': 'user/auth/signin',
+  }
+  if (aliases[clean] && moduleKeys.has(aliases[clean])) return aliases[clean]
 
   const parts = clean.split('/')
-  if (clean === 'explore/repos' || clean === 'explore/users' || clean === 'install') return clean
-  if (parts.length === 2) return 'repo/home'
-  if (parts.length >= 4 && parts[2] === 'commits') return 'repo/commits'
-  if (parts.length >= 4 && parts[2] === 'src') return 'repo/view_file'
-  if (parts.length === 1) return 'user/profile'
+  if (parts.length >= 4 && parts[2] === 'commits' && moduleKeys.has('repo/commits')) return 'repo/commits'
+  if (parts.length >= 4 && parts[2] === 'src' && moduleKeys.has('repo/view_file')) return 'repo/view_file'
+  if (parts.length === 2 && moduleKeys.has('repo/home')) return 'repo/home'
+  if (parts.length === 1 && moduleKeys.has('user/profile')) return 'user/profile'
 
-  return clean
+  return null
 }
 
-function lazyPageFromPath(pathname: string) {
+function pageFromPath(pathname: string): ComponentType | null {
   const key = toPageKey(pathname)
   if (!key) return null
-  const importer = pageModules[`./pages-generated/${key}.tsx`]
-  if (!importer) return null
-  return React.lazy(importer as () => Promise<{ default: React.ComponentType }>)
+  return pageModules[`./pages-generated/${key}.tsx`]?.default ?? null
 }
 
 const NotFound = () => <div className="tw-p-8">404 – Page not found</div>
@@ -62,7 +77,7 @@ function QuerySync() {
 
 function PathRenderer() {
   const { pathname } = useLocation()
-  const Comp = useMemo(() => lazyPageFromPath(pathname), [pathname])
+  const Comp = useMemo(() => pageFromPath(pathname), [pathname])
   if (!Comp) return <NotFound />
   return <Comp />
 }
@@ -71,11 +86,9 @@ export default function App() {
   return (
     <MemoryRouter initialEntries={[queryToPath()]}>
       <QuerySync />
-      <Suspense fallback={<div className="tw-p-8">Loading…</div>}>
-        <Routes>
-          <Route path="*" element={<PathRenderer />} />
-        </Routes>
-      </Suspense>
+      <Routes>
+        <Route path="*" element={<PathRenderer />} />
+      </Routes>
     </MemoryRouter>
   )
 }
