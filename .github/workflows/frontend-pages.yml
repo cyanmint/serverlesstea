@@ -2,7 +2,7 @@ name: Frontend Pages Deploy
 
 on:
   push:
-    branches: ["default", "copilot/**", "codex/**"]
+    branches: ["main", "copilot/**", "codex/**"]
     paths:
       - "frontend/**"
       - "package.json"
@@ -49,7 +49,7 @@ jobs:
 
       - name: Build frontend
         env:
-          VITE_API_URL: ${{ steps.worker-url.outputs.url }}
+          VITE_DEFAULT_API_URL: ${{ steps.worker-url.outputs.url }}
         run: npm run build:frontend
 
       - name: Upload Pages artifact
