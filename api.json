@@ -316,6 +316,639 @@
   ],
   "frontendRequiredEndpoints": [
     {
+      "name": "installCheck",
+      "method": "GET",
+      "path": "/api/v1/settings/api",
+      "requiredBy": "frontend/web_src/js/spa/router/index.ts"
+    },
+    {
+      "name": "getCurrentUser",
+      "method": "GET",
+      "path": "/api/v1/user",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "createToken",
+      "method": "POST",
+      "path": "/api/v1/users/{username}/tokens",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getUser",
+      "method": "GET",
+      "path": "/api/v1/users/{username}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getUserRepos",
+      "method": "GET",
+      "path": "/api/v1/users/{username}/repos",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getUserOrgs",
+      "method": "GET",
+      "path": "/api/v1/users/{username}/orgs",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "searchUsers",
+      "method": "GET",
+      "path": "/api/v1/users/search",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "searchRepos",
+      "method": "GET",
+      "path": "/api/v1/repos/search",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getRepo",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getRepoBranches",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/branches",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getRepoContents",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/contents/{path}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getRepoIssues",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/issues",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getIssue",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/issues/{index}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getIssueComments",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/issues/{index}/comments",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "createIssue",
+      "method": "POST",
+      "path": "/api/v1/repos/{owner}/{repo}/issues",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "createIssueComment",
+      "method": "POST",
+      "path": "/api/v1/repos/{owner}/{repo}/issues/{index}/comments",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getRepoReleases",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/releases",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getRepoRelease",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/releases/{id}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getRepoReleaseByTag",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/releases/tags/{tag}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getLatestRelease",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/releases/latest",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getRepoCommits",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/commits",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getRepoTags",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/tags",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getRepoLabels",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/labels",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getRepoMilestones",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/milestones",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getRepoMilestone",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/milestones/{id}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getRepoActivityFeeds",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/activities/feeds",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "isRepoStarred",
+      "method": "GET",
+      "path": "/api/v1/user/starred/{owner}/{repo}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "starRepo",
+      "method": "PUT",
+      "path": "/api/v1/user/starred/{owner}/{repo}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "unstarRepo",
+      "method": "DELETE",
+      "path": "/api/v1/user/starred/{owner}/{repo}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "createRepo",
+      "method": "POST",
+      "path": "/api/v1/user/repos",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getWikiPage",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/wiki/page/{pageName}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "listWikiPages",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/wiki/pages",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getUserIssues",
+      "method": "GET",
+      "path": "/api/v1/repos/issues/search",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getNotifications",
+      "method": "GET",
+      "path": "/api/v1/notifications",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "markAllNotificationsRead",
+      "method": "PUT",
+      "path": "/api/v1/notifications",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "markNotificationRead",
+      "method": "PATCH",
+      "path": "/api/v1/notifications/threads/{id}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "listOrgs",
+      "method": "GET",
+      "path": "/api/v1/admin/orgs",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "listAdminUsers",
+      "method": "GET",
+      "path": "/api/v1/admin/users",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "listSSHKeys",
+      "method": "GET",
+      "path": "/api/v1/user/keys",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "createSSHKey",
+      "method": "POST",
+      "path": "/api/v1/user/keys",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "deleteSSHKey",
+      "method": "DELETE",
+      "path": "/api/v1/user/keys/{id}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "listGPGKeys",
+      "method": "GET",
+      "path": "/api/v1/user/gpg_keys",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "createGPGKey",
+      "method": "POST",
+      "path": "/api/v1/user/gpg_keys",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "deleteGPGKey",
+      "method": "DELETE",
+      "path": "/api/v1/user/gpg_keys/{id}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "listAccessTokens",
+      "method": "GET",
+      "path": "/api/v1/users/{username}/tokens",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "createAccessToken",
+      "method": "POST",
+      "path": "/api/v1/users/{username}/tokens",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "deleteAccessToken",
+      "method": "DELETE",
+      "path": "/api/v1/users/{username}/tokens/{id}",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "listEmails",
+      "method": "GET",
+      "path": "/api/v1/user/emails",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "addEmail",
+      "method": "POST",
+      "path": "/api/v1/user/emails",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "deleteEmail",
+      "method": "DELETE",
+      "path": "/api/v1/user/emails",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "changePassword",
+      "method": "POST",
+      "path": "/api/v1/user/change_password",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "deleteSelf",
+      "method": "DELETE",
+      "path": "/api/v1/user",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    }
+  ],
+  "stubResponseMarkers": [
+    "not implemented",
+    "todo",
+    "stub"
+  ]
+}
+    {
+      "method": "POST",
+      "path": "/api/auth/register"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/refresh"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/change-password"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/me"
+    },
+    {
+      "method": "GET",
+      "path": "/api/users/:username"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/users/:username"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/tree/:ref"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/blob/:ref/:path{.*}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/commits/:ref"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/diff/:sha"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/repos/:owner/:repo"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/collaborators"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/repos/:owner/:repo/collaborators/:username"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo/collaborators/:username"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/issues"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos/:owner/:repo/issues"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/issues/:number"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/repos/:owner/:repo/issues/:number"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos/:owner/:repo/issues/:number/comments"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/repos/:owner/:repo/issues/:number/comments/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo/issues/:number/comments/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/labels"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos/:owner/:repo/labels"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/repos/:owner/:repo/labels/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo/labels/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/milestones"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos/:owner/:repo/milestones"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/milestones/:id"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/repos/:owner/:repo/milestones/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo/milestones/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/releases"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos/:owner/:repo/releases"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/releases/:id"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/repos/:owner/:repo/releases/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo/releases/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/wiki"
+    },
+    {
+      "method": "POST",
+      "path": "/api/repos/:owner/:repo/wiki"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/wiki/:title"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/repos/:owner/:repo/wiki/:title"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/branches"
+    },
+    {
+      "method": "GET",
+      "path": "/api/repos/:owner/:repo/tags"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/users"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/admin/users/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/config"
+    },
+    {
+      "method": "POST",
+      "path": "/api/admin/users"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/admin/users/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/repos"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/orgs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/stats"
+    },
+    {
+      "method": "GET",
+      "path": "/api/admin/user/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/internal/check-access"
+    },
+    {
+      "method": "POST",
+      "path": "/api/orgs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/orgs/:orgname"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/orgs/:orgname"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/orgs/:orgname"
+    },
+    {
+      "method": "GET",
+      "path": "/api/orgs/:orgname/members"
+    },
+    {
+      "method": "POST",
+      "path": "/api/orgs/:orgname/members"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/orgs/:orgname/members/:username"
+    },
+    {
+      "method": "GET",
+      "path": "/api/orgs/:orgname/teams"
+    },
+    {
+      "method": "POST",
+      "path": "/api/orgs/:orgname/teams"
+    },
+    {
+      "method": "GET",
+      "path": "/api/orgs/:orgname/teams/:teamname"
+    },
+    {
+      "method": "POST",
+      "path": "/api/orgs/:orgname/teams/:teamname/members"
+    },
+    {
+      "method": "GET",
+      "path": "/api/orgs/user/memberships"
+    },
+    {
+      "method": "GET",
+      "path": "/api/orgs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/user/keys"
+    },
+    {
+      "method": "POST",
+      "path": "/api/user/keys"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/user/keys/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/notifications"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/notifications/:id"
+    },
+    {
+      "method": "GET",
+      "path": "/api/dashboard/issues"
+    },
+    {
+      "method": "GET",
+      "path": "/api/dashboard/milestones"
+    },
+    {
+      "method": "ALL",
+      "path": "/git/*"
+    }
+  ],
+  "frontendRequiredEndpoints": [
+    {
       "name": "addCollaborator",
       "method": "PUT",
       "path": "/api/repos/{owner}/{repo}/collaborators/{username}",
