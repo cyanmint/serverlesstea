@@ -67,6 +67,10 @@
     },
     {
       "method": "GET",
+      "path": "/api/v1/repos/:owner/:repo/pulls"
+    },
+    {
+      "method": "GET",
       "path": "/api/v1/repos/:owner/:repo/releases"
     },
     {
@@ -305,6 +309,12 @@
       "name": "createIssueComment",
       "method": "POST",
       "path": "/api/v1/repos/{owner}/{repo}/issues/{index}/comments",
+      "requiredBy": "frontend/web_src/js/spa/api/index.ts"
+    },
+    {
+      "name": "getPullRequests",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/pulls",
       "requiredBy": "frontend/web_src/js/spa/api/index.ts"
     },
     {

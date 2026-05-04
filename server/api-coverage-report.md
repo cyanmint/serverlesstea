@@ -1,6 +1,6 @@
 # API Coverage Report
 
-**Total endpoints:** 52 | **Correct:** 52 | **Stub:** 0 | **Malfunction:** 0
+**Total endpoints:** 53 | **Correct:** 53 | **Stub:** 0 | **Malfunction:** 0 | **Missing:** 0
 
 | Endpoint | Method | Path | Status | Note |
 |----------|--------|------|--------|------|
@@ -20,6 +20,7 @@
 | getIssueComments | `GET` | `/api/v1/repos/{owner}/{repo}/issues/{index}/comments` | **correct** | DB-backed implementation |
 | createIssue | `POST` | `/api/v1/repos/{owner}/{repo}/issues` | **correct** | DB-backed implementation |
 | createIssueComment | `POST` | `/api/v1/repos/{owner}/{repo}/issues/{index}/comments` | **correct** | DB-backed implementation |
+| getPullRequests | `GET` | `/api/v1/repos/{owner}/{repo}/pulls` | **correct** | DB-backed implementation |
 | getRepoReleases | `GET` | `/api/v1/repos/{owner}/{repo}/releases` | **correct** | DB-backed implementation |
 | getRepoRelease | `GET` | `/api/v1/repos/{owner}/{repo}/releases/{id}` | **correct** | DB-backed implementation |
 | getRepoReleaseByTag | `GET` | `/api/v1/repos/{owner}/{repo}/releases/tags/{tag}` | **correct** | DB-backed implementation |

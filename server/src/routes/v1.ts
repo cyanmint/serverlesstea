@@ -365,7 +365,7 @@ router.get('/repos/issues/search', v1OptionalAuth, async (c) => {
     WHERE i.is_pull = ? AND i.state = ? AND (i.title LIKE ? OR i.body LIKE ?) AND r.is_private = 0
     ORDER BY i.created_at DESC LIMIT ? OFFSET ?
   `).bind(isPull, state, `%${q}%`, `%${q}%`, parseInt(limit), offset).all()
-  return c.json({ data: (issues.results as Array<Record<string, unknown>>).map((i) => formatIssueRow(i)), ok: true })
+  return c.json((issues.results as Array<Record<string, unknown>>).map((i) => formatIssueRow(i)))
 })
 
 // ─── Repo ─────────────────────────────────────────────────────────────────────
@@ -724,6 +724,21 @@ router.post('/repos/:owner/:repo/issues/:index/comments', v1Auth, async (c) => {
   await db.prepare('INSERT INTO issue_comments (id, issue_id, user_id, body) VALUES (?, ?, ?, ?)').bind(id, issue.id, payload.sub, body.body).run()
   const u = await db.prepare('SELECT id, username, email, display_name, bio, is_admin, created_at FROM users WHERE id = ?').bind(payload.sub).first<UserRow>()
   return c.json({ id, body: body.body, created_at: new Date().toISOString(), updated_at: new Date().toISOString(), user: u ? formatUser(u) : null }, 201)
+})
+
+// ─── Pull requests (alias for issues with is_pull=1) ──────────────────────────
+
+router.get('/repos/:owner/:repo/pulls', v1OptionalAuth, async (c) => {
+  const { owner, repo } = c.req.param()
+  const { state = 'open', page = '1', limit = '20' } = c.req.query()
+  const db = c.env.database
+  const repoRow = await getRepo(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  const offset = (parseInt(page) - 1) * parseInt(limit)
+  const issues = await db.prepare(
+    issueQuery() + ' WHERE i.repo_id = ? AND i.is_pull = 1 AND i.state = ? ORDER BY i.created_at DESC LIMIT ? OFFSET ?',
+  ).bind(repoRow.id, state, parseInt(limit), offset).all()
+  return c.json((issues.results as Array<Record<string, unknown>>).map(formatIssueRow))
 })
 
 // ─── Wiki ─────────────────────────────────────────────────────────────────────

@@ -4,8 +4,16 @@ import path from 'node:path'
 import app from '../src/index'
 
 type FrontendEndpoint = { name: string; method: string; path: string }
-type CoverageStatus = 'correct' | 'stub' | 'malfunction'
+type CoverageStatus = 'correct' | 'stub' | 'malfunction' | 'missing'
 type CoverageRow = { name: string; method: string; path: string; status: CoverageStatus; note: string }
+
+// Known format mismatches: route exists + DB ops but response shape differs from
+// what the frontend function expects.  Key format: "METHOD:/path/without/api/v1"
+// Update this set whenever a format regression is introduced or fixed.
+const knownMalfunctions = new Set<string>([
+  // Example (currently empty after fixing repos/issues/search):
+  // 'GET:/repos/issues/search',
+])
 
 describe('api coverage report', () => {
   it('generates coverage report for frontendRequiredEndpoints', () => {
@@ -35,7 +43,12 @@ describe('api coverage report', () => {
       const found = routes.find(
         (r) => r.method.toLowerCase() === method.toLowerCase() && r.path === normalizedPath,
       )
-      if (!found) return 'malfunction'
+      // Route does not exist in the app at all — the frontend will get a 404.
+      if (!found) return 'missing'
+
+      // Route exists but is a known response-format mismatch.
+      const malfunctionKey = `${method.toUpperCase()}:${routePath}`
+      if (knownMalfunctions.has(malfunctionKey)) return 'malfunction'
 
       const lines = v1Source.split('\n')
       for (let i = 0; i < lines.length; i++) {
@@ -65,23 +78,26 @@ describe('api coverage report', () => {
       const normalizedPath = normalizePath(ep.path)
       const status = classifyEndpoint(ep.method, normalizedPath)
       const note =
-        status === 'malfunction'
-          ? 'Route not registered in app'
-          : status === 'stub'
-            ? 'No DB/git operations — returns minimal data'
-            : 'DB-backed implementation'
+        status === 'missing'
+          ? 'Route not registered — frontend receives 404'
+          : status === 'malfunction'
+            ? 'Route exists but response format does not match frontend expectation'
+            : status === 'stub'
+              ? 'No DB/git operations — returns minimal data'
+              : 'DB-backed implementation'
       return { name: ep.name, method: ep.method, path: ep.path, status, note }
     })
 
     const correctCount = rows.filter((r) => r.status === 'correct').length
     const stubCount = rows.filter((r) => r.status === 'stub').length
     const malfunctionCount = rows.filter((r) => r.status === 'malfunction').length
+    const missingCount = rows.filter((r) => r.status === 'missing').length
     const total = rows.length
 
     const md = [
       '# API Coverage Report',
       '',
-      `**Total endpoints:** ${total} | **Correct:** ${correctCount} | **Stub:** ${stubCount} | **Malfunction:** ${malfunctionCount}`,
+      `**Total endpoints:** ${total} | **Correct:** ${correctCount} | **Stub:** ${stubCount} | **Malfunction:** ${malfunctionCount} | **Missing:** ${missingCount}`,
       '',
       '| Endpoint | Method | Path | Status | Note |',
       '|----------|--------|------|--------|------|',
@@ -90,7 +106,8 @@ describe('api coverage report', () => {
 
     writeFileSync(path.resolve(process.cwd(), 'api-coverage-report.md'), md, 'utf8')
     console.log(
-      `Coverage: ${correctCount} correct, ${stubCount} stub, ${malfunctionCount} malfunction out of ${total}`,
+      `Coverage: ${correctCount} correct, ${stubCount} stub, ${malfunctionCount} malfunction, ${missingCount} missing out of ${total}`,
     )
   })
 })
+
