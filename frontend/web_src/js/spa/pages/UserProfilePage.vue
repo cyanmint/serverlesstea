@@ -1,6 +1,6 @@
 <template>
-  <AppLayout>
-    <div class="ui container tw-py-6">
+  <AppLayout page-class="user profile">
+    <div class="ui container">
       <!-- Loading / error -->
       <div v-if="loading" class="tw-py-16 tw-text-center">
         <div class="ui active centered inline loader"/>
@@ -10,85 +10,92 @@
         <p>{{ error }}</p>
       </div>
 
+      <!-- Profile layout — matches templates/user/profile.tmpl -->
       <template v-else-if="user">
-        <div class="tw-flex tw-gap-8">
-          <!-- Left: profile card -->
-          <div class="tw-w-64 tw-shrink-0">
-            <img
-              :src="user.avatar_url"
-              :alt="user.login"
-              class="tw-w-full tw-rounded-full tw-border tw-mb-4"
-            >
-            <h1 class="tw-text-2xl tw-font-bold">{{ user.full_name || user.login }}</h1>
-            <p v-if="user.full_name" class="tw-text-gray-500 tw-text-lg tw-mt-0.5">{{ user.login }}</p>
-
-            <div class="tw-mt-4 tw-space-y-2 tw-text-sm tw-text-gray-600">
-              <div v-if="user.email" class="tw-flex tw-items-center tw-gap-2">
-                <span>✉️</span> <a :href="`mailto:${user.email}`" class="hover:tw-underline">{{ user.email }}</a>
+        <div class="ui stackable grid">
+          <!-- Left: profile sidebar (4-wide column) -->
+          <div class="ui four wide column">
+            <div id="profile-avatar-card" class="ui card">
+              <div id="profile-avatar" class="content tw-flex">
+                <span class="image">
+                  <img :src="user.avatar_url" :alt="user.login" class="ui avatar image" style="width:256px">
+                </span>
               </div>
-              <div class="tw-flex tw-items-center tw-gap-2">
-                <span>📅</span> Joined {{ joinedDate }}
+              <div class="content tw-break-anywhere profile-avatar-name">
+                <span v-if="user.full_name" class="header text center">{{ user.full_name }}</span>
+                <span class="username text center">{{ user.login }}</span>
               </div>
-            </div>
-
-            <!-- Orgs -->
-            <div v-if="orgs.length > 0" class="tw-mt-4">
-              <h4 class="tw-text-xs tw-font-semibold tw-text-gray-500 tw-uppercase tw-mb-2">Organizations</h4>
-              <div class="tw-flex tw-flex-wrap tw-gap-2">
-                <a
-                  v-for="org in orgs"
-                  :key="org.id"
-                  :href="`${appSubUrl}/${org.login}`"
-                  :title="org.login"
-                >
-                  <img :src="org.avatar_url" :alt="org.login" class="tw-w-8 tw-h-8 tw-rounded tw-border">
-                </a>
+              <div class="extra content tw-break-anywhere">
+                <ul>
+                  <li v-if="user.email">
+                    <SvgIcon name="octicon-mail" :size="16"/>
+                    <a :href="`mailto:${user.email}`" rel="nofollow">{{ user.email }}</a>
+                  </li>
+                  <li>
+                    <SvgIcon name="octicon-calendar" :size="16"/>
+                    <span>Joined {{ joinedDate }}</span>
+                  </li>
+                </ul>
+              </div>
+              <!-- Orgs -->
+              <div v-if="orgs.length > 0" class="extra content">
+                <div class="header">Organizations</div>
+                <div class="ui list">
+                  <div class="item" v-for="org in orgs" :key="org.id">
+                    <RouterLink :to="`/${org.login}`" :title="org.login">
+                      <img :src="org.avatar_url" :alt="org.login" class="ui avatar image">
+                    </RouterLink>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Right: repositories -->
-          <div class="tw-flex-1">
-            <div class="tw-flex tw-items-center tw-mb-4">
-              <h2 class="tw-text-xl tw-font-semibold">Repositories</h2>
-              <span class="ui label tw-ml-2">{{ repos.length }}</span>
+          <!-- Right: content area (12-wide column) -->
+          <div class="ui twelve wide column tw-mb-4">
+            <div class="ui secondary pointing tabular top attached borderless menu">
+              <RouterLink :to="`/${user.login}`" class="item" :class="{active: !activeTab || activeTab === 'repos'}">
+                <SvgIcon name="octicon-repo" :size="16"/>
+                Repositories
+                <span class="ui label">{{ repos.length }}</span>
+              </RouterLink>
             </div>
 
+            <!-- Repos list -->
             <div v-if="reposLoading" class="tw-py-8 tw-text-center">
               <div class="ui active centered inline loader"/>
             </div>
-            <div v-else-if="repos.length === 0" class="tw-text-gray-500 tw-text-sm">
+            <div v-else-if="repos.length === 0" class="tw-text-center tw-py-8 tw-text-gray-500">
               No public repositories.
             </div>
-            <div v-else class="tw-space-y-3">
-              <div
-                v-for="repo in repos"
-                :key="repo.id"
-                class="tw-border tw-rounded tw-px-4 tw-py-3 hover:tw-bg-gray-50"
-              >
-                <div class="tw-flex tw-items-start tw-justify-between">
-                  <div>
-                    <RouterLink
-                      :to="`/${user.login}/${repo.name}`"
-                      class="tw-font-semibold tw-text-blue-600 hover:tw-underline"
-                    >
-                      {{ repo.name }}
-                    </RouterLink>
-                    <span v-if="repo.private" class="ui mini label tw-ml-1">Private</span>
-                    <span v-if="repo.fork" class="ui mini label tw-ml-1">Fork</span>
-                    <span v-if="repo.archived" class="ui mini label tw-ml-1">Archived</span>
-                    <p v-if="repo.description" class="tw-text-sm tw-text-gray-600 tw-mt-1">
-                      {{ repo.description }}
-                    </p>
-                  </div>
-                  <div class="tw-text-right tw-text-sm tw-text-gray-500 tw-shrink-0 tw-ml-4">
-                    <div v-if="repo.language" class="tw-mb-1">{{ repo.language }}</div>
-                    <div class="tw-flex tw-items-center tw-gap-2 tw-justify-end">
-                      <span>⭐ {{ repo.stars_count }}</span>
-                      <span>🍴 {{ repo.forks_count }}</span>
+            <div v-else class="flex-divided-list items-with-main">
+              <div v-for="repo in repos" :key="repo.id" class="item">
+                <div class="item-main">
+                  <div class="item-header">
+                    <div class="item-title">
+                      <RouterLink class="tw-text-primary name" :to="`/${user.login}/${repo.name}`">{{ repo.name }}</RouterLink>
+                      <span class="label-list">
+                        <span v-if="repo.private" class="ui basic label">Private</span>
+                        <span v-if="repo.fork" class="ui basic label">Fork</span>
+                        <span v-if="repo.archived" class="ui basic label">Archived</span>
+                      </span>
                     </div>
-                    <div class="tw-text-xs tw-mt-1">Updated {{ timeAgo(repo.updated_at) }}</div>
+                    <div class="item-trailing muted-links">
+                      <span v-if="repo.language" class="flex-text-inline">
+                        <i class="color-icon tw-mr-2"/>{{ repo.language }}
+                      </span>
+                      <RouterLink class="flex-text-inline" :to="`/${user.login}/${repo.name}/stars`">
+                        <span class="tw-contents" aria-label="Stars"><SvgIcon name="octicon-star" :size="16"/></span>
+                        <span>{{ repo.stars_count }}</span>
+                      </RouterLink>
+                      <RouterLink class="flex-text-inline" :to="`/${user.login}/${repo.name}/forks`">
+                        <span class="tw-contents" aria-label="Forks"><SvgIcon name="octicon-git-branch" :size="16"/></span>
+                        <span>{{ repo.forks_count }}</span>
+                      </RouterLink>
+                    </div>
                   </div>
+                  <div v-if="repo.description" class="item-body">{{ repo.description }}</div>
+                  <div class="item-body">Updated {{ timeAgo(repo.updated_at) }}</div>
                 </div>
               </div>
             </div>
@@ -103,12 +110,12 @@
 import {ref, computed, onMounted} from 'vue';
 import {RouterLink, useRoute} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
+import {SvgIcon} from '../../svg.ts';
 import {getUser, getUserRepos, getUserOrgs, type User, type Repository} from '../api/index.ts';
-
-import {appSubUrl} from '../spaconfig.ts';
 
 const route = useRoute();
 const username = String(route.params.username);
+const activeTab = computed(() => String(route.query.tab ?? ''));
 
 const loading = ref(true);
 const error = ref('');

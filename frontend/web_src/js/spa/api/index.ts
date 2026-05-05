@@ -1,6 +1,7 @@
 import {request, GET as _GET, POST as _POST, PATCH as _PATCH, PUT as _PUT, DELETE as _DELETE} from '../../modules/fetch.ts';
+import {localUserSettings} from '../../modules/user-settings.ts';
 import type {RequestOpts} from '../../types.ts';
-import {apiBase, appSubUrl} from '../spaconfig.ts';
+import {apiBase} from '../spaconfig.ts';
 
 // ---- Token storage ----
 
@@ -8,15 +9,15 @@ const TOKEN_KEY = 'gitea-spa-token';
 
 /** Returns the stored API token, or null when not signed in. */
 export function getStoredToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
+  return localUserSettings.getString(TOKEN_KEY) || null;
 }
 
 /** Persists an API token to localStorage, or removes it when token is null. */
 export function setStoredToken(token: string | null): void {
   if (token) {
-    localStorage.setItem(TOKEN_KEY, token);
+    localUserSettings.setString(TOKEN_KEY, token);
   } else {
-    localStorage.removeItem(TOKEN_KEY);
+    localUserSettings.setString(TOKEN_KEY, '');
   }
 }
 
@@ -27,7 +28,7 @@ export function setStoredToken(token: string | null): void {
 function withToken(opts: RequestOpts = {}): RequestOpts {
   const token = getStoredToken();
   if (!token) return opts;
-  const headers = new Headers((opts.headers ?? {}) as Record<string, string>);
+  const headers = new Headers((opts.headers ?? {}));
   if (!headers.has('Authorization')) headers.set('Authorization', `token ${token}`);
   return {...opts, headers};
 }
@@ -49,6 +50,8 @@ export type User = {
   html_url: string;
   is_admin: boolean;
   created: string;
+  website?: string;
+  location?: string;
 };
 
 export type Repository = {
@@ -71,6 +74,7 @@ export type Repository = {
   updated_at: string;
   owner: User;
   language: string;
+  size: number;
 };
 
 export type Issue = {
@@ -85,6 +89,8 @@ export type Issue = {
   updated_at: string;
   comments: number;
   labels: Label[];
+  milestone?: {id: number; title: string} | null;
+  assignees?: User[];
 };
 
 export type Label = {
@@ -236,6 +242,34 @@ export async function getUserRepos(username: string, opts: PaginationOpts = {}):
 /** List organizations a user belongs to (public membership). */
 export async function getUserOrgs(username: string): Promise<User[]> {
   const resp = await GET(`${apiBase}/users/${encodeURIComponent(username)}/orgs`);
+  if (!resp.ok) return [];
+  return resp.json();
+}
+
+/** An organization (from Gitea API). */
+export type Organization = {
+  id: number;
+  username: string;
+  name?: string;
+  full_name: string;
+  avatar_url: string;
+  description: string;
+  website: string;
+  location: string;
+  visibility: string;
+};
+
+/** List all organizations the authenticated user is a member of (including private). */
+export async function getMyOrgs(): Promise<Organization[]> {
+  const resp = await GET(`${apiBase}/user/orgs?limit=50`);
+  if (!resp.ok) return [];
+  return resp.json();
+}
+
+/** List repos accessible by the authenticated user (including private). */
+export async function getMyRepos(opts: PaginationOpts = {}): Promise<Repository[]> {
+  const params = new URLSearchParams({page: String(opts.page ?? 1), limit: String(opts.limit ?? 50)});
+  const resp = await GET(`${apiBase}/user/repos?${params}`);
   if (!resp.ok) return [];
   return resp.json();
 }
@@ -759,6 +793,13 @@ export async function getRepoActivityFeeds(owner: string, repo: string, opts: Pa
   return resp.json();
 }
 
+export async function getUserActivityFeeds(username: string, opts: PaginationOpts = {}): Promise<ActivityFeed[]> {
+  const params = new URLSearchParams({page: String(opts.page ?? 1), limit: String(opts.limit ?? 20)});
+  const resp = await GET(`${apiBase}/users/${encodeURIComponent(username)}/activities/feeds?${params}`);
+  if (!resp.ok) throw new Error(`Failed to fetch user activity feeds: ${resp.status}`);
+  return resp.json();
+}
+
 // ---- Password change / account deletion ----
 
 export async function changePassword(oldPassword: string, newPassword: string): Promise<void> {
@@ -767,7 +808,8 @@ export async function changePassword(oldPassword: string, newPassword: string): 
     data: {old_password: oldPassword, new_password: newPassword},
   });
   if (!resp.ok) {
-    const body = await resp.json().catch(() => ({message: 'Unknown error'})) as {message: string};
+    let body: {message: string} = {message: 'Unknown error'};
+    try { body = await resp.json() as typeof body; } catch { /* ignore */ }
     throw new Error(body.message ?? `Failed to change password: ${resp.status}`);
   }
 }
@@ -775,7 +817,236 @@ export async function changePassword(oldPassword: string, newPassword: string): 
 export async function deleteSelf(): Promise<void> {
   const resp = await request(`${apiBase}/user`, {method: 'DELETE'});
   if (!resp.ok) {
-    const body = await resp.json().catch(() => ({message: 'Unknown error'})) as {message: string};
+    let body: {message: string} = {message: 'Unknown error'};
+    try { body = await resp.json() as typeof body; } catch { /* ignore */ }
     throw new Error(body.message ?? `Failed to delete account: ${resp.status}`);
   }
+}
+
+// ---- Blocked users ----
+
+export type BlockedUser = User;
+
+export async function listBlockedUsers(page = 1, limit = 50): Promise<BlockedUser[]> {
+  const resp = await GET(`${apiBase}/user/blocks?page=${page}&limit=${limit}`);
+  if (!resp.ok) throw new Error(`Failed to list blocked users: ${resp.status}`);
+  return resp.json() as Promise<BlockedUser[]>;
+}
+
+export async function unblockUser(username: string): Promise<void> {
+  const resp = await DELETE(`${apiBase}/user/blocks/${encodeURIComponent(username)}`);
+  if (!resp.ok) throw new Error(`Failed to unblock user: ${resp.status}`);
+}
+
+// ---- User webhooks ----
+
+export type WebhookConfig = {url?: string; content_type?: string};
+export type Webhook = {
+  id: number;
+  type: string;
+  active: boolean;
+  config: WebhookConfig;
+  events: string[];
+  created: string;
+};
+
+export async function listUserHooks(page = 1, limit = 50): Promise<Webhook[]> {
+  const resp = await GET(`${apiBase}/user/hooks?page=${page}&limit=${limit}`);
+  if (!resp.ok) throw new Error(`Failed to list webhooks: ${resp.status}`);
+  return resp.json() as Promise<Webhook[]>;
+}
+
+export async function createUserHook(url: string, contentType: string, events: string[]): Promise<Webhook> {
+  const resp = await POST(`${apiBase}/user/hooks`, {
+    data: {type: 'gitea', active: true, config: {url, content_type: contentType}, events},
+  });
+  if (!resp.ok) throw new Error(`Failed to create webhook: ${resp.status}`);
+  return resp.json() as Promise<Webhook>;
+}
+
+export async function deleteUserHook(id: number): Promise<void> {
+  const resp = await DELETE(`${apiBase}/user/hooks/${id}`);
+  if (!resp.ok) throw new Error(`Failed to delete webhook: ${resp.status}`);
+}
+
+// ---- Actions permissions ----
+
+export type UserActionsPermissions = {
+  token_permission_mode: string;
+  allowed_cross_repo_ids: number[];
+};
+
+export async function getUserActionsPermissions(): Promise<UserActionsPermissions> {
+  const resp = await GET(`${apiBase}/user/actions/permissions`);
+  if (!resp.ok) throw new Error(`Failed to get actions permissions: ${resp.status}`);
+  return resp.json() as Promise<UserActionsPermissions>;
+}
+
+export async function setUserActionsPermissions(perms: UserActionsPermissions): Promise<UserActionsPermissions> {
+  const resp = await PUT(`${apiBase}/user/actions/permissions`, {data: perms});
+  if (!resp.ok) throw new Error(`Failed to update actions permissions: ${resp.status}`);
+  return resp.json() as Promise<UserActionsPermissions>;
+}
+
+// ---- Leave organization ----
+
+export async function leaveOrganization(orgName: string, username: string): Promise<void> {
+  const resp = await DELETE(`${apiBase}/orgs/${encodeURIComponent(orgName)}/members/${encodeURIComponent(username)}`);
+  if (!resp.ok) throw new Error(`Failed to leave organization: ${resp.status}`);
+}
+
+// ---- Actions Secrets (user-level) ----
+
+export type ActionSecret = {
+  name: string;
+  description: string;
+  created_at: string;
+};
+
+export async function listUserSecrets(): Promise<ActionSecret[]> {
+  const resp = await GET(`${apiBase}/user/actions/secrets?limit=50`);
+  if (!resp.ok) throw new Error(`Failed to list secrets: ${resp.status}`);
+  return resp.json() as Promise<ActionSecret[]>;
+}
+
+export async function setUserSecret(name: string, data: string, description?: string): Promise<void> {
+  const resp = await PUT(`${apiBase}/user/actions/secrets/${encodeURIComponent(name)}`, {data: {data, description: description ?? ''}});
+  if (!resp.ok) throw new Error(`Failed to set secret: ${resp.status}`);
+}
+
+export async function deleteUserSecret(name: string): Promise<void> {
+  const resp = await DELETE(`${apiBase}/user/actions/secrets/${encodeURIComponent(name)}`);
+  if (!resp.ok) throw new Error(`Failed to delete secret: ${resp.status}`);
+}
+
+// ---- Actions Variables (user-level) ----
+
+export type ActionVariable = {
+  name: string;
+  data: string;
+  description: string;
+};
+
+export async function listUserVariables(): Promise<ActionVariable[]> {
+  const resp = await GET(`${apiBase}/user/actions/variables?limit=50`);
+  if (!resp.ok) throw new Error(`Failed to list variables: ${resp.status}`);
+  return resp.json() as Promise<ActionVariable[]>;
+}
+
+export async function createUserVariable(name: string, value: string, description?: string): Promise<void> {
+  const resp = await POST(`${apiBase}/user/actions/variables/${encodeURIComponent(name)}`, {data: {value, description: description ?? ''}});
+  if (!resp.ok) throw new Error(`Failed to create variable: ${resp.status}`);
+}
+
+export async function updateUserVariable(name: string, value: string, description?: string): Promise<void> {
+  const resp = await PUT(`${apiBase}/user/actions/variables/${encodeURIComponent(name)}`, {data: {value, description: description ?? ''}});
+  if (!resp.ok) throw new Error(`Failed to update variable: ${resp.status}`);
+}
+
+export async function deleteUserVariable(name: string): Promise<void> {
+  const resp = await DELETE(`${apiBase}/user/actions/variables/${encodeURIComponent(name)}`);
+  if (!resp.ok) throw new Error(`Failed to delete variable: ${resp.status}`);
+}
+
+// ---- Actions Runners (user-level) ----
+
+export type ActionRunner = {
+  id: number;
+  name: string;
+  status: string;
+  busy: boolean;
+  disabled: boolean;
+  labels: Array<{id: number; name: string; type: string}>;
+};
+
+export type ActionRunnerToken = {token: string; token_is_expired: boolean};
+
+export async function listUserRunners(): Promise<ActionRunner[]> {
+  const resp = await GET(`${apiBase}/user/actions/runners`);
+  if (!resp.ok) throw new Error(`Failed to list runners: ${resp.status}`);
+  const data = await resp.json() as {runners: ActionRunner[]};
+  return data.runners ?? [];
+}
+
+export async function getUserRunnerRegistrationToken(): Promise<string> {
+  const resp = await POST(`${apiBase}/user/actions/runners/registration-token`, {});
+  if (!resp.ok) throw new Error(`Failed to get registration token: ${resp.status}`);
+  const data = await resp.json() as ActionRunnerToken;
+  return data.token;
+}
+
+export async function deleteUserRunner(id: number): Promise<void> {
+  const resp = await DELETE(`${apiBase}/user/actions/runners/${id}`);
+  if (!resp.ok) throw new Error(`Failed to delete runner: ${resp.status}`);
+}
+
+// ---- OAuth2 Applications ----
+
+export type OAuth2Application = {
+  id: number;
+  name: string;
+  client_id: string;
+  client_secret: string;
+  confidential_client: boolean;
+  skip_secondary_authorization: boolean;
+  redirect_uris: string[];
+  created: string;
+};
+
+export async function listOAuth2Applications(): Promise<OAuth2Application[]> {
+  const resp = await GET(`${apiBase}/user/applications/oauth2?limit=50`);
+  if (!resp.ok) throw new Error(`Failed to list OAuth2 applications: ${resp.status}`);
+  return resp.json() as Promise<OAuth2Application[]>;
+}
+
+export async function getOAuth2Application(id: number): Promise<OAuth2Application> {
+  const resp = await GET(`${apiBase}/user/applications/oauth2/${id}`);
+  if (!resp.ok) throw new Error(`Failed to get OAuth2 application: ${resp.status}`);
+  return resp.json() as Promise<OAuth2Application>;
+}
+
+export type CreateOAuth2ApplicationOptions = {
+  name: string;
+  redirect_uris: string[];
+  confidential_client?: boolean;
+  skip_secondary_authorization?: boolean;
+};
+
+export async function createOAuth2Application(opts: CreateOAuth2ApplicationOptions): Promise<OAuth2Application> {
+  const resp = await POST(`${apiBase}/user/applications/oauth2`, {data: opts});
+  if (!resp.ok) throw new Error(`Failed to create OAuth2 application: ${resp.status}`);
+  return resp.json() as Promise<OAuth2Application>;
+}
+
+export async function updateOAuth2Application(id: number, opts: CreateOAuth2ApplicationOptions): Promise<OAuth2Application> {
+  const resp = await PATCH(`${apiBase}/user/applications/oauth2/${id}`, {data: opts});
+  if (!resp.ok) throw new Error(`Failed to update OAuth2 application: ${resp.status}`);
+  return resp.json() as Promise<OAuth2Application>;
+}
+
+export async function deleteOAuth2Application(id: number): Promise<void> {
+  const resp = await DELETE(`${apiBase}/user/applications/oauth2/${id}`);
+  if (!resp.ok) throw new Error(`Failed to delete OAuth2 application: ${resp.status}`);
+}
+
+// ---- OAuth2 Grants ----
+
+export type OAuth2Grant = {
+  id: number;
+  user_id: number;
+  application_id: number;
+  application_name: string;
+  scope: string;
+  created: string;
+};
+
+export async function listOAuth2Grants(): Promise<OAuth2Grant[]> {
+  const resp = await GET(`${apiBase}/user/applications/grants`);
+  if (!resp.ok) throw new Error(`Failed to list OAuth2 grants: ${resp.status}`);
+  return resp.json() as Promise<OAuth2Grant[]>;
+}
+
+export async function revokeOAuth2Grant(id: number): Promise<void> {
+  const resp = await DELETE(`${apiBase}/user/applications/grants/${id}`);
+  if (!resp.ok) throw new Error(`Failed to revoke OAuth2 grant: ${resp.status}`);
 }

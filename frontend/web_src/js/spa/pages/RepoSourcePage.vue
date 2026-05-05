@@ -1,63 +1,88 @@
 <template>
-  <AppLayout>
-    <div class="ui container tw-py-4">
-      <!-- Breadcrumb -->
-      <div class="tw-flex tw-items-center tw-gap-1 tw-text-sm tw-mb-4 tw-text-gray-600">
-        <RouterLink :to="`/${owner}/${repoName}`" class="hover:tw-underline tw-text-blue-600 tw-font-medium">
-          {{ owner }}/{{ repoName }}
-        </RouterLink>
-        <span>/</span>
-        <span>{{ refType }}:{{ branchRef }}</span>
-        <template v-if="filePath">
-          <span v-for="(part, i) in pathParts" :key="i">/{{ part }}</span>
-        </template>
-      </div>
+  <AppLayout page-class="repository">
+    <!-- Secondary nav — matches templates/repo/header.tmpl -->
+    <RepoNav
+      :owner="owner"
+      :repo-name="repoName"
+      active-tab="code"
+      :repo="repo"
+      :current-user="currentUser"
+      :starred="starred"
+      :star-loading="starLoading"
+      @toggle-star="toggleStar"
+    />
 
-      <div v-if="loading" class="tw-py-16 tw-text-center">
-        <div class="ui active centered inline loader"/>
-      </div>
-      <div v-else-if="error" class="ui negative message">
-        <p>{{ error }}</p>
-      </div>
+    <div v-if="loading" class="ui container tw-py-8">
+      <div class="ui active centered inline loader"/>
+    </div>
+    <div v-else-if="error" class="ui container tw-py-6">
+      <div class="ui negative message"><p>{{ error }}</p></div>
+    </div>
 
-      <!-- Directory listing -->
-      <template v-else-if="Array.isArray(contents)">
-        <table class="ui celled table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="entry in sortedContents" :key="entry.name">
-              <td>
-                <RouterLink :to="buildEntryPath(entry)" class="hover:tw-underline tw-text-blue-600">
-                  {{ entry.type === 'dir' ? '📁' : '📄' }} {{ entry.name }}
-                </RouterLink>
-              </td>
-              <td class="tw-text-gray-500 tw-text-sm">{{ entry.type }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </template>
+    <!-- Directory listing — matches templates/repo/view_list.tmpl -->
+    <div v-else-if="Array.isArray(contents)" class="ui container">
+      <div id="repo-files-table" class="ui segment">
+        <div class="ui attached table segment">
+          <table class="ui very basic fixed table single line">
+            <tbody>
+              <tr
+                v-for="entry in sortedContents"
+                :key="entry.name"
+                class="repo-file-item"
+              >
+                <td class="repo-file-cell name">
+                  <div class="flex-text-block">
+                    <SvgIcon
+                      :name="entry.type === 'dir' ? 'octicon-file-directory-fill' : 'octicon-file'"
+                      :size="16"
+                      class="tw-mr-2"
+                    />
+                    <RouterLink :to="buildEntryPath(entry)" class="muted">{{ entry.name }}</RouterLink>
+                  </div>
+                </td>
+                <td class="repo-file-cell message"/>
+                <td class="repo-file-cell age"/>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-      <!-- File view -->
-      <template v-else-if="contents">
-        <div class="tw-border tw-rounded tw-overflow-hidden">
-          <div class="tw-bg-gray-100 tw-px-4 tw-py-2 tw-flex tw-items-center tw-justify-between tw-border-b">
-            <span class="tw-font-mono tw-text-sm">{{ contents.name }}</span>
+    <!-- File view — matches templates/repo/view_file.tmpl -->
+    <div v-else-if="contents" class="ui container">
+      <div class="non-diff-file-content">
+        <div class="file-header">
+          <div class="file-info">
+            <div class="file-info-entry">{{ contents.name }}</div>
+          </div>
+          <div class="file-actions">
             <a
               v-if="contents.download_url"
               :href="contents.download_url"
-              class="tw-text-sm tw-text-blue-600 hover:tw-underline"
-            >
-              Raw
-            </a>
+              class="ui tiny basic button"
+              rel="nofollow"
+            >Raw</a>
           </div>
-          <pre class="tw-p-4 tw-overflow-x-auto tw-text-sm tw-font-mono tw-bg-white tw-m-0">{{ fileContent }}</pre>
         </div>
-      </template>
+        <div class="file-view code-view">
+          <table>
+            <tbody>
+              <tr
+                v-for="(line, idx) in fileLines"
+                :key="idx"
+              >
+                <td class="lines-num" :id="`L${idx + 1}`">
+                  <span>{{ idx + 1 }}</span>
+                </td>
+                <td class="lines-code">
+                  <code>{{ line }}</code>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </AppLayout>
 </template>
@@ -66,7 +91,9 @@
 import {ref, computed, watch, onMounted} from 'vue';
 import {useRoute, RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-import {getRepoContents, type ContentsResponse} from '../api/index.ts';
+import RepoNav from '../components/RepoNav.vue';
+import {SvgIcon} from '../../svg.ts';
+import {getRepo, getRepoContents, getCurrentUser, isRepoStarred, starRepo, unstarRepo, type ContentsResponse, type Repository, type User} from '../api/index.ts';
 
 const route = useRoute();
 
@@ -79,11 +106,13 @@ const filePath = computed(() => {
   return Array.isArray(pm) ? pm.join('/') : (pm ?? '');
 });
 
-const pathParts = computed(() => filePath.value ? filePath.value.split('/').filter(Boolean) : []);
-
 const contents = ref<ContentsResponse | ContentsResponse[] | null>(null);
 const loading = ref(false);
 const error = ref<string | null>(null);
+const repo = ref<Repository | null>(null);
+const currentUser = ref<User | null>(null);
+const starred = ref(false);
+const starLoading = ref(false);
 
 const sortedContents = computed(() => {
   if (!Array.isArray(contents.value)) return [];
@@ -103,9 +132,31 @@ const fileContent = computed(() => {
   }
 });
 
+const fileLines = computed(() => fileContent.value.split('\n'));
+
 function buildEntryPath(entry: ContentsResponse): string {
   const base = `/${owner.value}/${repoName.value}/src/${refType.value}/${branchRef.value}`;
   return entry.path ? `${base}/${entry.path}` : base;
+}
+
+async function toggleStar() {
+  if (!currentUser.value) return;
+  starLoading.value = true;
+  try {
+    if (starred.value) {
+      await unstarRepo(owner.value, repoName.value);
+    } else {
+      await starRepo(owner.value, repoName.value);
+    }
+    starred.value = !starred.value;
+    if (repo.value) {
+      repo.value = {...repo.value, stars_count: repo.value.stars_count + (starred.value ? 1 : -1)};
+    }
+  } catch {
+    // ignore
+  } finally {
+    starLoading.value = false;
+  }
 }
 
 async function load() {
@@ -123,5 +174,14 @@ async function load() {
 }
 
 watch([owner, repoName, branchRef, filePath], load);
-onMounted(load);
+onMounted(async () => {
+  [repo.value, currentUser.value] = await Promise.all([
+    getRepo(owner.value, repoName.value).catch(() => null),
+    getCurrentUser(),
+  ]);
+  if (currentUser.value) {
+    starred.value = await isRepoStarred(owner.value, repoName.value).catch(() => false);
+  }
+  await load();
+});
 </script>
