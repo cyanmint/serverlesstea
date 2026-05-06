@@ -59,8 +59,9 @@ export async function handleReceivePack(
       const fs = createR2Fs(bucket, owner, repo)
       const packFilepath = `${owner}/${repo}.git/objects/pack/pack-${packSha}.pack`
 
-      // Write the pack file to R2.
-      await fs.promises.writeFile(`/${packFilepath}`, packData)
+      // Use .slice() to copy the pack data before writing so the stored bytes
+      // are not a view into the larger request body buffer.
+      await fs.promises.writeFile(`/${packFilepath}`, packData.slice())
 
       // Generate the .idx file so isomorphic-git can resolve objects.
       try {

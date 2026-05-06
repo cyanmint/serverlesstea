@@ -26,7 +26,14 @@ class MockR2ObjectBody {
     return typeof this.value === 'string' ? this.value : new TextDecoder().decode(this.value)
   }
   async arrayBuffer() {
-    return typeof this.value === 'string' ? new TextEncoder().encode(this.value).buffer : this.value.buffer
+    if (typeof this.value === 'string') return new TextEncoder().encode(this.value).buffer as ArrayBuffer
+    // `this.value.buffer` may be a larger backing buffer if `this.value` is a
+    // sub-array view (e.g. created via `new Uint8Array(buf, offset, len)`).
+    // Always return a copy that contains exactly the view's own bytes.
+    return this.value.buffer.slice(
+      this.value.byteOffset,
+      this.value.byteOffset + this.value.byteLength,
+    ) as ArrayBuffer
   }
 }
 
