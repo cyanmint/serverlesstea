@@ -6,10 +6,10 @@
  * and pinpoint protocol bugs.
  */
 import { createServer, IncomingMessage, ServerResponse } from 'node:http'
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, rmSync, writeFileSync, appendFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { spawnSync } from 'node:child_process'
+import { spawn } from 'node:child_process'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import app from '../src/index'
@@ -27,61 +27,73 @@ const mockEnv = {
   JWT_SECRET: 'test-secret',
 }
 
+// ── file-based log (vitest may swallow server-side console.log in worker threads) ──
+const LOG_FILE = '/tmp/git-integration-test.log'
+function log(msg: string) {
+  const line = `${new Date().toISOString()} ${msg}\n`
+  process.stdout.write(line)
+  appendFileSync(LOG_FILE, line)
+}
+
 // ── HTTP bridge: Node HTTP → Hono fetch ───────────────────────────────────
 
-async function honoHandler(req: IncomingMessage, res: ServerResponse) {
-  console.log(`→ ${req.method} ${req.url}`)
-  // Collect body bytes (handles both normal and "Expect: 100-continue" flows)
-  const body: Buffer = await new Promise((resolve, reject) => {
+function readBody(req: IncomingMessage): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
     const chunks: Buffer[] = []
     req.on('data', (c: Buffer) => chunks.push(c))
     req.on('end', () => resolve(Buffer.concat(chunks)))
     req.on('error', reject)
   })
-  console.log(`  body ${body.length} bytes`)
+}
 
-  const url = `http://127.0.0.1${req.url}`
-  const headers: Record<string, string> = {}
-  for (let i = 0; i < req.rawHeaders.length; i += 2) {
-    const name = req.rawHeaders[i].toLowerCase()
-    // Drop transfer-encoding / content-length; fetch API manages these internally
-    if (name === 'transfer-encoding' || name === 'expect') continue
-    headers[name] = req.rawHeaders[i + 1]
-  }
+function honoHandler(req: IncomingMessage, res: ServerResponse): void {
+  log(`→ ${req.method} ${req.url} [Expect: ${req.headers['expect'] ?? 'none'}]`)
 
-  const request = new Request(url, {
-    method: req.method ?? 'GET',
-    headers,
-    ...(body.length ? { body } : {}),
-  } as RequestInit)
+  readBody(req).then(async (body) => {
+    log(`  body ${body.length} bytes`)
+    const url = `http://127.0.0.1${req.url}`
+    const headers: Record<string, string> = {}
+    for (let i = 0; i < req.rawHeaders.length; i += 2) {
+      const name = req.rawHeaders[i].toLowerCase()
+      // Suppress hop-by-hop headers that clash with the internal fetch call.
+      if (name === 'transfer-encoding' || name === 'expect' || name === 'host') continue
+      headers[name] = req.rawHeaders[i + 1]
+    }
 
-  let response: Response
-  try {
-    response = await app.fetch(request, mockEnv)
-  } catch (e) {
-    console.error('  App error:', e)
-    res.writeHead(500)
-    res.end(String(e))
-    return
-  }
+    const request = new Request(url, {
+      method: req.method ?? 'GET',
+      headers,
+      ...(body.length ? { body } : {}),
+    } as RequestInit)
 
-  console.log(`  ← ${response.status} (${response.headers.get('content-type')})`)
-  const respHeaders: Record<string, string> = {}
-  response.headers.forEach((v, k) => { respHeaders[k] = v })
-  res.writeHead(response.status, respHeaders)
-  const buf = await response.arrayBuffer()
-  console.log(`  ← body ${buf.byteLength} bytes`)
-  res.end(Buffer.from(buf))
+    let response: Response
+    try {
+      response = await app.fetch(request, mockEnv)
+    } catch (e) {
+      console.error('  App error:', e)
+      res.writeHead(500)
+      res.end(String(e))
+      return
+    }
+
+    log(`  ← ${response.status} (${response.headers.get('content-type')})`)
+    const respHeaders: Record<string, string> = {}
+    response.headers.forEach((v, k) => { respHeaders[k] = v })
+    res.writeHead(response.status, respHeaders)
+    const buf = await response.arrayBuffer()
+    log(`  ← body ${buf.byteLength} bytes`)
+    res.end(Buffer.from(buf))
+  }).catch((err) => {
+    log(`Bridge error: ${err}`)
+    if (!res.headersSent) res.writeHead(500)
+    res.end(String(err))
+  })
 }
 
 // ── server lifecycle ──────────────────────────────────────────────────────
 
 let serverPort = 0
 const httpServer = createServer(honoHandler)
-httpServer.on('checkContinue', (req, res) => {
-  res.writeContinue()
-  honoHandler(req, res)
-})
 const tempDirs: string[] = []
 
 beforeAll(async () => {
@@ -110,7 +122,10 @@ beforeAll(async () => {
 
   await new Promise<void>((resolve) => httpServer.listen(0, '127.0.0.1', resolve))
   serverPort = (httpServer.address() as { port: number }).port
-  console.log(`\nTest server on http://127.0.0.1:${serverPort}`)
+  log(`\nTest server on http://127.0.0.1:${serverPort}`)
+  httpServer.on('error', (e) => log(`Server error: ${e}`))
+  // clear previous log
+  writeFileSync(LOG_FILE, '')
 })
 
 afterAll(() => {
@@ -126,26 +141,34 @@ function mktemp(label: string) {
   return dir
 }
 
-function runGit(args: string[], cwd: string, extraEnv: Record<string, string> = {}) {
-  const result = spawnSync('git', args, {
-    cwd,
-    env: {
-      ...process.env,
-      GIT_TERMINAL_PROMPT: '0',
-      GIT_TRACE: '1',
-      GIT_TRACE_PACKET: '1',
-      HOME: tmpdir(),
-      ...extraEnv,
-    },
-    encoding: 'utf8',
-    timeout: 30_000,
+/** Run git asynchronously so the HTTP server's event loop stays free. */
+function runGit(args: string[], cwd: string, extraEnv: Record<string, string> = {}): Promise<{
+  status: number; stdout: string; stderr: string; combined: string
+}> {
+  return new Promise((resolve) => {
+    const child = spawn('git', args, {
+      cwd,
+      env: {
+        ...process.env,
+        GIT_TERMINAL_PROMPT: '0',
+        GIT_TRACE: '1',
+        GIT_TRACE_PACKET: '1',
+        HOME: tmpdir(),
+        ...extraEnv,
+      },
+    })
+    let stdout = ''
+    let stderr = ''
+    child.stdout.on('data', (d: Buffer) => { stdout += d.toString() })
+    child.stderr.on('data', (d: Buffer) => { stderr += d.toString() })
+    child.on('close', (code) => resolve({
+      status: code ?? -1,
+      stdout,
+      stderr,
+      combined: stdout + stderr,
+    }))
+    child.on('error', (err) => resolve({ status: -1, stdout, stderr, combined: stdout + stderr + String(err) }))
   })
-  return {
-    status: result.status ?? -1,
-    stdout: result.stdout ?? '',
-    stderr: result.stderr ?? '',
-    combined: (result.stdout ?? '') + (result.stderr ?? ''),
-  }
 }
 
 // ── tests ─────────────────────────────────────────────────────────────────
@@ -159,27 +182,31 @@ describe('git smart-HTTP push + clone integration', () => {
     authUrl = `http://alice:pass123@127.0.0.1:${serverPort}/git/alice/demo.git`
   })
 
-  it('initialises a local repo and commits a file', () => {
-    runGit(['init', '-b', 'main', workDir], tmpdir())
-    runGit(['config', 'user.email', 'alice@example.com'], workDir)
-    runGit(['config', 'user.name', 'alice'], workDir)
+  it('initialises a local repo and commits a file', async () => {
+    await runGit(['init', '-b', 'main', workDir], tmpdir())
+    await runGit(['config', 'user.email', 'alice@example.com'], workDir)
+    await runGit(['config', 'user.name', 'alice'], workDir)
     writeFileSync(join(workDir, 'README.md'), 'hello\n')
-    runGit(['add', 'README.md'], workDir)
-    const r = runGit(['commit', '-m', 'init'], workDir)
+    await runGit(['add', 'README.md'], workDir)
+    const r = await runGit(['commit', '-m', 'init'], workDir)
     console.log('commit:', r.combined)
     expect(r.status).toBe(0)
   })
 
-  it('pushes main to the server without sideband errors', () => {
-    runGit(['remote', 'add', 'origin', authUrl], workDir)
-    const r = runGit(['push', '-v', 'origin', 'main'], workDir)
+  it('pushes main to the server without sideband errors', async () => {
+    await runGit(['remote', 'add', 'origin', authUrl], workDir)
+    const r = await runGit(['push', '-v', 'origin', 'main'], workDir)
+    const logContent = (() => { try { return require('node:fs').readFileSync(LOG_FILE, 'utf8') } catch { return '(no log)' } })()
+    console.log('\n── server log ──\n', logContent)
     console.log('\n── git push output ──\n', r.combined)
     expect(r.status, `push failed:\n${r.combined}`).toBe(0)
   })
 
-  it('clones the pushed repo without pack-header errors', () => {
+  it('clones the pushed repo without pack-header errors', async () => {
     const cloneDir = mktemp('clone')
-    const r = runGit(['clone', '-v', authUrl, join(cloneDir, 'repo')], tmpdir())
+    const r = await runGit(['clone', '-v', authUrl, join(cloneDir, 'repo')], tmpdir())
+    const logContent = (() => { try { return require('node:fs').readFileSync(LOG_FILE, 'utf8') } catch { return '(no log)' } })()
+    console.log('\n── server log ──\n', logContent)
     console.log('\n── git clone output ──\n', r.combined)
     expect(r.status, `clone failed:\n${r.combined}`).toBe(0)
   })
