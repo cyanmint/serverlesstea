@@ -1,4 +1,4 @@
-The HTML templates in frontend/gitea-templates/ are taken from the Gitea project
+The HTML templates in frontend/ are taken from the Gitea project
 (https://github.com/go-gitea/gitea) and are used as build-time assets.
 
 Gitea License (MIT):
