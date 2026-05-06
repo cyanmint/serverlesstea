@@ -981,7 +981,7 @@ router.put('/admin/users/:username', v1Auth, async (c) => {
   const u = await getUser(db, username)
   if (!u) return c.json({ message: 'User not found' }, 404)
   const body = await c.req.json<{ full_name?: string; description?: string; is_admin?: boolean; login_name?: string; source_id?: number }>()
-    .catch(() => ({}))
+    .catch((): { full_name?: string; description?: string; is_admin?: boolean; login_name?: string; source_id?: number } => ({}))
   if (body.full_name !== undefined || body.description !== undefined || body.is_admin !== undefined) {
     await db.prepare("UPDATE users SET display_name = ?, bio = ?, is_admin = ?, updated_at = datetime('now') WHERE id = ?")
       .bind(body.full_name ?? u.display_name, body.description ?? u.bio, body.is_admin !== undefined ? (body.is_admin ? 1 : 0) : u.is_admin, u.id).run()
