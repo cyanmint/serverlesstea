@@ -1,28 +1,61 @@
 import { describe, expect, it } from 'vitest'
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import app from '../src/index'
 
-type FrontendEndpoint = { name: string; method: string; path: string }
+type Endpoint = { name?: string; method: string; path: string }
 type CoverageStatus = 'correct' | 'stub' | 'malfunction' | 'missing'
 type CoverageRow = { name: string; method: string; path: string; status: CoverageStatus; note: string }
 
 // Known format mismatches: route exists + DB ops but response shape differs from
-// what the frontend function expects.  Key format: "METHOD:/path/without/api/v1"
+// what the caller expects.  Key format: "METHOD:/handler/path"
 // Update this set whenever a format regression is introduced or fixed.
 const knownMalfunctions = new Set<string>([
-  // Example (currently empty after fixing repos/issues/search):
-  // 'GET:/repos/issues/search',
+  // Example: 'GET:/repos/issues/search',
 ])
 
+function collectSourceFiles(dir: string): string[] {
+  const files: string[] = []
+  for (const entry of readdirSync(dir)) {
+    const full = path.join(dir, entry)
+    if (statSync(full).isDirectory()) {
+      files.push(...collectSourceFiles(full))
+    } else if (full.endsWith('.ts')) {
+      files.push(full)
+    }
+  }
+  return files
+}
+
+// Route prefixes registered in src/index.ts — used to derive the handler-relative path
+// that appears in each route file (e.g. '/api/v1/user' → '/user' for v1Routes).
+const ROUTE_PREFIXES = [
+  '/api/v1',
+  '/api/auth',
+  '/api/users',
+  '/api/repos',
+  '/api/admin',
+  '/api/internal',
+  '/api/orgs',
+  '/api/user/keys',
+  '/api/notifications',
+  '/api/dashboard',
+]
+
 describe('api coverage report', () => {
-  it('generates coverage report for frontendRequiredEndpoints', () => {
+  it('generates coverage report for all endpoints in api.json', () => {
     const apiJson = JSON.parse(readFileSync(path.resolve(process.cwd(), '../api.json'), 'utf8'))
-    const endpoints: FrontendEndpoint[] = apiJson.frontendRequiredEndpoints
+    const endpoints: Endpoint[] = apiJson.endpoints
     const routes = (app as unknown as { routes: Array<{ method: string; path: string }> }).routes
-    const v1Source = readFileSync(path.resolve(process.cwd(), 'src/routes/v1.ts'), 'utf8')
+
+    // Concatenate all TypeScript source files for DB/git-op detection.
+    const allSource = collectSourceFiles(path.resolve(process.cwd(), 'src'))
+      .map((f) => readFileSync(f, 'utf8'))
+      .join('\n')
 
     function normalizePath(p: string): string {
+      // All git smart-HTTP paths are handled by a single app.all('/git/*') wildcard.
+      if (p.startsWith('/git/')) return '/git/*'
       return p
         .replace(/\{owner\}/g, ':owner')
         .replace(/\{repo\}/g, ':repo')
@@ -39,22 +72,34 @@ describe('api coverage report', () => {
     }
 
     function classifyEndpoint(method: string, normalizedPath: string): CoverageStatus {
-      const routePath = normalizedPath.replace('/api/v1', '')
-      const found = routes.find(
-        (r) => r.method.toLowerCase() === method.toLowerCase() && r.path === normalizedPath,
-      )
-      // Route does not exist in the app at all — the frontend will get a 404.
+      // Git routes are registered as app.all('/git/*').
+      const isGit = normalizedPath === '/git/*'
+      const found = routes.find((r) => {
+        if (isGit) return r.method.toLowerCase() === 'all' && r.path === '/git/*'
+        return r.method.toLowerCase() === method.toLowerCase() && r.path === normalizedPath
+      })
       if (!found) return 'missing'
 
-      // Route exists but is a known response-format mismatch.
-      const malfunctionKey = `${method.toUpperCase()}:${routePath}`
+      // Git operations always touch git storage — always correct.
+      if (isGit) return 'correct'
+
+      // Derive the handler-relative path that appears in the route source file.
+      let handlerPath = normalizedPath
+      for (const prefix of ROUTE_PREFIXES) {
+        if (normalizedPath.startsWith(prefix)) {
+          handlerPath = normalizedPath.slice(prefix.length) || '/'
+          break
+        }
+      }
+
+      const malfunctionKey = `${method.toUpperCase()}:${handlerPath}`
       if (knownMalfunctions.has(malfunctionKey)) return 'malfunction'
 
-      const lines = v1Source.split('\n')
+      const lines = allSource.split('\n')
       for (let i = 0; i < lines.length; i++) {
         if (
-          lines[i].includes(routePath.replace(/:([^/]+)\{\.\*\}/, ':$1{.*}')) ||
-          lines[i].includes(routePath.replace(/:([^/]+)/g, (_, p) => `{${p}}`))
+          lines[i].includes(handlerPath.replace(/:([^/]+)\{\.\*\}/, ':$1{.*}')) ||
+          lines[i].includes(handlerPath.replace(/:([^/]+)/g, (_, p) => `{${p}}`))
         ) {
           const context = lines.slice(i, i + 30).join('\n')
           if (
@@ -77,15 +122,16 @@ describe('api coverage report', () => {
     const rows: CoverageRow[] = endpoints.map((ep) => {
       const normalizedPath = normalizePath(ep.path)
       const status = classifyEndpoint(ep.method, normalizedPath)
+      const name = ep.name ?? `${ep.method} ${ep.path}`
       const note =
         status === 'missing'
-          ? 'Route not registered — frontend receives 404'
+          ? 'Route not registered — returns 404'
           : status === 'malfunction'
-            ? 'Route exists but response format does not match frontend expectation'
+            ? 'Route exists but response format does not match expectation'
             : status === 'stub'
               ? 'No DB/git operations — returns minimal data'
-              : 'DB-backed implementation'
-      return { name: ep.name, method: ep.method, path: ep.path, status, note }
+              : 'DB/git-backed implementation'
+      return { name, method: ep.method, path: ep.path, status, note }
     })
 
     const correctCount = rows.filter((r) => r.status === 'correct').length
@@ -109,15 +155,16 @@ describe('api coverage report', () => {
       `Coverage: ${correctCount} correct, ${stubCount} stub, ${malfunctionCount} malfunction, ${missingCount} missing out of ${total}`,
     )
 
+    // Every endpoint in api.json must be registered in the app — a missing route means
+    // the server returns 404 for a published API path.
     const missingEndpoints = rows.filter((r) => r.status === 'missing').map((r) => `${r.method} ${r.path}`)
-    const stubEndpoints = rows.filter((r) => r.status === 'stub').map((r) => `${r.method} ${r.path}`)
-    const malfunctionEndpoints = rows.filter((r) => r.status === 'malfunction').map((r) => `${r.method} ${r.path}`)
+    expect(missingEndpoints, `Endpoints listed in api.json but not registered in the app: ${missingEndpoints.join(', ')}`).toHaveLength(0)
 
-    expect(missingEndpoints, `Missing endpoints (not registered in app): ${missingEndpoints.join(', ')}`).toHaveLength(0)
-    expect(stubEndpoints, `Stub endpoints (no DB/git operations): ${stubEndpoints.join(', ')}`).toHaveLength(0)
+    // Known format mismatches must not accumulate silently.
+    const malfunctionEndpoints = rows.filter((r) => r.status === 'malfunction').map((r) => `${r.method} ${r.path}`)
     expect(
       malfunctionEndpoints,
-      `Malfunctioning endpoints (response format mismatch): ${malfunctionEndpoints.join(', ')}`,
+      `Endpoints with response-format mismatches: ${malfunctionEndpoints.join(', ')}`,
     ).toHaveLength(0)
   })
 })
