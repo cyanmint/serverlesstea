@@ -39,6 +39,13 @@ export class MockR2Bucket {
     return new MockR2ObjectBody(value)
   }
 
+  async head(key: string) {
+    const value = this.store.get(key)
+    if (!value) return null
+    const size = typeof value === 'string' ? new TextEncoder().encode(value).length : value.length
+    return { size }
+  }
+
   async put(key: string, value: string | ArrayBuffer | Uint8Array) {
     if (typeof value === 'string') {
       this.store.set(key, value)
@@ -51,7 +58,11 @@ export class MockR2Bucket {
     const objects = Array.from(this.store.keys())
       .filter((k) => k.startsWith(prefix))
       .map((key) => ({ key }))
-    return { objects }
+    return { objects, delimitedPrefixes: [] as string[] }
+  }
+
+  async delete(key: string) {
+    this.store.delete(key)
   }
 }
 

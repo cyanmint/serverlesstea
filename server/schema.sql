@@ -161,3 +161,28 @@ CREATE TABLE IF NOT EXISTS notifications (
   is_read INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS starred_repos (
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  repo_id TEXT NOT NULL REFERENCES repositories(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (user_id, repo_id)
+);
+
+CREATE TABLE IF NOT EXISTS access_tokens (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  sha1 TEXT NOT NULL,
+  last_eight TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS gpg_keys (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  key_id TEXT NOT NULL,
+  raw_content TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  expires_at TEXT
+);

@@ -1691,7 +1691,7 @@
               "type": "string"
             },
             "collectionFormat": "multi",
-            "description": "Show notifications with the provided status types. Options are: unread, read and/or pinned. Defaults to unread \u0026 pinned.",
+            "description": "Show notifications with the provided status types. Options are: unread, read and/or pinned. Defaults to unread & pinned.",
             "name": "status-types",
             "in": "query"
           },
@@ -8649,7 +8649,7 @@
         }
       },
       "post": {
-        "description": "Uses automatic pagination based on default page size and max response size and returns the maximum allowed number of files. Files which could not be retrieved are null. Files which are too large are being returned with `encoding == null`, `content == null` and `size \u003e 0`, they can be requested separately by using the `download_url`.",
+        "description": "Uses automatic pagination based on default page size and max response size and returns the maximum allowed number of files. Files which could not be retrieved are null. Files which are too large are being returned with `encoding == null`, `content == null` and `size > 0`, they can be requested separately by using the `download_url`.",
         "produces": [
           "application/json"
         ],
@@ -13990,7 +13990,7 @@
               "type": "string"
             },
             "collectionFormat": "multi",
-            "description": "Show notifications with the provided status types. Options are: unread, read and/or pinned. Defaults to unread \u0026 pinned",
+            "description": "Show notifications with the provided status types. Options are: unread, read and/or pinned. Defaults to unread & pinned",
             "name": "status-types",
             "in": "query"
           },
@@ -22480,7 +22480,7 @@
           "x-go-name": "Path"
         },
         "previous_attempt_url": {
-          "description": "PreviousAttemptURL is the API URL of the previous attempt of this run, e.g. \".../actions/runs/{run_id}/attempts/{attempt-1}\".\nIt is set only when the current attempt is \u003e 1 (i.e. a rerun). For the first attempt, or for legacy runs that pre-date ActionRunAttempt, it is null.",
+          "description": "PreviousAttemptURL is the API URL of the previous attempt of this run, e.g. \".../actions/runs/{run_id}/attempts/{attempt-1}\".\nIt is set only when the current attempt is > 1 (i.e. a rerun). For the first attempt, or for legacy runs that pre-date ActionRunAttempt, it is null.",
           "type": "string",
           "x-go-name": "PreviousAttemptURL"
         },
@@ -24547,7 +24547,7 @@
           "x-go-name": "Deadline"
         },
         "head": {
-          "description": "The head branch for the pull request, it could be a branch name on the base repository or\na form like `\u003cusername\u003e:\u003cbranch\u003e` which refers to the user's fork repository's branch.",
+          "description": "The head branch for the pull request, it could be a branch name on the base repository or\na form like `<username>:<branch>` which refers to the user's fork repository's branch.",
           "type": "string",
           "x-go-name": "Head"
         },
@@ -32292,5 +32292,517 @@
     {
       "TOTPHeader": []
     }
-  ]
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/api/auth/register"
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/settings/api"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/user"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/user"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/user/change_password"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/user/starred/{owner}/{repo}"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/user/starred/{owner}/{repo}"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/user/starred/{owner}/{repo}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/user/repos"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/user/orgs"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/user/repos"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/user/keys"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/user/keys"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/user/keys/{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/user/gpg_keys"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/user/gpg_keys"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/user/gpg_keys/{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/user/emails"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/user/emails"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/user/emails"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/users/search"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/users/{username}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/users/{username}/repos"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/users/{username}/orgs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/users/{username}/tokens"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/users/{username}/tokens"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/users/{username}/tokens/{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/search"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/issues/search"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/branches"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/contents/{path}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/commits"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/tags"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/labels"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/milestones"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/milestones/{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/activities/feeds"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/releases"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/releases/tags/{tag}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/releases/latest"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/releases/{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/issues"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/issues/{index}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/issues/{index}/comments"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/repos/{owner}/{repo}/issues"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/repos/{owner}/{repo}/issues/{index}/comments"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/pulls"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/wiki/page/{pageName}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/wiki/pages"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/notifications"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/notifications"
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/notifications/threads/{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/orgs"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/users"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/admin/users"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/admin/users/{username}"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/v1/admin/users/{username}"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/admin/users/{username}"
+    },
+    {
+      "method": "GET",
+      "path": "/git/{owner}/{repo}.git/info/refs"
+    },
+    {
+      "method": "POST",
+      "path": "/git/{owner}/{repo}.git/git-receive-pack"
+    },
+    {
+      "method": "POST",
+      "path": "/git/{owner}/{repo}.git/git-upload-pack"
+    }
+  ],
+  "frontendRequiredEndpoints": [
+    {
+      "name": "login (get current user)",
+      "method": "GET",
+      "path": "/api/v1/user"
+    },
+    {
+      "name": "createToken (login)",
+      "method": "POST",
+      "path": "/api/v1/users/{username}/tokens"
+    },
+    {
+      "name": "getCurrentUser",
+      "method": "GET",
+      "path": "/api/v1/user"
+    },
+    {
+      "name": "getUser",
+      "method": "GET",
+      "path": "/api/v1/users/{username}"
+    },
+    {
+      "name": "getUserRepos",
+      "method": "GET",
+      "path": "/api/v1/users/{username}/repos"
+    },
+    {
+      "name": "getUserOrgs",
+      "method": "GET",
+      "path": "/api/v1/users/{username}/orgs"
+    },
+    {
+      "name": "getMyOrgs",
+      "method": "GET",
+      "path": "/api/v1/user/orgs"
+    },
+    {
+      "name": "getMyRepos",
+      "method": "GET",
+      "path": "/api/v1/user/repos"
+    },
+    {
+      "name": "searchUsers",
+      "method": "GET",
+      "path": "/api/v1/users/search"
+    },
+    {
+      "name": "searchRepos",
+      "method": "GET",
+      "path": "/api/v1/repos/search"
+    },
+    {
+      "name": "getRepo",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}"
+    },
+    {
+      "name": "getRepoBranches",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/branches"
+    },
+    {
+      "name": "getRepoContents",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/contents/{path}"
+    },
+    {
+      "name": "getRepoIssues",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/issues"
+    },
+    {
+      "name": "getIssue",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/issues/{index}"
+    },
+    {
+      "name": "getIssueComments",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/issues/{index}/comments"
+    },
+    {
+      "name": "getPullRequests",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/pulls"
+    },
+    {
+      "name": "getRepoReleases",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/releases"
+    },
+    {
+      "name": "getRepoRelease",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/releases/{id}"
+    },
+    {
+      "name": "getRepoReleaseByTag",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/releases/tags/{tag}"
+    },
+    {
+      "name": "getLatestRelease",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/releases/latest"
+    },
+    {
+      "name": "getRepoCommits",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/commits"
+    },
+    {
+      "name": "getRepoTags",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/tags"
+    },
+    {
+      "name": "getNotifications",
+      "method": "GET",
+      "path": "/api/v1/notifications"
+    },
+    {
+      "name": "markAllNotificationsRead",
+      "method": "PUT",
+      "path": "/api/v1/notifications"
+    },
+    {
+      "name": "markNotificationRead",
+      "method": "PATCH",
+      "path": "/api/v1/notifications/threads/{id}"
+    },
+    {
+      "name": "getWikiPage",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/wiki/page/{pageName}"
+    },
+    {
+      "name": "listWikiPages",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/wiki/pages"
+    },
+    {
+      "name": "getUserIssues (search)",
+      "method": "GET",
+      "path": "/api/v1/repos/issues/search"
+    },
+    {
+      "name": "getRepoMilestones",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/milestones"
+    },
+    {
+      "name": "getRepoMilestone",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/milestones/{id}"
+    },
+    {
+      "name": "getRepoLabels",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/labels"
+    },
+    {
+      "name": "createIssue",
+      "method": "POST",
+      "path": "/api/v1/repos/{owner}/{repo}/issues"
+    },
+    {
+      "name": "createIssueComment",
+      "method": "POST",
+      "path": "/api/v1/repos/{owner}/{repo}/issues/{index}/comments"
+    },
+    {
+      "name": "isRepoStarred",
+      "method": "GET",
+      "path": "/api/v1/user/starred/{owner}/{repo}"
+    },
+    {
+      "name": "starRepo",
+      "method": "PUT",
+      "path": "/api/v1/user/starred/{owner}/{repo}"
+    },
+    {
+      "name": "unstarRepo",
+      "method": "DELETE",
+      "path": "/api/v1/user/starred/{owner}/{repo}"
+    },
+    {
+      "name": "createRepo",
+      "method": "POST",
+      "path": "/api/v1/user/repos"
+    },
+    {
+      "name": "listSSHKeys",
+      "method": "GET",
+      "path": "/api/v1/user/keys"
+    },
+    {
+      "name": "createSSHKey",
+      "method": "POST",
+      "path": "/api/v1/user/keys"
+    },
+    {
+      "name": "deleteSSHKey",
+      "method": "DELETE",
+      "path": "/api/v1/user/keys/{id}"
+    },
+    {
+      "name": "listGPGKeys",
+      "method": "GET",
+      "path": "/api/v1/user/gpg_keys"
+    },
+    {
+      "name": "createGPGKey",
+      "method": "POST",
+      "path": "/api/v1/user/gpg_keys"
+    },
+    {
+      "name": "deleteGPGKey",
+      "method": "DELETE",
+      "path": "/api/v1/user/gpg_keys/{id}"
+    },
+    {
+      "name": "listAccessTokens",
+      "method": "GET",
+      "path": "/api/v1/users/{username}/tokens"
+    },
+    {
+      "name": "createAccessToken",
+      "method": "POST",
+      "path": "/api/v1/users/{username}/tokens"
+    },
+    {
+      "name": "deleteAccessToken",
+      "method": "DELETE",
+      "path": "/api/v1/users/{username}/tokens/{id}"
+    },
+    {
+      "name": "listEmails",
+      "method": "GET",
+      "path": "/api/v1/user/emails"
+    },
+    {
+      "name": "getRepoActivities",
+      "method": "GET",
+      "path": "/api/v1/repos/{owner}/{repo}/activities/feeds"
+    },
+    {
+      "name": "listAdminUsers",
+      "method": "GET",
+      "path": "/api/v1/admin/users"
+    },
+    {
+      "name": "listAdminOrgs",
+      "method": "GET",
+      "path": "/api/v1/admin/orgs"
+    }
+  ],
+  "stubResponseMarkers": []
 }

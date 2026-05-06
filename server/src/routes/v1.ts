@@ -149,18 +149,64 @@ router.post('/user/change_password', v1Auth, async (c) => {
 // ─── User starred repos ───────────────────────────────────────────────────────
 
 router.get('/user/starred/:owner/:repo', v1Auth, async (c) => {
-  return c.body(null, 404)
+  const payload = c.get('user' as never) as JWTPayload
+  const { owner, repo } = c.req.param()
+  const db = c.env.database
+  const repoRow = await getRepo(db, owner, repo)
+  if (!repoRow) return c.body(null, 404)
+  const star = await db.prepare('SELECT 1 FROM starred_repos WHERE user_id = ? AND repo_id = ?')
+    .bind(payload.sub, repoRow.id).first()
+  return c.body(null, star ? 204 : 404)
 })
 
 router.put('/user/starred/:owner/:repo', v1Auth, async (c) => {
+  const payload = c.get('user' as never) as JWTPayload
+  const { owner, repo } = c.req.param()
+  const db = c.env.database
+  const repoRow = await getRepo(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  await db.prepare('INSERT OR IGNORE INTO starred_repos (user_id, repo_id) VALUES (?, ?)').bind(payload.sub, repoRow.id).run()
   return c.body(null, 204)
 })
 
 router.delete('/user/starred/:owner/:repo', v1Auth, async (c) => {
+  const payload = c.get('user' as never) as JWTPayload
+  const { owner, repo } = c.req.param()
+  const db = c.env.database
+  const repoRow = await getRepo(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  await db.prepare('DELETE FROM starred_repos WHERE user_id = ? AND repo_id = ?').bind(payload.sub, repoRow.id).run()
   return c.body(null, 204)
 })
 
 // ─── Create repo ─────────────────────────────────────────────────────────────
+
+router.get('/user/repos', v1Auth, async (c) => {
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const { limit = '20', page = '1' } = c.req.query()
+  const offset = (parseInt(page) - 1) * parseInt(limit)
+  const repos = await db.prepare(`
+    SELECT r.id, r.name, r.description, r.is_private, r.default_branch, r.created_at, r.updated_at,
+           r.owner_id, u.username as owner_username, u.display_name as owner_display_name,
+           u.email as owner_email, u.bio as owner_bio, u.is_admin as owner_is_admin
+    FROM repositories r JOIN users u ON r.owner_id = u.id
+    WHERE r.owner_id = ?
+    ORDER BY r.updated_at DESC LIMIT ? OFFSET ?
+  `).bind(payload.sub, parseInt(limit), offset).all<Parameters<typeof formatRepo>[0]>()
+  return c.json(repos.results.map(formatRepo))
+})
+
+router.get('/user/orgs', v1Auth, async (c) => {
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const orgs = await db.prepare(`
+    SELECT o.id, o.name, o.display_name, o.description, o.visibility
+    FROM org_members m JOIN organizations o ON m.org_id = o.id
+    WHERE m.user_id = ? ORDER BY o.name
+  `).bind(payload.sub).all<{ id: string; name: string; display_name: string | null; description: string | null; visibility: string }>()
+  return c.json(orgs.results.map((o) => ({ id: o.id, username: o.name, full_name: o.display_name ?? '', description: o.description ?? '', visibility: o.visibility, avatar_url: '' })))
+})
 
 router.post('/user/repos', v1Auth, async (c) => {
   const payload = c.get('user' as never) as JWTPayload
@@ -179,6 +225,12 @@ router.post('/user/repos', v1Auth, async (c) => {
 
   const owner = await db.prepare('SELECT id, username, email, display_name, bio, is_admin, created_at FROM users WHERE id = ?')
     .bind(payload.sub).first<UserRow>()
+
+  // Initialise the bare git repository in R2 so the repo is clonable immediately.
+  if (owner?.username) {
+    await c.env.bucket.put(`${owner.username}/${name}.git/HEAD`, 'ref: refs/heads/main\n')
+  }
+
   return c.json({
     id, name,
     full_name: `${owner?.username ?? ''}/${name}`,
@@ -230,17 +282,40 @@ router.delete('/user/keys/:id', v1Auth, async (c) => {
   return c.body(null, 204)
 })
 
-// ─── GPG Keys (no backing table) ─────────────────────────────────────────────
+// ─── GPG Keys ─────────────────────────────────────────────────────────────────
 
 router.get('/user/gpg_keys', v1Auth, async (c) => {
-  return c.json([])
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const keys = await db.prepare(
+    'SELECT id, key_id, raw_content, created_at, expires_at FROM gpg_keys WHERE user_id = ? ORDER BY created_at DESC',
+  ).bind(payload.sub).all<{ id: string; key_id: string; raw_content: string; created_at: string; expires_at: string | null }>()
+  return c.json(keys.results.map((k) => ({
+    id: k.id, key_id: k.key_id, primary_key_id: '', emails: [], subkeys: [],
+    created_at: k.created_at, expires_at: k.expires_at ?? null,
+  })))
 })
 
 router.post('/user/gpg_keys', v1Auth, async (c) => {
-  return c.json({ id: '' }, 201)
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const body = await c.req.json<{ armored_public_key?: string }>().catch(() => ({ armored_public_key: undefined }))
+  if (!body.armored_public_key) return c.json({ message: 'armored_public_key required' }, 422)
+  const id = crypto.randomUUID()
+  const keyId = crypto.randomUUID().slice(0, 16).toUpperCase()
+  await db.prepare('INSERT INTO gpg_keys (id, user_id, key_id, raw_content) VALUES (?, ?, ?, ?)')
+    .bind(id, payload.sub, keyId, body.armored_public_key).run()
+  return c.json({ id, key_id: keyId, primary_key_id: '', emails: [], subkeys: [], created_at: new Date().toISOString(), expires_at: null }, 201)
 })
 
 router.delete('/user/gpg_keys/:id', v1Auth, async (c) => {
+  const payload = c.get('user' as never) as JWTPayload
+  const { id } = c.req.param()
+  const db = c.env.database
+  const row = await db.prepare('SELECT user_id FROM gpg_keys WHERE id = ?').bind(id).first<{ user_id: string }>()
+  if (!row) return c.json({ message: 'GPG key not found' }, 404)
+  if (row.user_id !== (payload.sub as string)) return c.json({ message: 'Forbidden' }, 403)
+  await db.prepare('DELETE FROM gpg_keys WHERE id = ?').bind(id).run()
   return c.body(null, 204)
 })
 
@@ -314,7 +389,16 @@ router.get('/users/:username/orgs', v1OptionalAuth, async (c) => {
 })
 
 router.get('/users/:username/tokens', v1Auth, async (c) => {
-  return c.json([])
+  const payload = c.get('user' as never) as JWTPayload
+  const { username } = c.req.param()
+  const db = c.env.database
+  const u = await getUser(db, username)
+  if (!u) return c.json({ message: 'User not found' }, 404)
+  if (u.id !== (payload.sub as string) && !payload['isAdmin']) return c.json({ message: 'Forbidden' }, 403)
+  const tokens = await db.prepare(
+    'SELECT id, name, last_eight, created_at FROM access_tokens WHERE user_id = ? ORDER BY created_at DESC',
+  ).bind(u.id).all<{ id: string; name: string; last_eight: string; created_at: string }>()
+  return c.json(tokens.results.map((t) => ({ id: t.id, name: t.name, token_last_eight: t.last_eight, created_at: t.created_at })))
 })
 
 router.post('/users/:username/tokens', v1Auth, async (c) => {
@@ -325,10 +409,22 @@ router.post('/users/:username/tokens', v1Auth, async (c) => {
     { sub: payload.sub, username: payload['username'], email: payload['email'], isAdmin: payload['isAdmin'] },
     c.env.JWT_SECRET,
   )
-  return c.json({ id: '', name: tokenName, sha1 }, 201)
+  const id = crypto.randomUUID()
+  const lastEight = sha1.slice(-8)
+  const db = c.env.database
+  await db.prepare('INSERT INTO access_tokens (id, user_id, name, sha1, last_eight) VALUES (?, ?, ?, ?, ?)')
+    .bind(id, payload.sub, tokenName, sha1, lastEight).run()
+  return c.json({ id, name: tokenName, sha1, token_last_eight: lastEight }, 201)
 })
 
 router.delete('/users/:username/tokens/:id', v1Auth, async (c) => {
+  const payload = c.get('user' as never) as JWTPayload
+  const { id } = c.req.param()
+  const db = c.env.database
+  const row = await db.prepare('SELECT user_id FROM access_tokens WHERE id = ?').bind(id).first<{ user_id: string }>()
+  if (!row) return c.json({ message: 'Token not found' }, 404)
+  if (row.user_id !== (payload.sub as string) && !payload['isAdmin']) return c.json({ message: 'Forbidden' }, 403)
+  await db.prepare('DELETE FROM access_tokens WHERE id = ?').bind(id).run()
   return c.body(null, 204)
 })
 
@@ -509,7 +605,34 @@ router.get('/repos/:owner/:repo/milestones/:id', v1OptionalAuth, async (c) => {
 })
 
 router.get('/repos/:owner/:repo/activities/feeds', v1OptionalAuth, async (c) => {
-  return c.json([])
+  const { owner, repo } = c.req.param()
+  const db = c.env.database
+  const repoRow = await getRepo(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  const { limit = '20', page = '1' } = c.req.query()
+  const offset = (parseInt(page) - 1) * parseInt(limit)
+  const rows = await db.prepare(`
+    SELECT i.id, i.number, i.title, i.state, i.is_pull, i.created_at,
+           u.id as user_id, u.username as user_username, u.email as user_email,
+           u.display_name as user_display_name, u.bio as user_bio,
+           u.is_admin as user_is_admin, u.created_at as user_created_at
+    FROM issues i JOIN users u ON i.creator_id = u.id
+    WHERE i.repo_id = ?
+    ORDER BY i.created_at DESC LIMIT ? OFFSET ?
+  `).bind(repoRow.id, parseInt(limit), offset).all<Record<string, unknown>>()
+  return c.json(rows.results.map((i) => ({
+    id: i.id,
+    op_type: i.is_pull ? 'create_pull_request' : 'create_issue',
+    act_user: {
+      id: i.user_id, login: i.user_username, full_name: i.user_display_name ?? '',
+      email: i.user_email, avatar_url: '', html_url: `/${i.user_username}`,
+      is_admin: i.user_is_admin === 1, created: i.user_created_at, description: i.user_bio ?? '',
+    },
+    repo: null,
+    ref_name: '',
+    content: JSON.stringify({ Number: i.number, Title: i.title }),
+    created: i.created_at,
+  })))
 })
 
 // ─── Releases ─────────────────────────────────────────────────────────────────
@@ -821,6 +944,61 @@ router.get('/admin/users', v1Auth, async (c) => {
     'SELECT id, username, email, display_name, bio, is_admin, created_at FROM users ORDER BY created_at DESC',
   ).all<UserRow>()
   return c.json(users.results.map(formatUser))
+})
+
+router.post('/admin/users', v1Auth, async (c) => {
+  const payload = c.get('user' as never) as JWTPayload
+  if (!payload['isAdmin']) return c.json({ message: 'Forbidden' }, 403)
+  const db = c.env.database
+  const body = await c.req.json<{ username?: string; email?: string; password?: string; is_admin?: boolean }>()
+    .catch(() => ({ username: undefined, email: undefined, password: undefined, is_admin: undefined }))
+  if (!body.username || !body.email || !body.password) return c.json({ message: 'username, email and password required' }, 422)
+  const existing = await db.prepare('SELECT id FROM users WHERE username = ? OR email = ?').bind(body.username, body.email).first()
+  if (existing) return c.json({ message: 'User already exists' }, 409)
+  const id = crypto.randomUUID()
+  const hash = await hashPassword(body.password)
+  await db.prepare('INSERT INTO users (id, username, email, password_hash, is_admin) VALUES (?, ?, ?, ?, ?)')
+    .bind(id, body.username, body.email, hash, body.is_admin ? 1 : 0).run()
+  const u = await db.prepare('SELECT id, username, email, display_name, bio, is_admin, created_at FROM users WHERE id = ?').bind(id).first<UserRow>()
+  return c.json(formatUser(u!), 201)
+})
+
+router.get('/admin/users/:username', v1Auth, async (c) => {
+  const payload = c.get('user' as never) as JWTPayload
+  if (!payload['isAdmin']) return c.json({ message: 'Forbidden' }, 403)
+  const { username } = c.req.param()
+  const db = c.env.database
+  const u = await getUser(db, username)
+  if (!u) return c.json({ message: 'User not found' }, 404)
+  return c.json(formatUser(u))
+})
+
+router.put('/admin/users/:username', v1Auth, async (c) => {
+  const payload = c.get('user' as never) as JWTPayload
+  if (!payload['isAdmin']) return c.json({ message: 'Forbidden' }, 403)
+  const { username } = c.req.param()
+  const db = c.env.database
+  const u = await getUser(db, username)
+  if (!u) return c.json({ message: 'User not found' }, 404)
+  const body = await c.req.json<{ full_name?: string; description?: string; is_admin?: boolean; login_name?: string; source_id?: number }>()
+    .catch(() => ({}))
+  if (body.full_name !== undefined || body.description !== undefined || body.is_admin !== undefined) {
+    await db.prepare("UPDATE users SET display_name = ?, bio = ?, is_admin = ?, updated_at = datetime('now') WHERE id = ?")
+      .bind(body.full_name ?? u.display_name, body.description ?? u.bio, body.is_admin !== undefined ? (body.is_admin ? 1 : 0) : u.is_admin, u.id).run()
+  }
+  const updated = await db.prepare('SELECT id, username, email, display_name, bio, is_admin, created_at FROM users WHERE id = ?').bind(u.id).first<UserRow>()
+  return c.json(formatUser(updated!))
+})
+
+router.delete('/admin/users/:username', v1Auth, async (c) => {
+  const payload = c.get('user' as never) as JWTPayload
+  if (!payload['isAdmin']) return c.json({ message: 'Forbidden' }, 403)
+  const { username } = c.req.param()
+  const db = c.env.database
+  const u = await getUser(db, username)
+  if (!u) return c.json({ message: 'User not found' }, 404)
+  await db.prepare('DELETE FROM users WHERE id = ?').bind(u.id).run()
+  return c.body(null, 204)
 })
 
 export default router
