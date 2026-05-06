@@ -1,4 +1,4 @@
-import { describe, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import app from '../src/index'
@@ -108,6 +108,17 @@ describe('api coverage report', () => {
     console.log(
       `Coverage: ${correctCount} correct, ${stubCount} stub, ${malfunctionCount} malfunction, ${missingCount} missing out of ${total}`,
     )
+
+    const missingEndpoints = rows.filter((r) => r.status === 'missing').map((r) => `${r.method} ${r.path}`)
+    const stubEndpoints = rows.filter((r) => r.status === 'stub').map((r) => `${r.method} ${r.path}`)
+    const malfunctionEndpoints = rows.filter((r) => r.status === 'malfunction').map((r) => `${r.method} ${r.path}`)
+
+    expect(missingEndpoints, `Missing endpoints (not registered in app): ${missingEndpoints.join(', ')}`).toHaveLength(0)
+    expect(stubEndpoints, `Stub endpoints (no DB/git operations): ${stubEndpoints.join(', ')}`).toHaveLength(0)
+    expect(
+      malfunctionEndpoints,
+      `Malfunctioning endpoints (response format mismatch): ${malfunctionEndpoints.join(', ')}`,
+    ).toHaveLength(0)
   })
 })
 
