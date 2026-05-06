@@ -45,7 +45,31 @@ const ROUTE_PREFIXES = [
 describe('api coverage report', () => {
   it('generates coverage report for all endpoints in api.json', () => {
     const apiJson = JSON.parse(readFileSync(path.resolve(process.cwd(), '../api.json'), 'utf8'))
-    const endpoints: Endpoint[] = apiJson.endpoints
+
+    // The implemented-endpoint list (used for hard assertions).
+    const implementedEndpoints: Endpoint[] = apiJson.endpoints
+
+    // Build the full endpoint list from the Swagger spec: basePath + paths.
+    // basePath may contain a Go template prefix (e.g. "{{.SwaggerAppSubUrl}}/api/v1");
+    // strip it to get the real path base.
+    const swaggerBase: string = (apiJson.basePath as string).replace(/\{\{.*?\}\}/g, '')
+    const swaggerPaths: Record<string, Record<string, unknown>> = apiJson.paths ?? {}
+    const swaggerEndpoints: Endpoint[] = []
+    for (const [swaggerPath, methods] of Object.entries(swaggerPaths)) {
+      for (const method of Object.keys(methods)) {
+        swaggerEndpoints.push({ method: method.toUpperCase(), path: swaggerBase + swaggerPath })
+      }
+    }
+
+    // Union: Swagger spec + any implemented endpoints that aren't in the Swagger spec
+    // (e.g. /api/auth/*, /git/*).
+    const swaggerSet = new Set(swaggerEndpoints.map((e) => `${e.method}:${e.path}`))
+    const extras = implementedEndpoints.filter((e) => !swaggerSet.has(`${e.method.toUpperCase()}:${e.path}`))
+    const allEndpoints: Endpoint[] = [...swaggerEndpoints, ...extras]
+
+    // Set of implemented keys for per-endpoint assertion enforcement.
+    const implementedKeys = new Set(implementedEndpoints.map((e) => `${e.method.toUpperCase()}:${e.path}`))
+
     const routes = (app as unknown as { routes: Array<{ method: string; path: string }> }).routes
 
     // Concatenate all TypeScript source files for DB/git-op detection.
@@ -119,7 +143,7 @@ describe('api coverage report', () => {
       return 'stub'
     }
 
-    const rows: CoverageRow[] = endpoints.map((ep) => {
+    const rows: CoverageRow[] = allEndpoints.map((ep) => {
       const normalizedPath = normalizePath(ep.path)
       const status = classifyEndpoint(ep.method, normalizedPath)
       const name = ep.name ?? `${ep.method} ${ep.path}`
@@ -155,13 +179,18 @@ describe('api coverage report', () => {
       `Coverage: ${correctCount} correct, ${stubCount} stub, ${malfunctionCount} malfunction, ${missingCount} missing out of ${total}`,
     )
 
-    // Every endpoint in api.json must be registered in the app — a missing route means
-    // the server returns 404 for a published API path.
-    const missingEndpoints = rows.filter((r) => r.status === 'missing').map((r) => `${r.method} ${r.path}`)
-    expect(missingEndpoints, `Endpoints listed in api.json but not registered in the app: ${missingEndpoints.join(', ')}`).toHaveLength(0)
+    // Every endpoint in the `endpoints` array must be registered in the app — a missing
+    // route means the server returns 404 for a path that was declared implemented.
+    // Swagger-spec-only paths (not yet implemented) are reported but do not fail CI.
+    const missingEndpoints = rows
+      .filter((r) => r.status === 'missing' && implementedKeys.has(`${r.method.toUpperCase()}:${r.path}`))
+      .map((r) => `${r.method} ${r.path}`)
+    expect(missingEndpoints, `Implemented endpoints no longer registered in the app: ${missingEndpoints.join(', ')}`).toHaveLength(0)
 
-    // Known format mismatches must not accumulate silently.
-    const malfunctionEndpoints = rows.filter((r) => r.status === 'malfunction').map((r) => `${r.method} ${r.path}`)
+    // Known format mismatches must not accumulate silently (implemented routes only).
+    const malfunctionEndpoints = rows
+      .filter((r) => r.status === 'malfunction' && implementedKeys.has(`${r.method.toUpperCase()}:${r.path}`))
+      .map((r) => `${r.method} ${r.path}`)
     expect(
       malfunctionEndpoints,
       `Endpoints with response-format mismatches: ${malfunctionEndpoints.join(', ')}`,
