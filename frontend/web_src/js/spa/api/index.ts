@@ -135,6 +135,7 @@ export type PullRequest = Issue & {
   merged: boolean;
   merged_at: string | null;
   merge_commit_sha: string | null;
+  mergeable: boolean | null;
   head: {label: string; ref: string; sha: string; repo: Repository | null};
   base: {label: string; ref: string; sha: string; repo: Repository | null};
 };
@@ -529,6 +530,35 @@ export async function listWikiPages(owner: string, repo: string, opts: Paginatio
   return resp.json();
 }
 
+/** Helper: encode a string to base64, supporting full UTF-8. */
+function toBase64(str: string): string {
+  return btoa(Array.from(new TextEncoder().encode(str), (b) => String.fromCharCode(b)).join(''));
+}
+
+/** Create a new wiki page in a repository. */
+export async function createWikiPage(owner: string, repo: string, title: string, content: string): Promise<WikiPage> {
+  const resp = await POST(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/wiki/new`, {
+    data: {title, content_base64: toBase64(content)},
+  });
+  if (!resp.ok) throw new Error(`Failed to create wiki page: ${resp.status}`);
+  return resp.json();
+}
+
+/** Update an existing wiki page. */
+export async function editWikiPage(owner: string, repo: string, pageName: string, title: string, content: string): Promise<WikiPage> {
+  const resp = await PATCH(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/wiki/page/${encodeURIComponent(pageName)}`, {
+    data: {title, content_base64: toBase64(content)},
+  });
+  if (!resp.ok) throw new Error(`Failed to edit wiki page: ${resp.status}`);
+  return resp.json();
+}
+
+/** Delete a wiki page. */
+export async function deleteWikiPage(owner: string, repo: string, pageName: string): Promise<void> {
+  const resp = await DELETE(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/wiki/page/${encodeURIComponent(pageName)}`);
+  if (!resp.ok) throw new Error(`Failed to delete wiki page: ${resp.status}`);
+}
+
 // ---- User issues/pulls ----
 
 export async function getUserIssues(opts: PaginationOpts & {state?: 'open' | 'closed'; type?: 'issues' | 'comment'; assigned?: boolean} = {}): Promise<Issue[]> {
@@ -582,10 +612,65 @@ export async function createIssue(owner: string, repo: string, data: CreateIssue
   return resp.json();
 }
 
+export type EditIssueOpts = {
+  title?: string;
+  body?: string;
+  state?: 'open' | 'closed';
+  assignees?: string[];
+  milestone?: number | null;
+};
+
+/** Edit an existing issue (title, body, state, assignees, milestone). */
+export async function editIssue(owner: string, repo: string, index: number, data: EditIssueOpts): Promise<Issue> {
+  const resp = await PATCH(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues/${index}`, {data});
+  if (!resp.ok) throw new Error(`Failed to edit issue: ${resp.status}`);
+  return resp.json();
+}
+
+/** Replace all labels on an issue with the given set of label IDs. */
+export async function setIssueLabels(owner: string, repo: string, index: number, labelIds: number[]): Promise<Label[]> {
+  const resp = await PUT(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues/${index}/labels`, {data: {labels: labelIds}});
+  if (!resp.ok) throw new Error(`Failed to set labels: ${resp.status}`);
+  return resp.json();
+}
+
 /** Post a new comment on an issue or pull request. */
 export async function createIssueComment(owner: string, repo: string, index: number, body: string): Promise<Comment> {
   const resp = await POST(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/issues/${index}/comments`, {data: {body}});
   if (!resp.ok) throw new Error(`Failed to post comment: ${resp.status}`);
+  return resp.json();
+}
+
+// ---- Pull Request mutations ----
+
+/** Get a single pull request by its index number. */
+export async function getPullRequest(owner: string, repo: string, index: number): Promise<PullRequest> {
+  const resp = await GET(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/pulls/${index}`);
+  if (!resp.ok) throw new Error(`Failed to fetch pull request: ${resp.status}`);
+  return resp.json();
+}
+
+/** Merge a pull request. style is 'merge', 'rebase', or 'squash'. */
+export async function mergePullRequest(owner: string, repo: string, index: number, style: 'merge' | 'rebase' | 'squash' = 'merge'): Promise<void> {
+  const resp = await POST(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/pulls/${index}/merge`, {
+    data: {Do: style, merge_message_field: ''},
+  });
+  if (!resp.ok) {
+    let msg = `Failed to merge pull request: ${resp.status}`;
+    try {
+      const body = await resp.json() as {message?: string};
+      if (body.message) msg = body.message;
+    } catch { /* ignore */ }
+    throw new Error(msg);
+  }
+}
+
+// ---- Repository collaborators ----
+
+/** List collaborators of a repository. */
+export async function getRepoCollaborators(owner: string, repo: string): Promise<User[]> {
+  const resp = await GET(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/collaborators`);
+  if (!resp.ok) return [];
   return resp.json();
 }
 
@@ -1049,4 +1134,283 @@ export async function listOAuth2Grants(): Promise<OAuth2Grant[]> {
 export async function revokeOAuth2Grant(id: number): Promise<void> {
   const resp = await DELETE(`${apiBase}/user/applications/grants/${id}`);
   if (!resp.ok) throw new Error(`Failed to revoke OAuth2 grant: ${resp.status}`);
+}
+
+// ---- Admin API ----
+
+export type CronTask = {
+  name: string;
+  schedule: string;
+  next: string;
+  prev: string;
+  exec_times: number;
+};
+
+export async function listAdminCronTasks(): Promise<CronTask[]> {
+  const resp = await GET(`${apiBase}/admin/cron?limit=50`);
+  if (!resp.ok) throw new Error(`Failed to list cron tasks: ${resp.status}`);
+  return resp.json() as Promise<CronTask[]>;
+}
+
+export async function runAdminCronTask(task: string): Promise<void> {
+  const resp = await POST(`${apiBase}/admin/cron/${encodeURIComponent(task)}`, {});
+  if (!resp.ok) throw new Error(`Failed to run cron task: ${resp.status}`);
+}
+
+export type AdminEmail = {
+  email: string;
+  is_primary: boolean;
+  is_activated: boolean;
+  name: string;
+  full_name: string;
+};
+
+export async function listAdminEmails(opts: PaginationOpts = {}): Promise<{data: AdminEmail[]; totalCount: number}> {
+  const params = new URLSearchParams({page: String(opts.page ?? 1), limit: String(opts.limit ?? 20)});
+  const resp = await GET(`${apiBase}/admin/emails?${params}`);
+  if (!resp.ok) throw new Error(`Failed to list emails: ${resp.status}`);
+  const data: AdminEmail[] = await resp.json();
+  return {data, totalCount: parseInt(resp.headers.get('X-Total-Count') ?? String(data.length), 10)};
+}
+
+export type AdminHook = Webhook;
+
+export async function listAdminHooks(opts: PaginationOpts = {}): Promise<{data: AdminHook[]; totalCount: number}> {
+  const params = new URLSearchParams({page: String(opts.page ?? 1), limit: String(opts.limit ?? 20)});
+  const resp = await GET(`${apiBase}/admin/hooks?${params}`);
+  if (!resp.ok) throw new Error(`Failed to list admin hooks: ${resp.status}`);
+  const data: AdminHook[] = await resp.json();
+  return {data, totalCount: parseInt(resp.headers.get('X-Total-Count') ?? String(data.length), 10)};
+}
+
+export type AdminRunner = ActionRunner;
+
+export async function listAdminRunners(opts: PaginationOpts = {}): Promise<{data: AdminRunner[]; totalCount: number}> {
+  const params = new URLSearchParams({page: String(opts.page ?? 1), limit: String(opts.limit ?? 20)});
+  const resp = await GET(`${apiBase}/admin/actions/runners?${params}`);
+  if (!resp.ok) throw new Error(`Failed to list admin runners: ${resp.status}`);
+  const data: AdminRunner[] = await resp.json();
+  return {data, totalCount: parseInt(resp.headers.get('X-Total-Count') ?? String(data.length), 10)};
+}
+
+export async function deleteAdminRunner(id: number): Promise<void> {
+  const resp = await DELETE(`${apiBase}/admin/actions/runners/${id}`);
+  if (!resp.ok) throw new Error(`Failed to delete admin runner: ${resp.status}`);
+}
+
+export type AdminVariable = ActionVariable;
+
+export async function listAdminVariables(opts: PaginationOpts = {}): Promise<{data: AdminVariable[]; totalCount: number}> {
+  const params = new URLSearchParams({page: String(opts.page ?? 1), limit: String(opts.limit ?? 20)});
+  const resp = await GET(`${apiBase}/admin/actions/variables?${params}`);
+  if (!resp.ok) throw new Error(`Failed to list admin variables: ${resp.status}`);
+  const data: AdminVariable[] = await resp.json();
+  return {data, totalCount: parseInt(resp.headers.get('X-Total-Count') ?? String(data.length), 10)};
+}
+
+export type AdminPackage = {
+  id: number;
+  owner: User;
+  repo: Repository | null;
+  creator: User;
+  type: string;
+  name: string;
+  version: string;
+  created_at: string;
+};
+
+export async function listAdminPackages(opts: PaginationOpts = {}): Promise<{data: AdminPackage[]; totalCount: number}> {
+  const params = new URLSearchParams({page: String(opts.page ?? 1), limit: String(opts.limit ?? 20)});
+  const resp = await GET(`${apiBase}/packages/search?${params}`);
+  if (!resp.ok) throw new Error(`Failed to list packages: ${resp.status}`);
+  const data: AdminPackage[] = await resp.json();
+  return {data, totalCount: parseInt(resp.headers.get('X-Total-Count') ?? String(data.length), 10)};
+}
+
+export type AdminApplication = OAuth2Application & {user?: User};
+
+export async function listAdminApplications(opts: PaginationOpts = {}): Promise<{data: AdminApplication[]; totalCount: number}> {
+  const params = new URLSearchParams({page: String(opts.page ?? 1), limit: String(opts.limit ?? 20)});
+  const resp = await GET(`${apiBase}/admin/apps?${params}`);
+  if (!resp.ok) throw new Error(`Failed to list admin applications: ${resp.status}`);
+  const data: AdminApplication[] = await resp.json();
+  return {data, totalCount: parseInt(resp.headers.get('X-Total-Count') ?? String(data.length), 10)};
+}
+
+export type AdminNotice = {
+  id: number;
+  type: string;
+  created_at: string;
+  description: string;
+};
+
+export async function listAdminNotices(opts: PaginationOpts = {}): Promise<{data: AdminNotice[]; totalCount: number}> {
+  const params = new URLSearchParams({page: String(opts.page ?? 1), limit: String(opts.limit ?? 20)});
+  const resp = await GET(`${apiBase}/admin/notices?${params}`);
+  if (!resp.ok) throw new Error(`Failed to list notices: ${resp.status}`);
+  const data: AdminNotice[] = await resp.json();
+  return {data, totalCount: parseInt(resp.headers.get('X-Total-Count') ?? String(data.length), 10)};
+}
+
+export type AuthSource = {
+  id: number;
+  name: string;
+  type: number;
+  type_name: string;
+  is_active: boolean;
+  is_sync_enabled: boolean;
+  created: string;
+  updated: string;
+};
+
+/** List all authentication sources (admin only). */
+export async function listAdminAuthSources(): Promise<{data: AuthSource[]; totalCount: number}> {
+  const resp = await GET(`${apiBase}/admin/auths`);
+  if (!resp.ok) throw new Error(`Failed to list auth sources: ${resp.status}`);
+  const data: AuthSource[] = await resp.json();
+  return {data, totalCount: parseInt(resp.headers.get('X-Total-Count') ?? String(data.length), 10)};
+}
+
+export type QueueStat = {
+  id: number;
+  name: string;
+  type: string;
+  item_type_name: string;
+  worker_number: number;
+  worker_active_number: number;
+  worker_max_number: number;
+  queue_item_number: number;
+};
+
+/** List all managed queues and their runtime statistics (admin only). */
+export async function listAdminQueues(): Promise<QueueStat[]> {
+  const resp = await GET(`${apiBase}/admin/monitor/queues`);
+  if (!resp.ok) throw new Error(`Failed to list queues: ${resp.status}`);
+  return resp.json() as Promise<QueueStat[]>;
+}
+
+export type StackEntry = {function: string; file: string; line: number};
+export type StackLabel = {name: string; value: string};
+export type GoroutineStack = {count: number; description: string; labels?: StackLabel[]; entry?: StackEntry[]};
+export type ProcessInfo = {
+  pid: string;
+  parent_pid: string;
+  description: string;
+  start: string;
+  type: string;
+  children?: ProcessInfo[];
+  stacks?: GoroutineStack[];
+};
+export type StacktraceResult = {
+  num_goroutine: number;
+  process_count: number;
+  goroutine_count: number;
+  processes: ProcessInfo[];
+};
+
+/** Get goroutine stacktrace for all managed processes (admin only). */
+export async function getAdminStacktrace(show = 'all'): Promise<StacktraceResult> {
+  const resp = await GET(`${apiBase}/admin/monitor/stacktrace?show=${encodeURIComponent(show)}`);
+  if (!resp.ok) throw new Error(`Failed to get stacktrace: ${resp.status}`);
+  return resp.json() as Promise<StacktraceResult>;
+}
+
+export type SelfCheckResult = {
+  startup_problems: string[];
+  database_collation_mismatch: boolean;
+  database_collation_case_insensitive: boolean;
+  inconsistent_collation_columns: string[];
+  cache_error: string;
+  cache_slow: boolean;
+  cache_elapsed_ms: number;
+};
+
+/** Run admin self-check diagnostics (admin only). */
+export async function runAdminSelfCheck(): Promise<SelfCheckResult> {
+  const resp = await GET(`${apiBase}/admin/self_check`);
+  if (!resp.ok) throw new Error(`Failed to run self-check: ${resp.status}`);
+  return resp.json() as Promise<SelfCheckResult>;
+}
+
+export type ConfigSetting = {key: string; value: string};
+
+/** List all dynamic configuration settings (admin only). */
+export async function listAdminConfigSettings(): Promise<ConfigSetting[]> {
+  const resp = await GET(`${apiBase}/admin/config/settings`);
+  if (!resp.ok) throw new Error(`Failed to list config settings: ${resp.status}`);
+  return resp.json() as Promise<ConfigSetting[]>;
+}
+
+/** Update dynamic configuration settings (admin only). */
+export async function updateAdminConfigSettings(settings: ConfigSetting[]): Promise<void> {
+  const resp = await PATCH(`${apiBase}/admin/config/settings`, {data: settings});
+  if (!resp.ok) throw new Error(`Failed to update config settings: ${resp.status}`);
+}
+
+/** Activate or deactivate a user account (admin). */
+export async function setAdminUserActive(username: string, active: boolean): Promise<void> {
+  const resp = await PATCH(`${apiBase}/admin/users/${encodeURIComponent(username)}`, {
+    data: {login_name: username, source_id: 0, active},
+  });
+  if (!resp.ok) throw new Error(`Failed to update user: ${resp.status}`);
+}
+
+/** Delete a user account (admin). */
+export async function deleteAdminUser(username: string): Promise<void> {
+  const resp = await DELETE(`${apiBase}/admin/users/${encodeURIComponent(username)}`);
+  if (!resp.ok) throw new Error(`Failed to delete user: ${resp.status}`);
+}
+
+/** Delete a repository (admin). */
+export async function deleteAdminRepo(owner: string, repo: string): Promise<void> {
+  const resp = await DELETE(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`);
+  if (!resp.ok) throw new Error(`Failed to delete repository: ${resp.status}`);
+}
+
+// ---- Server settings (public, no auth required) ----
+
+export type RepoSettings = {
+  mirrors_disabled: boolean;
+  http_git_disabled: boolean;
+  migrations_disabled: boolean;
+  stars_disabled: boolean;
+  time_tracking_disabled: boolean;
+  lfs_disabled: boolean;
+};
+
+export type AttachmentSettings = {
+  enabled: boolean;
+  allowed_types: string;
+  max_files: number;
+  max_size: number;
+};
+
+export type UISettings = {
+  default_theme: string;
+  allowed_reactions: string[];
+  custom_emojis: string[];
+};
+
+export async function getSettingsAPI(): Promise<Record<string, number>> {
+  const resp = await GET(`${apiBase}/settings/api`);
+  if (!resp.ok) throw new Error(`Failed to get API settings: ${resp.status}`);
+  return resp.json();
+}
+
+export async function getSettingsRepository(): Promise<RepoSettings> {
+  const resp = await GET(`${apiBase}/settings/repository`);
+  if (!resp.ok) throw new Error(`Failed to get repo settings: ${resp.status}`);
+  return resp.json();
+}
+
+export async function getSettingsAttachment(): Promise<AttachmentSettings> {
+  const resp = await GET(`${apiBase}/settings/attachment`);
+  if (!resp.ok) throw new Error(`Failed to get attachment settings: ${resp.status}`);
+  return resp.json();
+}
+
+export async function getSettingsUI(): Promise<UISettings> {
+  const resp = await GET(`${apiBase}/settings/ui`);
+  if (!resp.ok) throw new Error(`Failed to get UI settings: ${resp.status}`);
+  return resp.json();
 }

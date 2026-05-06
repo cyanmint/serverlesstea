@@ -15,6 +15,9 @@
         active-tab="settings"
         :repo="repo"
         :current-user="currentUser"
+        :starred="starred"
+        :star-loading="starLoading"
+        @toggle-star="toggleStar"
       />
 
       <!-- Settings content with sidebar -->
@@ -231,7 +234,7 @@ import {useRoute, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import RepoNav from '../components/RepoNav.vue';
 import {GET, POST, PATCH, PUT, DELETE} from '../../modules/fetch.ts';
-import {getRepo, getCurrentUser, type Repository, type User} from '../api/index.ts';
+import {getRepo, getCurrentUser, isRepoStarred, starRepo, unstarRepo, type Repository, type User} from '../api/index.ts';
 import {apiBase, appSubUrl} from '../spaconfig.ts';
 
 const route = useRoute();
@@ -244,6 +247,8 @@ const repo = ref<Repository | null>(null);
 const repoLoading = ref(true);
 const repoError = ref('');
 const currentUser = ref<User | null>(null);
+const starred = ref(false);
+const starLoading = ref(false);
 
 // Basic settings
 const editName = ref('');
@@ -292,7 +297,24 @@ onMounted(async () => {
     editWebsite.value = (repo.value as unknown as Record<string, string>)['website'] ?? '';
     editPrivate.value = repo.value.private;
   }
+  isRepoStarred(owner.value, repoName.value).then((s) => { starred.value = s; }).catch(() => {});
 });
+
+async function toggleStar() {
+  if (!currentUser.value || starLoading.value) return;
+  starLoading.value = true;
+  try {
+    if (starred.value) {
+      await unstarRepo(owner.value, repoName.value);
+      starred.value = false;
+    } else {
+      await starRepo(owner.value, repoName.value);
+      starred.value = true;
+    }
+  } finally {
+    starLoading.value = false;
+  }
+}
 
 watch(activeTab, async (tab) => {
   if (tab === 'collaboration') loadCollaborators();

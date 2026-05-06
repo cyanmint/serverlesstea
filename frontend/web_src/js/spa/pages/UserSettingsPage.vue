@@ -232,12 +232,20 @@
             <div class="user-setting-content">
               <h4 class="ui top attached header">Two-Factor Authentication</h4>
               <div class="ui attached segment">
-                <p>Manage your two-factor authentication settings through the full Gitea interface.</p>
+                <p>Two-factor authentication (2FA) enrollment and management requires server-side rendering.</p>
+                <a :href="`${appSubUrl}/user/settings/security`" class="ui primary button tw-mt-2" target="_blank" rel="noopener">Manage 2FA</a>
               </div>
 
               <h4 class="ui top attached header">WebAuthn / Security Keys</h4>
               <div class="ui attached segment">
-                <p>Hardware security key registration is available in the full Gitea interface.</p>
+                <p>Hardware security key (WebAuthn) registration and management requires server-side rendering.</p>
+                <a :href="`${appSubUrl}/user/settings/security`" class="ui primary button tw-mt-2" target="_blank" rel="noopener">Manage Security Keys</a>
+              </div>
+
+              <h4 class="ui top attached header">Linked Accounts</h4>
+              <div class="ui attached segment">
+                <p>Linked OAuth2 account management requires server-side rendering.</p>
+                <a :href="`${appSubUrl}/user/settings/security`" class="ui primary button tw-mt-2" target="_blank" rel="noopener">Manage Linked Accounts</a>
               </div>
             </div>
           </template>

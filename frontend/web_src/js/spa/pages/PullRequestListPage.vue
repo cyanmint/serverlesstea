@@ -7,6 +7,9 @@
       active-tab="pulls"
       :repo="repo"
       :current-user="currentUser"
+      :starred="starred"
+      :star-loading="starLoading"
+      @toggle-star="toggleStar"
     />
 
     <div class="ui container">
@@ -119,7 +122,7 @@ import {RouterLink, useRoute} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import RepoNav from '../components/RepoNav.vue';
 import {SvgIcon} from '../../svg.ts';
-import {getRepo, getPullRequests, getRepoIssueCount, getCurrentUser, type PullRequest, type Repository, type User} from '../api/index.ts';
+import {getRepo, getPullRequests, getRepoIssueCount, getCurrentUser, isRepoStarred, starRepo, unstarRepo, type PullRequest, type Repository, type User} from '../api/index.ts';
 
 const route = useRoute();
 const owner = String(route.params.owner);
@@ -136,6 +139,8 @@ const openCount = ref(0);
 const closedCount = ref(0);
 const repo = ref<Repository | null>(null);
 const currentUser = ref<User | null>(null);
+const starred = ref(false);
+const starLoading = ref(false);
 
 const labelTextColor = computed(() => (hex: string) => {
   const r = parseInt(hex.substring(0, 2), 16);
@@ -190,6 +195,22 @@ async function loadPRs() {
   }
 }
 
+async function toggleStar() {
+  if (!currentUser.value || starLoading.value) return;
+  starLoading.value = true;
+  try {
+    if (starred.value) {
+      await unstarRepo(owner, repoName);
+      starred.value = false;
+    } else {
+      await starRepo(owner, repoName);
+      starred.value = true;
+    }
+  } finally {
+    starLoading.value = false;
+  }
+}
+
 onMounted(async () => {
   const [openTotal, closedTotal] = await Promise.all([
     getRepoIssueCount(owner, repoName, 'open', 'pulls'),
@@ -201,6 +222,7 @@ onMounted(async () => {
     getRepo(owner, repoName).catch(() => null),
     getCurrentUser(),
   ]);
+  isRepoStarred(owner, repoName).then((s) => { starred.value = s; }).catch(() => {});
   await loadPRs();
 });
 </script>

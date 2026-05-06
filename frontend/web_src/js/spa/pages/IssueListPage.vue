@@ -6,6 +6,9 @@
       active-tab="issues"
       :repo="repo"
       :current-user="currentUser"
+      :starred="starred"
+      :star-loading="starLoading"
+      @toggle-star="toggleStar"
     />
 
     <div class="ui container">

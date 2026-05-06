@@ -6,6 +6,9 @@
       active-tab="issues"
       :repo="repo"
       :current-user="currentUser"
+      :starred="starred"
+      :star-loading="starLoading"
+      @toggle-star="toggleStar"
     />
     <div class="ui container">
       <div v-if="!currentUser" class="ui warning message">
@@ -89,7 +92,7 @@ import {ref, onMounted} from 'vue';
 import {RouterLink, useRoute, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import RepoNav from '../components/RepoNav.vue';
-import {getCurrentUser, getRepo, createIssue, type User, type Repository} from '../api/index.ts';
+import {getCurrentUser, getRepo, createIssue, isRepoStarred, starRepo, unstarRepo, type User, type Repository} from '../api/index.ts';
 
 const route = useRoute();
 const router = useRouter();
@@ -99,6 +102,8 @@ const repoName = String(route.params.repo);
 
 const currentUser = ref<User | null>(null);
 const repo = ref<Repository | null>(null);
+const starred = ref(false);
+const starLoading = ref(false);
 const title = ref('');
 const body = ref('');
 const titleError = ref('');
@@ -128,10 +133,27 @@ async function handleSubmit() {
   }
 }
 
+async function toggleStar() {
+  if (!currentUser.value || starLoading.value) return;
+  starLoading.value = true;
+  try {
+    if (starred.value) {
+      await unstarRepo(owner, repoName);
+      starred.value = false;
+    } else {
+      await starRepo(owner, repoName);
+      starred.value = true;
+    }
+  } finally {
+    starLoading.value = false;
+  }
+}
+
 onMounted(async () => {
   [currentUser.value, repo.value] = await Promise.all([
     getCurrentUser(),
     getRepo(owner, repoName).catch(() => null),
   ]);
+  isRepoStarred(owner, repoName).then((s) => { starred.value = s; }).catch(() => {});
 });
 </script>
