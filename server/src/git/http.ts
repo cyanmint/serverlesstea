@@ -55,7 +55,7 @@ export async function handleGitRequest(request: Request, env: Env): Promise<Resp
       })
     }
 
-    return handleUploadPack(request)
+    return handleUploadPack(request, env.bucket, owner, repo)
   }
 
   if (request.method === 'POST' && path === '/git-receive-pack') {

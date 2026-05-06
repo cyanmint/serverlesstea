@@ -16,6 +16,7 @@ export async function handleReceivePack(
   const body = await request.arrayBuffer()
   let offset = 0
 
+  let useSideband = false
   const updates: Array<{ oldSha: string; newSha: string; refName: string }> = []
 
   while (offset < body.byteLength) {
@@ -32,7 +33,14 @@ export async function handleReceivePack(
 
     const nullIdx = data.indexOf('\0')
     const refLine = nullIdx !== -1 ? data.slice(0, nullIdx) : data.trimEnd()
-    const parts = refLine.split(' ')
+
+    // First pkt-line carries capabilities after the NUL byte
+    if (nullIdx !== -1 && updates.length === 0) {
+      const caps = data.slice(nullIdx + 1)
+      useSideband = caps.includes('side-band-64k') || caps.includes('side-band')
+    }
+
+    const parts = refLine.trim().split(' ')
     if (parts.length >= 3) {
       updates.push({ oldSha: parts[0], newSha: parts[1], refName: parts[2] })
     }
@@ -84,9 +92,11 @@ export async function handleReceivePack(
     }
   }
 
-  let responseBody = pktLine('unpack ok\n')
+  // Wrap status lines in sideband band-1 (\x01) if the client negotiated sideband.
+  const band = useSideband ? '\x01' : ''
+  let responseBody = pktLine(`${band}unpack ok\n`)
   for (const update of updates) {
-    responseBody += pktLine(`ok ${update.refName}\n`)
+    responseBody += pktLine(`${band}ok ${update.refName}\n`)
   }
   responseBody += '0000'
 
