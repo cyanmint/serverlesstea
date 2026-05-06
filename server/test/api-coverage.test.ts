@@ -81,6 +81,7 @@ describe('api coverage report', () => {
       // All git smart-HTTP paths are handled by a single app.all('/git/*') wildcard.
       if (p.startsWith('/git/')) return '/git/*'
       return p
+        // Core params (original set)
         .replace(/\{owner\}/g, ':owner')
         .replace(/\{repo\}/g, ':repo')
         .replace(/\{username\}/g, ':username')
@@ -92,6 +93,40 @@ describe('api coverage report', () => {
         .replace(/\{pageName\}/g, ':pageName')
         .replace(/\{number\}/g, ':number')
         .replace(/\{path\}.*/, ':path{.*}')
+        // Additional params for remaining swagger endpoints
+        .replace(/\{org\}/g, ':org')
+        .replace(/\{branch\}/g, ':branch')
+        .replace(/\{collaborator\}/g, ':collaborator')
+        .replace(/\{runner_id\}/g, ':runner_id')
+        .replace(/\{secretname\}/g, ':secretname')
+        .replace(/\{variablename\}/g, ':variablename')
+        .replace(/\{job_id\}/g, ':job_id')
+        .replace(/\{run\}/g, ':run')
+        .replace(/\{artifact_id\}/g, ':artifact_id')
+        .replace(/\{attachment_id\}/g, ':attachment_id')
+        .replace(/\{attempt\}/g, ':attempt')
+        .replace(/\{task\}/g, ':task')
+        .replace(/\{team\}/g, ':team')
+        .replace(/\{topic\}/g, ':topic')
+        .replace(/\{target\}/g, ':target')
+        .replace(/\{user\}/g, ':user')
+        .replace(/\{type\}/g, ':type')
+        .replace(/\{version\}/g, ':version')
+        .replace(/\{workflow_id\}/g, ':workflow_id')
+        .replace(/\{position\}/g, ':position')
+        .replace(/\{repo_name\}/g, ':repo_name')
+        .replace(/\{token\}/g, ':token')
+        .replace(/\{template_owner\}/g, ':template_owner')
+        .replace(/\{template_repo\}/g, ':template_repo')
+        .replace(/\{base\}/g, ':base')
+        .replace(/\{head\}/g, ':head')
+        .replace(/\{name\}/g, ':name')
+        // Wildcard-style params (always at end of path)
+        .replace(/\{filepath\}$/, ':filepath{.*}')
+        .replace(/\{archive\}$/, ':archive')
+        .replace(/\{basehead\}$/, ':basehead{.*}')
+        // Strip .{diffType} suffix (appears as /{sha}.{diffType} or /{index}.{diffType})
+        .replace(/\.?\{diffType\}$/, '')
         .split('?')[0]
     }
 
