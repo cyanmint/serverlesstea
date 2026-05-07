@@ -81,7 +81,7 @@ function formatRepo(r: {
     description: r.description ?? '',
     html_url: `/${r.owner_username}/${r.name}`,
     ssh_url: `git@localhost:${r.owner_username}/${r.name}.git`,
-    clone_url: `http://localhost/${r.owner_username}/${r.name}.git`,
+    clone_url: `http://localhost/git/${r.owner_username}/${r.name}.git`,
     private: r.is_private === 1,
     fork: false,
     archived: false,
@@ -90,6 +90,7 @@ function formatRepo(r: {
     stars_count: 0,
     forks_count: 0,
     open_issues_count: 0,
+    watchers_count: 0,
     default_branch: r.default_branch,
     updated_at: r.updated_at ?? r.created_at,
     language: '',
@@ -477,7 +478,25 @@ router.get('/repos/:owner/:repo', v1OptionalAuth, async (c) => {
       return c.json({ message: 'Repository not found' }, 404)
     }
   }
-  return c.json(formatRepo(r))
+
+  // Detect whether the repository has been initialised with any content by
+  // checking for the default branch ref in R2 (loose ref file or packed-refs).
+  const looseRef = await c.env.bucket.head(
+    `${r.owner_username}/${r.name}.git/refs/heads/${r.default_branch}`
+  )
+  let empty = !looseRef
+  if (empty) {
+    const packedObj = await c.env.bucket.get(`${r.owner_username}/${r.name}.git/packed-refs`)
+    if (packedObj) {
+      const text = await packedObj.text()
+      empty = !text.split('\n').some((line) => {
+        const parts = line.trim().split(' ')
+        return parts.length >= 2 && parts[1] === `refs/heads/${r.default_branch}`
+      })
+    }
+  }
+
+  return c.json({ ...formatRepo(r), empty })
 })
 
 router.get('/repos/:owner/:repo/branches', v1OptionalAuth, async (c) => {

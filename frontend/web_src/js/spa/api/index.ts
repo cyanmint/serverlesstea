@@ -70,11 +70,13 @@ export type Repository = {
   stars_count: number;
   forks_count: number;
   open_issues_count: number;
+  watchers_count?: number;
   default_branch: string;
   updated_at: string;
   owner: User;
   language: string;
   size: number;
+  empty?: boolean;
 };
 
 export type Issue = {

@@ -10,6 +10,38 @@ function makeFs(bucket: R2Bucket, owner: string, repo: string): { fs: FsType; gi
   }
 }
 
+/**
+ * Ensure every pack file under objects/pack/ has a corresponding .idx file.
+ * This is needed for repos that were pushed before indexPack was fixed (the
+ * previous implementation crashed because createR2Fs was missing readlink/symlink).
+ * Returns true if at least one new index was created.
+ */
+async function ensurePacksIndexed(
+  fs: FsType,
+  gitdir: string,
+  bucket: R2Bucket,
+  owner: string,
+  repo: string,
+): Promise<boolean> {
+  const packPrefix = `${owner}/${repo}.git/objects/pack/`
+  const listed = await bucket.list({ prefix: packPrefix })
+  let indexed = false
+  for (const obj of listed.objects) {
+    if (!obj.key.endsWith('.pack')) continue
+    const idxKey = obj.key.replace(/\.pack$/, '.idx')
+    const hasIdx = await bucket.head(idxKey)
+    if (!hasIdx) {
+      try {
+        await git.indexPack({ fs, dir: '/', gitdir, filepath: obj.key })
+        indexed = true
+      } catch (e) {
+        console.error('ensurePacksIndexed: indexPack failed:', e)
+      }
+    }
+  }
+  return indexed
+}
+
 export async function listFiles(
   owner: string,
   repo: string,
@@ -56,7 +88,16 @@ export async function listDirectory(
 ): Promise<DirEntry[]> {
   const { fs, gitdir } = makeFs(bucket, owner, repo)
   const commitSha = await git.resolveRef({ fs, gitdir, ref })
-  const commitObj = await git.readCommit({ fs, gitdir, oid: commitSha })
+
+  // Read the commit object — if this fails (e.g. no .idx file yet), try to
+  // lazily index any unindexed pack files and then retry once.
+  let commitObj: Awaited<ReturnType<typeof git.readCommit>>
+  try {
+    commitObj = await git.readCommit({ fs, gitdir, oid: commitSha })
+  } catch {
+    await ensurePacksIndexed(fs, gitdir, bucket, owner, repo)
+    commitObj = await git.readCommit({ fs, gitdir, oid: commitSha })
+  }
   let treeSha = commitObj.commit.tree
 
   // Walk down the path components to reach the target subdirectory.

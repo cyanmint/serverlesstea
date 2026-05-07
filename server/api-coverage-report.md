@@ -1,6 +1,6 @@
 # API Coverage Report
 
-**Total endpoints:** 498 | **Correct:** 55 | **Stub:** 8 | **Malfunction:** 0 | **Missing:** 435
+**Total endpoints:** 498 | **Correct:** 54 | **Stub:** 9 | **Malfunction:** 0 | **Missing:** 435
 
 | Endpoint | Method | Path | Status | Note |
 |----------|--------|------|--------|------|
@@ -120,7 +120,7 @@
 | GET /api/v1/repos/issues/search | `GET` | `/api/v1/repos/issues/search` | **correct** | DB/git-backed implementation |
 | POST /api/v1/repos/migrate | `POST` | `/api/v1/repos/migrate` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/search | `GET` | `/api/v1/repos/search` | **correct** | DB/git-backed implementation |
-| GET /api/v1/repos/{owner}/{repo} | `GET` | `/api/v1/repos/{owner}/{repo}` | **correct** | DB/git-backed implementation |
+| GET /api/v1/repos/{owner}/{repo} | `GET` | `/api/v1/repos/{owner}/{repo}` | **stub** | No DB/git operations — returns minimal data |
 | DELETE /api/v1/repos/{owner}/{repo} | `DELETE` | `/api/v1/repos/{owner}/{repo}` | **missing** | Route not registered — returns 404 |
 | PATCH /api/v1/repos/{owner}/{repo} | `PATCH` | `/api/v1/repos/{owner}/{repo}` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/actions/artifacts | `GET` | `/api/v1/repos/{owner}/{repo}/actions/artifacts` | **missing** | Route not registered — returns 404 |

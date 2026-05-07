@@ -31,10 +31,38 @@
           <div class="repo-home-filelist">
             <!-- empty repo notice -->
             <div v-if="repo.empty" class="ui segment">
-              <p>This repository is empty.</p>
-              <div class="tw-mt-4 tw-font-mono tw-text-sm">
-                <p>Quick setup — if you've done this kind of thing before</p>
-                <pre class="tw-bg-gray-100 tw-rounded tw-p-3">git clone {{ httpCloneUrl }}</pre>
+              <h3 class="tw-font-semibold tw-text-base tw-mb-3">This repository is empty.</h3>
+
+              <div class="tw-mb-4">
+                <p class="tw-text-sm tw-text-gray-600 tw-mb-1">Quick setup — clone URL</p>
+                <div class="ui small action input tw-flex tw-w-full">
+                  <input
+                    type="text"
+                    :value="httpCloneUrl"
+                    readonly
+                    class="tw-font-mono"
+                    @focus="($event.target as HTMLInputElement).select()"
+                  >
+                  <button class="ui button" @click="copyUrl(httpCloneUrl)">Copy</button>
+                </div>
+              </div>
+
+              <div class="tw-mb-4">
+                <p class="tw-text-sm tw-font-medium tw-mb-1">…or push an existing repository from the command line</p>
+                <pre class="tw-bg-gray-100 tw-rounded tw-p-3 tw-text-sm tw-font-mono tw-whitespace-pre-wrap">git remote add origin {{ httpCloneUrl }}
+git branch -M {{ repo.default_branch || 'main' }}
+git push -u origin {{ repo.default_branch || 'main' }}</pre>
+              </div>
+
+              <div class="tw-mb-4">
+                <p class="tw-text-sm tw-font-medium tw-mb-1">…or create a new repository on the command line</p>
+                <pre class="tw-bg-gray-100 tw-rounded tw-p-3 tw-text-sm tw-font-mono tw-whitespace-pre-wrap">echo "# {{ repoName }}" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M {{ repo.default_branch || 'main' }}
+git remote add origin {{ httpCloneUrl }}
+git push -u origin {{ repo.default_branch || 'main' }}</pre>
               </div>
             </div>
 
