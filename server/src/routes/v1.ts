@@ -531,14 +531,14 @@ router.patch('/repos/:owner/:repo', v1Auth, async (c) => {
   if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
   if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
 
-  const body = await c.req.json<{
+  const body: {
     name?: string
     description?: string
     website?: string
     private?: boolean
     archived?: boolean
     default_branch?: string
-  }>().catch(() => ({}))
+  } = await c.req.json().catch(() => ({}))
 
   const updates: string[] = [`updated_at = datetime('now')`]
   const binds: unknown[] = []
@@ -609,7 +609,7 @@ router.post('/repos/:owner/:repo/branches', v1Auth, async (c) => {
   if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
   if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
 
-  const body = await c.req.json<{ new_branch_name?: string; old_ref_name?: string }>().catch(() => ({}))
+  const body: { new_branch_name?: string; old_ref_name?: string } = await c.req.json().catch(() => ({}))
   const newBranch = body.new_branch_name?.trim()
   if (!newBranch) return c.json({ message: 'new_branch_name required' }, 422)
   const fromRef = body.old_ref_name?.trim() || repoRow.default_branch
@@ -639,7 +639,7 @@ router.patch('/repos/:owner/:repo/branches/:branch', v1Auth, async (c) => {
   if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
   if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
 
-  const body = await c.req.json<{ new_name?: string }>().catch(() => ({}))
+  const body: { new_name?: string } = await c.req.json().catch(() => ({}))
   const newName = body.new_name?.trim()
   if (!newName) return c.json({ message: 'new_name required' }, 422)
 
@@ -761,15 +761,15 @@ router.put('/repos/:owner/:repo/contents/:path{.*}', v1Auth, async (c) => {
   if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
   if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
 
-  const body = await c.req.json<{
+  const body: {
     content?: string
     message?: string
     branch?: string
     new_branch?: string
-  }>().catch(() => ({}))
+  } = await c.req.json().catch(() => ({}))
   if (!body.content) return c.json({ message: 'content required' }, 422)
 
-  const user = await getUserById(db, payload.sub)
+  const user = await getUserById(db, payload.sub as string)
   if (!user) return c.json({ message: 'User not found' }, 404)
 
   const fs = createR2Fs(c.env.bucket, owner, repo)
@@ -863,7 +863,7 @@ router.post('/repos/:owner/:repo/tags', v1Auth, async (c) => {
   if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
   if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
 
-  const body = await c.req.json<{ tag_name?: string; target?: string }>().catch(() => ({}))
+  const body: { tag_name?: string; target?: string } = await c.req.json().catch(() => ({}))
   const tagName = body.tag_name?.trim()
   const target = body.target?.trim() || repoRow.default_branch
   if (!tagName) return c.json({ message: 'tag_name required' }, 422)
@@ -893,7 +893,7 @@ router.patch('/repos/:owner/:repo/tags/:tag', v1Auth, async (c) => {
   if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
   if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
 
-  const body = await c.req.json<{ new_name?: string }>().catch(() => ({}))
+  const body: { new_name?: string } = await c.req.json().catch(() => ({}))
   const newName = body.new_name?.trim()
   if (!newName) return c.json({ message: 'new_name required' }, 422)
 
@@ -1251,13 +1251,13 @@ router.patch('/repos/:owner/:repo/issues/:index', v1Auth, async (c) => {
     return c.json({ message: 'Forbidden' }, 403)
   }
 
-  const body = await c.req.json<{
+  const body: {
     title?: string
     body?: string
     state?: 'open' | 'closed'
     assignees?: string[]
     milestone?: number | string | null
-  }>().catch(() => ({}))
+  } = await c.req.json().catch(() => ({}))
 
   const updates: string[] = [`updated_at = datetime('now')`]
   const bindings: unknown[] = []
@@ -1388,7 +1388,7 @@ router.post('/repos/:owner/:repo/pulls', v1Auth, async (c) => {
   const repoRow = await getRepo(db, owner, repo)
   if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
 
-  const body = await c.req.json<{ title?: string; body?: string; head?: string; base?: string }>().catch(() => ({}))
+  const body: { title?: string; body?: string; head?: string; base?: string } = await c.req.json().catch(() => ({}))
   if (!body.title?.trim() || !body.head?.trim() || !body.base?.trim()) {
     return c.json({ message: 'title, head and base are required' }, 422)
   }
@@ -1429,10 +1429,10 @@ router.post('/repos/:owner/:repo/pulls/:index/merge', v1Auth, async (c) => {
   if (pull.state !== 'open') return c.json({ message: 'Pull request is not open' }, 400)
   if (!pull.head_branch || !pull.base_branch) return c.json({ message: 'Pull request branches are missing' }, 400)
 
-  const user = await getUserById(db, payload.sub)
+  const user = await getUserById(db, payload.sub as string)
   if (!user) return c.json({ message: 'User not found' }, 404)
 
-  const body = await c.req.json<{ Do?: 'merge' | 'squash' | 'rebase' }>().catch(() => ({}))
+  const body: { Do?: 'merge' | 'squash' | 'rebase' } = await c.req.json().catch(() => ({}))
   const method = body.Do ?? 'merge'
 
   try {

@@ -1,6 +1,6 @@
 # API Coverage Report
 
-**Total endpoints:** 498 | **Correct:** 54 | **Stub:** 9 | **Malfunction:** 0 | **Missing:** 435
+**Total endpoints:** 498 | **Correct:** 63 | **Stub:** 12 | **Malfunction:** 0 | **Missing:** 423
 
 | Endpoint | Method | Path | Status | Note |
 |----------|--------|------|--------|------|
@@ -121,8 +121,8 @@
 | POST /api/v1/repos/migrate | `POST` | `/api/v1/repos/migrate` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/search | `GET` | `/api/v1/repos/search` | **correct** | DB/git-backed implementation |
 | GET /api/v1/repos/{owner}/{repo} | `GET` | `/api/v1/repos/{owner}/{repo}` | **stub** | No DB/git operations — returns minimal data |
-| DELETE /api/v1/repos/{owner}/{repo} | `DELETE` | `/api/v1/repos/{owner}/{repo}` | **missing** | Route not registered — returns 404 |
-| PATCH /api/v1/repos/{owner}/{repo} | `PATCH` | `/api/v1/repos/{owner}/{repo}` | **missing** | Route not registered — returns 404 |
+| DELETE /api/v1/repos/{owner}/{repo} | `DELETE` | `/api/v1/repos/{owner}/{repo}` | **stub** | No DB/git operations — returns minimal data |
+| PATCH /api/v1/repos/{owner}/{repo} | `PATCH` | `/api/v1/repos/{owner}/{repo}` | **stub** | No DB/git operations — returns minimal data |
 | GET /api/v1/repos/{owner}/{repo}/actions/artifacts | `GET` | `/api/v1/repos/{owner}/{repo}/actions/artifacts` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/actions/artifacts/{artifact_id} | `GET` | `/api/v1/repos/{owner}/{repo}/actions/artifacts/{artifact_id}` | **missing** | Route not registered — returns 404 |
 | DELETE /api/v1/repos/{owner}/{repo}/actions/artifacts/{artifact_id} | `DELETE` | `/api/v1/repos/{owner}/{repo}/actions/artifacts/{artifact_id}` | **missing** | Route not registered — returns 404 |
@@ -171,11 +171,11 @@
 | DELETE /api/v1/repos/{owner}/{repo}/branch_protections/{name} | `DELETE` | `/api/v1/repos/{owner}/{repo}/branch_protections/{name}` | **missing** | Route not registered — returns 404 |
 | PATCH /api/v1/repos/{owner}/{repo}/branch_protections/{name} | `PATCH` | `/api/v1/repos/{owner}/{repo}/branch_protections/{name}` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/branches | `GET` | `/api/v1/repos/{owner}/{repo}/branches` | **correct** | DB/git-backed implementation |
-| POST /api/v1/repos/{owner}/{repo}/branches | `POST` | `/api/v1/repos/{owner}/{repo}/branches` | **missing** | Route not registered — returns 404 |
+| POST /api/v1/repos/{owner}/{repo}/branches | `POST` | `/api/v1/repos/{owner}/{repo}/branches` | **correct** | DB/git-backed implementation |
 | GET /api/v1/repos/{owner}/{repo}/branches/{branch} | `GET` | `/api/v1/repos/{owner}/{repo}/branches/{branch}` | **missing** | Route not registered — returns 404 |
 | PUT /api/v1/repos/{owner}/{repo}/branches/{branch} | `PUT` | `/api/v1/repos/{owner}/{repo}/branches/{branch}` | **missing** | Route not registered — returns 404 |
-| DELETE /api/v1/repos/{owner}/{repo}/branches/{branch} | `DELETE` | `/api/v1/repos/{owner}/{repo}/branches/{branch}` | **missing** | Route not registered — returns 404 |
-| PATCH /api/v1/repos/{owner}/{repo}/branches/{branch} | `PATCH` | `/api/v1/repos/{owner}/{repo}/branches/{branch}` | **missing** | Route not registered — returns 404 |
+| DELETE /api/v1/repos/{owner}/{repo}/branches/{branch} | `DELETE` | `/api/v1/repos/{owner}/{repo}/branches/{branch}` | **correct** | DB/git-backed implementation |
+| PATCH /api/v1/repos/{owner}/{repo}/branches/{branch} | `PATCH` | `/api/v1/repos/{owner}/{repo}/branches/{branch}` | **correct** | DB/git-backed implementation |
 | GET /api/v1/repos/{owner}/{repo}/collaborators | `GET` | `/api/v1/repos/{owner}/{repo}/collaborators` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/collaborators/{collaborator} | `GET` | `/api/v1/repos/{owner}/{repo}/collaborators/{collaborator}` | **missing** | Route not registered — returns 404 |
 | PUT /api/v1/repos/{owner}/{repo}/collaborators/{collaborator} | `PUT` | `/api/v1/repos/{owner}/{repo}/collaborators/{collaborator}` | **missing** | Route not registered — returns 404 |
@@ -237,7 +237,7 @@
 | GET /api/v1/repos/{owner}/{repo}/issues/pinned | `GET` | `/api/v1/repos/{owner}/{repo}/issues/pinned` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/issues/{index} | `GET` | `/api/v1/repos/{owner}/{repo}/issues/{index}` | **correct** | DB/git-backed implementation |
 | DELETE /api/v1/repos/{owner}/{repo}/issues/{index} | `DELETE` | `/api/v1/repos/{owner}/{repo}/issues/{index}` | **missing** | Route not registered — returns 404 |
-| PATCH /api/v1/repos/{owner}/{repo}/issues/{index} | `PATCH` | `/api/v1/repos/{owner}/{repo}/issues/{index}` | **missing** | Route not registered — returns 404 |
+| PATCH /api/v1/repos/{owner}/{repo}/issues/{index} | `PATCH` | `/api/v1/repos/{owner}/{repo}/issues/{index}` | **correct** | DB/git-backed implementation |
 | GET /api/v1/repos/{owner}/{repo}/issues/{index}/assets | `GET` | `/api/v1/repos/{owner}/{repo}/issues/{index}/assets` | **missing** | Route not registered — returns 404 |
 | POST /api/v1/repos/{owner}/{repo}/issues/{index}/assets | `POST` | `/api/v1/repos/{owner}/{repo}/issues/{index}/assets` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/issues/{index}/assets/{attachment_id} | `GET` | `/api/v1/repos/{owner}/{repo}/issues/{index}/assets/{attachment_id}` | **missing** | Route not registered — returns 404 |
@@ -302,19 +302,19 @@
 | GET /api/v1/repos/{owner}/{repo}/notifications | `GET` | `/api/v1/repos/{owner}/{repo}/notifications` | **missing** | Route not registered — returns 404 |
 | PUT /api/v1/repos/{owner}/{repo}/notifications | `PUT` | `/api/v1/repos/{owner}/{repo}/notifications` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/pulls | `GET` | `/api/v1/repos/{owner}/{repo}/pulls` | **correct** | DB/git-backed implementation |
-| POST /api/v1/repos/{owner}/{repo}/pulls | `POST` | `/api/v1/repos/{owner}/{repo}/pulls` | **missing** | Route not registered — returns 404 |
+| POST /api/v1/repos/{owner}/{repo}/pulls | `POST` | `/api/v1/repos/{owner}/{repo}/pulls` | **correct** | DB/git-backed implementation |
 | POST /api/v1/repos/{owner}/{repo}/pulls/comments/{id}/resolve | `POST` | `/api/v1/repos/{owner}/{repo}/pulls/comments/{id}/resolve` | **missing** | Route not registered — returns 404 |
 | POST /api/v1/repos/{owner}/{repo}/pulls/comments/{id}/unresolve | `POST` | `/api/v1/repos/{owner}/{repo}/pulls/comments/{id}/unresolve` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/pulls/pinned | `GET` | `/api/v1/repos/{owner}/{repo}/pulls/pinned` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/pulls/{base}/{head} | `GET` | `/api/v1/repos/{owner}/{repo}/pulls/{base}/{head}` | **missing** | Route not registered — returns 404 |
-| GET /api/v1/repos/{owner}/{repo}/pulls/{index} | `GET` | `/api/v1/repos/{owner}/{repo}/pulls/{index}` | **missing** | Route not registered — returns 404 |
+| GET /api/v1/repos/{owner}/{repo}/pulls/{index} | `GET` | `/api/v1/repos/{owner}/{repo}/pulls/{index}` | **correct** | DB/git-backed implementation |
 | PATCH /api/v1/repos/{owner}/{repo}/pulls/{index} | `PATCH` | `/api/v1/repos/{owner}/{repo}/pulls/{index}` | **missing** | Route not registered — returns 404 |
-| GET /api/v1/repos/{owner}/{repo}/pulls/{index}.{diffType} | `GET` | `/api/v1/repos/{owner}/{repo}/pulls/{index}.{diffType}` | **missing** | Route not registered — returns 404 |
+| GET /api/v1/repos/{owner}/{repo}/pulls/{index}.{diffType} | `GET` | `/api/v1/repos/{owner}/{repo}/pulls/{index}.{diffType}` | **correct** | DB/git-backed implementation |
 | POST /api/v1/repos/{owner}/{repo}/pulls/{index}/comments/{id}/replies | `POST` | `/api/v1/repos/{owner}/{repo}/pulls/{index}/comments/{id}/replies` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/pulls/{index}/commits | `GET` | `/api/v1/repos/{owner}/{repo}/pulls/{index}/commits` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/pulls/{index}/files | `GET` | `/api/v1/repos/{owner}/{repo}/pulls/{index}/files` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/pulls/{index}/merge | `GET` | `/api/v1/repos/{owner}/{repo}/pulls/{index}/merge` | **missing** | Route not registered — returns 404 |
-| POST /api/v1/repos/{owner}/{repo}/pulls/{index}/merge | `POST` | `/api/v1/repos/{owner}/{repo}/pulls/{index}/merge` | **missing** | Route not registered — returns 404 |
+| POST /api/v1/repos/{owner}/{repo}/pulls/{index}/merge | `POST` | `/api/v1/repos/{owner}/{repo}/pulls/{index}/merge` | **correct** | DB/git-backed implementation |
 | DELETE /api/v1/repos/{owner}/{repo}/pulls/{index}/merge | `DELETE` | `/api/v1/repos/{owner}/{repo}/pulls/{index}/merge` | **missing** | Route not registered — returns 404 |
 | POST /api/v1/repos/{owner}/{repo}/pulls/{index}/requested_reviewers | `POST` | `/api/v1/repos/{owner}/{repo}/pulls/{index}/requested_reviewers` | **missing** | Route not registered — returns 404 |
 | DELETE /api/v1/repos/{owner}/{repo}/pulls/{index}/requested_reviewers | `DELETE` | `/api/v1/repos/{owner}/{repo}/pulls/{index}/requested_reviewers` | **missing** | Route not registered — returns 404 |
@@ -362,9 +362,9 @@
 | DELETE /api/v1/repos/{owner}/{repo}/tag_protections/{id} | `DELETE` | `/api/v1/repos/{owner}/{repo}/tag_protections/{id}` | **missing** | Route not registered — returns 404 |
 | PATCH /api/v1/repos/{owner}/{repo}/tag_protections/{id} | `PATCH` | `/api/v1/repos/{owner}/{repo}/tag_protections/{id}` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/tags | `GET` | `/api/v1/repos/{owner}/{repo}/tags` | **correct** | DB/git-backed implementation |
-| POST /api/v1/repos/{owner}/{repo}/tags | `POST` | `/api/v1/repos/{owner}/{repo}/tags` | **missing** | Route not registered — returns 404 |
+| POST /api/v1/repos/{owner}/{repo}/tags | `POST` | `/api/v1/repos/{owner}/{repo}/tags` | **correct** | DB/git-backed implementation |
 | GET /api/v1/repos/{owner}/{repo}/tags/{tag} | `GET` | `/api/v1/repos/{owner}/{repo}/tags/{tag}` | **missing** | Route not registered — returns 404 |
-| DELETE /api/v1/repos/{owner}/{repo}/tags/{tag} | `DELETE` | `/api/v1/repos/{owner}/{repo}/tags/{tag}` | **missing** | Route not registered — returns 404 |
+| DELETE /api/v1/repos/{owner}/{repo}/tags/{tag} | `DELETE` | `/api/v1/repos/{owner}/{repo}/tags/{tag}` | **stub** | No DB/git operations — returns minimal data |
 | GET /api/v1/repos/{owner}/{repo}/teams | `GET` | `/api/v1/repos/{owner}/{repo}/teams` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/repos/{owner}/{repo}/teams/{team} | `GET` | `/api/v1/repos/{owner}/{repo}/teams/{team}` | **missing** | Route not registered — returns 404 |
 | PUT /api/v1/repos/{owner}/{repo}/teams/{team} | `PUT` | `/api/v1/repos/{owner}/{repo}/teams/{team}` | **missing** | Route not registered — returns 404 |
