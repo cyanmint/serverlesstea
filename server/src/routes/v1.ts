@@ -3,6 +3,7 @@ import { v1Auth, v1OptionalAuth } from '../middleware/v1auth'
 import { signToken } from '../auth/jwt'
 import { hashPassword } from '../auth/password'
 import { readBlob, listCommits, listDirectory } from '../git/introspect'
+import { commitFileToBranch } from '../git/mutate'
 import { Env } from '../index'
 import git from 'isomorphic-git'
 import { createR2Fs } from '../git/r2fs'
@@ -41,6 +42,22 @@ async function getRepo(db: D1Database, owner: string, repo: string) {
     )
     .bind(owner, repo)
     .first<{ id: string; owner_id: string }>()
+}
+
+async function getRepoWithOwner(db: D1Database, owner: string, repo: string) {
+  return db
+    .prepare(
+      `SELECT r.id, r.owner_id, r.default_branch, u.username as owner_username
+       FROM repositories r
+       JOIN users u ON r.owner_id = u.id
+       WHERE u.username = ? AND r.name = ?`,
+    )
+    .bind(owner, repo)
+    .first<{ id: string; owner_id: string; default_branch: string; owner_username: string }>()
+}
+
+function canWriteRepo(payload: JWTPayload | undefined, repoOwnerId: string): boolean {
+  return Boolean(payload && (payload.sub === repoOwnerId || payload['isAdmin']))
 }
 
 async function getUser(db: D1Database, username: string) {
@@ -499,6 +516,61 @@ router.get('/repos/:owner/:repo', v1OptionalAuth, async (c) => {
   return c.json({ ...formatRepo(r), empty })
 })
 
+router.patch('/repos/:owner/:repo', v1Auth, async (c) => {
+  const { owner, repo } = c.req.param()
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const repoRow = await getRepoWithOwner(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
+
+  const body = await c.req.json<{
+    name?: string
+    description?: string
+    website?: string
+    private?: boolean
+    archived?: boolean
+    default_branch?: string
+  }>().catch(() => ({}))
+
+  const updates: string[] = [`updated_at = datetime('now')`]
+  const binds: unknown[] = []
+  if (typeof body.name === 'string' && body.name.trim()) {
+    updates.push('name = ?')
+    binds.push(body.name.trim())
+  }
+  if (typeof body.description === 'string') {
+    updates.push('description = ?')
+    binds.push(body.description)
+  }
+  if (typeof body.private === 'boolean') {
+    updates.push('is_private = ?')
+    binds.push(body.private ? 1 : 0)
+  }
+  if (typeof body.default_branch === 'string' && body.default_branch.trim()) {
+    updates.push('default_branch = ?')
+    binds.push(body.default_branch.trim())
+  }
+  binds.push(repoRow.id)
+  await db.prepare(`UPDATE repositories SET ${updates.join(', ')} WHERE id = ?`).bind(...binds).run()
+
+  const updatedRepoName = (typeof body.name === 'string' && body.name.trim()) ? body.name.trim() : repo
+  const full = await getRepoFull(db, owner, updatedRepoName)
+  if (!full) return c.json({ message: 'Repository not found' }, 404)
+  return c.json(formatRepo(full))
+})
+
+router.delete('/repos/:owner/:repo', v1Auth, async (c) => {
+  const { owner, repo } = c.req.param()
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const repoRow = await getRepoWithOwner(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
+  await db.prepare('DELETE FROM repositories WHERE id = ?').bind(repoRow.id).run()
+  return c.body(null, 204)
+})
+
 router.get('/repos/:owner/:repo/branches', v1OptionalAuth, async (c) => {
   const { owner, repo } = c.req.param()
   const db = c.env.database
@@ -519,6 +591,97 @@ router.get('/repos/:owner/:repo/branches', v1OptionalAuth, async (c) => {
     return c.json(result)
   } catch {
     return c.json([])
+  }
+})
+
+router.post('/repos/:owner/:repo/branches', v1Auth, async (c) => {
+  const { owner, repo } = c.req.param()
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const repoRow = await getRepoWithOwner(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
+
+  const body = await c.req.json<{ new_branch_name?: string; old_ref_name?: string }>().catch(() => ({}))
+  const newBranch = body.new_branch_name?.trim()
+  if (!newBranch) return c.json({ message: 'new_branch_name required' }, 422)
+  const fromRef = body.old_ref_name?.trim() || repoRow.default_branch
+
+  try {
+    const fs = createR2Fs(c.env.bucket, owner, repo)
+    const gitdir = `/${owner}/${repo}.git`
+    const sourceOid = await git.resolveRef({ fs: fs as unknown as Parameters<typeof git.resolveRef>[0]['fs'], gitdir, ref: fromRef })
+    await git.writeRef({
+      fs: fs as unknown as Parameters<typeof git.writeRef>[0]['fs'],
+      gitdir,
+      ref: `refs/heads/${newBranch}`,
+      value: sourceOid,
+      force: false,
+    })
+    return c.json({ name: newBranch, commit: { id: sourceOid } }, 201)
+  } catch {
+    return c.json({ message: 'Failed to create branch' }, 400)
+  }
+})
+
+router.patch('/repos/:owner/:repo/branches/:branch', v1Auth, async (c) => {
+  const { owner, repo, branch } = c.req.param()
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const repoRow = await getRepoWithOwner(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
+
+  const body = await c.req.json<{ new_name?: string }>().catch(() => ({}))
+  const newName = body.new_name?.trim()
+  if (!newName) return c.json({ message: 'new_name required' }, 422)
+
+  try {
+    const fs = createR2Fs(c.env.bucket, owner, repo)
+    const gitdir = `/${owner}/${repo}.git`
+    const oid = await git.resolveRef({ fs: fs as unknown as Parameters<typeof git.resolveRef>[0]['fs'], gitdir, ref: branch })
+    await git.writeRef({
+      fs: fs as unknown as Parameters<typeof git.writeRef>[0]['fs'],
+      gitdir,
+      ref: `refs/heads/${newName}`,
+      value: oid,
+      force: false,
+    })
+    await (git as unknown as { deleteRef: typeof git.writeRef }).deleteRef({
+      fs: fs as unknown as Parameters<typeof git.writeRef>[0]['fs'],
+      gitdir,
+      ref: `refs/heads/${branch}`,
+    } as unknown as Parameters<typeof git.writeRef>[0])
+    if (branch === repoRow.default_branch) {
+      await db.prepare('UPDATE repositories SET default_branch = ?, updated_at = datetime(\'now\') WHERE id = ?')
+        .bind(newName, repoRow.id).run()
+    }
+    return c.json({ name: newName, commit: { id: oid } })
+  } catch {
+    return c.json({ message: 'Failed to rename branch' }, 400)
+  }
+})
+
+router.delete('/repos/:owner/:repo/branches/:branch', v1Auth, async (c) => {
+  const { owner, repo, branch } = c.req.param()
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const repoRow = await getRepoWithOwner(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
+  if (branch === repoRow.default_branch) return c.json({ message: 'Cannot delete default branch' }, 400)
+
+  try {
+    const fs = createR2Fs(c.env.bucket, owner, repo)
+    const gitdir = `/${owner}/${repo}.git`
+    await (git as unknown as { deleteRef: typeof git.writeRef }).deleteRef({
+      fs: fs as unknown as Parameters<typeof git.writeRef>[0]['fs'],
+      gitdir,
+      ref: `refs/heads/${branch}`,
+    } as unknown as Parameters<typeof git.writeRef>[0])
+    return c.body(null, 204)
+  } catch {
+    return c.json({ message: 'Failed to delete branch' }, 400)
   }
 })
 
