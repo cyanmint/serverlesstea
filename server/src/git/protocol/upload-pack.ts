@@ -61,12 +61,14 @@ export async function handleUploadPack(
       const sha = line.slice(5, 45)
       wants.push(sha)
       if (wants.length === 1) {
-        // First want line carries capabilities after NUL
+        // First want line carries capabilities.
+        // In HTTP stateless-rpc (git protocol v0) caps follow the SHA separated by spaces (no NUL).
+        // Some older or direct-connection flows use NUL separation — handle both.
         const nullIdx = line.indexOf('\0')
-        if (nullIdx !== -1) {
-          const caps = line.slice(nullIdx + 1)
-          useSideband = caps.includes('side-band-64k') || caps.includes('side-band')
-        }
+        const capString = nullIdx !== -1
+          ? line.slice(nullIdx + 1)
+          : line.slice(46) // "want "(5) + 40-char SHA + " "(1) = offset 46
+        useSideband = capString.includes('side-band-64k') || capString.includes('side-band')
       }
     }
   }

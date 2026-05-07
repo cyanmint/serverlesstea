@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 import { v1Auth, v1OptionalAuth } from '../middleware/v1auth'
 import { signToken } from '../auth/jwt'
 import { hashPassword } from '../auth/password'
-import { readBlob, listCommits } from '../git/introspect'
+import { readBlob, listCommits, listDirectory } from '../git/introspect'
 import { Env } from '../index'
 import git from 'isomorphic-git'
 import { createR2Fs } from '../git/r2fs'
@@ -506,14 +506,61 @@ router.get('/repos/:owner/:repo/branches', v1OptionalAuth, async (c) => {
 router.get('/repos/:owner/:repo/contents/:path{.*}', v1OptionalAuth, async (c) => {
   const { owner, repo, path } = c.req.param()
   const ref = c.req.query('ref') ?? 'HEAD'
+
+  // Try to serve as a directory listing first (empty path or explicit dir request).
+  // Fall back to a blob read if that fails with ENOTDIR.
+  if (!path || path.endsWith('/')) {
+    try {
+      const entries = await listDirectory(owner, repo, ref, path.replace(/\/$/, ''), c.env.bucket)
+      return c.json(entries.map((e) => ({
+        name: e.name,
+        path: e.path,
+        type: e.type === 'dir' ? 'dir' : 'file',
+        sha: e.sha,
+        download_url: null,
+      })))
+    } catch {
+      return c.json({ message: 'Not found' }, 404)
+    }
+  }
+
+  // Try blob first; if the object is a tree, fall back to directory listing.
   try {
     const content = await readBlob(owner, repo, ref, path, c.env.bucket)
     const encoded = btoa(unescape(encodeURIComponent(content)))
     const parts = path.split('/')
     const name = parts[parts.length - 1]
-    return c.json({ name, path, type: 'file', encoding: 'base64', content: encoded, size: content.length })
-  } catch {
-    return c.json({ message: 'Not found' }, 404)
+    return c.json({ name, path, type: 'file', encoding: 'base64', content: encoded, size: content.length, download_url: null })
+  } catch (err) {
+    // If the path is a directory (tree), serve a directory listing.
+    const code = (err as { code?: string }).code
+    if (code === 'ENOTDIR' || (err instanceof Error && err.message?.includes('ENOTDIR'))) {
+      try {
+        const entries = await listDirectory(owner, repo, ref, path, c.env.bucket)
+        return c.json(entries.map((e) => ({
+          name: e.name,
+          path: e.path,
+          type: e.type === 'dir' ? 'dir' : 'file',
+          sha: e.sha,
+          download_url: null,
+        })))
+      } catch {
+        return c.json({ message: 'Not found' }, 404)
+      }
+    }
+    // Also try as a directory without an explicit ENOTDIR (some isomorphic-git paths)
+    try {
+      const entries = await listDirectory(owner, repo, ref, path, c.env.bucket)
+      return c.json(entries.map((e) => ({
+        name: e.name,
+        path: e.path,
+        type: e.type === 'dir' ? 'dir' : 'file',
+        sha: e.sha,
+        download_url: null,
+      })))
+    } catch {
+      return c.json({ message: 'Not found' }, 404)
+    }
   }
 })
 
