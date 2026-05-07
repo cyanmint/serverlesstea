@@ -17,6 +17,7 @@
       </div>
       <div v-else-if="error" class="ui negative message"><p>{{ error }}</p></div>
       <div v-else class="ui attached table segment">
+        <div v-if="actionError" class="ui negative message"><p>{{ actionError }}</p></div>
         <div class="tw-mb-4 tw-flex tw-justify-end">
           <button class="ui primary button" @click="createBranch">New Branch</button>
         </div>
@@ -84,6 +85,7 @@ const repo = ref<Repository | null>(null);
 const currentUser = ref<User | null>(null);
 const starred = ref(false);
 const starLoading = ref(false);
+const actionError = ref('');
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString();
@@ -134,22 +136,37 @@ async function load() {
 async function createBranch() {
   const name = window.prompt('New branch name');
   if (!name?.trim()) return;
-  await createRepoBranch(owner.value, repoName.value, name.trim(), defaultBranch.value || undefined);
-  await load();
+  actionError.value = '';
+  try {
+    await createRepoBranch(owner.value, repoName.value, name.trim(), defaultBranch.value || undefined);
+    await load();
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to create branch';
+  }
 }
 
 async function renameBranch(name: string) {
   const newName = window.prompt('Rename branch', name);
   if (!newName?.trim() || newName.trim() === name) return;
-  await renameRepoBranch(owner.value, repoName.value, name, newName.trim());
-  if (defaultBranch.value === name) defaultBranch.value = newName.trim();
-  await load();
+  actionError.value = '';
+  try {
+    await renameRepoBranch(owner.value, repoName.value, name, newName.trim());
+    if (defaultBranch.value === name) defaultBranch.value = newName.trim();
+    await load();
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to rename branch';
+  }
 }
 
 async function removeBranch(name: string) {
   if (!window.confirm(`Delete branch "${name}"?`)) return;
-  await deleteRepoBranch(owner.value, repoName.value, name);
-  await load();
+  actionError.value = '';
+  try {
+    await deleteRepoBranch(owner.value, repoName.value, name);
+    await load();
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to delete branch';
+  }
 }
 
 watch([owner, repoName, page], load);

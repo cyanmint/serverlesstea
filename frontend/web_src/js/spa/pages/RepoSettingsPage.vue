@@ -74,10 +74,14 @@
                     </div>
                   </div>
                   <div class="field">
-                    <label>Default Branch</label>
+                    <label class="tw-flex tw-items-center tw-gap-2">
+                      <span>Default Branch</span>
+                      <button class="ui tiny basic button" type="button" @click="loadBranchOptions">Refresh</button>
+                    </label>
                     <select v-model="editDefaultBranch" class="ui dropdown">
                       <option v-for="branch in repoBranches" :key="branch.name" :value="branch.name">{{ branch.name }}</option>
                     </select>
+                    <div v-if="branchLoadError" class="tw-text-xs tw-text-red-600 tw-mt-1">{{ branchLoadError }}</div>
                   </div>
                   <div class="field">
                     <button class="ui primary button" type="submit" :disabled="saving">
@@ -266,6 +270,7 @@ const saveError = ref('');
 const saveSuccess = ref(false);
 const editDefaultBranch = ref('');
 const repoBranches = ref<Branch[]>([]);
+const branchLoadError = ref('');
 
 // Delete
 const showDeleteConfirm = ref(false);
@@ -305,10 +310,38 @@ onMounted(async () => {
     editWebsite.value = (repo.value as unknown as Record<string, string>)['website'] ?? '';
     editPrivate.value = repo.value.private;
     editDefaultBranch.value = repo.value.default_branch;
-    repoBranches.value = await getRepoBranches(owner.value, repoName.value).catch(() => []);
+    await loadBranchOptions();
   }
   isRepoStarred(owner.value, repoName.value).then((s) => { starred.value = s; }).catch(() => {});
 });
+
+async function loadBranchOptions() {
+  branchLoadError.value = '';
+  const fetched = await getRepoBranches(owner.value, repoName.value).catch((e) => {
+    branchLoadError.value = e instanceof Error ? e.message : 'Failed to load branches';
+    return [] as Branch[];
+  });
+  if (fetched.length > 0) {
+    repoBranches.value = fetched;
+  } else if (repo.value?.default_branch) {
+    repoBranches.value = [{
+      name: repo.value.default_branch,
+      protected: false,
+      commit: {
+        id: '',
+        message: '',
+        added: null,
+        removed: null,
+        modified: null,
+        author: {name: '', email: '', date: ''},
+        committer: {name: '', email: '', date: ''},
+        url: '',
+      },
+    }];
+  } else {
+    repoBranches.value = [];
+  }
+}
 
 async function toggleStar() {
   if (!currentUser.value || starLoading.value) return;
@@ -349,6 +382,8 @@ async function saveBasicSettings() {
     if (!resp.ok) throw new Error('Failed to save settings');
     const updated = await resp.json() as Repository;
     repo.value = updated;
+    editDefaultBranch.value = updated.default_branch;
+    await loadBranchOptions();
     saveSuccess.value = true;
     if (updated.name !== repoName.value) {
       router.push(`/${owner.value}/${updated.name}/settings`);

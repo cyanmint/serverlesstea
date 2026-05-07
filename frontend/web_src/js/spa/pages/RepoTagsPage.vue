@@ -25,6 +25,7 @@
         </div>
       </div>
       <div v-else id="tags-table" class="ui segment">
+        <div v-if="actionError" class="ui negative message"><p>{{ actionError }}</p></div>
         <div class="tw-mb-4 tw-flex tw-justify-end">
           <button class="ui primary button" @click="createTag">New Tag</button>
         </div>
@@ -92,6 +93,7 @@ const repo = ref<Repository | null>(null);
 const currentUser = ref<User | null>(null);
 const starred = ref(false);
 const starLoading = ref(false);
+const actionError = ref('');
 
 function changePage(p: number) {
   page.value = p;
@@ -133,21 +135,36 @@ async function load() {
 async function createTag() {
   const name = window.prompt('New tag name');
   if (!name?.trim()) return;
-  await createRepoTag(owner.value, repoName.value, name.trim(), repo.value?.default_branch);
-  await load();
+  actionError.value = '';
+  try {
+    await createRepoTag(owner.value, repoName.value, name.trim(), repo.value?.default_branch);
+    await load();
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to create tag';
+  }
 }
 
 async function renameTag(name: string) {
   const newName = window.prompt('Rename tag', name);
   if (!newName?.trim() || newName.trim() === name) return;
-  await renameRepoTag(owner.value, repoName.value, name, newName.trim());
-  await load();
+  actionError.value = '';
+  try {
+    await renameRepoTag(owner.value, repoName.value, name, newName.trim());
+    await load();
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to rename tag';
+  }
 }
 
 async function removeTag(name: string) {
   if (!window.confirm(`Delete tag "${name}"?`)) return;
-  await deleteRepoTag(owner.value, repoName.value, name);
-  await load();
+  actionError.value = '';
+  try {
+    await deleteRepoTag(owner.value, repoName.value, name);
+    await load();
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to delete tag';
+  }
 }
 
 watch([owner, repoName, page], load);

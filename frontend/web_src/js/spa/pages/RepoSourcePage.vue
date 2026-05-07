@@ -17,6 +17,20 @@
     </div>
     <div v-else-if="error" class="ui container tw-py-6">
       <div class="ui negative message"><p>{{ error }}</p></div>
+      <div class="ui segment tw-mt-4">
+        <div v-if="actionError" class="ui negative message tw-mb-3"><p>{{ actionError }}</p></div>
+        <div class="tw-flex tw-flex-wrap tw-gap-2 tw-items-center">
+          <select v-model="selectedRef" class="ui dropdown" @change="switchRef">
+            <option v-for="option in refOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+          </select>
+          <button class="ui button" @click="createBranchFromCurrent">New Branch</button>
+          <button class="ui button" @click="createTagFromCurrent">New Tag</button>
+          <button v-if="currentRefType !== 'commit'" class="ui button" @click="renameCurrentRef">Rename {{ currentRefType }}</button>
+          <button v-if="currentRefType !== 'commit'" class="ui red basic button" @click="deleteCurrentRef">Delete {{ currentRefType }}</button>
+          <button class="ui button" @click="triggerUpload">Upload File</button>
+          <input ref="uploadInput" type="file" class="tw-hidden" @change="handleUpload">
+        </div>
+      </div>
     </div>
 
     <div v-else-if="contents" class="ui container">
@@ -28,6 +42,8 @@
           </select>
           <button class="ui button" @click="createBranchFromCurrent">New Branch</button>
           <button class="ui button" @click="createTagFromCurrent">New Tag</button>
+          <button v-if="currentRefType !== 'commit'" class="ui button" @click="renameCurrentRef">Rename {{ currentRefType }}</button>
+          <button v-if="currentRefType !== 'commit'" class="ui red basic button" @click="deleteCurrentRef">Delete {{ currentRefType }}</button>
           <button class="ui button" @click="triggerUpload">Upload File</button>
           <button v-if="!Array.isArray(contents)" class="ui primary button" @click="editingFile = !editingFile">
             {{ editingFile ? 'Cancel Edit' : 'Edit File' }}
@@ -119,8 +135,9 @@ import AppLayout from '../layouts/AppLayout.vue';
 import RepoNav from '../components/RepoNav.vue';
 import {SvgIcon} from '../../svg.ts';
 import {
-  createRepoBranch, createRepoTag, getRepo, getRepoBranches, getRepoContents, getRepoTags,
+  createRepoBranch, createRepoTag, deleteRepoBranch, deleteRepoTag, getRepo, getRepoBranches, getRepoContents, getRepoTags,
   getCurrentUser, isRepoStarred, starRepo, unstarRepo, writeRepoFile,
+  renameRepoBranch, renameRepoTag,
   type Branch, type ContentsResponse, type Repository, type Tag, type User,
 } from '../api/index.ts';
 
@@ -172,10 +189,20 @@ const fileContent = computed(() => {
 });
 
 const fileLines = computed(() => fileContent.value.split('\n'));
-const refOptions = computed(() => [
-  ...branches.value.map((branch) => ({value: `branch:${branch.name}`, label: `Branch: ${branch.name}`})),
-  ...tags.value.map((tag) => ({value: `tag:${tag.name}`, label: `Tag: ${tag.name}`})),
-]);
+const currentRefType = computed(() => (selectedRef.value.split(':')[0] || 'branch') as 'branch' | 'tag' | 'commit');
+const currentRefName = computed(() => selectedRef.value.split(':').slice(1).join(':'));
+const refOptions = computed(() => {
+  const options = [
+    ...branches.value.map((branch) => ({value: `branch:${branch.name}`, label: `Branch: ${branch.name}`})),
+    ...tags.value.map((tag) => ({value: `tag:${tag.name}`, label: `Tag: ${tag.name}`})),
+  ];
+  const current = `${refType.value}:${branchRef.value}`;
+  if (!options.some((o) => o.value === current)) {
+    const prefix = refType.value === 'tag' ? 'Tag' : refType.value === 'commit' ? 'Commit' : 'Branch';
+    options.unshift({value: current, label: `${prefix}: ${branchRef.value}`});
+  }
+  return options;
+});
 
 function buildEntryPath(entry: ContentsResponse): string {
   const base = `/${owner.value}/${repoName.value}/src/${refType.value}/${branchRef.value}`;
@@ -253,6 +280,46 @@ async function createTagFromCurrent() {
     await loadRefs();
   } catch (e) {
     actionError.value = e instanceof Error ? e.message : 'Failed to create tag';
+  }
+}
+
+async function renameCurrentRef() {
+  const type = currentRefType.value;
+  const ref = currentRefName.value;
+  if (!ref || type === 'commit') return;
+  const newName = window.prompt(`Rename ${type}`, ref);
+  if (!newName?.trim() || newName.trim() === ref) return;
+  actionError.value = '';
+  try {
+    if (type === 'branch') {
+      await renameRepoBranch(owner.value, repoName.value, ref, newName.trim());
+    } else {
+      await renameRepoTag(owner.value, repoName.value, ref, newName.trim());
+    }
+    await loadRefs();
+    await router.push(`/${owner.value}/${repoName.value}/src/${type}/${encodeURIComponent(newName.trim())}`);
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : `Failed to rename ${type}`;
+  }
+}
+
+async function deleteCurrentRef() {
+  const type = currentRefType.value;
+  const ref = currentRefName.value;
+  if (!ref || type === 'commit') return;
+  if (!window.confirm(`Delete ${type} "${ref}"?`)) return;
+  actionError.value = '';
+  try {
+    if (type === 'branch') {
+      await deleteRepoBranch(owner.value, repoName.value, ref);
+    } else {
+      await deleteRepoTag(owner.value, repoName.value, ref);
+    }
+    await loadRefs();
+    const fallbackBranch = branches.value[0]?.name || repo.value?.default_branch || 'main';
+    await router.push(`/${owner.value}/${repoName.value}/src/branch/${encodeURIComponent(fallbackBranch)}`);
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : `Failed to delete ${type}`;
   }
 }
 
