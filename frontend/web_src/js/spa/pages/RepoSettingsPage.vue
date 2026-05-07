@@ -76,7 +76,7 @@
                   <div class="field">
                     <label class="tw-flex tw-items-center tw-gap-2">
                       <span>Default Branch</span>
-                      <button class="ui tiny basic button" type="button" @click="loadBranchOptions">Refresh</button>
+                      <button class="ui tiny basic button" type="button" @click="loadBranchOptions(true)">Refresh</button>
                     </label>
                     <select v-model="editDefaultBranch" class="ui dropdown">
                       <option v-for="branch in repoBranches" :key="branch.name" :value="branch.name">{{ branch.name }}</option>
@@ -310,19 +310,21 @@ onMounted(async () => {
     editWebsite.value = (repo.value as unknown as Record<string, string>)['website'] ?? '';
     editPrivate.value = repo.value.private;
     editDefaultBranch.value = repo.value.default_branch;
-    await loadBranchOptions();
+    await loadBranchOptions(false);
   }
   isRepoStarred(owner.value, repoName.value).then((s) => { starred.value = s; }).catch(() => {});
 });
 
-async function loadBranchOptions() {
+async function loadBranchOptions(showErrors = false) {
   branchLoadError.value = '';
-  const fetched = await getRepoBranches(owner.value, repoName.value).catch((e) => {
-    branchLoadError.value = e instanceof Error ? e.message : 'Failed to load branches';
+  let fetchFailed = false;
+  const fetched = await getRepoBranches(owner.value, repoName.value).catch(() => {
+    fetchFailed = true;
     return [] as Branch[];
   });
   if (fetched.length > 0) {
     repoBranches.value = fetched;
+    branchLoadError.value = '';
   } else if (repo.value?.default_branch) {
     repoBranches.value = [{
       name: repo.value.default_branch,
@@ -338,8 +340,10 @@ async function loadBranchOptions() {
         url: '',
       },
     }];
+    branchLoadError.value = showErrors && fetchFailed ? 'Could not refresh branches. Showing default branch only.' : '';
   } else {
     repoBranches.value = [];
+    branchLoadError.value = fetchFailed ? 'Failed to load branches.' : '';
   }
 }
 
@@ -383,7 +387,7 @@ async function saveBasicSettings() {
     const updated = await resp.json() as Repository;
     repo.value = updated;
     editDefaultBranch.value = updated.default_branch;
-    await loadBranchOptions();
+    await loadBranchOptions(false);
     saveSuccess.value = true;
     if (updated.name !== repoName.value) {
       router.push(`/${owner.value}/${updated.name}/settings`);
