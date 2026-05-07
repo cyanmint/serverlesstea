@@ -1,0 +1,12 @@
+[
+  {"emoji": "😀", "description": "grinning face", "aliases": ["grinning"], "tags": ["smile", "happy"]},
+  {"emoji": "😂", "description": "face with tears of joy", "aliases": ["joy"], "tags": ["happy", "lol"]},
+  {"emoji": "❤️", "description": "red heart", "aliases": ["heart"], "tags": ["love"]},
+  {"emoji": "👍", "description": "thumbs up", "aliases": ["+1", "thumbsup"], "tags": ["approve"]},
+  {"emoji": "👎", "description": "thumbs down", "aliases": ["-1", "thumbsdown"], "tags": ["disapprove"]},
+  {"emoji": "🎉", "description": "party popper", "aliases": ["tada"], "tags": ["celebrate"]},
+  {"emoji": "🚀", "description": "rocket", "aliases": ["rocket"], "tags": ["launch"]},
+  {"emoji": "👀", "description": "eyes", "aliases": ["eyes"], "tags": ["look", "watch"]},
+  {"emoji": "🐛", "description": "bug", "aliases": ["bug"], "tags": ["issue", "error"]},
+  {"emoji": "✅", "description": "check mark button", "aliases": ["white_check_mark"], "tags": ["done", "ok"]}
+]

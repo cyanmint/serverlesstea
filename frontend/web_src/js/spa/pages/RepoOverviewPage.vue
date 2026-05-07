@@ -67,6 +67,13 @@ git push -u origin {{ repo.default_branch || 'main' }}</pre>
             </div>
 
             <template v-else>
+              <!-- branch selector bar -->
+              <div class="tw-flex tw-flex-wrap tw-gap-2 tw-items-center tw-mb-3">
+                <select v-model="selectedBranch" class="ui dropdown" @change="onBranchChange">
+                  <option v-for="option in refOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+                </select>
+              </div>
+
               <!-- latest commit bar -->
               <div id="repo-files-table">
                 <div v-if="contentsLoading" class="repo-file-line tw-py-2">
@@ -160,18 +167,19 @@ git push -u origin {{ repo.default_branch || 'main' }}</pre>
 
 <script setup lang="ts">
 import {ref, computed, onMounted} from 'vue';
-import {RouterLink, useRoute} from 'vue-router';
+import {RouterLink, useRoute, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import RepoNav from '../components/RepoNav.vue';
 import {SvgIcon} from '../../svg.ts';
 import {
-  getRepo, getRepoContents, getCurrentUser,
+  getRepo, getRepoContents, getRepoBranches, getRepoTags, getCurrentUser,
   isRepoStarred, starRepo, unstarRepo,
-  type Repository, type ContentsResponse, type User,
+  type Branch, type Tag, type Repository, type ContentsResponse, type User,
 } from '../api/index.ts';
 import {rewriteToBackend} from '../spaconfig.ts';
 
 const route = useRoute();
+const router = useRouter();
 const owner = String(route.params['owner']);
 const repoName = String(route.params['repo']);
 
@@ -186,6 +194,28 @@ const dirContents = ref<ContentsResponse[]>([]);
 
 const starred = ref(false);
 const starLoading = ref(false);
+
+// Branch / tag selector
+const branches = ref<Branch[]>([]);
+const tags = ref<Tag[]>([]);
+const selectedBranch = ref('');
+
+const refOptions = computed(() => {
+  const options = [
+    ...branches.value.map((b) => ({value: `branch:${b.name}`, label: `Branch: ${b.name}`})),
+    ...tags.value.map((t) => ({value: `tag:${t.name}`, label: `Tag: ${t.name}`})),
+  ];
+  if (options.length === 0 && repo.value?.default_branch) {
+    options.push({value: `branch:${repo.value.default_branch}`, label: `Branch: ${repo.value.default_branch}`});
+  }
+  return options;
+});
+
+async function onBranchChange() {
+  const [type, ...rest] = selectedBranch.value.split(':');
+  const ref = rest.join(':');
+  await router.push(`/${owner}/${repoName}/src/${type}/${encodeURIComponent(ref)}`);
+}
 
 const httpCloneUrl = computed(() => rewriteToBackend(repo.value?.clone_url ?? ''));
 const sshCloneUrl = computed(() => repo.value?.ssh_url ?? '');
@@ -231,24 +261,38 @@ onMounted(async () => {
   }
   loading.value = false;
 
+  // Initialise selector to default branch
+  selectedBranch.value = `branch:${repo.value.default_branch}`;
+
   if (currentUser.value) {
     isRepoStarred(owner, repoName).then(v => { starred.value = v; }).catch(() => {});
   }
 
-  contentsLoading.value = true;
-  try {
-    const contents = await getRepoContents(owner, repoName, '', repo.value!.default_branch);
-    if (Array.isArray(contents)) {
-      dirContents.value = (contents as ContentsResponse[]).sort((a, b) => {
-        if (a.type === 'dir' && b.type !== 'dir') return -1;
-        if (a.type !== 'dir' && b.type === 'dir') return 1;
-        return a.name.localeCompare(b.name);
-      });
-    }
-  } catch (err) {
-    contentsError.value = err instanceof Error ? err.message : 'Failed to load files';
-  } finally {
-    contentsLoading.value = false;
-  }
+  // Load branches and tags in parallel with file listing
+  const [, branchList, tagList] = await Promise.all([
+    (async () => {
+      if (!repo.value) return;
+      contentsLoading.value = true;
+      try {
+        const contents = await getRepoContents(owner, repoName, '', repo.value.default_branch);
+        if (Array.isArray(contents)) {
+          dirContents.value = (contents as ContentsResponse[]).sort((a, b) => {
+            if (a.type === 'dir' && b.type !== 'dir') return -1;
+            if (a.type !== 'dir' && b.type === 'dir') return 1;
+            return a.name.localeCompare(b.name);
+          });
+        }
+      } catch (err) {
+        contentsError.value = err instanceof Error ? err.message : 'Failed to load files';
+      } finally {
+        contentsLoading.value = false;
+      }
+    })(),
+    getRepoBranches(owner, repoName).catch(() => [] as Branch[]),
+    getRepoTags(owner, repoName).catch(() => [] as Tag[]),
+  ]);
+
+  branches.value = branchList;
+  tags.value = tagList;
 });
 </script>
