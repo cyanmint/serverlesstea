@@ -67,6 +67,13 @@ async function getUser(db: D1Database, username: string) {
     .first<UserRow>()
 }
 
+async function getUserById(db: D1Database, id: string) {
+  return db
+    .prepare('SELECT id, username, email, display_name, bio, is_admin, created_at FROM users WHERE id = ?')
+    .bind(id)
+    .first<UserRow>()
+}
+
 async function getRepoFull(db: D1Database, owner: string, repo: string) {
   return db
     .prepare(
@@ -647,11 +654,11 @@ router.patch('/repos/:owner/:repo/branches/:branch', v1Auth, async (c) => {
       value: oid,
       force: false,
     })
-    await (git as unknown as { deleteRef: typeof git.writeRef }).deleteRef({
-      fs: fs as unknown as Parameters<typeof git.writeRef>[0]['fs'],
+    await git.deleteRef({
+      fs: fs as unknown as Parameters<typeof git.deleteRef>[0]['fs'],
       gitdir,
       ref: `refs/heads/${branch}`,
-    } as unknown as Parameters<typeof git.writeRef>[0])
+    })
     if (branch === repoRow.default_branch) {
       await db.prepare('UPDATE repositories SET default_branch = ?, updated_at = datetime(\'now\') WHERE id = ?')
         .bind(newName, repoRow.id).run()
@@ -674,11 +681,11 @@ router.delete('/repos/:owner/:repo/branches/:branch', v1Auth, async (c) => {
   try {
     const fs = createR2Fs(c.env.bucket, owner, repo)
     const gitdir = `/${owner}/${repo}.git`
-    await (git as unknown as { deleteRef: typeof git.writeRef }).deleteRef({
-      fs: fs as unknown as Parameters<typeof git.writeRef>[0]['fs'],
+    await git.deleteRef({
+      fs: fs as unknown as Parameters<typeof git.deleteRef>[0]['fs'],
       gitdir,
       ref: `refs/heads/${branch}`,
-    } as unknown as Parameters<typeof git.writeRef>[0])
+    })
     return c.body(null, 204)
   } catch {
     return c.json({ message: 'Failed to delete branch' }, 400)
@@ -746,6 +753,62 @@ router.get('/repos/:owner/:repo/contents/:path{.*}', v1OptionalAuth, async (c) =
   }
 })
 
+router.put('/repos/:owner/:repo/contents/:path{.*}', v1Auth, async (c) => {
+  const { owner, repo, path } = c.req.param()
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const repoRow = await getRepoWithOwner(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
+
+  const body = await c.req.json<{
+    content?: string
+    message?: string
+    branch?: string
+    new_branch?: string
+  }>().catch(() => ({}))
+  if (!body.content) return c.json({ message: 'content required' }, 422)
+
+  const user = await getUserById(db, payload.sub)
+  if (!user) return c.json({ message: 'User not found' }, 404)
+
+  const fs = createR2Fs(c.env.bucket, owner, repo)
+  const gitdir = `/${owner}/${repo}.git`
+  const sourceRef = body.branch?.trim() || repoRow.default_branch
+  const targetBranch = body.new_branch?.trim() || sourceRef
+
+  try {
+    if (body.new_branch?.trim()) {
+      const sourceOid = await git.resolveRef({ fs: fs as unknown as Parameters<typeof git.resolveRef>[0]['fs'], gitdir, ref: sourceRef })
+      await git.writeRef({
+        fs: fs as unknown as Parameters<typeof git.writeRef>[0]['fs'],
+        gitdir,
+        ref: `refs/heads/${targetBranch}`,
+        value: sourceOid,
+        force: false,
+      })
+    }
+
+    const bytes = Uint8Array.from(atob(body.content), (ch) => ch.charCodeAt(0))
+    const result = await commitFileToBranch(owner, repo, c.env.bucket, {
+      branch: targetBranch,
+      filePath: path,
+      contentBytes: bytes,
+      message: body.message?.trim() || `Update ${path}`,
+      authorName: user.display_name ?? user.username,
+      authorEmail: user.email,
+    })
+    const name = path.split('/').filter(Boolean).at(-1) ?? path
+    return c.json({
+      content: { name, path, sha: result.blobSha },
+      commit: { sha: result.commitSha },
+      branch: targetBranch,
+    })
+  } catch {
+    return c.json({ message: 'Failed to write file' }, 400)
+  }
+})
+
 router.get('/repos/:owner/:repo/commits', v1OptionalAuth, async (c) => {
   const { owner, repo } = c.req.param()
   const db = c.env.database
@@ -789,6 +852,92 @@ router.get('/repos/:owner/:repo/tags', v1OptionalAuth, async (c) => {
     return c.json(result)
   } catch {
     return c.json([])
+  }
+})
+
+router.post('/repos/:owner/:repo/tags', v1Auth, async (c) => {
+  const { owner, repo } = c.req.param()
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const repoRow = await getRepoWithOwner(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
+
+  const body = await c.req.json<{ tag_name?: string; target?: string }>().catch(() => ({}))
+  const tagName = body.tag_name?.trim()
+  const target = body.target?.trim() || repoRow.default_branch
+  if (!tagName) return c.json({ message: 'tag_name required' }, 422)
+
+  try {
+    const fs = createR2Fs(c.env.bucket, owner, repo)
+    const gitdir = `/${owner}/${repo}.git`
+    const oid = await git.resolveRef({ fs: fs as unknown as Parameters<typeof git.resolveRef>[0]['fs'], gitdir, ref: target })
+    await git.writeRef({
+      fs: fs as unknown as Parameters<typeof git.writeRef>[0]['fs'],
+      gitdir,
+      ref: `refs/tags/${tagName}`,
+      value: oid,
+      force: false,
+    })
+    return c.json({ name: tagName, message: '', id: oid, commit: { sha: oid, created: '' }, zipball_url: '', tarball_url: '' }, 201)
+  } catch {
+    return c.json({ message: 'Failed to create tag' }, 400)
+  }
+})
+
+router.patch('/repos/:owner/:repo/tags/:tag', v1Auth, async (c) => {
+  const { owner, repo, tag } = c.req.param()
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const repoRow = await getRepoWithOwner(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
+
+  const body = await c.req.json<{ new_name?: string }>().catch(() => ({}))
+  const newName = body.new_name?.trim()
+  if (!newName) return c.json({ message: 'new_name required' }, 422)
+
+  try {
+    const fs = createR2Fs(c.env.bucket, owner, repo)
+    const gitdir = `/${owner}/${repo}.git`
+    const oid = await git.resolveRef({ fs: fs as unknown as Parameters<typeof git.resolveRef>[0]['fs'], gitdir, ref: `refs/tags/${tag}` })
+    await git.writeRef({
+      fs: fs as unknown as Parameters<typeof git.writeRef>[0]['fs'],
+      gitdir,
+      ref: `refs/tags/${newName}`,
+      value: oid,
+      force: false,
+    })
+    await git.deleteRef({
+      fs: fs as unknown as Parameters<typeof git.deleteRef>[0]['fs'],
+      gitdir,
+      ref: `refs/tags/${tag}`,
+    })
+    return c.json({ name: newName, message: '', id: oid, commit: { sha: oid, created: '' }, zipball_url: '', tarball_url: '' })
+  } catch {
+    return c.json({ message: 'Failed to rename tag' }, 400)
+  }
+})
+
+router.delete('/repos/:owner/:repo/tags/:tag', v1Auth, async (c) => {
+  const { owner, repo, tag } = c.req.param()
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const repoRow = await getRepoWithOwner(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  if (!canWriteRepo(payload, repoRow.owner_id)) return c.json({ message: 'Forbidden' }, 403)
+
+  try {
+    const fs = createR2Fs(c.env.bucket, owner, repo)
+    const gitdir = `/${owner}/${repo}.git`
+    await git.deleteRef({
+      fs: fs as unknown as Parameters<typeof git.deleteRef>[0]['fs'],
+      gitdir,
+      ref: `refs/tags/${tag}`,
+    })
+    return c.body(null, 204)
+  } catch {
+    return c.json({ message: 'Failed to delete tag' }, 400)
   }
 })
 
@@ -985,11 +1134,81 @@ function formatIssueRow(i: Record<string, unknown>) {
 function issueQuery() {
   return `
     SELECT i.id, i.number, i.title, i.body, i.state, i.created_at, i.updated_at, i.closed_at,
+           i.head_branch, i.base_branch,
            u.id as user_id, u.username as user_username, u.email as user_email,
            u.display_name as user_display_name, u.bio as user_bio,
            u.is_admin as user_is_admin, u.created_at as user_created_at
     FROM issues i JOIN users u ON i.creator_id = u.id
   `
+}
+
+type PullIssueRow = Record<string, unknown> & {
+  id: string
+  number: number
+  title: string
+  body: string | null
+  state: string
+  created_at: string
+  updated_at: string
+  closed_at: string | null
+  user_id: string
+  user_username: string
+  user_email: string
+  user_display_name: string | null
+  user_bio: string | null
+  user_is_admin: number
+  user_created_at: string
+  head_branch: string | null
+  base_branch: string | null
+}
+
+async function formatPullRequestRow(
+  row: PullIssueRow,
+  owner: string,
+  repo: string,
+  bucket: R2Bucket,
+) {
+  const headRef = row.head_branch ?? ''
+  const baseRef = row.base_branch ?? ''
+  const fs = createR2Fs(bucket, owner, repo)
+  const gitdir = `/${owner}/${repo}.git`
+
+  let headSha = ''
+  let baseSha = ''
+  try {
+    if (headRef) headSha = await git.resolveRef({ fs: fs as unknown as Parameters<typeof git.resolveRef>[0]['fs'], gitdir, ref: headRef })
+  } catch {}
+  try {
+    if (baseRef) baseSha = await git.resolveRef({ fs: fs as unknown as Parameters<typeof git.resolveRef>[0]['fs'], gitdir, ref: baseRef })
+  } catch {}
+
+  let mergeable: boolean | null = null
+  if (row.state === 'open' && headRef && baseRef) {
+    try {
+      await git.merge({
+        fs: fs as unknown as Parameters<typeof git.merge>[0]['fs'],
+        gitdir,
+        ours: baseRef,
+        theirs: headRef,
+        dryRun: true,
+        abortOnConflict: true,
+      })
+      mergeable = true
+    } catch {
+      mergeable = false
+    }
+  }
+
+  const merged = row.state === 'closed' && !row.head_branch
+  return {
+    ...formatIssueRow(row),
+    merged,
+    merged_at: merged ? row.closed_at : null,
+    merge_commit_sha: merged ? baseSha || null : null,
+    mergeable,
+    head: { label: headRef ? `${owner}:${headRef}` : '', ref: headRef, sha: headSha, repo: null },
+    base: { label: baseRef ? `${owner}:${baseRef}` : '', ref: baseRef, sha: baseSha, repo: null },
+  }
 }
 
 router.get('/repos/:owner/:repo/issues', v1OptionalAuth, async (c) => {
@@ -1016,6 +1235,63 @@ router.get('/repos/:owner/:repo/issues/:index', v1OptionalAuth, async (c) => {
   ).bind(repoRow.id, parseInt(index)).first()
   if (!issue) return c.json({ message: 'Issue not found' }, 404)
   return c.json(formatIssueRow(issue as Record<string, unknown>))
+})
+
+router.patch('/repos/:owner/:repo/issues/:index', v1Auth, async (c) => {
+  const { owner, repo, index } = c.req.param()
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const repoRow = await getRepo(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+
+  const issue = await db.prepare('SELECT id, creator_id FROM issues WHERE repo_id = ? AND number = ?')
+    .bind(repoRow.id, parseInt(index)).first<{ id: string; creator_id: string }>()
+  if (!issue) return c.json({ message: 'Issue not found' }, 404)
+  if (issue.creator_id !== payload.sub && repoRow.owner_id !== payload.sub && !payload['isAdmin']) {
+    return c.json({ message: 'Forbidden' }, 403)
+  }
+
+  const body = await c.req.json<{
+    title?: string
+    body?: string
+    state?: 'open' | 'closed'
+    assignees?: string[]
+    milestone?: number | string | null
+  }>().catch(() => ({}))
+
+  const updates: string[] = [`updated_at = datetime('now')`]
+  const bindings: unknown[] = []
+  if (typeof body.title === 'string' && body.title.trim()) {
+    updates.push('title = ?')
+    bindings.push(body.title.trim())
+  }
+  if (typeof body.body === 'string') {
+    updates.push('body = ?')
+    bindings.push(body.body)
+  }
+  if (body.state === 'open' || body.state === 'closed') {
+    updates.push('state = ?')
+    bindings.push(body.state)
+    updates.push(body.state === 'closed' ? "closed_at = datetime('now')" : 'closed_at = NULL')
+  }
+  if (Object.hasOwn(body, 'assignees')) {
+    const assignee = Array.isArray(body.assignees) && body.assignees.length > 0
+      ? await getUser(db, body.assignees[0] as string)
+      : null
+    updates.push('assignee_id = ?')
+    bindings.push(assignee?.id ?? null)
+  }
+  if (Object.hasOwn(body, 'milestone')) {
+    updates.push('milestone_id = ?')
+    bindings.push(body.milestone ? String(body.milestone) : null)
+  }
+  bindings.push(issue.id)
+  await db.prepare(`UPDATE issues SET ${updates.join(', ')} WHERE id = ?`).bind(...bindings).run()
+
+  const updated = await db.prepare(
+    issueQuery() + ' WHERE i.repo_id = ? AND i.number = ?',
+  ).bind(repoRow.id, parseInt(index)).first()
+  return c.json(formatIssueRow(updated as Record<string, unknown>))
 })
 
 router.get('/repos/:owner/:repo/issues/:index/comments', v1OptionalAuth, async (c) => {
@@ -1090,7 +1366,114 @@ router.get('/repos/:owner/:repo/pulls', v1OptionalAuth, async (c) => {
   const issues = await db.prepare(
     issueQuery() + ' WHERE i.repo_id = ? AND i.is_pull = 1 AND i.state = ? ORDER BY i.created_at DESC LIMIT ? OFFSET ?',
   ).bind(repoRow.id, state, parseInt(limit), offset).all()
-  return c.json((issues.results as Array<Record<string, unknown>>).map(formatIssueRow))
+  return c.json(await Promise.all((issues.results as PullIssueRow[]).map((row) => formatPullRequestRow(row, owner, repo, c.env.bucket))))
+})
+
+router.get('/repos/:owner/:repo/pulls/:index', v1OptionalAuth, async (c) => {
+  const { owner, repo, index } = c.req.param()
+  const db = c.env.database
+  const repoRow = await getRepo(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+  const pull = await db.prepare(
+    issueQuery() + ' WHERE i.repo_id = ? AND i.number = ? AND i.is_pull = 1',
+  ).bind(repoRow.id, parseInt(index)).first<PullIssueRow>()
+  if (!pull) return c.json({ message: 'Pull request not found' }, 404)
+  return c.json(await formatPullRequestRow(pull, owner, repo, c.env.bucket))
+})
+
+router.post('/repos/:owner/:repo/pulls', v1Auth, async (c) => {
+  const { owner, repo } = c.req.param()
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const repoRow = await getRepo(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+
+  const body = await c.req.json<{ title?: string; body?: string; head?: string; base?: string }>().catch(() => ({}))
+  if (!body.title?.trim() || !body.head?.trim() || !body.base?.trim()) {
+    return c.json({ message: 'title, head and base are required' }, 422)
+  }
+
+  const maxRow = await db.prepare('SELECT MAX(number) as max FROM issues WHERE repo_id = ?').bind(repoRow.id).first<{ max: number | null }>()
+  const number = (maxRow?.max ?? 0) + 1
+  const id = crypto.randomUUID()
+  await db.prepare(`
+    INSERT INTO issues (id, repo_id, number, title, body, creator_id, is_pull, head_branch, base_branch)
+    VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)
+  `).bind(id, repoRow.id, number, body.title.trim(), body.body ?? null, payload.sub, body.head.trim(), body.base.trim()).run()
+
+  const pull = await db.prepare(`
+    SELECT i.id, i.number, i.title, i.body, i.state, i.created_at, i.updated_at, i.closed_at,
+           u.id as user_id, u.username as user_username, u.email as user_email,
+           u.display_name as user_display_name, u.bio as user_bio,
+           u.is_admin as user_is_admin, u.created_at as user_created_at,
+           i.head_branch, i.base_branch
+    FROM issues i JOIN users u ON i.creator_id = u.id
+    WHERE i.id = ?
+  `).bind(id).first<PullIssueRow>()
+  return c.json(await formatPullRequestRow(pull as PullIssueRow, owner, repo, c.env.bucket), 201)
+})
+
+router.post('/repos/:owner/:repo/pulls/:index/merge', v1Auth, async (c) => {
+  const { owner, repo, index } = c.req.param()
+  const payload = c.get('user' as never) as JWTPayload
+  const db = c.env.database
+  const repoRow = await getRepo(db, owner, repo)
+  if (!repoRow) return c.json({ message: 'Repository not found' }, 404)
+
+  const pull = await db.prepare(`
+    SELECT i.id, i.number, i.title, i.state, i.head_branch, i.base_branch
+    FROM issues i
+    WHERE i.repo_id = ? AND i.number = ? AND i.is_pull = 1
+  `).bind(repoRow.id, parseInt(index)).first<{ id: string; number: number; title: string; state: string; head_branch: string | null; base_branch: string | null }>()
+  if (!pull) return c.json({ message: 'Pull request not found' }, 404)
+  if (pull.state !== 'open') return c.json({ message: 'Pull request is not open' }, 400)
+  if (!pull.head_branch || !pull.base_branch) return c.json({ message: 'Pull request branches are missing' }, 400)
+
+  const user = await getUserById(db, payload.sub)
+  if (!user) return c.json({ message: 'User not found' }, 404)
+
+  const body = await c.req.json<{ Do?: 'merge' | 'squash' | 'rebase' }>().catch(() => ({}))
+  const method = body.Do ?? 'merge'
+
+  try {
+    const fs = createR2Fs(c.env.bucket, owner, repo)
+    const gitdir = `/${owner}/${repo}.git`
+    const headOid = await git.resolveRef({ fs: fs as unknown as Parameters<typeof git.resolveRef>[0]['fs'], gitdir, ref: pull.head_branch })
+    const baseOid = await git.resolveRef({ fs: fs as unknown as Parameters<typeof git.resolveRef>[0]['fs'], gitdir, ref: pull.base_branch })
+    const ffPossible = await git.isDescendent({
+      fs: fs as unknown as Parameters<typeof git.isDescendent>[0]['fs'],
+      gitdir,
+      oid: headOid,
+      ancestor: baseOid,
+    })
+
+    if (ffPossible) {
+      await git.writeRef({
+        fs: fs as unknown as Parameters<typeof git.writeRef>[0]['fs'],
+        gitdir,
+        ref: `refs/heads/${pull.base_branch}`,
+        value: headOid,
+        force: true,
+      })
+    } else {
+      await git.merge({
+        fs: fs as unknown as Parameters<typeof git.merge>[0]['fs'],
+        gitdir,
+        ours: pull.base_branch,
+        theirs: pull.head_branch,
+        message: `${method} pull request #${pull.number}: ${pull.title}`,
+        author: { name: user.display_name ?? user.username, email: user.email, timestamp: Math.floor(Date.now() / 1000), timezoneOffset: 0 },
+        committer: { name: user.display_name ?? user.username, email: user.email, timestamp: Math.floor(Date.now() / 1000), timezoneOffset: 0 },
+      })
+    }
+
+    const mergedSha = await git.resolveRef({ fs: fs as unknown as Parameters<typeof git.resolveRef>[0]['fs'], gitdir, ref: pull.base_branch })
+    await db.prepare("UPDATE issues SET state = 'closed', closed_at = datetime('now'), updated_at = datetime('now'), head_branch = NULL WHERE id = ?")
+      .bind(pull.id).run()
+    return c.json({ sha: mergedSha, merged: true, message: `Pull request ${method}d` })
+  } catch {
+    return c.json({ message: 'Failed to merge pull request' }, 400)
+  }
 })
 
 // ─── Wiki ─────────────────────────────────────────────────────────────────────

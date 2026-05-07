@@ -19,9 +19,37 @@
       <div class="ui negative message"><p>{{ error }}</p></div>
     </div>
 
-    <!-- Directory listing — matches templates/repo/view_list.tmpl -->
-    <div v-else-if="Array.isArray(contents)" class="ui container">
-      <div id="repo-files-table" class="ui segment">
+    <div v-else-if="contents" class="ui container">
+      <div class="ui segment tw-mb-4">
+        <div v-if="actionError" class="ui negative message tw-mb-3"><p>{{ actionError }}</p></div>
+        <div class="tw-flex tw-flex-wrap tw-gap-2 tw-items-center">
+          <select v-model="selectedRef" class="ui dropdown" @change="switchRef">
+            <option v-for="option in refOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+          </select>
+          <button class="ui button" @click="createBranchFromCurrent">New Branch</button>
+          <button class="ui button" @click="createTagFromCurrent">New Tag</button>
+          <button class="ui button" @click="triggerUpload">Upload File</button>
+          <button v-if="!Array.isArray(contents)" class="ui primary button" @click="editingFile = !editingFile">
+            {{ editingFile ? 'Cancel Edit' : 'Edit File' }}
+          </button>
+          <input ref="uploadInput" type="file" class="tw-hidden" @change="handleUpload">
+        </div>
+        <div v-if="editingFile && !Array.isArray(contents)" class="tw-mt-4">
+          <div class="ui form">
+            <div class="field">
+              <label>Commit message</label>
+              <input v-model="commitMessage" type="text" :placeholder="`Update ${contents.path}`">
+            </div>
+            <div class="field">
+              <label>Content</label>
+              <textarea v-model="newFileContent" rows="16" class="ui fluid textarea"/>
+            </div>
+            <button class="ui primary button" :class="{loading: savingFile}" :disabled="savingFile" @click="saveFile">Save File</button>
+          </div>
+        </div>
+      </div>
+
+      <div v-if="Array.isArray(contents)" id="repo-files-table" class="ui segment">
         <div class="ui attached table segment">
           <table class="ui very basic fixed table single line">
             <tbody>
@@ -47,11 +75,8 @@
           </table>
         </div>
       </div>
-    </div>
 
-    <!-- File view — matches templates/repo/view_file.tmpl -->
-    <div v-else-if="contents" class="ui container">
-      <div class="non-diff-file-content">
+      <div v-else class="non-diff-file-content">
         <div class="file-header">
           <div class="file-info">
             <div class="file-info-entry">{{ contents.name }}</div>
@@ -89,13 +114,18 @@
 
 <script setup lang="ts">
 import {ref, computed, watch, onMounted} from 'vue';
-import {useRoute, RouterLink} from 'vue-router';
+import {useRoute, useRouter, RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import RepoNav from '../components/RepoNav.vue';
 import {SvgIcon} from '../../svg.ts';
-import {getRepo, getRepoContents, getCurrentUser, isRepoStarred, starRepo, unstarRepo, type ContentsResponse, type Repository, type User} from '../api/index.ts';
+import {
+  createRepoBranch, createRepoTag, getRepo, getRepoBranches, getRepoContents, getRepoTags,
+  getCurrentUser, isRepoStarred, starRepo, unstarRepo, writeRepoFile,
+  type Branch, type ContentsResponse, type Repository, type Tag, type User,
+} from '../api/index.ts';
 
 const route = useRoute();
+const router = useRouter();
 
 const owner = computed(() => route.params.owner as string);
 const repoName = computed(() => route.params.repo as string);
@@ -113,6 +143,15 @@ const repo = ref<Repository | null>(null);
 const currentUser = ref<User | null>(null);
 const starred = ref(false);
 const starLoading = ref(false);
+const branches = ref<Branch[]>([]);
+const tags = ref<Tag[]>([]);
+const selectedRef = ref('');
+const uploadInput = ref<HTMLInputElement | null>(null);
+const editingFile = ref(false);
+const newFileContent = ref('');
+const commitMessage = ref('');
+const savingFile = ref(false);
+const actionError = ref('');
 
 const sortedContents = computed(() => {
   if (!Array.isArray(contents.value)) return [];
@@ -133,6 +172,10 @@ const fileContent = computed(() => {
 });
 
 const fileLines = computed(() => fileContent.value.split('\n'));
+const refOptions = computed(() => [
+  ...branches.value.map((branch) => ({value: `branch:${branch.name}`, label: `Branch: ${branch.name}`})),
+  ...tags.value.map((tag) => ({value: `tag:${tag.name}`, label: `Tag: ${tag.name}`})),
+]);
 
 function buildEntryPath(entry: ContentsResponse): string {
   const base = `/${owner.value}/${repoName.value}/src/${refType.value}/${branchRef.value}`;
@@ -164,8 +207,13 @@ async function load() {
   loading.value = true;
   error.value = null;
   contents.value = null;
+  selectedRef.value = `${refType.value}:${branchRef.value}`;
   try {
     contents.value = await getRepoContents(owner.value, repoName.value, filePath.value, branchRef.value);
+    if (!Array.isArray(contents.value)) {
+      newFileContent.value = fileContent.value;
+      commitMessage.value = `Update ${contents.value.path}`;
+    }
   } catch (e) {
     error.value = String(e);
   } finally {
@@ -173,12 +221,115 @@ async function load() {
   }
 }
 
-watch([owner, repoName, branchRef, filePath], load);
+function toBase64(bytes: Uint8Array): string {
+  return btoa(Array.from(bytes, (byte) => String.fromCharCode(byte)).join(''));
+}
+
+async function switchRef() {
+  const [type, ...rest] = selectedRef.value.split(':');
+  const ref = rest.join(':');
+  const path = filePath.value ? `/${filePath.value}` : '';
+  await router.push(`/${owner.value}/${repoName.value}/src/${type}/${encodeURIComponent(ref)}${path}`);
+}
+
+async function createBranchFromCurrent() {
+  const name = window.prompt('New branch name');
+  if (!name?.trim()) return;
+  actionError.value = '';
+  try {
+    await createRepoBranch(owner.value, repoName.value, name.trim(), branchRef.value);
+    await loadRefs();
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to create branch';
+  }
+}
+
+async function createTagFromCurrent() {
+  const name = window.prompt('New tag name');
+  if (!name?.trim()) return;
+  actionError.value = '';
+  try {
+    await createRepoTag(owner.value, repoName.value, name.trim(), branchRef.value);
+    await loadRefs();
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to create tag';
+  }
+}
+
+function triggerUpload() {
+  uploadInput.value?.click();
+}
+
+async function handleUpload(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+  const targetPath = window.prompt('File path', filePath.value ? `${filePath.value}/${file.name}` : file.name);
+  input.value = '';
+  if (!targetPath?.trim()) return;
+  actionError.value = '';
+  savingFile.value = true;
+  try {
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const targetBranch = refType.value === 'branch' ? branchRef.value : undefined;
+    const newBranch = refType.value === 'branch' ? undefined : (window.prompt('Target branch for upload', repo.value?.default_branch ?? 'main') ?? undefined);
+    await writeRepoFile(owner.value, repoName.value, targetPath.trim(), {
+      contentBase64: toBase64(bytes),
+      message: `Upload ${file.name}`,
+      branch: targetBranch,
+      new_branch: newBranch,
+    });
+    await loadRefs();
+    await router.push(`/${owner.value}/${repoName.value}/src/branch/${encodeURIComponent(newBranch || targetBranch || repo.value?.default_branch || 'main')}/${targetPath.trim()}`);
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to upload file';
+  } finally {
+    savingFile.value = false;
+  }
+}
+
+async function saveFile() {
+  if (Array.isArray(contents.value) || !contents.value) return;
+  actionError.value = '';
+  savingFile.value = true;
+  try {
+    const targetBranch = refType.value === 'branch' ? branchRef.value : undefined;
+    const newBranch = refType.value === 'branch' ? undefined : (window.prompt('Target branch for edit', repo.value?.default_branch ?? 'main') ?? undefined);
+    await writeRepoFile(owner.value, repoName.value, contents.value.path, {
+      contentBase64: toBase64(new TextEncoder().encode(newFileContent.value)),
+      message: commitMessage.value.trim() || `Update ${contents.value.path}`,
+      branch: targetBranch,
+      new_branch: newBranch,
+    });
+    editingFile.value = false;
+    await loadRefs();
+    if (newBranch) {
+      await router.push(`/${owner.value}/${repoName.value}/src/branch/${encodeURIComponent(newBranch)}/${contents.value.path}`);
+    } else {
+      await load();
+    }
+  } catch (e) {
+    actionError.value = e instanceof Error ? e.message : 'Failed to save file';
+  } finally {
+    savingFile.value = false;
+  }
+}
+
+async function loadRefs() {
+  [branches.value, tags.value] = await Promise.all([
+    getRepoBranches(owner.value, repoName.value).catch(() => []),
+    getRepoTags(owner.value, repoName.value).catch(() => []),
+  ]);
+  selectedRef.value = `${refType.value}:${branchRef.value}`;
+}
+
+watch([owner, repoName, refType, branchRef, filePath], load);
 onMounted(async () => {
   [repo.value, currentUser.value] = await Promise.all([
     getRepo(owner.value, repoName.value).catch(() => null),
     getCurrentUser(),
   ]);
+  await loadRefs();
   if (currentUser.value) {
     starred.value = await isRepoStarred(owner.value, repoName.value).catch(() => false);
   }

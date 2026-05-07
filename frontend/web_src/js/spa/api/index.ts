@@ -317,11 +317,51 @@ export async function getRepoBranches(owner: string, repo: string, opts: Paginat
   return resp.json();
 }
 
+export async function createRepoBranch(owner: string, repo: string, newBranchName: string, oldRefName?: string): Promise<Branch> {
+  const resp = await POST(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/branches`, {
+    data: {new_branch_name: newBranchName, old_ref_name: oldRefName},
+  });
+  if (!resp.ok) throw new Error(`Failed to create branch: ${resp.status}`);
+  return resp.json();
+}
+
+export async function renameRepoBranch(owner: string, repo: string, branch: string, newName: string): Promise<Branch> {
+  const resp = await PATCH(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/branches/${encodeURIComponent(branch)}`, {
+    data: {new_name: newName},
+  });
+  if (!resp.ok) throw new Error(`Failed to rename branch: ${resp.status}`);
+  return resp.json();
+}
+
+export async function deleteRepoBranch(owner: string, repo: string, branch: string): Promise<void> {
+  const resp = await DELETE(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/branches/${encodeURIComponent(branch)}`);
+  if (!resp.ok) throw new Error(`Failed to delete branch: ${resp.status}`);
+}
+
 /** Get contents of a path in a repository (file or directory listing). */
 export async function getRepoContents(owner: string, repo: string, path: string, ref?: string): Promise<ContentsResponse | ContentsResponse[]> {
   const params = ref ? `?ref=${encodeURIComponent(ref)}` : '';
   const resp = await GET(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${path}${params}`);
   if (!resp.ok) throw new Error(`Failed to fetch contents: ${resp.status}`);
+  return resp.json();
+}
+
+export async function writeRepoFile(
+  owner: string,
+  repo: string,
+  path: string,
+  data: {contentBase64: string; message: string; branch?: string; new_branch?: string},
+): Promise<{content: {name: string; path: string; sha: string}; commit: {sha: string}; branch: string}> {
+  const encodedPath = path.split('/').map((part) => encodeURIComponent(part)).join('/');
+  const resp = await PUT(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${encodedPath}`, {
+    data: {
+      content: data.contentBase64,
+      message: data.message,
+      branch: data.branch,
+      new_branch: data.new_branch,
+    },
+  });
+  if (!resp.ok) throw new Error(`Failed to write file: ${resp.status}`);
   return resp.json();
 }
 
@@ -497,6 +537,27 @@ export async function getRepoTags(owner: string, repo: string, opts: PaginationO
   return resp.json();
 }
 
+export async function createRepoTag(owner: string, repo: string, tagName: string, target?: string): Promise<Tag> {
+  const resp = await POST(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/tags`, {
+    data: {tag_name: tagName, target},
+  });
+  if (!resp.ok) throw new Error(`Failed to create tag: ${resp.status}`);
+  return resp.json();
+}
+
+export async function renameRepoTag(owner: string, repo: string, tag: string, newName: string): Promise<Tag> {
+  const resp = await PATCH(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/tags/${encodeURIComponent(tag)}`, {
+    data: {new_name: newName},
+  });
+  if (!resp.ok) throw new Error(`Failed to rename tag: ${resp.status}`);
+  return resp.json();
+}
+
+export async function deleteRepoTag(owner: string, repo: string, tag: string): Promise<void> {
+  const resp = await DELETE(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/tags/${encodeURIComponent(tag)}`);
+  if (!resp.ok) throw new Error(`Failed to delete tag: ${resp.status}`);
+}
+
 // ---- Notifications ----
 
 export async function getNotifications(opts: {all?: boolean; page?: number; limit?: number} = {}): Promise<Notification[]> {
@@ -665,6 +726,12 @@ export async function mergePullRequest(owner: string, repo: string, index: numbe
     } catch { /* ignore */ }
     throw new Error(msg);
   }
+}
+
+export async function createPullRequest(owner: string, repo: string, data: {title: string; body?: string; head: string; base: string}): Promise<PullRequest> {
+  const resp = await POST(`${apiBase}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/pulls`, {data});
+  if (!resp.ok) throw new Error(`Failed to create pull request: ${resp.status}`);
+  return resp.json();
 }
 
 // ---- Repository collaborators ----

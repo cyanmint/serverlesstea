@@ -152,15 +152,29 @@
                       <span class="tw-font-semibold">This branch has no conflicts with the base branch</span>
                     </div>
                     <p class="tw-text-sm tw-text-gray-500 tw-mb-3">Merging can be performed automatically.</p>
-                    <button
-                      class="ui green button"
-                      :class="{loading: mergingPR}"
-                      :disabled="mergingPR"
-                      @click="doMergePR"
-                    >
-                      <SvgIcon name="octicon-git-merge" :size="14"/>
-                      Merge pull request
-                    </button>
+                    <div class="tw-flex tw-flex-wrap tw-gap-2">
+                      <button
+                        class="ui green button"
+                        :class="{loading: mergingPR && mergeMethod === 'merge'}"
+                        :disabled="mergingPR"
+                        @click="doMergePR('merge')"
+                      >
+                        <SvgIcon name="octicon-git-merge" :size="14"/>
+                        Merge
+                      </button>
+                      <button
+                        class="ui button"
+                        :class="{loading: mergingPR && mergeMethod === 'squash'}"
+                        :disabled="mergingPR"
+                        @click="doMergePR('squash')"
+                      >Squash</button>
+                      <button
+                        class="ui button"
+                        :class="{loading: mergingPR && mergeMethod === 'rebase'}"
+                        :disabled="mergingPR"
+                        @click="doMergePR('rebase')"
+                      >Rebase</button>
+                    </div>
                   </div>
                   <!-- Has conflicts -->
                   <div v-else-if="pullRequest.mergeable === false" class="tw-flex tw-items-center tw-gap-2 tw-text-red-600">
@@ -493,6 +507,7 @@ const closingIssue = ref(false);
 // ── PR merge ────────────────────────────────────────────────────────────────
 const mergingPR = ref(false);
 const mergeError = ref('');
+const mergeMethod = ref<'merge' | 'squash' | 'rebase'>('merge');
 
 // ── Sidebar picker state ────────────────────────────────────────────────────
 const showLabelPicker = ref(false);
@@ -639,11 +654,12 @@ async function toggleState() {
 }
 
 // ── Merge PR ─────────────────────────────────────────────────────────────────
-async function doMergePR() {
+async function doMergePR(method: 'merge' | 'squash' | 'rebase') {
   mergingPR.value = true;
+  mergeMethod.value = method;
   mergeError.value = '';
   try {
-    await mergePullRequest(owner, repoName, issueIndex, 'merge');
+    await mergePullRequest(owner, repoName, issueIndex, method);
     // Refresh both issue and PR data to get updated state
     const [updatedIssue, updatedPR] = await Promise.all([
       getIssue(owner, repoName, issueIndex),

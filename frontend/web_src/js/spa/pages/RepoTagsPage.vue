@@ -17,9 +17,17 @@
       </div>
       <div v-else-if="error" class="ui negative message"><p>{{ error }}</p></div>
       <div v-else-if="tags.length === 0" class="ui placeholder segment">
-        <div class="tw-text-center tw-py-8 tw-text-gray-500">No tags yet.</div>
+        <div class="tw-text-center tw-py-8 tw-text-gray-500">
+          No tags yet.
+          <div class="tw-mt-4">
+            <button class="ui primary button" @click="createTag">New Tag</button>
+          </div>
+        </div>
       </div>
       <div v-else id="tags-table" class="ui segment">
+        <div class="tw-mb-4 tw-flex tw-justify-end">
+          <button class="ui primary button" @click="createTag">New Tag</button>
+        </div>
         <table class="ui very basic table">
           <tbody>
             <tr v-for="tag in tags" :key="tag.name" class="tag-list-row">
@@ -46,6 +54,8 @@
               <td class="tag-download tw-text-right">
                 <a :href="tag.zipball_url" class="tw-text-blue-600 hover:tw-underline tw-mr-3">zip</a>
                 <a :href="tag.tarball_url" class="tw-text-blue-600 hover:tw-underline">tar.gz</a>
+                <button class="ui tiny compact basic button tw-ml-3" @click="renameTag(tag.name)">Rename</button>
+                <button class="ui tiny compact red basic button" @click="removeTag(tag.name)">Delete</button>
               </td>
             </tr>
           </tbody>
@@ -67,7 +77,7 @@ import {useRoute, RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import RepoNav from '../components/RepoNav.vue';
 import {SvgIcon} from '../../svg.ts';
-import {getRepo, getRepoTags, getCurrentUser, isRepoStarred, starRepo, unstarRepo, type Tag, type Repository, type User} from '../api/index.ts';
+import {createRepoTag, deleteRepoTag, getRepo, getRepoTags, getCurrentUser, isRepoStarred, renameRepoTag, starRepo, unstarRepo, type Tag, type Repository, type User} from '../api/index.ts';
 
 const route = useRoute();
 const owner = computed(() => route.params.owner as string);
@@ -118,6 +128,26 @@ async function load() {
   } finally {
     loading.value = false;
   }
+}
+
+async function createTag() {
+  const name = window.prompt('New tag name');
+  if (!name?.trim()) return;
+  await createRepoTag(owner.value, repoName.value, name.trim(), repo.value?.default_branch);
+  await load();
+}
+
+async function renameTag(name: string) {
+  const newName = window.prompt('Rename tag', name);
+  if (!newName?.trim() || newName.trim() === name) return;
+  await renameRepoTag(owner.value, repoName.value, name, newName.trim());
+  await load();
+}
+
+async function removeTag(name: string) {
+  if (!window.confirm(`Delete tag "${name}"?`)) return;
+  await deleteRepoTag(owner.value, repoName.value, name);
+  await load();
 }
 
 watch([owner, repoName, page], load);

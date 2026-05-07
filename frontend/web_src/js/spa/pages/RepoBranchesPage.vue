@@ -17,6 +17,9 @@
       </div>
       <div v-else-if="error" class="ui negative message"><p>{{ error }}</p></div>
       <div v-else class="ui attached table segment">
+        <div class="tw-mb-4 tw-flex tw-justify-end">
+          <button class="ui primary button" @click="createBranch">New Branch</button>
+        </div>
         <table class="ui very basic table">
           <tbody>
             <tr v-for="branch in branches" :key="branch.name" class="branches-content">
@@ -42,6 +45,8 @@
                 >
                   Browse
                 </RouterLink>
+                <button class="ui tiny compact basic button" @click="renameBranch(branch.name)">Rename</button>
+                <button class="ui tiny compact red basic button" :disabled="branch.name === defaultBranch" @click="removeBranch(branch.name)">Delete</button>
               </td>
             </tr>
           </tbody>
@@ -63,7 +68,7 @@ import {useRoute, RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import RepoNav from '../components/RepoNav.vue';
 import {SvgIcon} from '../../svg.ts';
-import {getRepo, getRepoBranches, getCurrentUser, isRepoStarred, starRepo, unstarRepo, type Branch, type Repository, type User} from '../api/index.ts';
+import {createRepoBranch, deleteRepoBranch, getRepo, getRepoBranches, getCurrentUser, isRepoStarred, renameRepoBranch, starRepo, unstarRepo, type Branch, type Repository, type User} from '../api/index.ts';
 
 const route = useRoute();
 const owner = computed(() => route.params.owner as string);
@@ -124,6 +129,27 @@ async function load() {
   } finally {
     loading.value = false;
   }
+}
+
+async function createBranch() {
+  const name = window.prompt('New branch name');
+  if (!name?.trim()) return;
+  await createRepoBranch(owner.value, repoName.value, name.trim(), defaultBranch.value || undefined);
+  await load();
+}
+
+async function renameBranch(name: string) {
+  const newName = window.prompt('Rename branch', name);
+  if (!newName?.trim() || newName.trim() === name) return;
+  await renameRepoBranch(owner.value, repoName.value, name, newName.trim());
+  if (defaultBranch.value === name) defaultBranch.value = newName.trim();
+  await load();
+}
+
+async function removeBranch(name: string) {
+  if (!window.confirm(`Delete branch "${name}"?`)) return;
+  await deleteRepoBranch(owner.value, repoName.value, name);
+  await load();
 }
 
 watch([owner, repoName, page], load);

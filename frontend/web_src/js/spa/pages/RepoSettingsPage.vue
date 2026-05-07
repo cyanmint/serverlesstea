@@ -74,6 +74,12 @@
                     </div>
                   </div>
                   <div class="field">
+                    <label>Default Branch</label>
+                    <select v-model="editDefaultBranch" class="ui dropdown">
+                      <option v-for="branch in repoBranches" :key="branch.name" :value="branch.name">{{ branch.name }}</option>
+                    </select>
+                  </div>
+                  <div class="field">
                     <button class="ui primary button" type="submit" :disabled="saving">
                       <span v-if="saving">Saving…</span>
                       <span v-else>Update Settings</span>
@@ -234,7 +240,7 @@ import {useRoute, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import RepoNav from '../components/RepoNav.vue';
 import {GET, POST, PATCH, PUT, DELETE} from '../../modules/fetch.ts';
-import {getRepo, getCurrentUser, isRepoStarred, starRepo, unstarRepo, type Repository, type User} from '../api/index.ts';
+import {getRepo, getRepoBranches, getCurrentUser, isRepoStarred, starRepo, unstarRepo, type Branch, type Repository, type User} from '../api/index.ts';
 import {apiBase, appSubUrl} from '../spaconfig.ts';
 
 const route = useRoute();
@@ -258,6 +264,8 @@ const editPrivate = ref(false);
 const saving = ref(false);
 const saveError = ref('');
 const saveSuccess = ref(false);
+const editDefaultBranch = ref('');
+const repoBranches = ref<Branch[]>([]);
 
 // Delete
 const showDeleteConfirm = ref(false);
@@ -296,6 +304,8 @@ onMounted(async () => {
     editDescription.value = repo.value.description;
     editWebsite.value = (repo.value as unknown as Record<string, string>)['website'] ?? '';
     editPrivate.value = repo.value.private;
+    editDefaultBranch.value = repo.value.default_branch;
+    repoBranches.value = await getRepoBranches(owner.value, repoName.value).catch(() => []);
   }
   isRepoStarred(owner.value, repoName.value).then((s) => { starred.value = s; }).catch(() => {});
 });
@@ -333,6 +343,7 @@ async function saveBasicSettings() {
         description: editDescription.value,
         website: editWebsite.value,
         private: editPrivate.value,
+        default_branch: editDefaultBranch.value,
       },
     });
     if (!resp.ok) throw new Error('Failed to save settings');

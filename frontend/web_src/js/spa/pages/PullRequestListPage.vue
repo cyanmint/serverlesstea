@@ -27,6 +27,36 @@
             <span class="ui label tw-ml-1">{{ closedCount }}</span>
           </a>
         </h2>
+        <button v-if="currentUser" class="ui primary button" @click="showNewPrForm = !showNewPrForm">
+          {{ showNewPrForm ? 'Cancel' : 'New Pull Request' }}
+        </button>
+      </div>
+
+      <div v-if="showNewPrForm" class="ui segment tw-mb-4">
+        <div v-if="createError" class="ui negative message"><p>{{ createError }}</p></div>
+        <div class="ui form">
+          <div class="field">
+            <label>Title</label>
+            <input v-model="newPrTitle" type="text">
+          </div>
+          <div class="two fields">
+            <div class="field">
+              <label>Head branch</label>
+              <input v-model="newPrHead" type="text" placeholder="feature-branch">
+            </div>
+            <div class="field">
+              <label>Base branch</label>
+              <input v-model="newPrBase" type="text" :placeholder="repo?.default_branch || 'main'">
+            </div>
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <textarea v-model="newPrBody" rows="4"/>
+          </div>
+          <button class="ui primary button" :class="{loading: creatingPr}" :disabled="creatingPr || !newPrTitle.trim() || !newPrHead.trim() || !newPrBase.trim()" @click="submitPullRequest">
+            Open Pull Request
+          </button>
+        </div>
       </div>
 
       <!-- Loading / error states -->
@@ -118,13 +148,14 @@
 
 <script setup lang="ts">
 import {ref, computed, onMounted} from 'vue';
-import {RouterLink, useRoute} from 'vue-router';
+import {RouterLink, useRoute, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import RepoNav from '../components/RepoNav.vue';
 import {SvgIcon} from '../../svg.ts';
-import {getRepo, getPullRequests, getRepoIssueCount, getCurrentUser, isRepoStarred, starRepo, unstarRepo, type PullRequest, type Repository, type User} from '../api/index.ts';
+import {createPullRequest, getRepo, getPullRequests, getRepoIssueCount, getCurrentUser, isRepoStarred, starRepo, unstarRepo, type PullRequest, type Repository, type User} from '../api/index.ts';
 
 const route = useRoute();
+const router = useRouter();
 const owner = String(route.params.owner);
 const repoName = String(route.params.repo);
 
@@ -141,6 +172,13 @@ const repo = ref<Repository | null>(null);
 const currentUser = ref<User | null>(null);
 const starred = ref(false);
 const starLoading = ref(false);
+const showNewPrForm = ref(false);
+const newPrTitle = ref('');
+const newPrHead = ref('');
+const newPrBase = ref('');
+const newPrBody = ref('');
+const creatingPr = ref(false);
+const createError = ref('');
 
 const labelTextColor = computed(() => (hex: string) => {
   const r = parseInt(hex.substring(0, 2), 16);
@@ -211,6 +249,24 @@ async function toggleStar() {
   }
 }
 
+async function submitPullRequest() {
+  creatingPr.value = true;
+  createError.value = '';
+  try {
+    const pr = await createPullRequest(owner, repoName, {
+      title: newPrTitle.value.trim(),
+      body: newPrBody.value.trim(),
+      head: newPrHead.value.trim(),
+      base: newPrBase.value.trim(),
+    });
+    await router.push(`/${owner}/${repoName}/pulls/${pr.number}`);
+  } catch (err) {
+    createError.value = err instanceof Error ? err.message : 'Failed to create pull request';
+  } finally {
+    creatingPr.value = false;
+  }
+}
+
 onMounted(async () => {
   const [openTotal, closedTotal] = await Promise.all([
     getRepoIssueCount(owner, repoName, 'open', 'pulls'),
@@ -222,8 +278,8 @@ onMounted(async () => {
     getRepo(owner, repoName).catch(() => null),
     getCurrentUser(),
   ]);
+  newPrBase.value = repo.value?.default_branch ?? 'main';
   isRepoStarred(owner, repoName).then((s) => { starred.value = s; }).catch(() => {});
   await loadPRs();
 });
 </script>
-
