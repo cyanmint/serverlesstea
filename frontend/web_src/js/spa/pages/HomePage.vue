@@ -1,7 +1,7 @@
 <!-- Translated from: templates/home.tmpl + templates/user/dashboard/dashboard.tmpl -->
 <template>
   <!-- Signed-out landing page (home.tmpl) -->
-  <AppLayout v-if="!loading && !currentUser" page-class="home" title="Home">
+  <AppLayout v-if="!authLoading && !currentUser" page-class="home" title="Home">
     <div class="tw-mb-8 tw-px-8">
       <div class="center">
         <img class="logo" width="220" height="220" :src="`${assetUrlPrefix}/img/logo.svg`" alt="Logo">
@@ -55,7 +55,7 @@
 
   <!-- Signed-in dashboard (user/dashboard/dashboard.tmpl) -->
   <AppLayout v-else page-class="dashboard feeds" title="Dashboard">
-    <div v-if="loading" class="ui container tw-py-8">
+    <div v-if="authLoading" class="ui container tw-py-8">
       <div class="ui active centered inline loader"/>
     </div>
     <template v-else-if="currentUser">
@@ -128,13 +128,12 @@ import {RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import DashboardNav from '../components/DashboardNav.vue';
 import {SvgIcon} from '../../svg.ts';
-import {getCurrentUser, searchRepos, getUserActivityFeeds, type User, type Repository, type ActivityFeed} from '../api/index.ts';
+import {searchRepos, getUserActivityFeeds, type Repository, type ActivityFeed} from '../api/index.ts';
+import {currentUser, authLoading, initAuth} from '../stores/auth.ts';
 import {assetUrlPrefix} from '../spaconfig.ts';
 
-const loading = ref(true);
 const reposLoading = ref(false);
 const feedsLoading = ref(false);
-const currentUser = ref<User | null>(null);
 const repos = ref<Repository[]>([]);
 const feeds = ref<ActivityFeed[]>([]);
 const repoSearch = ref('');
@@ -186,21 +185,16 @@ function describeAction(feed: ActivityFeed): string {
 }
 
 onMounted(async () => {
-  try {
-    currentUser.value = await getCurrentUser();
-    if (currentUser.value) {
-      reposLoading.value = true;
-      feedsLoading.value = true;
-      const [repoResult, feedResult] = await Promise.allSettled([
-        searchRepos('', {limit: 30, sort: 'newest'}),
-        getUserActivityFeeds(currentUser.value.login, {limit: 30}),
-      ]);
-      if (repoResult.status === 'fulfilled') repos.value = repoResult.value.data ?? [];
-      if (feedResult.status === 'fulfilled') feeds.value = feedResult.value;
-    }
-  } catch { /* not signed in */ }
-  finally {
-    loading.value = false;
+  await initAuth();
+  if (currentUser.value) {
+    reposLoading.value = true;
+    feedsLoading.value = true;
+    const [repoResult, feedResult] = await Promise.allSettled([
+      searchRepos('', {limit: 30, sort: 'newest'}),
+      getUserActivityFeeds(currentUser.value.login, {limit: 30}),
+    ]);
+    if (repoResult.status === 'fulfilled') repos.value = repoResult.value.data ?? [];
+    if (feedResult.status === 'fulfilled') feeds.value = feedResult.value;
     reposLoading.value = false;
     feedsLoading.value = false;
   }

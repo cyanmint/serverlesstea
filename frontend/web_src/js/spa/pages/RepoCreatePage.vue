@@ -69,13 +69,13 @@ import {useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import BaseAlert from '../components/BaseAlert.vue';
 import {apiBase} from '../spaconfig.ts';
-import {getCurrentUser, getStoredToken} from '../api/index.ts';
+import {getStoredToken} from '../api/index.ts';
+import {currentUser, initAuth} from '../stores/auth.ts';
 
 const router = useRouter();
 const token = getStoredToken() ?? '';
 const headers = {'Content-Type': 'application/json', Authorization: `token ${token}`};
 
-const currentUser = ref<any>(null);
 const orgs = ref<any[]>([]);
 const gitignoreList = ref<string[]>([]);
 const licenseList = ref<string[]>([]);
@@ -94,7 +94,7 @@ const form = ref({
 
 async function loadMeta() {
   try {
-    currentUser.value = await getCurrentUser();
+    await initAuth();
     form.value.owner = currentUser.value?.login || '';
     const [orgResp, giResp, licResp] = await Promise.all([
       fetch(`${apiBase}/user/orgs`, {headers: {Authorization: `token ${token}`}}),

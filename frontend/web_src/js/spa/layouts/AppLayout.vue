@@ -132,11 +132,12 @@
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted, onUnmounted, computed} from 'vue';
+import {ref, onMounted, onUnmounted} from 'vue';
 import {RouterLink, useRoute} from 'vue-router';
-import {getCurrentUser, getStoredToken, logout, type User} from '../api/index.ts';
+import {getStoredToken, logout} from '../api/index.ts';
 import {assetUrlPrefix, apiBase, appSubUrl} from '../spaconfig.ts';
 import {SvgIcon} from '../../svg.ts';
+import {currentUser, authLoading, initAuth} from '../stores/auth.ts';
 
 const props = defineProps<{
   pageClass?: string;
@@ -144,8 +145,6 @@ const props = defineProps<{
   pageIsInstall?: boolean;
 }>();
 
-const authLoading = ref(true);
-const currentUser = ref<User | null>(null);
 const giteaVersion = ref('');
 const notificationCount = ref(0);
 
@@ -189,13 +188,7 @@ async function doSignOut() {
 }
 
 onMounted(async () => {
-  try {
-    currentUser.value = await getCurrentUser();
-  } catch {
-    // not signed in
-  } finally {
-    authLoading.value = false;
-  }
+  await initAuth();
   // fetch server version
   try {
     const resp = await fetch(`${apiBase}/version`);

@@ -41,7 +41,8 @@ import {useRoute, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import BaseAlert from '../components/BaseAlert.vue';
 import {apiBase} from '../spaconfig.ts';
-import {getCurrentUser, getStoredToken} from '../api/index.ts';
+import {getStoredToken} from '../api/index.ts';
+import {currentUser, initAuth} from '../stores/auth.ts';
 
 const route = useRoute();
 const router = useRouter();
@@ -51,14 +52,13 @@ const forkFrom = `${forkOwner}/${forkRepo}`;
 const token = getStoredToken() ?? '';
 const headers = {'Content-Type': 'application/json', Authorization: `token ${token}`};
 
-const currentUser = ref<any>(null);
 const orgs = ref<any[]>([]);
 const form = ref({owner: '', name: forkRepo, description: ''});
 const submitting = ref(false);
 const flash = ref<{error?: string}>({});
 
 async function loadMeta() {
-  currentUser.value = await getCurrentUser();
+  await initAuth();
   form.value.owner = currentUser.value?.login || '';
   try {
     const resp = await fetch(`${apiBase}/user/orgs`, {headers: {Authorization: `token ${token}`}});
