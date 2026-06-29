@@ -46,6 +46,7 @@
               <div class="field">
                 <textarea v-model="newComment" rows="4" placeholder="Leave a comment…"></textarea>
               </div>
+              <div v-if="stateError" class="ui error message tw-mb-2">{{ stateError }}</div>
               <div class="tw-flex tw-gap-2">
                 <button class="ui primary button" type="submit" :disabled="!newComment.trim()">Comment</button>
                 <button v-if="issue.state === 'open'" class="ui red button" type="button" @click="toggleIssueState">Close Issue</button>
@@ -99,6 +100,7 @@ const renderedBody = ref('');
 const newComment = ref('');
 const loading = ref(true);
 const canComment = ref(!!token);
+const stateError = ref('');
 
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString() : ''; }
 
@@ -138,6 +140,7 @@ async function postComment() {
 async function toggleIssueState() {
   if (!issue.value) return;
   const newState = issue.value.state === 'open' ? 'closed' : 'open';
+  stateError.value = '';
   try {
     const resp = await fetch(`${apiBase}/repos/${owner}/${repoName}/issues/${issueNumber}`, {
       method: 'PATCH',
@@ -146,8 +149,12 @@ async function toggleIssueState() {
     });
     if (resp.ok) {
       issue.value = await resp.json();
+    } else {
+      stateError.value = `Failed to ${newState === 'closed' ? 'close' : 'reopen'} issue. Please try again.`;
     }
-  } catch { /* empty */ }
+  } catch {
+    stateError.value = 'Network error. Please try again.';
+  }
 }
 
 onMounted(async () => {

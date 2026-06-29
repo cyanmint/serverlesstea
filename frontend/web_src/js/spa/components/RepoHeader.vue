@@ -152,8 +152,8 @@ async function fetchRepo() {
   } catch { /* non-critical; render without full repo data */ }
 }
 
-onMounted(() => {
-  initAuth();
+onMounted(async () => {
+  await initAuth();
   fetchRepo();
 });
 
