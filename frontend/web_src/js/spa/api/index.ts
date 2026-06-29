@@ -215,7 +215,7 @@ export async function login(username: string, password: string): Promise<User> {
           })),
       );
     }
-  } catch { /* best-effort cleanup */ }
+  } catch (err) { console.debug('Token cleanup failed:', err); }
 
   // Create a named API token so future requests use a token instead of password.
   // Use user.login (the canonical username) not the raw input which may be an email.
