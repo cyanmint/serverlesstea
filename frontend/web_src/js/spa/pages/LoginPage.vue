@@ -51,11 +51,13 @@
 
 <script setup lang="ts">
 import {ref} from 'vue';
-import {RouterLink} from 'vue-router';
+import {RouterLink, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import BaseAlert from '../components/BaseAlert.vue';
 import {login} from '../api/index.ts';
+import {currentUser, authLoading} from '../stores/auth.ts';
 
+const router = useRouter();
 const username = ref('');
 const password = ref('');
 const remember = ref(false);
@@ -66,8 +68,10 @@ async function handleLogin() {
   submitting.value = true;
   flash.value = {};
   try {
-    await login(username.value, password.value);
-    window.location.href = window.location.pathname;
+    const user = await login(username.value, password.value);
+    currentUser.value = user;
+    authLoading.value = false;
+    await router.push('/');
   } catch (e) {
     flash.value.error = e instanceof Error ? e.message : 'Login failed. Please check your credentials.';
   } finally {

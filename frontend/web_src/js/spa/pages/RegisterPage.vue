@@ -57,12 +57,14 @@
 
 <script setup lang="ts">
 import {ref} from 'vue';
-import {RouterLink} from 'vue-router';
+import {RouterLink, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import BaseAlert from '../components/BaseAlert.vue';
 import {login} from '../api/index.ts';
+import {currentUser, authLoading} from '../stores/auth.ts';
 import {apiBase} from '../spaconfig.ts';
 
+const router = useRouter();
 const form = ref({username: '', email: '', password: '', retype: ''});
 const submitting = ref(false);
 const flash = ref<{error?: string}>({});
@@ -85,8 +87,10 @@ async function handleRegister() {
     });
     if (resp.status === 201) {
       try {
-        await login(form.value.username, form.value.password);
-        window.location.href = window.location.pathname;
+        const user = await login(form.value.username, form.value.password);
+        currentUser.value = user;
+        authLoading.value = false;
+        await router.push('/');
       } catch {
         successMessage.value = 'Account created! You can now sign in.';
       }
