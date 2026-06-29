@@ -16,7 +16,7 @@
     "type-check": "npm run type-check -w serverlesstea-server && npm run type-check -w serverlesstea-frontend",
     "type-check:server": "npm run type-check -w serverlesstea-server",
     "type-check:frontend": "npm run type-check -w serverlesstea-frontend",
-    "setup": "npm i",
+    "setup": "npm i && npm run migrate",
     "deploy": "npm run deploy -w serverlesstea-server",
     "migrate": "npm run migrate -w serverlesstea-server",
     "test": "npm run test -w serverlesstea-server"
