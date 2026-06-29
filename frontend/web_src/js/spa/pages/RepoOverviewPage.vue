@@ -223,7 +223,7 @@ const commitsCount = ref(0);
 const cloneUrl = ref('');
 const hasSettingsAccess = computed(() =>
   !!(repo.value?.permissions?.admin || repo.value?.permissions?.push ||
-     (currentUser.value && currentUser.value.login === owner.value)));
+     (currentUser.value?.login === owner.value)));
 const loading = ref(true);
 const flash = ref<{error?: string}>({});
 

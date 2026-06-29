@@ -77,7 +77,9 @@ function isActive(prefix: string): boolean {
 
 watch(() => props.currentUser, async (user) => {
   if (user) {
-    orgs.value = await getMyOrgs();
+    try {
+      orgs.value = await getMyOrgs();
+    } catch { /* silently ignore org fetch errors */ }
   }
 }, {immediate: true});
 
