@@ -134,7 +134,7 @@
 <script setup lang="ts">
 import {ref, onMounted, onUnmounted, computed} from 'vue';
 import {RouterLink, useRoute} from 'vue-router';
-import {getCurrentUser, logout, type User} from '../api/index.ts';
+import {getCurrentUser, getStoredToken, logout, type User} from '../api/index.ts';
 import {assetUrlPrefix, apiBase, appSubUrl} from '../spaconfig.ts';
 import {SvgIcon} from '../../svg.ts';
 
@@ -208,7 +208,7 @@ onMounted(async () => {
   if (currentUser.value) {
     try {
       const resp = await fetch(`${apiBase}/notifications/new`, {
-        headers: {'Authorization': `token ${(await import('../api/index.ts')).getStoredToken()}`},
+        headers: {'Authorization': `token ${getStoredToken()}`},
       });
       if (resp.ok) {
         const data = await resp.json();

@@ -44,13 +44,14 @@
 import {ref, onMounted, watch} from 'vue';
 import AppLayout from '../layouts/AppLayout.vue';
 import {apiBase} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
 
 const pageType = ref<'unread'|'read'>('unread');
 const notifications = ref<any[]>([]);
 const unreadCount = ref(0);
 const loading = ref(false);
 
-const token = localStorage.getItem('gitea-spa-token') || '';
+const token = getStoredToken() ?? '';
 
 function formatDate(d: string) {
   if (!d) return '';

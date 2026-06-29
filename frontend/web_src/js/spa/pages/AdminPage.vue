@@ -176,8 +176,9 @@ import {ref, onMounted} from 'vue';
 import {RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import {apiBase} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
 
-const token = localStorage.getItem('gitea-spa-token') || '';
+const token = getStoredToken() ?? '';
 const headers = {Authorization: `token ${token}`};
 
 const section = ref('dashboard');

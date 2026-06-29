@@ -61,10 +61,11 @@ import SharedRepoSearch from '../components/SharedRepoSearch.vue';
 import SharedRepoList from '../components/SharedRepoList.vue';
 import BasePaginate from '../components/BasePaginate.vue';
 import {apiBase} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
 
 const route = useRoute();
 const orgName = route.params.orgname as string;
-const token = localStorage.getItem('gitea-spa-token') || '';
+const token = getStoredToken() ?? '';
 const headers: Record<string, string> = token ? {Authorization: `token ${token}`} : {};
 
 const org = ref<any>(null);

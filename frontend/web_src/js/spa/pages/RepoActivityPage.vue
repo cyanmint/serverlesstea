@@ -44,11 +44,12 @@ import {useRoute} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import RepoHeader from '../components/RepoHeader.vue';
 import {apiBase} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
 
 const route = useRoute();
 const owner = route.params.owner as string;
 const repoName = route.params.repo as string;
-const token = localStorage.getItem('gitea-spa-token') || '';
+const token = getStoredToken() ?? '';
 const headers: Record<string, string> = token ? {Authorization: `token ${token}`} : {};
 
 const periods = [{value: 'weekly', label: 'Week'}, {value: 'monthly', label: 'Month'}, {value: 'yearly', label: 'Year'}];

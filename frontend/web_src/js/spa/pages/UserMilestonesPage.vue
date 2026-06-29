@@ -53,8 +53,9 @@ import {RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import DashboardNav from '../components/DashboardNav.vue';
 import {apiBase} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
 
-const token = localStorage.getItem('gitea-spa-token') || '';
+const token = getStoredToken() ?? '';
 const headers: Record<string, string> = token ? {Authorization: `token ${token}`} : {};
 
 const milestones = ref<any[]>([]);

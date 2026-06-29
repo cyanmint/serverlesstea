@@ -69,10 +69,10 @@ import {useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import BaseAlert from '../components/BaseAlert.vue';
 import {apiBase} from '../spaconfig.ts';
-import {getCurrentUser} from '../api/index.ts';
+import {getCurrentUser} , getStoredToken} from '../api/index.ts';
 
 const router = useRouter();
-const token = localStorage.getItem('gitea-spa-token') || '';
+const token = getStoredToken() ?? '';
 const headers = {'Content-Type': 'application/json', Authorization: `token ${token}`};
 
 const currentUser = ref<any>(null);

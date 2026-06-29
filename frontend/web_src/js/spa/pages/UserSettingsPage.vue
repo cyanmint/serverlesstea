@@ -127,8 +127,9 @@ import {ref, onMounted} from 'vue';
 import AppLayout from '../layouts/AppLayout.vue';
 import BaseAlert from '../components/BaseAlert.vue';
 import {apiBase} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
 
-const token = localStorage.getItem('gitea-spa-token') || '';
+const token = getStoredToken() ?? '';
 const headers = {'Content-Type': 'application/json', Authorization: `token ${token}`};
 
 const section = ref('profile');

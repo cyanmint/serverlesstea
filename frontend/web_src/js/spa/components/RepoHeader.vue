@@ -3,89 +3,152 @@
   <div class="secondary-nav">
     <div class="ui container">
       <!-- repo/header.tmpl: repo header line -->
-      <div class="repo-header flex-left-right">
+      <div v-if="repoData" class="repo-header flex-left-right">
         <div class="flex-text-block">
-          <SvgIcon v-if="repo.fork" name="octicon-repo-forked" :size="16"/>
-          <SvgIcon v-else-if="repo.mirror" name="octicon-mirror" :size="16"/>
-          <SvgIcon v-else-if="repo.private" name="octicon-lock" :size="16"/>
+          <SvgIcon v-if="repoData.fork" name="octicon-repo-forked" :size="16"/>
+          <SvgIcon v-else-if="repoData.mirror" name="octicon-mirror" :size="16"/>
+          <SvgIcon v-else-if="repoData.private" name="octicon-lock" :size="16"/>
           <SvgIcon v-else name="octicon-repo" :size="16"/>
           <div class="flex-text-block tw-flex-wrap tw-text-18">
-            <RouterLink class="muted tw-font-normal" :to="`/${repo.owner?.login}`">{{ repo.owner?.login }}</RouterLink>/<RouterLink class="muted" :to="`/${repo.full_name}`">{{ repo.name }}</RouterLink>
+            <RouterLink class="muted tw-font-normal" :to="`/${repoData.owner?.login}`">{{ repoData.owner?.login }}</RouterLink>/<RouterLink class="muted" :to="`/${repoData.full_name}`">{{ repoData.name }}</RouterLink>
           </div>
           <div class="flex-text-block tw-flex-wrap">
-            <span v-if="repo.archived" class="ui basic label not-mobile">Archived</span>
-            <span v-if="repo.private" class="ui basic label not-mobile">Private</span>
-            <span v-if="repo.template" class="ui basic label not-mobile">Template</span>
+            <span v-if="repoData.archived" class="ui basic label not-mobile">Archived</span>
+            <span v-if="repoData.private" class="ui basic label not-mobile">Private</span>
+            <span v-if="repoData.template" class="ui basic label not-mobile">Template</span>
           </div>
         </div>
         <div class="flex-text-block tw-flex-wrap">
           <!-- star/watch/fork buttons -->
-          <a class="ui compact small basic button" :href="`/?${repo.full_name}/stargazers`">
+          <RouterLink class="ui compact small basic button" :to="`/${repoData.full_name}/stargazers`">
             <SvgIcon name="octicon-star" :size="16"/>
-            <span class="tw-ml-1">{{ repo.stars_count ?? 0 }}</span>
-          </a>
-          <a class="ui compact small basic button" :href="`/?${repo.full_name}/watchers`">
+            <span class="tw-ml-1">{{ repoData.stars_count ?? 0 }}</span>
+          </RouterLink>
+          <RouterLink class="ui compact small basic button" :to="`/${repoData.full_name}/watchers`">
             <SvgIcon name="octicon-eye" :size="16"/>
-            <span class="tw-ml-1">{{ repo.watchers_count ?? 0 }}</span>
-          </a>
-          <a class="ui compact small basic button" :href="`/?${repo.full_name}/forks`">
+            <span class="tw-ml-1">{{ repoData.watchers_count ?? 0 }}</span>
+          </RouterLink>
+          <RouterLink class="ui compact small basic button" :to="`/${repoData.full_name}/forks`">
             <SvgIcon name="octicon-repo-forked" :size="16"/>
-            <span class="tw-ml-1">{{ repo.forks_count ?? 0 }}</span>
-          </a>
+            <span class="tw-ml-1">{{ repoData.forks_count ?? 0 }}</span>
+          </RouterLink>
+        </div>
+      </div>
+      <div v-else class="repo-header flex-left-right tw-py-2">
+        <!-- skeleton while loading -->
+        <div class="flex-text-block">
+          <SvgIcon name="octicon-repo" :size="16"/>
+          <div class="flex-text-block tw-flex-wrap tw-text-18">
+            <RouterLink class="muted tw-font-normal" :to="`/${resolvedOwner}`">{{ resolvedOwner }}</RouterLink>/<RouterLink class="muted" :to="`/${resolvedOwner}/${resolvedRepoName}`">{{ resolvedRepoName }}</RouterLink>
+          </div>
         </div>
       </div>
 
       <!-- repo/navbar.tmpl: tab navigation -->
-      <overflow-menu class="ui secondary pointing tabular menu">
-        <div class="overflow-menu-items">
-          <RouterLink class="item" :class="{active: activeTab === 'code'}" :to="`/${repo.full_name}`">
-            <SvgIcon name="octicon-code" :size="16"/> Code
-          </RouterLink>
-          <RouterLink class="item" :class="{active: activeTab === 'issues'}" :to="`/${repo.full_name}/issues`">
-            <SvgIcon name="octicon-issue-opened" :size="16"/> Issues
-            <span v-if="repo.open_issues_count" class="ui small label">{{ repo.open_issues_count }}</span>
-          </RouterLink>
-          <RouterLink class="item" :class="{active: activeTab === 'pulls'}" :to="`/${repo.full_name}/pulls`">
-            <SvgIcon name="octicon-git-pull-request" :size="16"/> Pull Requests
-          </RouterLink>
-          <RouterLink v-if="repo.has_actions" class="item" :class="{active: activeTab === 'actions'}" :to="`/${repo.full_name}/actions`">
-            <SvgIcon name="octicon-play" :size="16"/> Actions
-          </RouterLink>
-          <RouterLink v-if="repo.has_projects" class="item" :class="{active: activeTab === 'projects'}" :to="`/${repo.full_name}/projects`">
-            <SvgIcon name="octicon-project" :size="16"/> Projects
-          </RouterLink>
-          <RouterLink v-if="repo.has_releases" class="item" :class="{active: activeTab === 'releases'}" :to="`/${repo.full_name}/releases`">
-            <SvgIcon name="octicon-tag" :size="16"/> Releases
-          </RouterLink>
-          <RouterLink v-if="repo.has_wiki" class="item" :class="{active: activeTab === 'wiki'}" :to="`/${repo.full_name}/wiki`">
-            <SvgIcon name="octicon-book" :size="16"/> Wiki
-          </RouterLink>
-          <RouterLink class="item" :class="{active: activeTab === 'activity'}" :to="`/${repo.full_name}/activity`">
-            <SvgIcon name="octicon-pulse" :size="16"/> Activity
-          </RouterLink>
-          <RouterLink v-if="hasSettingsAccess" class="item" :class="{active: activeTab === 'settings'}" :to="`/${repo.full_name}/settings`">
-            <SvgIcon name="octicon-tools" :size="16"/> Settings
-          </RouterLink>
-        </div>
-      </overflow-menu>
+      <div class="ui secondary pointing tabular menu tw-flex-wrap">
+        <RouterLink class="item" :class="{active: currentTab === 'code'}" :to="`/${resolvedOwner}/${resolvedRepoName}`">
+          <SvgIcon name="octicon-code" :size="16"/> Code
+        </RouterLink>
+        <RouterLink class="item" :class="{active: currentTab === 'issues'}" :to="`/${resolvedOwner}/${resolvedRepoName}/issues`">
+          <SvgIcon name="octicon-issue-opened" :size="16"/> Issues
+          <span v-if="repoData?.open_issues_count" class="ui small label">{{ repoData.open_issues_count }}</span>
+        </RouterLink>
+        <RouterLink class="item" :class="{active: currentTab === 'pulls'}" :to="`/${resolvedOwner}/${resolvedRepoName}/pulls`">
+          <SvgIcon name="octicon-git-pull-request" :size="16"/> Pull Requests
+        </RouterLink>
+        <RouterLink class="item" :class="{active: currentTab === 'actions'}" :to="`/${resolvedOwner}/${resolvedRepoName}/actions`">
+          <SvgIcon name="octicon-play" :size="16"/> Actions
+        </RouterLink>
+        <RouterLink class="item" :class="{active: currentTab === 'projects'}" :to="`/${resolvedOwner}/${resolvedRepoName}/projects`">
+          <SvgIcon name="octicon-project" :size="16"/> Projects
+        </RouterLink>
+        <RouterLink class="item" :class="{active: currentTab === 'releases'}" :to="`/${resolvedOwner}/${resolvedRepoName}/releases`">
+          <SvgIcon name="octicon-tag" :size="16"/> Releases
+        </RouterLink>
+        <RouterLink v-if="repoData?.has_wiki !== false" class="item" :class="{active: currentTab === 'wiki'}" :to="`/${resolvedOwner}/${resolvedRepoName}/wiki`">
+          <SvgIcon name="octicon-book" :size="16"/> Wiki
+        </RouterLink>
+        <RouterLink class="item" :class="{active: currentTab === 'activity'}" :to="`/${resolvedOwner}/${resolvedRepoName}/activity`">
+          <SvgIcon name="octicon-pulse" :size="16"/> Activity
+        </RouterLink>
+        <RouterLink v-if="resolvedHasSettingsAccess" class="item" :class="{active: currentTab === 'settings'}" :to="`/${resolvedOwner}/${resolvedRepoName}/settings`">
+          <SvgIcon name="octicon-tools" :size="16"/> Settings
+        </RouterLink>
+      </div>
     </div>
-  </div>
-
-  <!-- repo description (from repo/home.tmpl) -->
-  <div v-if="repo.description || repo.website" class="ui container tw-mt-2">
-    <p v-if="repo.description" class="tw-break-anywhere">{{ repo.description }}</p>
-    <p v-if="repo.website"><a :href="repo.website" target="_blank" rel="noopener nofollow">{{ repo.website }}</a></p>
   </div>
 </template>
 
 <script setup lang="ts">
-import {RouterLink} from 'vue-router';
+import {ref, computed, onMounted, watch} from 'vue';
+import {RouterLink, useRoute} from 'vue-router';
 import {SvgIcon} from '../../svg.ts';
-import type {Repository} from '../api/index.ts';
+import {getRepo, getStoredToken, type Repository} from '../api/index.ts';
 
-defineProps<{
-  repo: Repository;
-  activeTab: string;
+const props = defineProps<{
+  // Pass pre-fetched repo object (preferred when parent already loaded it)
+  repo?: Repository | null;
+  // OR pass owner + repoName strings (component fetches internally)
+  owner?: string;
+  repoName?: string;
+  // Which tab is active – auto-detected from route when not provided
+  activeTab?: string;
   hasSettingsAccess?: boolean;
 }>();
+
+const route = useRoute();
+
+/** The repo owner resolved from props or route params */
+const resolvedOwner = computed<string>(() =>
+  props.owner ?? (props.repo?.owner?.login) ?? (route.params.owner as string) ?? '');
+
+/** The repo name resolved from props or route params */
+const resolvedRepoName = computed<string>(() =>
+  props.repoName ?? props.repo?.name ?? (route.params.repo as string) ?? '');
+
+/** Internally fetched repo (used when only owner/repoName strings are provided) */
+const fetchedRepo = ref<Repository | null>(null);
+
+/** The repo data to render – prefer the prop, fall back to internally fetched */
+const repoData = computed<Repository | null>(() => props.repo ?? fetchedRepo.value);
+
+/** Detect the active tab from the current route when not explicitly provided */
+const currentTab = computed<string>(() => {
+  if (props.activeTab) return props.activeTab;
+  const path = route.path;
+  const base = `/${resolvedOwner.value}/${resolvedRepoName.value}`;
+  if (path === base || path.startsWith(`${base}/src`) || path.startsWith(`${base}/commit`)) return 'code';
+  if (path.startsWith(`${base}/issues`)) return 'issues';
+  if (path.startsWith(`${base}/pulls`) || path.startsWith(`${base}/compare`)) return 'pulls';
+  if (path.startsWith(`${base}/actions`)) return 'actions';
+  if (path.startsWith(`${base}/projects`)) return 'projects';
+  if (path.startsWith(`${base}/releases`) || path.startsWith(`${base}/tags`)) return 'releases';
+  if (path.startsWith(`${base}/wiki`)) return 'wiki';
+  if (path.startsWith(`${base}/activity`) || path.startsWith(`${base}/pulse`) || path.startsWith(`${base}/graphs`)) return 'activity';
+  if (path.startsWith(`${base}/settings`)) return 'settings';
+  return 'code';
+});
+
+/** Settings access: use the prop if provided, otherwise determine from repo permissions */
+const resolvedHasSettingsAccess = computed<boolean>(() => {
+  if (props.hasSettingsAccess !== undefined) return props.hasSettingsAccess;
+  const r = repoData.value as any;
+  return !!(r?.permissions?.admin || r?.permissions?.push);
+});
+
+async function fetchRepo() {
+  if (props.repo) return; // already provided
+  const o = resolvedOwner.value;
+  const n = resolvedRepoName.value;
+  if (!o || !n) return;
+  try {
+    fetchedRepo.value = await getRepo(o, n);
+    // Check if current user has settings access via permissions field
+  } catch { /* non-critical; render without full repo data */ }
+}
+
+onMounted(fetchRepo);
+
+// Re-fetch when owner/repoName change (route navigation)
+watch([resolvedOwner, resolvedRepoName], fetchRepo);
 </script>

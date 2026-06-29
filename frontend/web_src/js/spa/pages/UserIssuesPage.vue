@@ -73,10 +73,11 @@ import BaseAlert from '../components/BaseAlert.vue';
 import DashboardNav from '../components/DashboardNav.vue';
 import BasePaginate from '../components/BasePaginate.vue';
 import {apiBase} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
 
 const route = useRoute();
 const isPulls = route.path.includes('pulls');
-const token = localStorage.getItem('gitea-spa-token') || '';
+const token = getStoredToken() ?? '';
 const headers: Record<string, string> = token ? {Authorization: `token ${token}`} : {};
 
 const issues = ref<any[]>([]);

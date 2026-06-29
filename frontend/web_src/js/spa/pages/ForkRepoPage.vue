@@ -41,14 +41,14 @@ import {useRoute, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import BaseAlert from '../components/BaseAlert.vue';
 import {apiBase} from '../spaconfig.ts';
-import {getCurrentUser} from '../api/index.ts';
+import {getCurrentUser} , getStoredToken} from '../api/index.ts';
 
 const route = useRoute();
 const router = useRouter();
 const forkOwner = route.params.owner as string;
 const forkRepo = route.params.repo as string;
 const forkFrom = `${forkOwner}/${forkRepo}`;
-const token = localStorage.getItem('gitea-spa-token') || '';
+const token = getStoredToken() ?? '';
 const headers = {'Content-Type': 'application/json', Authorization: `token ${token}`};
 
 const currentUser = ref<any>(null);

@@ -51,9 +51,10 @@ import {useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import BaseAlert from '../components/BaseAlert.vue';
 import {apiBase} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
 
 const router = useRouter();
-const token = localStorage.getItem('gitea-spa-token') || '';
+const token = getStoredToken() ?? '';
 const submitting = ref(false);
 const flash = ref<{error?: string}>({});
 const errors = ref<{org_name?: string}>({});
