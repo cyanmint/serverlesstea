@@ -1,38 +1,22 @@
+<!-- Translated from: templates/user/auth/twofa.tmpl -->
 <template>
-  <AppLayout>
-    <div role="main" class="page-content user signin">
-      <div class="ui middle very relaxed page grid">
-        <div class="column">
-          <form class="ui form tw-max-w-2xl tw-m-auto" @submit.prevent="handleSubmit">
-            <h3 class="ui top attached header">Two-Factor Authentication</h3>
-            <div class="ui attached segment">
-              <div v-if="error" class="ui negative message"><p>{{ error }}</p></div>
-
-              <div class="required field">
-                <label for="passcode">Authentication Code</label>
-                <input
-                  id="passcode"
-                  v-model="passcode"
-                  name="passcode"
-                  type="text"
-                  autocomplete="one-time-code"
-                  inputmode="numeric"
-                  pattern="[0-9]*"
-                  autofocus
-                  required
-                >
-              </div>
-
-              <div class="inline field">
-                <button class="ui primary button" type="submit" :disabled="loading">
-                  <span v-if="loading">Verifying…</span>
-                  <span v-else>Verify</span>
-                </button>
-                <RouterLink :to="`/user/two_factor/scratch`">Use a scratch code</RouterLink>
-              </div>
+  <AppLayout page-class="user signin" title="Two-Factor Authentication">
+    <div class="ui middle very relaxed page grid">
+      <div class="column">
+        <form class="ui form tw-max-w-2xl tw-m-auto" @submit.prevent="handleVerify">
+          <h3 class="ui top attached header">Two-Factor Authentication</h3>
+          <div class="ui attached segment">
+            <BaseAlert :flash="flash"/>
+            <div class="required field">
+              <label for="passcode">Passcode</label>
+              <input id="passcode" v-model="passcode" name="passcode" type="text" autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" autofocus required>
             </div>
-          </form>
-        </div>
+            <div class="inline field">
+              <button class="ui primary button" type="submit" :disabled="submitting">Verify</button>
+              <RouterLink to="/user/two_factor/scratch">Use a scratch code</RouterLink>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </AppLayout>
@@ -42,32 +26,32 @@
 import {ref} from 'vue';
 import {RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-import {appSubUrl} from '../spaconfig.ts';
+import BaseAlert from '../components/BaseAlert.vue';
+import {apiBase} from '../spaconfig.ts';
 
 const passcode = ref('');
-const loading = ref(false);
-const error = ref('');
+const submitting = ref(false);
+const flash = ref<{error?: string}>({});
 
-async function handleSubmit() {
-  loading.value = true;
-  error.value = '';
+async function handleVerify() {
+  submitting.value = true;
+  flash.value = {};
   try {
-    const body = new URLSearchParams({passcode: passcode.value});
-    const resp = await fetch(`${appSubUrl}/user/two_factor`, {
+    const resp = await fetch(`${apiBase}/user/two_factor`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body,
-      redirect: 'manual',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({passcode: passcode.value}),
     });
-    if (resp.ok || resp.type === 'opaqueredirect' || resp.status === 302) {
-      window.location.href = `${appSubUrl}/`;
+    if (resp.ok) {
+      window.location.href = window.location.pathname;
     } else {
-      error.value = 'Invalid authentication code. Please try again.';
+      const body = await resp.json().catch(() => ({}));
+      flash.value.error = body.message || 'Invalid passcode. Please try again.';
     }
   } catch {
-    error.value = 'Network error. Please try again.';
+    flash.value.error = 'Network error. Please try again.';
   } finally {
-    loading.value = false;
+    submitting.value = false;
   }
 }
 </script>

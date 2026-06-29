@@ -1,52 +1,45 @@
+<!-- Translated from: templates/org/create.tmpl -->
 <template>
-  <AppLayout>
-    <div role="main" class="page-content organization new org">
-      <div class="ui container medium-width">
-        <div v-if="error" class="ui negative message"><p>{{ error }}</p></div>
-        <h3 class="ui top attached header">New Organization</h3>
-        <div class="ui attached segment">
-          <form class="ui form left-right-form" @submit.prevent="handleSubmit">
-            <div class="inline required field" :class="{error: !!error}">
-              <label for="org_name">Organization Name</label>
-              <input id="org_name" v-model="orgName" name="org_name" autofocus required maxlength="40">
-              <span class="help">Name must consist of alphanumeric characters, '-', or '_'.</span>
-            </div>
-
-            <div class="inline field required">
-              <label>Visibility</label>
-              <div class="inline-right">
-                <div class="ui radio checkbox">
-                  <input v-model="visibility" class="enable-system-radio" name="visibility" type="radio" value="0">
-                  <label>Public</label>
-                </div>
-                <div class="ui radio checkbox">
-                  <input v-model="visibility" class="enable-system-radio" name="visibility" type="radio" value="1">
-                  <label>Limited</label>
-                </div>
-                <div class="ui radio checkbox">
-                  <input v-model="visibility" class="enable-system-radio" name="visibility" type="radio" value="2">
-                  <label>Private</label>
-                </div>
+  <AppLayout page-class="organization new org" title="New Organization">
+    <div class="ui container medium-width">
+      <BaseAlert :flash="flash"/>
+      <h3 class="ui top attached header">New Organization</h3>
+      <div class="ui attached segment">
+        <form class="ui form left-right-form" @submit.prevent="handleCreate">
+          <div class="inline required field" :class="{error: !!errors.org_name}">
+            <label for="org_name">Organization Name</label>
+            <input id="org_name" v-model="form.org_name" name="org_name" autofocus required maxlength="40">
+            <span class="help">Organization name cannot be changed later.</span>
+          </div>
+          <div class="inline field required">
+            <label for="visibility">Visibility</label>
+            <div class="inline-right">
+              <div class="ui radio checkbox">
+                <input v-model="form.visibility" name="visibility" type="radio" value="public">
+                <label>Public</label>
+              </div>
+              <div class="ui radio checkbox">
+                <input v-model="form.visibility" name="visibility" type="radio" value="limited">
+                <label>Limited</label>
+              </div>
+              <div class="ui radio checkbox">
+                <input v-model="form.visibility" name="visibility" type="radio" value="private">
+                <label>Private</label>
               </div>
             </div>
-
-            <div class="inline field">
-              <label>Permission</label>
-              <div class="ui checkbox">
-                <input v-model="repoAdminChangeTeamAccess" type="checkbox" name="repo_admin_change_team_access">
-                <label>Allow repo admins to change team access</label>
-              </div>
+          </div>
+          <div class="inline field">
+            <label>Permissions</label>
+            <div class="ui checkbox">
+              <input v-model="form.repo_admin_change_team_access" type="checkbox">
+              <label>Allow repository administrators to change team access</label>
             </div>
-
-            <div class="inline field">
-              <label/>
-              <button class="ui primary button" type="submit" :disabled="loading">
-                <span v-if="loading">Creating…</span>
-                <span v-else>Create Organization</span>
-              </button>
-            </div>
-          </form>
-        </div>
+          </div>
+          <div class="inline field">
+            <label></label>
+            <button class="ui primary button" type="submit" :disabled="submitting">Create Organization</button>
+          </div>
+        </form>
       </div>
     </div>
   </AppLayout>
@@ -56,43 +49,45 @@
 import {ref} from 'vue';
 import {useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
+import BaseAlert from '../components/BaseAlert.vue';
 import {apiBase} from '../spaconfig.ts';
-import {getStoredToken} from '../api/index.ts';
 
 const router = useRouter();
-const orgName = ref('');
-const visibility = ref('0');
-const repoAdminChangeTeamAccess = ref(false);
-const loading = ref(false);
-const error = ref('');
+const token = localStorage.getItem('gitea-spa-token') || '';
+const submitting = ref(false);
+const flash = ref<{error?: string}>({});
+const errors = ref<{org_name?: string}>({});
+const form = ref({
+  org_name: '',
+  visibility: 'public',
+  repo_admin_change_team_access: true,
+});
 
-async function handleSubmit() {
-  loading.value = true;
-  error.value = '';
+async function handleCreate() {
+  submitting.value = true;
+  flash.value = {};
+  errors.value = {};
   try {
-    const token = getStoredToken();
     const resp = await fetch(`${apiBase}/orgs`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token ? {Authorization: `token ${token}`} : {}),
-      },
+      headers: {'Content-Type': 'application/json', Authorization: `token ${token}`},
       body: JSON.stringify({
-        username: orgName.value,
-        visibility: ['public', 'limited', 'private'][parseInt(visibility.value)],
-        repo_admin_change_team_access: repoAdminChangeTeamAccess.value,
+        username: form.value.org_name,
+        visibility: form.value.visibility,
+        repo_admin_change_team_access: form.value.repo_admin_change_team_access,
       }),
     });
-    if (!resp.ok) {
-      const body = await resp.json().catch(() => ({message: 'Unknown error'})) as {message: string};
-      throw new Error(body.message ?? 'Failed to create organization');
+    if (resp.ok || resp.status === 201) {
+      const data = await resp.json();
+      router.push(`/${data.username || form.value.org_name}`);
+    } else {
+      const body = await resp.json().catch(() => ({}));
+      flash.value.error = body.message || 'Failed to create organization.';
     }
-    const org = await resp.json() as {name: string};
-    router.push(`/org/${org.name}`);
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to create organization';
+  } catch {
+    flash.value.error = 'Network error.';
   } finally {
-    loading.value = false;
+    submitting.value = false;
   }
 }
 </script>

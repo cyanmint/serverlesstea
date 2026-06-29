@@ -1,21 +1,19 @@
+<!-- Translated from: templates/status/404.tmpl -->
 <template>
-  <AppLayout>
-    <div class="ui container tw-py-12 tw-text-center">
-      <h1 class="tw-text-6xl tw-font-bold tw-text-gray-300 tw-mb-4">404</h1>
-      <h2 class="tw-text-2xl tw-font-semibold tw-mb-2">Page Not Found</h2>
-      <p class="tw-text-gray-600 tw-mb-6">
-        The page <code class="tw-font-mono tw-bg-gray-100 tw-px-1 tw-rounded">{{ path }}</code> does not exist.
-      </p>
-      <RouterLink to="/" class="ui primary button">Go Home</RouterLink>
+  <AppLayout page-class="" title="Page Not Found">
+    <div class="ui container">
+      <div class="status-page-error">
+        <div class="status-page-error-title">404 Not Found</div>
+        <div class="tw-text-center">
+          <div class="tw-my-4">The page you are looking for either does not exist or you don't have permission to view it.</div>
+          <RouterLink class="tw-block tw-my-4" to="/">Go back to home page</RouterLink>
+        </div>
+      </div>
     </div>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
-import {computed} from 'vue';
-import {RouterLink, useRoute} from 'vue-router';
+import {RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-
-const route = useRoute();
-const path = computed(() => route.path);
 </script>

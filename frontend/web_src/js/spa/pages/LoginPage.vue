@@ -1,54 +1,48 @@
+<!-- Translated from: templates/user/auth/signin.tmpl + templates/user/auth/signin_inner.tmpl -->
 <template>
-  <AppLayout>
-    <div class="ui middle aligned centered grid" style="min-height: 60vh">
-      <div class="column" style="max-width: 400px">
-        <h2 class="ui teal image header tw-text-center tw-mb-6">
-          <img :src="`${assetUrlPrefix}/img/logo.svg`" alt="Gitea" width="40" height="40">
-          <div class="content">Sign in to Gitea</div>
-        </h2>
-
-        <div v-if="error" class="ui negative message tw-mb-4">
-          <p>{{ error }}</p>
+  <AppLayout page-class="user signin" title="Sign In">
+    <div class="ui middle very relaxed page grid">
+      <div class="column tw-flex tw-flex-col tw-gap-4 tw-max-w-2xl tw-m-auto">
+        <!-- signin_inner.tmpl -->
+        <div class="ui container fluid">
+          <BaseAlert :flash="flash"/>
+          <h4 class="ui top attached header center">Sign in with username or email</h4>
+          <div class="ui attached segment">
+            <form class="ui form" @submit.prevent="handleLogin">
+              <div class="required field" :class="{error: !!flash.error}">
+                <label for="user_name">Username or email address</label>
+                <input id="user_name" v-model="username" type="text" name="user_name" autofocus required tabindex="1">
+              </div>
+              <div class="required field" :class="{error: !!flash.error}">
+                <div class="tw-flex tw-mb-1">
+                  <label for="password" class="tw-flex-1">Password</label>
+                  <RouterLink to="/user/forgot_password" tabindex="4">Forgot password?</RouterLink>
+                </div>
+                <input id="password" v-model="password" name="password" type="password" autocomplete="current-password" required tabindex="2">
+              </div>
+              <div class="inline field">
+                <div class="ui checkbox">
+                  <label>Remember this device</label>
+                  <input v-model="remember" name="remember" type="checkbox" tabindex="5">
+                </div>
+              </div>
+              <div class="field">
+                <button class="ui primary button tw-w-full" type="submit" tabindex="3" :disabled="submitting">
+                  {{ submitting ? 'Signing in…' : 'Sign In' }}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
 
-        <form class="ui large form" @submit.prevent="handleLogin">
-          <div class="ui stacked segment">
+        <!-- Registration prompt -->
+        <div class="ui container fluid">
+          <div class="ui attached segment header top tw-max-w-2xl tw-m-auto tw-flex tw-flex-col tw-items-center">
             <div class="field">
-              <div class="ui left icon input">
-                <i class="user icon"/>
-                <input
-                  v-model="username"
-                  type="text"
-                  name="user_name"
-                  placeholder="Username or email"
-                  autocomplete="username"
-                  required
-                >
-              </div>
+              <span>Need an account?</span>
+              <RouterLink to="/user/sign_up">Register now</RouterLink>
             </div>
-            <div class="field">
-              <div class="ui left icon input">
-                <i class="lock icon"/>
-                <input
-                  v-model="password"
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  autocomplete="current-password"
-                  required
-                >
-              </div>
-            </div>
-            <button class="ui fluid large teal submit button" type="submit" :disabled="loading">
-              <span v-if="loading">Signing in…</span>
-              <span v-else>Sign In</span>
-            </button>
           </div>
-        </form>
-
-        <div class="ui message tw-text-center">
-          New to Gitea?
-          <RouterLink to="/user/sign_up">Create an account</RouterLink>
         </div>
       </div>
     </div>
@@ -57,28 +51,27 @@
 
 <script setup lang="ts">
 import {ref} from 'vue';
-import {RouterLink, useRouter} from 'vue-router';
+import {RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
+import BaseAlert from '../components/BaseAlert.vue';
 import {login} from '../api/index.ts';
-import {assetUrlPrefix} from '../spaconfig.ts';
 
-const router = useRouter();
 const username = ref('');
 const password = ref('');
-const loading = ref(false);
-const error = ref('');
+const remember = ref(false);
+const submitting = ref(false);
+const flash = ref<{error?: string}>({});
 
 async function handleLogin() {
-  loading.value = true;
-  error.value = '';
+  submitting.value = true;
+  flash.value = {};
   try {
     await login(username.value, password.value);
-    // Full navigation to home after login so the navbar re-fetches auth state.
     window.location.href = window.location.pathname;
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Login failed. Please try again.';
+    flash.value.error = e instanceof Error ? e.message : 'Login failed. Please check your credentials.';
   } finally {
-    loading.value = false;
+    submitting.value = false;
   }
 }
 </script>

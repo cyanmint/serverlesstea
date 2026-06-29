@@ -1,68 +1,75 @@
+<!-- Translated from: templates/user/auth/reset_passwd.tmpl -->
 <template>
-  <AppLayout>
-    <div role="main" class="page-content user reset password">
-      <div class="ui middle very relaxed page grid">
-        <div class="column">
-          <form class="ui form" @submit.prevent="handleSubmit">
-            <h2 class="ui top attached header">Reset Password</h2>
-            <div class="ui attached segment">
-              <div v-if="error" class="ui negative message"><p>{{ error }}</p></div>
-              <div v-if="success" class="ui success message"><p>Password changed. <RouterLink to="/user/login">Sign in</RouterLink></p></div>
-
-              <template v-if="!success">
-                <div class="required field" :class="{error: !!error}">
-                  <label for="password">New Password</label>
-                  <input id="password" v-model="password" name="password" type="password" autocomplete="new-password" autofocus required>
-                </div>
-                <div class="divider"/>
-                <div class="inline field">
-                  <button class="ui primary button" type="submit" :disabled="loading">
-                    <span v-if="loading">Resetting…</span>
-                    <span v-else>Reset Password</span>
-                  </button>
-                </div>
-              </template>
+  <AppLayout page-class="user reset password" title="Reset Password">
+    <div class="ui middle very relaxed page grid">
+      <div class="column">
+        <form class="ui form ignore-dirty tw-max-w-2xl tw-m-auto" @submit.prevent="handleReset">
+          <h2 class="ui top attached header">Reset Password</h2>
+          <div class="ui attached segment">
+            <BaseAlert :flash="flash"/>
+            <div v-if="success" class="ui positive message">
+              <p>Password has been reset successfully.</p>
+              <RouterLink to="/user/login" class="ui small primary button tw-mt-2">Sign In</RouterLink>
             </div>
-          </form>
-        </div>
+            <template v-else-if="validCode">
+              <div class="required field" :class="{error: !!flash.error}">
+                <label for="password">New Password</label>
+                <input id="password" v-model="password" name="password" type="password" autocomplete="new-password" autofocus required>
+              </div>
+              <div class="divider"></div>
+              <div class="inline field">
+                <button class="ui primary button" type="submit" :disabled="submitting">Reset Password</button>
+              </div>
+            </template>
+            <template v-else>
+              <p class="center">Invalid or expired password reset link. <RouterLink to="/user/forgot_password">Request a new one</RouterLink>.</p>
+            </template>
+          </div>
+        </form>
       </div>
     </div>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
+import {ref, onMounted} from 'vue';
 import {RouterLink, useRoute} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-import {appSubUrl} from '../spaconfig.ts';
+import BaseAlert from '../components/BaseAlert.vue';
+import {apiBase} from '../spaconfig.ts';
 
 const route = useRoute();
 const password = ref('');
-const loading = ref(false);
-const error = ref('');
+const submitting = ref(false);
 const success = ref(false);
+const validCode = ref(false);
+const flash = ref<{error?: string}>({});
 
-async function handleSubmit() {
-  loading.value = true;
-  error.value = '';
+onMounted(() => {
+  const code = route.query.code as string;
+  validCode.value = !!code;
+});
+
+async function handleReset() {
+  submitting.value = true;
+  flash.value = {};
   try {
-    const code = route.query['code'] as string ?? '';
-    const body = new URLSearchParams({password: password.value, code});
-    const resp = await fetch(`${appSubUrl}/user/reset_password`, {
+    const code = route.query.code as string;
+    const resp = await fetch(`${apiBase}/user/reset_password`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body,
-      redirect: 'manual',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({code, password: password.value}),
     });
-    if (resp.ok || resp.type === 'opaqueredirect' || resp.status === 302) {
+    if (resp.ok) {
       success.value = true;
     } else {
-      error.value = 'Invalid or expired reset link. Please request a new one.';
+      const body = await resp.json().catch(() => ({}));
+      flash.value.error = body.message || 'Failed to reset password.';
     }
   } catch {
-    error.value = 'Network error. Please try again.';
+    flash.value.error = 'Network error. Please try again.';
   } finally {
-    loading.value = false;
+    submitting.value = false;
   }
 }
 </script>

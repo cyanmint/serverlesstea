@@ -1,139 +1,90 @@
+<!-- Translated from: templates/repo/commits.tmpl + repo/commits_table.tmpl -->
 <template>
-  <AppLayout page-class="repository commits">
-    <RepoNav
-      :owner="owner"
-      :repo-name="repoName"
-      active-tab="code"
-      :repo="repo"
-      :current-user="currentUser"
-      :starred="starred"
-      :star-loading="starLoading"
-      @toggle-star="toggleStar"
-    />
-
+  <AppLayout :page-class="'repository commits'" :title="`Commits - ${owner}/${repoName}`">
+    <RepoHeader :owner="owner" :repo-name="repoName"/>
     <div class="ui container">
-      <div v-if="loading" class="tw-py-8">
-        <div class="ui active centered inline loader"/>
+      <div class="repo-button-row tw-mb-4 tw-flex tw-gap-2">
+        <select v-model="branch" class="ui dropdown" @change="loadCommits">
+          <option v-for="b in branches" :key="b.name" :value="b.name">{{ b.name }}</option>
+        </select>
+        <RouterLink :to="`/${owner}/${repoName}/graph`" class="ui basic small compact button">
+          Commit Graph
+        </RouterLink>
       </div>
-      <div v-else-if="error" class="ui negative message"><p>{{ error }}</p></div>
-      <div v-else-if="commits.length === 0" class="ui placeholder segment">
-        <div class="tw-text-center tw-py-8 tw-text-gray-500">No commits found.</div>
+      <!-- Commits table -->
+      <div class="tw-flex tw-flex-col tw-gap-1">
+        <div v-for="commit in commits" :key="commit.sha" class="flex-item tw-py-2">
+          <div class="flex-item-main">
+            <div class="flex-item-title">
+              <RouterLink :to="`/${owner}/${repoName}/commit/${commit.sha}`">
+                {{ commit.commit?.message?.split('\n')[0] }}
+              </RouterLink>
+            </div>
+            <div class="flex-item-body tw-text-text-light">
+              <span>{{ commit.commit?.author?.name }}</span>
+              <span class="tw-ml-2">{{ formatDate(commit.commit?.author?.date) }}</span>
+            </div>
+          </div>
+          <div class="flex-item-trailing tw-font-mono tw-text-sm">
+            <RouterLink :to="`/${owner}/${repoName}/commit/${commit.sha}`" class="ui label">
+              {{ commit.sha?.substring(0, 10) }}
+            </RouterLink>
+          </div>
+        </div>
       </div>
-      <div v-else class="ui segment commits-table">
-        <table class="ui very basic table commits-list">
-          <tbody>
-            <tr
-              v-for="c in commits"
-              :key="c.sha"
-              class="commits-list-item"
-            >
-              <td class="message">
-                <a :href="`/${owner}/${repoName}/commit/${c.sha}`" class="tw-font-medium">
-                  {{ firstLine(c.commit.message) }}
-                </a>
-              </td>
-              <td class="author">
-                <a :href="`/${c.commit.author?.name}`" class="muted">{{ c.commit.author?.name }}</a>
-              </td>
-              <td class="date tw-text-right tw-text-sm tw-text-gray-500">
-                {{ formatDate(c.commit.author.date) }}
-              </td>
-              <td class="hash tw-text-right">
-                <a :href="`/${owner}/${repoName}/commit/${c.sha}`" class="ui basic label tw-font-mono">
-                  {{ c.sha.slice(0, 7) }}
-                </a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div v-if="commits.length > 0" class="ui pagination menu tw-my-4">
-        <a class="item" :class="{disabled: page <= 1}" @click="page > 1 && changePage(page - 1)">Previous</a>
-        <a class="item active">{{ page }}</a>
-        <a class="item" :class="{disabled: commits.length < pageSize}" @click="commits.length >= pageSize && changePage(page + 1)">Next</a>
-      </div>
+      <div v-if="!loading && !commits.length" class="tw-text-center tw-py-8 tw-text-text-light">No commits found</div>
+      <BasePaginate :total="total" :page="page" :limit="limit" @page-change="changePage"/>
     </div>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
-import {ref, computed, watch, onMounted} from 'vue';
-import {useRoute} from 'vue-router';
+import {ref, onMounted} from 'vue';
+import {useRoute, RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-import RepoNav from '../components/RepoNav.vue';
-import {getRepo, getRepoCommits, getCurrentUser, isRepoStarred, starRepo, unstarRepo, type Commit, type Repository, type User} from '../api/index.ts';
+import RepoHeader from '../components/RepoHeader.vue';
+import BasePaginate from '../components/BasePaginate.vue';
+import {apiBase} from '../spaconfig.ts';
 
 const route = useRoute();
-const owner = computed(() => route.params.owner as string);
-const repoName = computed(() => route.params.repo as string);
-const refType = computed(() => route.params.refType as string);
-const branchRef = computed(() => route.params.ref as string);
+const owner = route.params.owner as string;
+const repoName = route.params.repo as string;
+const token = localStorage.getItem('gitea-spa-token') || '';
+const headers: Record<string, string> = token ? {Authorization: `token ${token}`} : {};
 
-const commits = ref<Commit[]>([]);
-const loading = ref(false);
-const error = ref<string | null>(null);
+const commits = ref<any[]>([]);
+const branches = ref<any[]>([]);
+const branch = ref((route.params.branch as string) || 'main');
 const page = ref(1);
-const pageSize = 20;
-const repo = ref<Repository | null>(null);
-const currentUser = ref<User | null>(null);
-const starred = ref(false);
-const starLoading = ref(false);
+const limit = ref(30);
+const total = ref(0);
+const loading = ref(false);
 
-function firstLine(msg: string): string {
-  return msg.split('\n')[0] ?? msg;
-}
+function formatDate(d: string) { return d ? new Date(d).toLocaleDateString() : ''; }
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString();
-}
-
-function changePage(p: number) {
-  page.value = p;
-}
-
-async function toggleStar() {
-  if (!currentUser.value) return;
-  starLoading.value = true;
+async function loadBranches() {
   try {
-    if (starred.value) {
-      await unstarRepo(owner.value, repoName.value);
-    } else {
-      await starRepo(owner.value, repoName.value);
+    const resp = await fetch(`${apiBase}/repos/${owner}/${repoName}/branches`, {headers});
+    if (resp.ok) branches.value = await resp.json();
+    if (branches.value.length && !branches.value.find((b: any) => b.name === branch.value)) {
+      branch.value = branches.value[0]?.name || 'main';
     }
-    starred.value = !starred.value;
-    if (repo.value) {
-      repo.value = {...repo.value, stars_count: repo.value.stars_count + (starred.value ? 1 : -1)};
-    }
-  } catch {
-    // ignore
-  } finally {
-    starLoading.value = false;
-  }
+  } catch { /* empty */ }
 }
 
-async function load() {
-  if (!owner.value || !repoName.value || !branchRef.value) return;
+async function loadCommits() {
   loading.value = true;
-  error.value = null;
   try {
-    commits.value = await getRepoCommits(owner.value, repoName.value, {sha: branchRef.value, page: page.value, limit: pageSize});
-  } catch (e) {
-    error.value = String(e);
-  } finally {
-    loading.value = false;
-  }
+    const params = new URLSearchParams({page: String(page.value), limit: String(limit.value), sha: branch.value});
+    const resp = await fetch(`${apiBase}/repos/${owner}/${repoName}/commits?${params}`, {headers});
+    if (resp.ok) {
+      commits.value = await resp.json();
+      total.value = Number(resp.headers.get('x-total-count')) || commits.value.length;
+    }
+  } catch { /* empty */ } finally { loading.value = false; }
 }
 
-watch([owner, repoName, branchRef, page], load);
-onMounted(async () => {
-  [repo.value, currentUser.value] = await Promise.all([
-    getRepo(owner.value, repoName.value).catch(() => null),
-    getCurrentUser(),
-  ]);
-  if (currentUser.value) {
-    starred.value = await isRepoStarred(owner.value, repoName.value).catch(() => false);
-  }
-  await load();
-});
+function changePage(p: number) { page.value = p; loadCommits(); }
+
+onMounted(async () => { await loadBranches(); await loadCommits(); });
 </script>
