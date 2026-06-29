@@ -9,7 +9,7 @@
       <div class="repo-button-row tw-mb-3 tw-flex tw-flex-wrap tw-gap-2 tw-items-center">
         <div class="repo-button-row-left tw-flex tw-flex-wrap tw-gap-2 tw-items-center">
           <!-- Branch / tag / commit dropdown -->
-          <div class="ui dropdown jump item tw-border tw-rounded tw-px-3 tw-py-1 tw-cursor-pointer tw-relative" ref="branchDropdownEl" @click.stop="toggleBranchDropdown">
+          <div class="ui dropdown jump item tw-border tw-rounded tw-px-3 tw-py-1 tw-cursor-pointer tw-relative" :class="{active: branchDropdownOpen}" ref="branchDropdownEl" @click.stop="toggleBranchDropdown">
             <span class="flex-text-block">
               <SvgIcon name="octicon-git-branch" :size="16"/>
               <span class="tw-ml-1 tw-max-w-[160px] tw-truncate">{{ branch }}</span>

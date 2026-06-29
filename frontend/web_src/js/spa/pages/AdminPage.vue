@@ -172,8 +172,8 @@
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted} from 'vue';
-import {RouterLink} from 'vue-router';
+import {ref, onMounted, watch} from 'vue';
+import {RouterLink, useRoute} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import {apiBase} from '../spaconfig.ts';
 import {getStoredToken} from '../api/index.ts';
@@ -181,7 +181,12 @@ import {getStoredToken} from '../api/index.ts';
 const token = getStoredToken() ?? '';
 const headers = {Authorization: `token ${token}`};
 
-const section = ref('dashboard');
+const route = useRoute();
+const section = ref((route.params['section'] as string) || 'dashboard');
+
+watch(() => route.params['section'], (s) => {
+  section.value = (s as string) || 'dashboard';
+});
 const users = ref<any[]>([]);
 const orgs = ref<any[]>([]);
 const repos = ref<any[]>([]);

@@ -49,6 +49,9 @@ export type User = {
   avatar_url: string;
   html_url: string;
   is_admin: boolean;
+  active?: boolean;
+  restricted?: boolean;
+  can_create_organization?: boolean;
   created: string;
   website?: string;
   location?: string;
@@ -77,6 +80,9 @@ export type Repository = {
   language: string;
   size: number;
   empty?: boolean;
+  topics?: string[];
+  website?: string;
+  permissions?: {admin: boolean; push: boolean; pull: boolean};
 };
 
 export type Issue = {

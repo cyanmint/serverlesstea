@@ -23,7 +23,7 @@
           <div class="repo-button-row tw-mb-2 tw-flex tw-flex-wrap tw-gap-2 tw-items-center">
             <div class="repo-button-row-left tw-flex tw-gap-2 tw-items-center">
               <!-- Branch dropdown -->
-              <div class="ui dropdown jump item tw-border tw-rounded tw-px-3 tw-py-1 tw-cursor-pointer tw-relative" ref="branchDropdownEl" @click.stop="toggleBranchDropdown">
+              <div class="ui dropdown jump item tw-border tw-rounded tw-px-3 tw-py-1 tw-cursor-pointer tw-relative" :class="{active: branchDropdownOpen}" ref="branchDropdownEl" @click.stop="toggleBranchDropdown">
                 <span class="flex-text-block">
                   <SvgIcon name="octicon-git-branch" :size="16"/>
                   <span class="tw-ml-1 tw-max-w-[180px] tw-truncate">{{ currentBranch }}</span>
@@ -194,6 +194,7 @@ import RepoHeader from '../components/RepoHeader.vue';
 import {SvgIcon} from '../../svg.ts';
 import {apiBase} from '../spaconfig.ts';
 import {getStoredToken, type Repository} from '../api/index.ts';
+import {currentUser, initAuth} from '../stores/auth.ts';
 
 const route = useRoute();
 const owner = computed(() => route.params.owner as string);
@@ -220,7 +221,9 @@ const currentBranch = ref('main');
 const branches = ref<any[]>([]);
 const commitsCount = ref(0);
 const cloneUrl = ref('');
-const hasSettingsAccess = ref(false);
+const hasSettingsAccess = computed(() =>
+  !!(repo.value?.permissions?.admin || repo.value?.permissions?.push ||
+     (currentUser.value && currentUser.value.login === owner.value)));
 const loading = ref(true);
 const flash = ref<{error?: string}>({});
 
@@ -281,12 +284,8 @@ async function loadRepo() {
     }
     repo.value = await resp.json() as Repository;
     currentBranch.value = repo.value.default_branch || 'main';
-    topics.value = (repo.value as any).topics || [];
-    cloneUrl.value = (repo.value as any).clone_url || '';
-    hasSettingsAccess.value = !!(
-      (repo.value as any).permissions?.admin ||
-      (repo.value as any).permissions?.push
-    );
+    topics.value = repo.value.topics || [];
+    cloneUrl.value = repo.value.clone_url || '';
   } catch { flash.value.error = 'Failed to load repository.'; }
 }
 
@@ -386,6 +385,7 @@ async function loadAll() {
 watch([owner, repoName], loadAll);
 
 onMounted(() => {
+  initAuth();
   loadAll();
   document.addEventListener('click', onDocClick);
 });
