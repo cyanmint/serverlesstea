@@ -1,0 +1,28 @@
+{
+  "name": "serverlesstea-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "tsc --noEmit -p tsconfig.json",
+    "type-check": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run --reporter=default --reporter=junit --outputFile=./test-report.junit.xml",
+    "deploy": "wrangler deploy",
+    "migrate": "wrangler d1 execute git-devel --remote --file=schema.sql"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.2.0",
+    "hono": "^4.0.0",
+    "isomorphic-git": "^1.25.0",
+    "jose": "^5.2.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.0.0",
+    "@types/node": "25.6.0",
+    "typescript": "6.0.3",
+    "vitest": "4.1.4",
+    "wrangler": "^3.0.0"
+  }
+}
