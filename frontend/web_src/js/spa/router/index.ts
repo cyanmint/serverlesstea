@@ -1,5 +1,7 @@
 import {createRouter, type RouteRecordRaw} from 'vue-router';
 import {createQueryHistory} from './queryHistory.ts';
+import {GET} from '../../modules/fetch.ts';
+import {apiBase} from '../spaconfig.ts';
 
 // Pages
 import InstallPage from '../pages/InstallPage.vue';
@@ -7,12 +9,23 @@ import HomePage from '../pages/HomePage.vue';
 import ExplorePage from '../pages/ExplorePage.vue';
 import LoginPage from '../pages/LoginPage.vue';
 import RegisterPage from '../pages/RegisterPage.vue';
+import ForgotPasswordPage from '../pages/ForgotPasswordPage.vue';
+import ResetPasswordPage from '../pages/ResetPasswordPage.vue';
+import ActivateAccountPage from '../pages/ActivateAccountPage.vue';
+import TwoFAPage from '../pages/TwoFAPage.vue';
+import OAuthGrantPage from '../pages/OAuthGrantPage.vue';
 import UserProfilePage from '../pages/UserProfilePage.vue';
 import UserIssuesPage from '../pages/UserIssuesPage.vue';
+import UserMilestonesPage from '../pages/UserMilestonesPage.vue';
 import UserSettingsPage from '../pages/UserSettingsPage.vue';
 import NotificationsPage from '../pages/NotificationsPage.vue';
 import AdminPage from '../pages/AdminPage.vue';
+import OrgHomePage from '../pages/OrgHomePage.vue';
+import OrgCreatePage from '../pages/OrgCreatePage.vue';
+import RepoCreatePage from '../pages/RepoCreatePage.vue';
 import RepoOverviewPage from '../pages/RepoOverviewPage.vue';
+import RepoSettingsPage from '../pages/RepoSettingsPage.vue';
+import UserCardsPage from '../pages/UserCardsPage.vue';
 import IssueListPage from '../pages/IssueListPage.vue';
 import IssueDetailPage from '../pages/IssueDetailPage.vue';
 import NewIssuePage from '../pages/NewIssuePage.vue';
@@ -25,6 +38,15 @@ import RepoTagsPage from '../pages/RepoTagsPage.vue';
 import RepoWikiPage from '../pages/RepoWikiPage.vue';
 import RepoActivityPage from '../pages/RepoActivityPage.vue';
 import NotFoundPage from '../pages/NotFoundPage.vue';
+import UserSettingsOAuth2EditPage from '../pages/UserSettingsOAuth2EditPage.vue';
+
+// ---------------------------------------------------------------------------
+// Auto-detect uninstalled state.
+//
+// When the Gitea backend returns HTTP 503 (Service Unavailable) it means the
+// instance has not been set up yet.  On the first navigation to any page that
+// is not already the install wizard, probe the API and redirect if needed.
+// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 // Route table
@@ -61,19 +83,23 @@ const routes: RouteRecordRaw[] = [
   {path: '/user/oauth2/:provider', component: LoginPage, meta: {title: 'Sign In', public: true}},
   {path: '/user/oauth2/:provider/callback', component: LoginPage, meta: {title: 'Sign In', public: true}},
   // Account activation & password reset
-  {path: '/user/activate', component: LoginPage, meta: {title: 'Activate Account', public: true}},
-  {path: '/user/forgot_password', component: LoginPage, meta: {title: 'Forgot Password', public: true}},
-  {path: '/user/reset_password', component: LoginPage, meta: {title: 'Reset Password', public: true}},
+  {path: '/user/activate', component: ActivateAccountPage, meta: {title: 'Activate Account', public: true}},
+  {path: '/user/forgot_password', component: ForgotPasswordPage, meta: {title: 'Forgot Password', public: true}},
+  {path: '/user/reset_password', component: ResetPasswordPage, meta: {title: 'Reset Password', public: true}},
+  {path: '/user/two_factor_auth', component: TwoFAPage, meta: {title: 'Two-Factor Auth', public: true}},
+  {path: '/user/oauth2/authorize', component: OAuthGrantPage, meta: {title: 'Authorize Application'}},
 
   // ── User settings ─────────────────────────────────────────────────────────
   {path: '/user/settings', component: UserSettingsPage, meta: {title: 'Settings'}},
+  {path: '/user/settings/applications/oauth2/:id', component: UserSettingsOAuth2EditPage, meta: {title: 'Edit OAuth2 Application'}},
   {path: '/user/settings/:tab', component: UserSettingsPage, meta: {title: 'Settings'}},
+  {path: '/user/settings/:tab/:subsection', component: UserSettingsPage, meta: {title: 'Settings'}},
 
   // ── User dashboard (issues / pulls / milestones) ──────────────────────────
   {path: '/issues', component: UserIssuesPage, meta: {title: 'Issues'}},
   {path: '/issues/:type(your_repositories|assigned|mentioned)', component: UserIssuesPage, meta: {title: 'Issues'}},
   {path: '/pulls', component: UserIssuesPage, meta: {title: 'Pull Requests'}},
-  {path: '/milestones', component: UserIssuesPage, meta: {title: 'Milestones'}},
+  {path: '/milestones', component: UserMilestonesPage, meta: {title: 'Milestones'}},
 
   // ── Notifications ─────────────────────────────────────────────────────────
   {path: '/notifications', component: NotificationsPage, meta: {title: 'Notifications'}},
@@ -81,13 +107,13 @@ const routes: RouteRecordRaw[] = [
   {path: '/notifications/watching', component: NotificationsPage, meta: {title: 'Watching'}},
 
   // ── Repository creation ───────────────────────────────────────────────────
-  {path: '/repo/create', component: RepoOverviewPage, meta: {title: 'New Repository'}},
+  {path: '/repo/create', component: RepoCreatePage, meta: {title: 'New Repository'}},
   {path: '/repo/migrate', component: RepoOverviewPage, meta: {title: 'Migrate Repository'}},
 
   // ── Organisation ──────────────────────────────────────────────────────────
-  {path: '/org/create', component: UserProfilePage, meta: {title: 'New Organisation'}},
-  {path: '/org/:org', component: UserProfilePage, meta: {title: 'Organisation'}},
-  {path: '/org/:org/members', component: UserProfilePage, meta: {title: 'Organisation Members'}},
+  {path: '/org/create', component: OrgCreatePage, meta: {title: 'New Organisation'}},
+  {path: '/org/:org', component: OrgHomePage, meta: {title: 'Organisation'}},
+  {path: '/org/:org/members', component: OrgHomePage, meta: {title: 'Organisation Members'}},
   {path: '/org/:org/teams', component: UserProfilePage, meta: {title: 'Teams'}},
   {path: '/org/:org/teams/:team', component: UserProfilePage, meta: {title: 'Team'}},
   {path: '/org/:org/settings', component: UserSettingsPage, meta: {title: 'Organisation Settings'}},
@@ -96,9 +122,9 @@ const routes: RouteRecordRaw[] = [
   // ── Site-admin (/-/admin/…) ───────────────────────────────────────────────
   // Legacy paths: /admin/... → /-/admin/... (old Gitea used /admin/, new uses /-/admin/)
   {path: '/admin', redirect: '/-/admin'},
-  {path: '/admin/:section', redirect: (to) => `/-/admin/${to.params.section}`},
-  {path: '/admin/:section/:subsection', redirect: (to) => `/-/admin/${to.params.section}/${to.params.subsection}`},
-  {path: '/admin/:section/:subsection/:action', redirect: (to) => `/-/admin/${to.params.section}/${to.params.subsection}/${to.params.action}`},
+  {path: '/admin/:section', redirect: (to) => `/-/admin/${String(to.params['section'])}`},
+  {path: '/admin/:section/:subsection', redirect: (to) => `/-/admin/${String(to.params['section'])}/${String(to.params['subsection'])}`},
+  {path: '/admin/:section/:subsection/:action', redirect: (to) => `/-/admin/${String(to.params['section'])}/${String(to.params['subsection'])}/${String(to.params['action'])}`},
 
   {path: '/-/admin', component: AdminPage, meta: {title: 'Administration'}},
   {path: '/-/admin/:section', component: AdminPage, meta: {title: 'Administration'}},
@@ -160,13 +186,13 @@ const routes: RouteRecordRaw[] = [
   {path: '/:owner/:repo/graphs/:graph', component: RepoActivityPage, meta: {title: 'Graph'}},
 
   // Repository settings
-  {path: '/:owner/:repo/settings', component: RepoOverviewPage, meta: {title: 'Settings'}},
-  {path: '/:owner/:repo/settings/:tab', component: RepoOverviewPage, meta: {title: 'Settings'}},
+  {path: '/:owner/:repo/settings', component: RepoSettingsPage, meta: {title: 'Settings'}},
+  {path: '/:owner/:repo/settings/:tab', component: RepoSettingsPage, meta: {title: 'Settings'}},
 
   // Forks / watchers / stargazers
-  {path: '/:owner/:repo/forks', component: RepoOverviewPage, meta: {title: 'Forks'}},
-  {path: '/:owner/:repo/watchers', component: RepoOverviewPage, meta: {title: 'Watchers'}},
-  {path: '/:owner/:repo/stargazers', component: RepoOverviewPage, meta: {title: 'Stargazers'}},
+  {path: '/:owner/:repo/forks', component: UserCardsPage, meta: {title: 'Forks'}},
+  {path: '/:owner/:repo/watchers', component: UserCardsPage, meta: {title: 'Watchers'}},
+  {path: '/:owner/:repo/stargazers', component: UserCardsPage, meta: {title: 'Stargazers'}},
 
   // Actions (CI)
   {path: '/:owner/:repo/actions', component: RepoOverviewPage, meta: {title: 'Actions'}},
@@ -202,22 +228,13 @@ router.afterEach((to) => {
   if (title) document.title = `${title} - ${appName}`;
 });
 
-// ---------------------------------------------------------------------------
-// Auto-detect uninstalled state.
-//
-// When the Gitea backend returns HTTP 503 (Service Unavailable) it means the
-// instance has not been set up yet.  On the first navigation to any page that
-// is not already the install wizard, probe the API and redirect if needed.
-// ---------------------------------------------------------------------------
-import {apiBase} from '../spaconfig.ts';
-
 let installCheckDone = false;
 
 router.beforeEach(async (to) => {
   if (installCheckDone || to.path === '/install') return true;
   installCheckDone = true; // only probe once per SPA session
   try {
-    const resp = await fetch(`${apiBase}/settings/api`, {method: 'GET'});
+    const resp = await GET(`${apiBase}/settings/api`);
     if (resp.status === 503) {
       return {path: '/install', replace: true};
     }

@@ -14,9 +14,27 @@
 
 import {defineConfig} from 'vite';
 import vuePlugin from '@vitejs/plugin-vue';
+import {stringPlugin} from 'vite-string-plugin';
 import {join} from 'node:path';
+import {env} from 'node:process';
 import tailwindcss from 'tailwindcss';
 import tailwindConfig from './tailwind.config.ts';
+import type {Plugin} from 'vite';
+
+const isProduction = env.NODE_ENV !== 'development';
+
+// Filter out legacy font formats from CSS, keeping only woff2
+// (mirrors the same plugin in vite.config.ts)
+function filterCssUrlPlugin(): Plugin {
+  return {
+    name: 'filter-css-url',
+    enforce: 'pre',
+    transform(code, id) {
+      if (!id.endsWith('.css') || !id.includes('katex')) return null;
+      return code.replace(/,\s*url\([^)]*\.(?:woff|ttf)\)\s*format\("[^"]*"\)/gi, '');
+    },
+  };
+}
 
 export default defineConfig({
   // Root is the frontend/ directory so that index.html is treated as the
@@ -36,6 +54,8 @@ export default defineConfig({
   // produced by assetUrlPrefix='.' in spaconfig.ts.
   publicDir: join(import.meta.dirname, 'public/assets'),
   plugins: [
+    filterCssUrlPlugin(),
+    stringPlugin(),
     vuePlugin({
       template: {
         compilerOptions: {
@@ -59,6 +79,13 @@ export default defineConfig({
     // outDir must be absolute when root is not the project root.
     outDir: join(import.meta.dirname, 'frontend-dist'),
     emptyOutDir: true,
+    target: 'es2020',
+    minify: isProduction ? 'esbuild' : false,
+    cssMinify: isProduction ? 'esbuild' : false,
+    sourcemap: !isProduction,
+    chunkSizeWarningLimit: Infinity,
+    assetsInlineLimit: 32768,
+    reportCompressedSize: false,
     // No explicit rollupOptions.input: Vite auto-detects root/index.html.
   },
 });

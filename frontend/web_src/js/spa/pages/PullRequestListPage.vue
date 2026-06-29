@@ -1,26 +1,65 @@
 <template>
-  <AppLayout>
-    <div class="ui container tw-py-4">
-      <!-- Header -->
-      <div class="tw-flex tw-items-center tw-gap-2 tw-mb-4">
-        <RouterLink :to="`/${owner}/${repoName}`" class="tw-text-blue-600 hover:tw-underline tw-font-medium">
-          {{ owner }}/{{ repoName }}
-        </RouterLink>
-        <span class="tw-text-gray-400">/</span>
-        <span class="tw-font-semibold">Pull Requests</span>
+  <AppLayout page-class="repository issue-list">
+    <!-- Secondary nav (repo header + tabs) — matches templates/repo/header.tmpl -->
+    <RepoNav
+      :owner="owner"
+      :repo-name="repoName"
+      active-tab="pulls"
+      :repo="repo"
+      :current-user="currentUser"
+      :starred="starred"
+      :star-loading="starLoading"
+      @toggle-star="toggleStar"
+    />
+
+    <div class="ui container">
+      <!-- List header -->
+      <div class="list-header flex-text-block">
+        <h2 class="ui compact small menu small-menu-items issue-list-navbar">
+          <a class="item" :class="{active: state === 'open'}" @click="setStateFilter('open')">
+            <SvgIcon name="octicon-git-pull-request" :size="16"/>
+            Open
+            <span class="ui label tw-ml-1">{{ openCount }}</span>
+          </a>
+          <a class="item" :class="{active: state === 'closed'}" @click="setStateFilter('closed')">
+            <SvgIcon name="octicon-git-merge" :size="16"/>
+            Closed
+            <span class="ui label tw-ml-1">{{ closedCount }}</span>
+          </a>
+        </h2>
+        <button v-if="currentUser" class="ui primary button" @click="showNewPrForm = !showNewPrForm">
+          {{ showNewPrForm ? 'Cancel' : 'New Pull Request' }}
+        </button>
       </div>
 
-      <!-- State filter tabs -->
-      <div class="ui secondary pointing menu tw-mb-4">
-        <a class="item" :class="{active: state === 'open'}" @click="setStateFilter('open')">
-          🔀 Open <span class="ui label tw-ml-1">{{ openCount }}</span>
-        </a>
-        <a class="item" :class="{active: state === 'closed'}" @click="setStateFilter('closed')">
-          ✅ Closed <span class="ui label tw-ml-1">{{ closedCount }}</span>
-        </a>
+      <div v-if="showNewPrForm" class="ui segment tw-mb-4">
+        <div v-if="createError" class="ui negative message"><p>{{ createError }}</p></div>
+        <div class="ui form">
+          <div class="field">
+            <label>Title</label>
+            <input v-model="newPrTitle" type="text">
+          </div>
+          <div class="two fields">
+            <div class="field">
+              <label>Head branch</label>
+              <input v-model="newPrHead" type="text" placeholder="feature-branch">
+            </div>
+            <div class="field">
+              <label>Base branch</label>
+              <input v-model="newPrBase" type="text" :placeholder="repo?.default_branch || 'main'">
+            </div>
+          </div>
+          <div class="field">
+            <label>Description</label>
+            <textarea v-model="newPrBody" rows="4"/>
+          </div>
+          <button class="ui primary button" :class="{loading: creatingPr}" :disabled="creatingPr || !newPrTitle.trim() || !newPrHead.trim() || !newPrBase.trim()" @click="submitPullRequest">
+            Open Pull Request
+          </button>
+        </div>
       </div>
 
-      <!-- Loading / error -->
+      <!-- Loading / error states -->
       <div v-if="loading" class="tw-py-16 tw-text-center">
         <div class="ui active centered inline loader"/>
       </div>
@@ -28,77 +67,95 @@
         <p>{{ error }}</p>
       </div>
 
-      <!-- PR list -->
-      <div v-else class="tw-border tw-rounded">
-        <div v-if="prs.length === 0" class="tw-px-4 tw-py-12 tw-text-center tw-text-gray-500">
-          No {{ state }} pull requests.
+      <!-- PR list — matches templates/shared/issuelist.tmpl -->
+      <div v-else>
+        <div v-if="prs.length === 0" class="tw-px-4 tw-py-12 tw-text-center">
+          No {{ state }} pull requests found.
         </div>
-        <div
-          v-for="pr in prs"
-          :key="pr.id"
-          class="tw-px-4 tw-py-4 tw-border-b last:tw-border-0 hover:tw-bg-gray-50"
-        >
-          <div class="tw-flex tw-items-start tw-gap-3">
-            <span class="tw-mt-0.5">
-              {{ pr.merged ? '🟣' : pr.state === 'open' ? '🔀' : '🚫' }}
-            </span>
-            <div class="tw-flex-1">
-              <a :href="pr.html_url" class="tw-font-semibold tw-text-blue-700 hover:tw-underline">
-                {{ pr.title }}
-              </a>
-              <span
-                v-for="label in pr.labels"
-                :key="label.id"
-                class="ui mini label tw-ml-1"
-                :style="{background: '#' + label.color}"
-              >
-                {{ label.name }}
+        <div v-else class="flex-divided-list items-with-main">
+          <div v-for="pr in prs" :key="pr.id" class="item">
+            <div class="item-leading">
+              <span v-if="pr.merged" class="tw-text-purple-600">
+                <SvgIcon name="octicon-git-merge" :size="16"/>
               </span>
-              <p class="tw-text-xs tw-text-gray-500 tw-mt-1">
+              <span v-else-if="pr.state === 'open'" class="tw-text-green-600">
+                <SvgIcon name="octicon-git-pull-request" :size="16"/>
+              </span>
+              <span v-else class="tw-text-red-600">
+                <SvgIcon name="octicon-git-pull-request-closed" :size="16"/>
+              </span>
+            </div>
+            <div class="item-main">
+              <div class="item-header">
+                <div class="item-title">
+                  <RouterLink
+                    :to="`/${owner}/${repoName}/pulls/${pr.number}`"
+                    class="tw-text-primary"
+                  >
+                    {{ pr.title }}
+                  </RouterLink>
+                  <span class="label-list">
+                    <span
+                      v-for="label in pr.labels"
+                      :key="label.id"
+                      class="ui label"
+                      :style="{background: '#' + label.color, color: labelTextColor(label.color)}"
+                    >{{ label.name }}</span>
+                  </span>
+                </div>
+                <div v-if="pr.comments" class="item-trailing muted-links">
+                  <RouterLink class="flex-text-inline" :to="`/${owner}/${repoName}/pulls/${pr.number}`">
+                    <SvgIcon name="octicon-comment" :size="16"/>
+                    {{ pr.comments }}
+                  </RouterLink>
+                </div>
+              </div>
+              <div class="item-body">
                 #{{ pr.number }}
                 <template v-if="pr.merged">
                   merged {{ timeAgo(pr.merged_at ?? '') }} by
-                  <a :href="`${appSubUrl}/${pr.user.login}`" class="hover:tw-underline">{{ pr.user.login }}</a>
                 </template>
                 <template v-else>
                   opened {{ timeAgo(pr.created_at) }} by
-                  <a :href="`${appSubUrl}/${pr.user.login}`" class="hover:tw-underline">{{ pr.user.login }}</a>
                 </template>
-                <span v-if="pr.comments" class="tw-ml-2">💬 {{ pr.comments }}</span>
-              </p>
-              <p v-if="pr.head && pr.base" class="tw-text-xs tw-font-mono tw-text-gray-400 tw-mt-1">
-                {{ pr.head.label }} → {{ pr.base.label }}
-              </p>
+                <RouterLink :to="`/${pr.user.login}`">{{ pr.user.login }}</RouterLink>
+                <template v-if="pr.head && pr.base">
+                  · <span class="tw-font-mono tw-text-xs">{{ pr.head.ref }} → {{ pr.base.ref }}</span>
+                </template>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Pagination -->
-      <div v-if="totalPages > 1" class="tw-flex tw-justify-center tw-mt-6 tw-gap-2">
+      <div v-if="totalPages > 1" class="ui pagination menu tw-mt-4">
+        <button class="item" :class="{disabled: page <= 1}" @click="goToPage(page - 1)">Previous</button>
         <button
           v-for="p in totalPages"
           :key="p"
-          class="ui button"
-          :class="{primary: p === page}"
+          class="item"
+          :class="{active: p === page}"
           @click="goToPage(p)"
         >
           {{ p }}
         </button>
+        <button class="item" :class="{disabled: page >= totalPages}" @click="goToPage(page + 1)">Next</button>
       </div>
     </div>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted} from 'vue';
-import {RouterLink, useRoute} from 'vue-router';
+import {ref, computed, onMounted} from 'vue';
+import {RouterLink, useRoute, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-import {getPullRequests, getRepoIssueCount, type PullRequest} from '../api/index.ts';
-
-import {appSubUrl} from '../spaconfig.ts';
+import RepoNav from '../components/RepoNav.vue';
+import {SvgIcon} from '../../svg.ts';
+import {createPullRequest, getRepo, getPullRequests, getRepoIssueCount, getCurrentUser, isRepoStarred, starRepo, unstarRepo, type PullRequest, type Repository, type User} from '../api/index.ts';
 
 const route = useRoute();
+const router = useRouter();
 const owner = String(route.params.owner);
 const repoName = String(route.params.repo);
 
@@ -111,6 +168,25 @@ const pageSize = 20;
 const totalPages = ref(1);
 const openCount = ref(0);
 const closedCount = ref(0);
+const repo = ref<Repository | null>(null);
+const currentUser = ref<User | null>(null);
+const starred = ref(false);
+const starLoading = ref(false);
+const showNewPrForm = ref(false);
+const newPrTitle = ref('');
+const newPrHead = ref('');
+const newPrBase = ref('');
+const newPrBody = ref('');
+const creatingPr = ref(false);
+const createError = ref('');
+
+const labelTextColor = computed(() => (hex: string) => {
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return lum > 0.5 ? '#000' : '#fff';
+});
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -157,6 +233,40 @@ async function loadPRs() {
   }
 }
 
+async function toggleStar() {
+  if (!currentUser.value || starLoading.value) return;
+  starLoading.value = true;
+  try {
+    if (starred.value) {
+      await unstarRepo(owner, repoName);
+      starred.value = false;
+    } else {
+      await starRepo(owner, repoName);
+      starred.value = true;
+    }
+  } finally {
+    starLoading.value = false;
+  }
+}
+
+async function submitPullRequest() {
+  creatingPr.value = true;
+  createError.value = '';
+  try {
+    const pr = await createPullRequest(owner, repoName, {
+      title: newPrTitle.value.trim(),
+      body: newPrBody.value.trim(),
+      head: newPrHead.value.trim(),
+      base: newPrBase.value.trim(),
+    });
+    await router.push(`/${owner}/${repoName}/pulls/${pr.number}`);
+  } catch (err) {
+    createError.value = err instanceof Error ? err.message : 'Failed to create pull request';
+  } finally {
+    creatingPr.value = false;
+  }
+}
+
 onMounted(async () => {
   const [openTotal, closedTotal] = await Promise.all([
     getRepoIssueCount(owner, repoName, 'open', 'pulls'),
@@ -164,6 +274,12 @@ onMounted(async () => {
   ]);
   openCount.value = openTotal;
   closedCount.value = closedTotal;
+  [repo.value, currentUser.value] = await Promise.all([
+    getRepo(owner, repoName).catch(() => null),
+    getCurrentUser(),
+  ]);
+  newPrBase.value = repo.value?.default_branch ?? 'main';
+  isRepoStarred(owner, repoName).then((s) => { starred.value = s; }).catch(() => {});
   await loadPRs();
 });
 </script>

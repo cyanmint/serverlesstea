@@ -1,59 +1,85 @@
 <template>
-  <AppLayout>
-    <div class="ui container tw-py-4">
-      <div class="tw-flex tw-items-center tw-gap-2 tw-mb-4">
-        <RouterLink :to="`/${owner}/${repoName}`" class="tw-text-blue-600 hover:tw-underline tw-font-medium">
-          {{ owner }}/{{ repoName }}
-        </RouterLink>
-        <span class="tw-text-gray-400">/</span>
-        <span class="tw-font-semibold">Activity</span>
+  <AppLayout page-class="repository activity">
+    <RepoNav
+      :owner="owner"
+      :repo-name="repoName"
+      active-tab="activity"
+      :repo="repo"
+      :current-user="currentUser"
+      :starred="starred"
+      :star-loading="starLoading"
+      @toggle-star="toggleStar"
+    />
+
+    <div class="ui container">
+      <!-- Period filter nav — matches templates/repo/activity.tmpl -->
+      <div class="ui secondary pointing menu tw-mb-4">
+        <a
+          v-for="opt in periodOptions"
+          :key="opt.value"
+          class="item"
+          :class="{active: period === opt.value}"
+          @click="setPeriod(opt.value)"
+        >{{ opt.label }}</a>
       </div>
 
-      <div v-if="loading" class="tw-py-16 tw-text-center">
+      <div v-if="loading" class="tw-py-8">
         <div class="ui active centered inline loader"/>
       </div>
-      <div v-else-if="error" class="ui negative message">
-        <p>{{ error }}</p>
-      </div>
+      <div v-else-if="error" class="ui negative message"><p>{{ error }}</p></div>
       <template v-else>
         <div v-if="feeds.length === 0" class="ui placeholder segment">
           <div class="tw-text-center tw-py-8 tw-text-gray-500">No recent activity.</div>
         </div>
-        <div v-else class="tw-border tw-rounded">
-          <div
-            v-for="feed in feeds"
-            :key="feed.id"
-            class="tw-flex tw-items-start tw-gap-3 tw-px-4 tw-py-3 tw-border-b last:tw-border-b-0 hover:tw-bg-gray-50"
-          >
-            <img
-              v-if="feed.act_user"
-              :src="feed.act_user.avatar_url"
-              :alt="feed.act_user.login"
-              class="ui avatar image tw-w-8 tw-h-8 tw-shrink-0 tw-mt-0.5"
-            >
-            <div class="tw-flex-1 tw-min-w-0">
-              <div class="tw-text-sm">
-                <RouterLink
-                  v-if="feed.act_user"
-                  :to="`/${feed.act_user.login}`"
-                  class="tw-font-semibold hover:tw-underline"
-                >{{ feed.act_user.login }}</RouterLink>
-                <span class="tw-ml-1 tw-text-gray-700">{{ opTypeLabel(feed.op_type) }}</span>
-                <span v-if="feed.ref_name" class="tw-ml-1 tw-font-mono tw-text-xs tw-bg-gray-100 tw-px-1 tw-rounded">
-                  {{ feed.ref_name }}
-                </span>
-              </div>
-              <div class="tw-text-xs tw-text-gray-500 tw-mt-0.5">
-                {{ formatDate(feed.created) }}
+        <div v-else class="flex-container">
+          <div class="flex-container-main">
+            <div class="ui segment">
+              <div
+                v-for="feed in feeds"
+                :key="feed.id"
+                class="activity-block-list"
+              >
+                <div class="ui items activity-list">
+                  <div class="item">
+                    <div class="item-leading">
+                      <a :href="`/${feed.act_user?.login}`">
+                        <img
+                          v-if="feed.act_user"
+                          :src="feed.act_user.avatar_url"
+                          :alt="feed.act_user.login"
+                          class="ui avatar image"
+                        >
+                      </a>
+                    </div>
+                    <div class="item-main">
+                      <div class="item-header">
+                        <RouterLink
+                          v-if="feed.act_user"
+                          :to="`/${feed.act_user.login}`"
+                          class="author"
+                        >
+                          {{ feed.act_user.login }}
+                        </RouterLink>
+                        <span class="tw-ml-1 tw-text-gray-700">{{ opTypeLabel(feed.op_type) }}</span>
+                        <span v-if="feed.ref_name" class="ui basic label tw-font-mono tw-text-xs tw-ml-1">
+                          {{ feed.ref_name }}
+                        </span>
+                      </div>
+                      <div class="item-body">
+                        <span class="tw-text-xs tw-text-gray-500">{{ formatDate(feed.created) }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="tw-flex tw-justify-center tw-mt-4 tw-gap-2">
-          <button class="ui button" :disabled="page <= 1" @click="page--">Previous</button>
-          <span class="ui label tw-self-center">Page {{ page }}</span>
-          <button class="ui button" :disabled="feeds.length < pageSize" @click="page++">Next</button>
+        <div class="ui pagination menu tw-my-4">
+          <a class="item" :class="{disabled: page <= 1}" @click="page > 1 && changePage(page - 1)">Previous</a>
+          <a class="item active">{{ page }}</a>
+          <a class="item" :class="{disabled: feeds.length < pageSize}" @click="feeds.length >= pageSize && changePage(page + 1)">Next</a>
         </div>
       </template>
     </div>
@@ -64,7 +90,8 @@
 import {ref, computed, watch, onMounted} from 'vue';
 import {useRoute, RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-import {getRepoActivityFeeds, type ActivityFeed} from '../api/index.ts';
+import RepoNav from '../components/RepoNav.vue';
+import {getRepo, getRepoActivityFeeds, getCurrentUser, isRepoStarred, starRepo, unstarRepo, type ActivityFeed, type Repository, type User} from '../api/index.ts';
 
 const route = useRoute();
 const owner = computed(() => route.params.owner as string);
@@ -75,6 +102,20 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const page = ref(1);
 const pageSize = 20;
+const period = ref<'daily' | 'weekly' | 'monthly' | 'quarterly' | 'semiyearly' | 'yearly'>('weekly');
+const repo = ref<Repository | null>(null);
+const currentUser = ref<User | null>(null);
+const starred = ref(false);
+const starLoading = ref(false);
+
+const periodOptions = [
+  {value: 'daily', label: 'Daily'},
+  {value: 'weekly', label: 'Weekly'},
+  {value: 'monthly', label: 'Monthly'},
+  {value: 'quarterly', label: 'Quarterly'},
+  {value: 'semiyearly', label: 'Semi-yearly'},
+  {value: 'yearly', label: 'Yearly'},
+] as const;
 
 function opTypeLabel(op: string): string {
   const map: Record<string, string> = {
@@ -104,6 +145,37 @@ function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleString();
 }
 
+function setPeriod(p: typeof period.value) {
+  period.value = p;
+  page.value = 1;
+  load();
+}
+
+function changePage(p: number) {
+  page.value = p;
+  load();
+}
+
+async function toggleStar() {
+  if (!currentUser.value) return;
+  starLoading.value = true;
+  try {
+    if (starred.value) {
+      await unstarRepo(owner.value, repoName.value);
+    } else {
+      await starRepo(owner.value, repoName.value);
+    }
+    starred.value = !starred.value;
+    if (repo.value) {
+      repo.value = {...repo.value, stars_count: repo.value.stars_count + (starred.value ? 1 : -1)};
+    }
+  } catch {
+    // ignore
+  } finally {
+    starLoading.value = false;
+  }
+}
+
 async function load() {
   if (!owner.value || !repoName.value) return;
   loading.value = true;
@@ -117,6 +189,18 @@ async function load() {
   }
 }
 
-watch([owner, repoName, page], load);
-onMounted(load);
+watch([owner, repoName], () => {
+  page.value = 1;
+  load();
+});
+onMounted(async () => {
+  [repo.value, currentUser.value] = await Promise.all([
+    getRepo(owner.value, repoName.value).catch(() => null),
+    getCurrentUser(),
+  ]);
+  if (currentUser.value) {
+    starred.value = await isRepoStarred(owner.value, repoName.value).catch(() => false);
+  }
+  await load();
+});
 </script>

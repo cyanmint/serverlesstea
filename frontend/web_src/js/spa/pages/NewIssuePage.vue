@@ -1,65 +1,86 @@
 <template>
-  <AppLayout>
-    <div class="ui container tw-py-4 tw-max-w-3xl">
-      <!-- Breadcrumb -->
-      <div class="tw-flex tw-items-center tw-gap-2 tw-text-sm tw-mb-4">
-        <RouterLink :to="`/${owner}/${repoName}`" class="tw-text-blue-600 hover:tw-underline tw-font-medium">
-          {{ owner }}/{{ repoName }}
-        </RouterLink>
-        <span class="tw-text-gray-400">/</span>
-        <RouterLink :to="`/${owner}/${repoName}/issues`" class="tw-text-blue-600 hover:tw-underline">Issues</RouterLink>
-        <span class="tw-text-gray-400">/</span>
-        <span class="tw-font-semibold">New Issue</span>
-      </div>
-
-      <h1 class="tw-text-2xl tw-font-bold tw-mb-6">New Issue</h1>
-
+  <AppLayout page-class="repository new issue">
+    <RepoNav
+      :owner="owner"
+      :repo-name="repoName"
+      active-tab="issues"
+      :repo="repo"
+      :current-user="currentUser"
+      :starred="starred"
+      :star-loading="starLoading"
+      @toggle-star="toggleStar"
+    />
+    <div class="ui container">
       <div v-if="!currentUser" class="ui warning message">
         <p>You must be signed in to create an issue.</p>
         <RouterLink to="/user/login" class="ui small primary button tw-mt-2">Sign In</RouterLink>
       </div>
 
-      <form v-else class="ui form" @submit.prevent="handleSubmit">
+      <form v-else class="issue-content ui comment form" id="new-issue" @submit.prevent="handleSubmit">
         <div v-if="errorMessage" class="ui negative message tw-mb-4">
           <p>{{ errorMessage }}</p>
         </div>
 
-        <div class="field" :class="{error: titleError}">
-          <label for="issue-title">Title <span class="tw-text-red-500">*</span></label>
-          <input
-            id="issue-title"
-            v-model="title"
-            type="text"
-            placeholder="Brief description of the issue"
-            maxlength="255"
-            required
-            @input="titleError = ''"
-          >
-          <div v-if="titleError" class="ui pointing red label">{{ titleError }}</div>
+        <div class="issue-content-left">
+          <div class="ui comments">
+            <div class="comment">
+              <div class="tw-mr-4 not-mobile">
+                <img
+                  v-if="currentUser"
+                  :src="currentUser.avatar_url"
+                  :alt="currentUser.login"
+                  class="ui avatar image"
+                  width="40"
+                  height="40"
+                >
+              </div>
+              <div class="ui segment content tw-my-0 avatar-content-left-arrow">
+                <div class="field" :class="{error: !!titleError}">
+                  <input
+                    id="issue_title"
+                    v-model="title"
+                    name="title"
+                    type="text"
+                    placeholder="Title"
+                    maxlength="255"
+                    autocomplete="off"
+                    required
+                    @input="titleError = ''"
+                  >
+                  <div v-if="titleError" class="ui pointing red label">{{ titleError }}</div>
+                </div>
+                <div class="field">
+                  <textarea
+                    v-model="body"
+                    class="markdown-text-editor"
+                    rows="10"
+                    placeholder="Leave a comment"
+                  />
+                </div>
+                <div class="flex-text-block tw-justify-end">
+                  <button
+                    type="submit"
+                    class="ui primary button"
+                    :class="{loading: submitting}"
+                    :disabled="submitting || !title.trim()"
+                  >
+                    Submit New Issue
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="field">
-          <label for="issue-body">Description</label>
-          <textarea
-            id="issue-body"
-            v-model="body"
-            rows="10"
-            placeholder="Provide more details about the issue…"
-          />
-        </div>
-
-        <div class="tw-flex tw-gap-3 tw-justify-end tw-mt-4">
-          <RouterLink :to="`/${owner}/${repoName}/issues`" class="ui button">
-            Cancel
-          </RouterLink>
-          <button
-            type="submit"
-            class="ui primary button"
-            :class="{loading: submitting}"
-            :disabled="submitting || !title.trim()"
-          >
-            Submit New Issue
-          </button>
+        <div class="issue-content-right ui segment">
+          <div class="ui header">Labels</div>
+          <div class="tw-text-placeholder-text tw-text-sm">No labels</div>
+          <div class="divider"/>
+          <div class="ui header">Milestone</div>
+          <div class="tw-text-placeholder-text tw-text-sm">No milestone</div>
+          <div class="divider"/>
+          <div class="ui header">Assignees</div>
+          <div class="tw-text-placeholder-text tw-text-sm">No assignees</div>
         </div>
       </form>
     </div>
@@ -70,7 +91,8 @@
 import {ref, onMounted} from 'vue';
 import {RouterLink, useRoute, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-import {getCurrentUser, createIssue, type User} from '../api/index.ts';
+import RepoNav from '../components/RepoNav.vue';
+import {getCurrentUser, getRepo, createIssue, isRepoStarred, starRepo, unstarRepo, type User, type Repository} from '../api/index.ts';
 
 const route = useRoute();
 const router = useRouter();
@@ -79,6 +101,9 @@ const owner = String(route.params.owner);
 const repoName = String(route.params.repo);
 
 const currentUser = ref<User | null>(null);
+const repo = ref<Repository | null>(null);
+const starred = ref(false);
+const starLoading = ref(false);
 const title = ref('');
 const body = ref('');
 const titleError = ref('');
@@ -108,7 +133,27 @@ async function handleSubmit() {
   }
 }
 
+async function toggleStar() {
+  if (!currentUser.value || starLoading.value) return;
+  starLoading.value = true;
+  try {
+    if (starred.value) {
+      await unstarRepo(owner, repoName);
+      starred.value = false;
+    } else {
+      await starRepo(owner, repoName);
+      starred.value = true;
+    }
+  } finally {
+    starLoading.value = false;
+  }
+}
+
 onMounted(async () => {
-  currentUser.value = await getCurrentUser();
+  [currentUser.value, repo.value] = await Promise.all([
+    getCurrentUser(),
+    getRepo(owner, repoName).catch(() => null),
+  ]);
+  isRepoStarred(owner, repoName).then((s) => { starred.value = s; }).catch(() => {});
 });
 </script>

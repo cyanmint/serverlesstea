@@ -16,6 +16,7 @@ import sshKeyRoutes from './routes/sshkeys'
 import notificationRoutes from './routes/notifications'
 import dashboardRoutes from './routes/dashboard'
 import { handleGitRequest } from './git/http'
+import v1Routes from './routes/v1'
 
 export interface Env {
   database: D1Database
@@ -47,6 +48,7 @@ app.route('/api/orgs', orgRoutes)
 app.route('/api/user/keys', sshKeyRoutes)
 app.route('/api/notifications', notificationRoutes)
 app.route('/api/dashboard', dashboardRoutes)
+app.route('/api/v1', v1Routes)
 app.all('/git/*', async (c) => handleGitRequest(c.req.raw, c.env))
 
 app.get('/', (c) => c.json({ service: 'serverlesstea-server', status: 'ok' }))

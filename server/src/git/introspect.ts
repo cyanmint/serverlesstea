@@ -1,16 +1,55 @@
 import git from 'isomorphic-git'
 import { createR2Fs } from './r2fs'
 
+type FsType = Parameters<typeof git.resolveRef>[0]['fs']
+
+function makeFs(bucket: R2Bucket, owner: string, repo: string): { fs: FsType; gitdir: string } {
+  return {
+    fs: createR2Fs(bucket, owner, repo) as unknown as FsType,
+    gitdir: `/${owner}/${repo}.git`,
+  }
+}
+
+/**
+ * Ensure every pack file under objects/pack/ has a corresponding .idx file.
+ * This is needed for repos that were pushed before indexPack was fixed (the
+ * previous implementation crashed because createR2Fs was missing readlink/symlink).
+ * Returns true if at least one new index was created.
+ */
+async function ensurePacksIndexed(
+  fs: FsType,
+  gitdir: string,
+  bucket: R2Bucket,
+  owner: string,
+  repo: string,
+): Promise<boolean> {
+  const packPrefix = `${owner}/${repo}.git/objects/pack/`
+  const listed = await bucket.list({ prefix: packPrefix })
+  let indexed = false
+  for (const obj of listed.objects) {
+    if (!obj.key.endsWith('.pack')) continue
+    const idxKey = obj.key.replace(/\.pack$/, '.idx')
+    const hasIdx = await bucket.head(idxKey)
+    if (!hasIdx) {
+      try {
+        await git.indexPack({ fs, dir: '/', gitdir, filepath: obj.key })
+        indexed = true
+      } catch (e) {
+        console.error('ensurePacksIndexed: indexPack failed:', e)
+      }
+    }
+  }
+  return indexed
+}
+
 export async function listFiles(
   owner: string,
   repo: string,
   ref: string,
   bucket: R2Bucket
 ): Promise<Array<{ path: string; type: string; oid: string }>> {
-  const fs = createR2Fs(bucket, owner, repo)
-  const dir = `/${owner}/${repo}.git`
-
-  const files = await git.listFiles({ fs: fs as unknown as Parameters<typeof git.listFiles>[0]['fs'], gitdir: dir, ref })
+  const { fs, gitdir } = makeFs(bucket, owner, repo)
+  const files = await git.listFiles({ fs, gitdir, ref })
   return files.map((f) => ({ path: f, type: 'blob', oid: '' }))
 }
 
@@ -21,11 +60,64 @@ export async function readBlob(
   filepath: string,
   bucket: R2Bucket
 ): Promise<string> {
-  const fs = createR2Fs(bucket, owner, repo)
-  const dir = `/${owner}/${repo}.git`
-
-  const result = await git.readBlob({ fs: fs as unknown as Parameters<typeof git.readBlob>[0]['fs'], gitdir: dir, oid: ref, filepath })
+  const { fs, gitdir } = makeFs(bucket, owner, repo)
+  // ref may be a branch name or tag — resolve it to a commit SHA first, since
+  // git.readBlob expects an object OID, not a symbolic ref.
+  const oid = await git.resolveRef({ fs, gitdir, ref })
+  const result = await git.readBlob({ fs, gitdir, oid, filepath })
   return new TextDecoder().decode(result.blob)
+}
+
+export interface DirEntry {
+  name: string
+  path: string
+  type: 'file' | 'dir'
+  sha: string
+}
+
+/**
+ * List the immediate children of a directory inside a git repository.
+ * `dirpath` is the path relative to the repo root, or `''` for the root tree.
+ */
+export async function listDirectory(
+  owner: string,
+  repo: string,
+  ref: string,
+  dirpath: string,
+  bucket: R2Bucket
+): Promise<DirEntry[]> {
+  const { fs, gitdir } = makeFs(bucket, owner, repo)
+  const commitSha = await git.resolveRef({ fs, gitdir, ref })
+
+  // Read the commit object — if this fails (e.g. no .idx file yet), try to
+  // lazily index any unindexed pack files and then retry once.
+  let commitObj: Awaited<ReturnType<typeof git.readCommit>>
+  try {
+    commitObj = await git.readCommit({ fs, gitdir, oid: commitSha })
+  } catch {
+    await ensurePacksIndexed(fs, gitdir, bucket, owner, repo)
+    commitObj = await git.readCommit({ fs, gitdir, oid: commitSha })
+  }
+  let treeSha = commitObj.commit.tree
+
+  // Walk down the path components to reach the target subdirectory.
+  if (dirpath) {
+    for (const part of dirpath.split('/').filter(Boolean)) {
+      const { tree } = await git.readTree({ fs, gitdir, oid: treeSha })
+      const entry = tree.find((e) => e.path === part)
+      if (!entry) throw Object.assign(new Error(`ENOENT: ${dirpath}`), { code: 'ENOENT' })
+      if (entry.type !== 'tree') throw Object.assign(new Error(`ENOTDIR: ${dirpath}`), { code: 'ENOTDIR' })
+      treeSha = entry.oid
+    }
+  }
+
+  const { tree } = await git.readTree({ fs, gitdir, oid: treeSha })
+  return tree.map((entry) => ({
+    name: entry.path,
+    path: dirpath ? `${dirpath}/${entry.path}` : entry.path,
+    type: entry.type === 'tree' ? 'dir' : 'file',
+    sha: entry.oid,
+  }))
 }
 
 export async function listCommits(

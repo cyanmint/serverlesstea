@@ -20,6 +20,10 @@ function normalizeSpecPath(specPath: string): string {
     .replace('{ref}', ':ref')
     .replace('{sha}', ':sha')
     .replace('{username}', ':username')
+    .replace('{index}', ':index')
+    .replace('{tag}', ':tag')
+    .replace('{pageName}', ':pageName')
+    .replace('{number}', ':number')
     .replace('{id}', ':id')
     .replace('{path}', ':path{.*}')
 }

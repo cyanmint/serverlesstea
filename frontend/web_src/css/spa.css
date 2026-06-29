@@ -1,17 +1,15 @@
-/* spa.css — minimal CSS bundle for the standalone SPA build.
- * Imports only the modules consumed by SPA Vue components.
- * The full web_src/css/index.css is used by the Gitea embedded build.
+/* spa.css — full CSS bundle for the SPA build.
+ * Mirrors web_src/css/index.css exactly, minus install.css (not needed for SPA).
+ * Color theme variables must come first, before any module that uses them.
  */
 
 /* Color CSS variables (--color-*) must come first. */
 @import "./themes/theme-gitea-auto.css";
 
-/* Base variables: fonts, spacing, border-radius, z-index, etc. */
-@import "./base.css";
-
-/* Fomantic UI module replacements used by SPA components */
 @import "./modules/normalize.css";
 @import "./modules/animations.css";
+
+/* fomantic replacements */
 @import "./modules/button.css";
 @import "./modules/container.css";
 @import "./modules/divider.css";
@@ -26,12 +24,107 @@
 @import "./modules/table.css";
 @import "./modules/card.css";
 @import "./modules/checkbox.css";
+@import "./modules/dimmer.css";
+@import "./modules/modal.css";
+@import "./modules/search.css";
+@import "./modules/tab.css";
 @import "./modules/form.css";
 @import "./modules/dropdown.css";
-@import "./modules/navbar.css";
+@import "./modules/shortcut.css";
 
-/* Helpers (.gt-ellipsis, .interact-fg, etc.) */
+@import "./modules/tippy.css";
+@import "./modules/breadcrumb.css";
+@import "./modules/comment.css";
+@import "./modules/navbar.css";
+@import "./modules/toast.css";
+@import "./modules/svg.css";
+@import "./modules/flexcontainer.css";
+@import "./modules/codeeditor.css";
+@import "./modules/chroma.css";
+@import "./modules/charescape.css";
+
+@import "./shared/flex-list.css";
+@import "./shared/milestone.css";
+@import "./shared/settings.css";
+
+@import "./features/dropzone.css";
+@import "./features/gitgraph.css";
+@import "./features/heatmap.css";
+@import "./features/imagediff.css";
+@import "./features/projects.css";
+@import "./features/expander.css";
+@import "./features/cropper.css";
+@import "./features/console.css";
+@import "./features/captcha.css";
+
+@import "./markup/content.css";
+@import "./markup/codeblock.css";
+@import "./markup/codepreview.css";
+@import "./markup/asciicast.css";
+
+@import "./font_i18n.css";
+@import "./base.css";
+@import "./home.css";
+
+@import "./repo.css";
+@import "./repo/release-tag.css";
+@import "./repo/issue-card.css";
+@import "./repo/issue-label.css";
+@import "./repo/issue-list.css";
+@import "./repo/list-header.css";
+@import "./repo/file-view.css";
+@import "./repo/wiki.css";
+@import "./repo/home.css";
+@import "./repo/home-file-list.css";
+@import "./repo/reactions.css";
+@import "./repo/clone.css";
+@import "./repo/commit-sign.css";
+@import "./repo/packages.css";
+
+@import "./editor/combomarkdowneditor.css";
+
+@import "./org.css";
+@import "./user.css";
+@import "./dashboard.css";
+@import "./admin.css";
+@import "./explore.css";
+@import "./review.css";
+@import "./actions.css";
+
 @import "./helpers.css";
 
-/* Tailwind utility classes generated from SPA Vue component templates */
 @tailwind utilities;
+
+/* ── SPA-specific overrides ──────────────────────────────────────────────── */
+
+/* The Vue app mounts into #app which is a direct child of <body>.
+ * <body> uses display:flex + flex-direction:column but that only works when
+ * nav / page-content / footer are direct children of body.  In SPA mode they
+ * are inside #app, so #app must carry the same flex layout and fill the full
+ * viewport height so the footer is pinned to the bottom. */
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Allow the page content area to grow and fill all remaining space between
+ * the navbar and the footer. */
+#app > .page-content {
+  flex: 1;
+}
+
+/* Fomantic UI's JS normally adds an inline display:block when a dropdown is
+ * activated.  In the SPA we drive state through Vue reactive data instead of
+ * Fomantic JS, so we need a CSS rule to replicate that behaviour. */
+.ui.dropdown.active > .menu {
+  display: block !important;
+}
+
+/* Navbar-right dropdowns must open leftward so they don't overflow the right
+ * edge of the viewport.  Fomantic's rule only handles .right.menu inside
+ * .ui.menu; the SPA navbar uses a plain #navbar .navbar-right div. */
+#navbar .navbar-right .ui.dropdown > .menu {
+  left: auto;
+  right: 0;
+}

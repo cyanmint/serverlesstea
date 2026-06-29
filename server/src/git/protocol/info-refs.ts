@@ -69,15 +69,21 @@ export async function handleInfoRefs(
   body += FLUSH
 
   const refs = Array.from(allRefs.entries())
+  // Capabilities advertised for this server.
+  // report-status must be included so git send-pack reads the per-ref result
+  // lines we send inside sideband band 1 (omitting it causes git to drop the
+  // sideband output pipe and the demultiplexer fails writing to it).
+  const CAPS = 'side-band side-band-64k ofs-delta report-status delete-refs'
+
   if (refs.length === 0) {
     const nullSha = '0'.repeat(40)
     const caps = 'capabilities^{}'
-    body += pktLine(`${nullSha} ${caps}\0side-band side-band-64k ofs-delta\n`)
+    body += pktLine(`${nullSha} ${caps}\0${CAPS}\n`)
   } else {
     let first = true
     for (const [refName, sha] of refs) {
       if (first) {
-        body += pktLine(`${sha} ${refName}\0side-band side-band-64k ofs-delta\n`)
+        body += pktLine(`${sha} ${refName}\0${CAPS}\n`)
         first = false
       } else {
         body += pktLine(`${sha} ${refName}\n`)

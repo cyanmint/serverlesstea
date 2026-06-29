@@ -34,7 +34,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: npm
           cache-dependency-path: package-lock.json
 
@@ -46,6 +46,13 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Add API coverage to job summary
+        if: always()
+        run: |
+          if [ -f server/api-coverage-report.md ]; then
+            cat server/api-coverage-report.md >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Upload Server test report
         if: always()

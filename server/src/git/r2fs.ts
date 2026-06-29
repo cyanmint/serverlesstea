@@ -91,6 +91,15 @@ export function createR2Fs(bucket: R2Bucket, owner: string, repo: string) {
         // no-op
       },
 
+      async readlink(_path: string): Promise<string> {
+        // Bare git repos stored in R2 do not contain symlinks.
+        throw Object.assign(new Error(`ENOENT: readlink not supported`), { code: 'ENOENT' })
+      },
+
+      async symlink(_target: string, _path: string): Promise<void> {
+        // no-op: symlinks not supported in R2-backed bare repos
+      },
+
       async stat(path: string): Promise<StatResult> {
         const key = r2Key(path)
         const obj = await bucket.head(key)

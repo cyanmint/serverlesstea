@@ -26,7 +26,14 @@ class MockR2ObjectBody {
     return typeof this.value === 'string' ? this.value : new TextDecoder().decode(this.value)
   }
   async arrayBuffer() {
-    return typeof this.value === 'string' ? new TextEncoder().encode(this.value).buffer : this.value.buffer
+    if (typeof this.value === 'string') return new TextEncoder().encode(this.value).buffer as ArrayBuffer
+    // `this.value.buffer` may be a larger backing buffer if `this.value` is a
+    // sub-array view (e.g. created via `new Uint8Array(buf, offset, len)`).
+    // Always return a copy that contains exactly the view's own bytes.
+    return this.value.buffer.slice(
+      this.value.byteOffset,
+      this.value.byteOffset + this.value.byteLength,
+    ) as ArrayBuffer
   }
 }
 
@@ -37,6 +44,13 @@ export class MockR2Bucket {
     const value = this.store.get(key)
     if (!value) return null
     return new MockR2ObjectBody(value)
+  }
+
+  async head(key: string) {
+    const value = this.store.get(key)
+    if (!value) return null
+    const size = typeof value === 'string' ? new TextEncoder().encode(value).length : value.length
+    return { size }
   }
 
   async put(key: string, value: string | ArrayBuffer | Uint8Array) {
@@ -51,7 +65,11 @@ export class MockR2Bucket {
     const objects = Array.from(this.store.keys())
       .filter((k) => k.startsWith(prefix))
       .map((key) => ({ key }))
-    return { objects }
+    return { objects, delimitedPrefixes: [] as string[] }
+  }
+
+  async delete(key: string) {
+    this.store.delete(key)
   }
 }
 
