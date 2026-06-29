@@ -46,7 +46,11 @@
               <div class="field">
                 <textarea v-model="newComment" rows="4" placeholder="Leave a comment…"></textarea>
               </div>
-              <button class="ui primary button" type="submit" :disabled="!newComment.trim()">Comment</button>
+              <div class="tw-flex tw-gap-2">
+                <button class="ui primary button" type="submit" :disabled="!newComment.trim()">Comment</button>
+                <button v-if="issue.state === 'open'" class="ui red button" type="button" @click="toggleIssueState">Close Issue</button>
+                <button v-else class="ui green button" type="button" @click="toggleIssueState">Reopen Issue</button>
+              </div>
             </form>
           </div>
         </div>
@@ -127,6 +131,21 @@ async function postComment() {
       const comment = await resp.json();
       comments.value.push(comment);
       newComment.value = '';
+    }
+  } catch { /* empty */ }
+}
+
+async function toggleIssueState() {
+  if (!issue.value) return;
+  const newState = issue.value.state === 'open' ? 'closed' : 'open';
+  try {
+    const resp = await fetch(`${apiBase}/repos/${owner}/${repoName}/issues/${issueNumber}`, {
+      method: 'PATCH',
+      headers: {'Content-Type': 'application/json', ...headers},
+      body: JSON.stringify({state: newState}),
+    });
+    if (resp.ok) {
+      issue.value = await resp.json();
     }
   } catch { /* empty */ }
 }

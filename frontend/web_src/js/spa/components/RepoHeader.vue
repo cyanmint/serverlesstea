@@ -84,6 +84,7 @@ import {ref, computed, onMounted, watch} from 'vue';
 import {RouterLink, useRoute} from 'vue-router';
 import {SvgIcon} from '../../svg.ts';
 import {getRepo, getStoredToken, type Repository} from '../api/index.ts';
+import {currentUser, initAuth} from '../stores/auth.ts';
 
 const props = defineProps<{
   // Pass pre-fetched repo object (preferred when parent already loaded it)
@@ -133,7 +134,11 @@ const currentTab = computed<string>(() => {
 const resolvedHasSettingsAccess = computed<boolean>(() => {
   if (props.hasSettingsAccess !== undefined) return props.hasSettingsAccess;
   const r = repoData.value as any;
-  return !!(r?.permissions?.admin || r?.permissions?.push);
+  // Check API-reported permissions
+  if (r?.permissions?.admin || r?.permissions?.push) return true;
+  // Fallback: current user is the repo owner
+  return !!(currentUser.value && r?.owner?.login &&
+    currentUser.value.login === r.owner.login);
 });
 
 async function fetchRepo() {
@@ -147,7 +152,10 @@ async function fetchRepo() {
   } catch { /* non-critical; render without full repo data */ }
 }
 
-onMounted(fetchRepo);
+onMounted(() => {
+  initAuth();
+  fetchRepo();
+});
 
 // Re-fetch when owner/repoName change (route navigation)
 watch([resolvedOwner, resolvedRepoName], fetchRepo);

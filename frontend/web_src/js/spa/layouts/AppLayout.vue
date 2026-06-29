@@ -54,7 +54,7 @@
           </RouterLink>
 
           <!-- Create new dropdown -->
-          <div class="ui dropdown jump item" ref="createDropdownEl" @click.stop="toggleCreateMenu">
+          <div class="ui dropdown jump item" :class="{active: createMenuOpen}" ref="createDropdownEl" @click.stop="toggleCreateMenu">
             <span class="flex-text-block">
               <SvgIcon name="octicon-plus" :size="16"/>
               <span class="not-mobile flex-text-block"><SvgIcon name="octicon-triangle-down" :size="14"/></span>
@@ -73,7 +73,7 @@
           </div>
 
           <!-- User avatar dropdown -->
-          <div class="ui dropdown jump item" ref="userDropdownEl" @click.stop="toggleUserMenu">
+          <div class="ui dropdown jump item" :class="{active: userMenuOpen}" ref="userDropdownEl" @click.stop="toggleUserMenu">
             <span class="text tw-flex tw-items-center" :data-tooltip-content="`Signed in as ${currentUser.login}`">
               <span class="navbar-avatar">
                 <img :src="currentUser.avatar_url" :alt="currentUser.login" width="24" height="24" class="ui avatar image tw-mr-1">
