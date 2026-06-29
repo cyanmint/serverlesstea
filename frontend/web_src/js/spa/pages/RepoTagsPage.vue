@@ -1,181 +1,74 @@
+<!-- Translated from: templates/repo/tag/list.tmpl -->
 <template>
-  <AppLayout page-class="repository tags">
-    <RepoNav
-      :owner="owner"
-      :repo-name="repoName"
-      active-tab="releases"
-      :repo="repo"
-      :current-user="currentUser"
-      :starred="starred"
-      :star-loading="starLoading"
-      @toggle-star="toggleStar"
-    />
-
+  <AppLayout :page-class="'repository tags'" :title="`Tags - ${owner}/${repoName}`">
+    <RepoHeader :owner="owner" :repo-name="repoName"/>
     <div class="ui container">
-      <div v-if="loading" class="tw-py-8">
-        <div class="ui active centered inline loader"/>
+      <BaseAlert :flash="flash"/>
+      <div class="tw-flex tw-justify-between tw-items-center tw-mb-4">
+        <h3>Tags ({{ tags.length }})</h3>
+        <div class="tw-flex tw-gap-2">
+          <RouterLink :to="`/${owner}/${repoName}/releases`" class="ui small button">Releases</RouterLink>
+          <RouterLink :to="`/${owner}/${repoName}/tags`" class="ui small button active">Tags</RouterLink>
+        </div>
       </div>
-      <div v-else-if="error" class="ui negative message"><p>{{ error }}</p></div>
-      <div v-else-if="tags.length === 0" class="ui placeholder segment">
-        <div class="tw-text-center tw-py-8 tw-text-gray-500">
-          No tags yet.
-          <div class="tw-mt-4">
-            <button class="ui primary button" @click="createTag">New Tag</button>
+      <div class="ui attached segment">
+        <form class="ui form" @submit.prevent="loadTags">
+          <div class="ui action input tw-w-full">
+            <input v-model="keyword" type="text" placeholder="Search tags…">
+            <button class="ui primary button" type="submit">Search</button>
+          </div>
+        </form>
+      </div>
+      <div class="ui divided list">
+        <div v-for="tag in tags" :key="tag.name" class="item tw-p-4">
+          <h3 class="tw-mb-2">
+            <RouterLink :to="`/${owner}/${repoName}/src/tag/${tag.name}`">{{ tag.name }}</RouterLink>
+          </h3>
+          <div class="tw-flex tw-gap-4 tw-text-text-light">
+            <span v-if="tag.commit?.sha" class="tw-font-mono">{{ tag.commit.sha.substring(0, 10) }}</span>
+            <a :href="`${apiBase}/repos/${owner}/${repoName}/archive/${tag.name}.zip`">ZIP</a>
+            <a :href="`${apiBase}/repos/${owner}/${repoName}/archive/${tag.name}.tar.gz`">TAR.GZ</a>
           </div>
         </div>
       </div>
-      <div v-else id="tags-table" class="ui segment">
-        <div v-if="actionError" class="ui negative message"><p>{{ actionError }}</p></div>
-        <div class="tw-mb-4 tw-flex tw-justify-end">
-          <button class="ui primary button" @click="createTag">New Tag</button>
-        </div>
-        <table class="ui very basic table">
-          <tbody>
-            <tr v-for="tag in tags" :key="tag.name" class="tag-list-row">
-              <td class="tag-name">
-                <div class="flex-text-block">
-                  <SvgIcon name="octicon-tag" :size="16" class="tw-mr-2 tw-text-gray-500"/>
-                  <RouterLink
-                    :to="`/${owner}/${repoName}/releases/tag/${tag.name}`"
-                    class="tw-font-mono"
-                  >
-                    {{ tag.name }}
-                  </RouterLink>
-                </div>
-                <p v-if="tag.message" class="tw-text-xs tw-text-gray-500 tw-mt-0.5 tw-pl-6">{{ tag.message }}</p>
-              </td>
-              <td class="tag-hash tw-text-right">
-                <RouterLink
-                  :to="`/${owner}/${repoName}/src/commit/${tag.commit.sha}`"
-                  class="ui basic label tw-font-mono"
-                >
-                  {{ tag.commit.sha.slice(0, 7) }}
-                </RouterLink>
-              </td>
-              <td class="tag-download tw-text-right">
-                <a :href="tag.zipball_url" class="tw-text-blue-600 hover:tw-underline tw-mr-3">zip</a>
-                <a :href="tag.tarball_url" class="tw-text-blue-600 hover:tw-underline">tar.gz</a>
-                <button class="ui tiny compact basic button tw-ml-3" @click="renameTag(tag.name)">Rename</button>
-                <button class="ui tiny compact red basic button" @click="removeTag(tag.name)">Delete</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div v-if="tags.length > 0" class="ui pagination menu tw-my-4">
-        <a class="item" :class="{disabled: page <= 1}" @click="page > 1 && changePage(page - 1)">Previous</a>
-        <a class="item active">{{ page }}</a>
-        <a class="item" :class="{disabled: tags.length < pageSize}" @click="tags.length >= pageSize && changePage(page + 1)">Next</a>
-      </div>
+      <div v-if="!loading && !tags.length" class="tw-text-center tw-py-8 tw-text-text-light">No tags</div>
     </div>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
-import {ref, computed, watch, onMounted} from 'vue';
+import {ref, onMounted} from 'vue';
 import {useRoute, RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-import RepoNav from '../components/RepoNav.vue';
-import {SvgIcon} from '../../svg.ts';
-import {createRepoTag, deleteRepoTag, getRepo, getRepoTags, getCurrentUser, isRepoStarred, renameRepoTag, starRepo, unstarRepo, type Tag, type Repository, type User} from '../api/index.ts';
+import BaseAlert from '../components/BaseAlert.vue';
+import RepoHeader from '../components/RepoHeader.vue';
+import {apiBase} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
 
 const route = useRoute();
-const owner = computed(() => route.params.owner as string);
-const repoName = computed(() => route.params.repo as string);
+const owner = route.params.owner as string;
+const repoName = route.params.repo as string;
+const token = getStoredToken() ?? '';
+const headers: Record<string, string> = token ? {Authorization: `token ${token}`} : {};
 
-const tags = ref<Tag[]>([]);
+const tags = ref<any[]>([]);
+const keyword = ref('');
 const loading = ref(false);
-const error = ref<string | null>(null);
-const page = ref(1);
-const pageSize = 20;
-const repo = ref<Repository | null>(null);
-const currentUser = ref<User | null>(null);
-const starred = ref(false);
-const starLoading = ref(false);
-const actionError = ref('');
+const flash = ref<{error?: string}>({});
 
-function changePage(p: number) {
-  page.value = p;
-}
-
-async function toggleStar() {
-  if (!currentUser.value) return;
-  starLoading.value = true;
-  try {
-    if (starred.value) {
-      await unstarRepo(owner.value, repoName.value);
-    } else {
-      await starRepo(owner.value, repoName.value);
-    }
-    starred.value = !starred.value;
-    if (repo.value) {
-      repo.value = {...repo.value, stars_count: repo.value.stars_count + (starred.value ? 1 : -1)};
-    }
-  } catch {
-    // ignore
-  } finally {
-    starLoading.value = false;
-  }
-}
-
-async function load() {
-  if (!owner.value || !repoName.value) return;
+async function loadTags() {
   loading.value = true;
-  error.value = null;
   try {
-    tags.value = await getRepoTags(owner.value, repoName.value, {page: page.value, limit: pageSize});
-  } catch (e) {
-    error.value = String(e);
-  } finally {
-    loading.value = false;
-  }
+    const resp = await fetch(`${apiBase}/repos/${owner}/${repoName}/tags`, {headers});
+    if (resp.ok) {
+      let all = await resp.json();
+      if (keyword.value) {
+        all = all.filter((t: any) => t.name.toLowerCase().includes(keyword.value.toLowerCase()));
+      }
+      tags.value = all;
+    }
+  } catch { /* empty */ } finally { loading.value = false; }
 }
 
-async function createTag() {
-  const name = window.prompt('New tag name');
-  if (!name?.trim()) return;
-  actionError.value = '';
-  try {
-    await createRepoTag(owner.value, repoName.value, name.trim(), repo.value?.default_branch);
-    await load();
-  } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to create tag';
-  }
-}
-
-async function renameTag(name: string) {
-  const newName = window.prompt('Rename tag', name);
-  if (!newName?.trim() || newName.trim() === name) return;
-  actionError.value = '';
-  try {
-    await renameRepoTag(owner.value, repoName.value, name, newName.trim());
-    await load();
-  } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to rename tag';
-  }
-}
-
-async function removeTag(name: string) {
-  if (!window.confirm(`Delete tag "${name}"?`)) return;
-  actionError.value = '';
-  try {
-    await deleteRepoTag(owner.value, repoName.value, name);
-    await load();
-  } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to delete tag';
-  }
-}
-
-watch([owner, repoName, page], load);
-onMounted(async () => {
-  [repo.value, currentUser.value] = await Promise.all([
-    getRepo(owner.value, repoName.value).catch(() => null),
-    getCurrentUser(),
-  ]);
-  if (currentUser.value) {
-    starred.value = await isRepoStarred(owner.value, repoName.value).catch(() => false);
-  }
-  await load();
-});
+onMounted(() => loadTags());
 </script>

@@ -4,20 +4,16 @@ on:
   push:
     paths:
       - "server/**"
-      - "frontend/**"
       - "api.json"
       - "package.json"
       - "package-lock.json"
-      - "wrangler.jsonc"
       - ".github/workflows/backend-ci.yml"
   pull_request:
     paths:
       - "server/**"
-      - "frontend/**"
       - "api.json"
       - "package.json"
       - "package-lock.json"
-      - "wrangler.jsonc"
       - ".github/workflows/backend-ci.yml"
   workflow_dispatch:
 

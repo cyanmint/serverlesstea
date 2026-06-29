@@ -1,405 +1,315 @@
+<!-- Translated from: templates/repo/view.tmpl + repo/view_content.tmpl + repo/view_file.tmpl + repo/view_file_tree.tmpl -->
 <template>
-  <AppLayout page-class="repository">
-    <!-- Secondary nav — matches templates/repo/header.tmpl -->
-    <RepoNav
-      :owner="owner"
-      :repo-name="repoName"
-      active-tab="code"
-      :repo="repo"
-      :current-user="currentUser"
-      :starred="starred"
-      :star-loading="starLoading"
-      @toggle-star="toggleStar"
-    />
+  <AppLayout :page-class="'repository file list'" :title="`${owner}/${repoName}${treePath ? ` - ${treePath}` : ''}`">
+    <RepoHeader :owner="owner" :repo-name="repoName" active-tab="code"/>
+    <div class="ui container fluid padded">
+      <BaseAlert :flash="flash"/>
 
-    <div v-if="loading" class="ui container tw-py-8">
-      <div class="ui active centered inline loader"/>
-    </div>
-    <div v-else-if="error" class="ui container tw-py-6">
-      <div class="ui negative message"><p>{{ error }}</p></div>
-      <div class="ui segment tw-mt-4">
-        <div v-if="actionError" class="ui negative message tw-mb-3"><p>{{ actionError }}</p></div>
-        <div class="tw-flex tw-flex-wrap tw-gap-2 tw-items-center">
-          <select v-model="selectedRef" class="ui dropdown" @change="switchRef">
-            <option v-for="option in refOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
-          </select>
-          <button class="ui button" @click="createBranchFromCurrent">New Branch</button>
-          <button class="ui button" @click="createTagFromCurrent">New Tag</button>
-          <button v-if="currentRefType !== 'commit'" class="ui button" @click="renameCurrentRef">Rename {{ currentRefType }}</button>
-          <button v-if="currentRefType !== 'commit'" class="ui red basic button" @click="deleteCurrentRef">Delete {{ currentRefType }}</button>
-          <button class="ui button" @click="triggerUpload">Upload File</button>
-          <input ref="uploadInput" type="file" class="tw-hidden" @change="handleUpload">
-        </div>
-      </div>
-    </div>
-
-    <div v-else-if="contents" class="ui container">
-      <div class="ui segment tw-mb-4">
-        <div v-if="actionError" class="ui negative message tw-mb-3"><p>{{ actionError }}</p></div>
-        <div class="tw-flex tw-flex-wrap tw-gap-2 tw-items-center">
-          <select v-model="selectedRef" class="ui dropdown" @change="switchRef">
-            <option v-for="option in refOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
-          </select>
-          <button class="ui button" @click="createBranchFromCurrent">New Branch</button>
-          <button class="ui button" @click="createTagFromCurrent">New Tag</button>
-          <button v-if="currentRefType !== 'commit'" class="ui button" @click="renameCurrentRef">Rename {{ currentRefType }}</button>
-          <button v-if="currentRefType !== 'commit'" class="ui red basic button" @click="deleteCurrentRef">Delete {{ currentRefType }}</button>
-          <button class="ui button" @click="triggerUpload">Upload File</button>
-          <button v-if="!Array.isArray(contents)" class="ui primary button" @click="editingFile = !editingFile">
-            {{ editingFile ? 'Cancel Edit' : 'Edit File' }}
-          </button>
-          <input ref="uploadInput" type="file" class="tw-hidden" @change="handleUpload">
-        </div>
-        <div v-if="editingFile && !Array.isArray(contents)" class="tw-mt-4">
-          <div class="ui form">
-            <div class="field">
-              <label>Commit message</label>
-              <input v-model="commitMessage" type="text" :placeholder="`Update ${contents.path}`">
+      <!-- Sub-menu: branch selector + breadcrumb (repo/view_content.tmpl) -->
+      <div class="repo-button-row tw-mb-3 tw-flex tw-flex-wrap tw-gap-2 tw-items-center">
+        <div class="repo-button-row-left tw-flex tw-flex-wrap tw-gap-2 tw-items-center">
+          <!-- Branch / tag / commit dropdown -->
+          <div class="ui dropdown jump item tw-border tw-rounded tw-px-3 tw-py-1 tw-cursor-pointer tw-relative" :class="{active: branchDropdownOpen}" ref="branchDropdownEl" @click.stop="toggleBranchDropdown">
+            <span class="flex-text-block">
+              <SvgIcon name="octicon-git-branch" :size="16"/>
+              <span class="tw-ml-1 tw-max-w-[160px] tw-truncate">{{ branch }}</span>
+              <SvgIcon name="octicon-triangle-down" :size="14" class="tw-ml-1"/>
+            </span>
+            <div v-show="branchDropdownOpen" class="menu visible tw-absolute tw-z-10 tw-bg-primary tw-border tw-rounded tw-shadow-md tw-min-w-[200px]" @click.stop>
+              <div class="tw-p-2">
+                <input v-model="branchSearch" class="ui input tw-w-full" placeholder="Find a branch or tag…" @click.stop>
+              </div>
+              <div class="tw-text-xs tw-px-4 tw-pt-1 tw-text-text-light tw-font-semibold">Branches</div>
+              <div class="tw-max-h-52 tw-overflow-y-auto">
+                <RouterLink
+                  v-for="b in filteredBranches" :key="b.name"
+                  class="item tw-block tw-px-4 tw-py-1"
+                  :class="{active: b.name === branch}"
+                  :to="`/${owner}/${repoName}/src/branch/${b.name}/${treePath}`"
+                  @click="branchDropdownOpen = false; branchSearch = ''">
+                  <SvgIcon v-if="b.name === branch" name="octicon-check" :size="14" class="tw-mr-1"/>
+                  {{ b.name }}
+                </RouterLink>
+              </div>
+              <div v-if="tags.length" class="tw-text-xs tw-px-4 tw-pt-1 tw-text-text-light tw-font-semibold">Tags</div>
+              <div v-if="tags.length" class="tw-max-h-36 tw-overflow-y-auto">
+                <RouterLink
+                  v-for="t in filteredTags" :key="t.name"
+                  class="item tw-block tw-px-4 tw-py-1"
+                  :to="`/${owner}/${repoName}/src/tag/${t.name}/${treePath}`"
+                  @click="branchDropdownOpen = false; branchSearch = ''">
+                  {{ t.name }}
+                </RouterLink>
+              </div>
             </div>
-            <div class="field">
-              <label>Content</label>
-              <textarea v-model="newFileContent" rows="16" class="ui fluid textarea"/>
-            </div>
-            <button class="ui primary button" :class="{loading: savingFile}" :disabled="savingFile" @click="saveFile">Save File</button>
           </div>
+
+          <!-- Breadcrumb (repo/view_content.tmpl) -->
+          <span v-if="pathParts.length" class="breadcrumb tw-flex tw-items-center tw-gap-1 tw-flex-wrap">
+            <RouterLink :to="`/${owner}/${repoName}/src/${refType}/${branch}`" class="section muted">{{ repoName }}</RouterLink>
+            <template v-for="(part, i) in pathParts" :key="i">
+              <span class="breadcrumb-divider">/</span>
+              <span v-if="i === pathParts.length - 1" class="active section">{{ part }}</span>
+              <RouterLink v-else :to="`/${owner}/${repoName}/src/${refType}/${branch}/${pathParts.slice(0, i + 1).join('/')}`" class="section muted">{{ part }}</RouterLink>
+            </template>
+          </span>
         </div>
       </div>
 
-      <div v-if="Array.isArray(contents)" id="repo-files-table" class="ui segment">
-        <div class="ui attached table segment">
-          <table class="ui very basic fixed table single line">
+      <!-- Directory listing -->
+      <template v-if="isDir">
+        <div class="repo-file-table tw-border tw-rounded">
+          <div v-if="lastCommit" class="repo-file-last-commit tw-flex tw-items-center tw-gap-2 tw-px-4 tw-py-2 tw-border-b tw-bg-input">
+            <img v-if="lastCommit.author?.avatar_url" :src="lastCommit.author.avatar_url" class="ui avatar image" style="width:20px;height:20px" alt="">
+            <RouterLink v-if="lastCommit.author?.login" :to="`/${lastCommit.author.login}`" class="muted tw-font-semibold">{{ lastCommit.author.login }}</RouterLink>
+            <span v-else class="tw-font-semibold tw-text-text-light">{{ lastCommit.commit?.author?.name }}</span>
+            <RouterLink :to="`/${owner}/${repoName}/commit/${lastCommit.sha}`" class="tw-text-text-light tw-truncate">
+              {{ lastCommit.commit?.message?.split('\n')[0] }}
+            </RouterLink>
+            <span class="tw-text-text-light-3 tw-ml-auto tw-shrink-0 tw-text-sm">{{ formatRelativeDate(lastCommit.commit?.author?.date) }}</span>
+          </div>
+          <table class="ui very basic table tw-m-0">
             <tbody>
-              <tr
-                v-for="entry in sortedContents"
-                :key="entry.name"
-                class="repo-file-item"
-              >
-                <td class="repo-file-cell name">
-                  <div class="flex-text-block">
-                    <SvgIcon
-                      :name="entry.type === 'dir' ? 'octicon-file-directory-fill' : 'octicon-file'"
-                      :size="16"
-                      class="tw-mr-2"
-                    />
-                    <RouterLink :to="buildEntryPath(entry)" class="muted">{{ entry.name }}</RouterLink>
-                  </div>
+              <tr v-if="pathParts.length" class="tw-border-b">
+                <td class="tw-w-6 tw-py-2 tw-pl-4">
+                  <SvgIcon name="octicon-file-directory-fill" :size="16" class="tw-text-primary"/>
                 </td>
-                <td class="repo-file-cell message"/>
-                <td class="repo-file-cell age"/>
+                <td class="tw-py-2" colspan="2"><RouterLink :to="parentPath">…</RouterLink></td>
+              </tr>
+              <tr v-for="entry in sortedEntries" :key="entry.sha + entry.name" class="tw-border-b last:tw-border-0">
+                <td class="tw-w-6 tw-py-2 tw-pl-4">
+                  <SvgIcon v-if="entry.type === 'dir'" name="octicon-file-directory-fill" :size="16" class="tw-text-primary"/>
+                  <SvgIcon v-else name="octicon-file" :size="16" class="tw-text-text-light"/>
+                </td>
+                <td class="tw-py-2">
+                  <RouterLink :to="entryLink(entry)">{{ entry.name }}</RouterLink>
+                </td>
+                <td class="tw-py-2 tw-text-right tw-pr-4 tw-text-sm tw-text-text-light-3"/>
               </tr>
             </tbody>
           </table>
         </div>
-      </div>
+      </template>
 
-      <div v-else class="non-diff-file-content">
-        <div class="file-header">
-          <div class="file-info">
-            <div class="file-info-entry">{{ contents.name }}</div>
+      <!-- File view (repo/view_file.tmpl) -->
+      <template v-else>
+        <div class="tw-border tw-rounded">
+          <!-- File header -->
+          <div class="file-header tw-flex tw-items-center tw-justify-between tw-px-4 tw-py-2 tw-bg-input tw-border-b">
+            <div class="flex-text-block tw-gap-2">
+              <SvgIcon name="octicon-file" :size="16"/>
+              <span class="tw-font-semibold">{{ fileName }}</span>
+              <span v-if="fileSize" class="tw-text-text-light tw-text-sm">({{ fileSize }})</span>
+            </div>
+            <div class="tw-flex tw-gap-2">
+              <a v-if="downloadUrl" :href="downloadUrl" class="ui compact small basic button" download>
+                <SvgIcon name="octicon-download" :size="14"/>
+              </a>
+              <button v-if="fileContent" class="ui compact small basic button" @click="copyContent" :title="'Copy raw content'">
+                <SvgIcon name="octicon-copy" :size="14"/>
+              </button>
+              <a v-if="rawUrl" :href="rawUrl" class="ui compact small basic button" target="_blank" rel="noopener">Raw</a>
+            </div>
           </div>
-          <div class="file-actions">
-            <a
-              v-if="contents.download_url"
-              :href="contents.download_url"
-              class="ui tiny basic button"
-              rel="nofollow"
-            >Raw</a>
+          <!-- File body -->
+          <div v-if="loading" class="tw-text-center tw-py-8 tw-text-text-light">Loading…</div>
+          <div v-else-if="isBinary" class="tw-px-4 tw-py-8 tw-text-center tw-text-text-light">
+            Binary file — <a v-if="downloadUrl" :href="downloadUrl">Download</a>
           </div>
+          <div v-else-if="isImage" class="tw-text-center tw-p-4">
+            <img :src="rawUrl" :alt="fileName" class="tw-max-w-full">
+          </div>
+          <pre v-else-if="fileContent" class="code-view tw-m-0 tw-overflow-auto tw-p-4 tw-text-sm"><code>{{ fileContent }}</code></pre>
+          <div v-else class="tw-px-4 tw-py-8 tw-text-center tw-text-text-light">File is empty.</div>
         </div>
-        <div class="file-view code-view">
-          <table>
-            <tbody>
-              <tr
-                v-for="(line, idx) in fileLines"
-                :key="idx"
-              >
-                <td class="lines-num" :id="`L${idx + 1}`">
-                  <span>{{ idx + 1 }}</span>
-                </td>
-                <td class="lines-code">
-                  <code>{{ line }}</code>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      </template>
     </div>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
-import {ref, computed, watch, onMounted} from 'vue';
-import {useRoute, useRouter, RouterLink} from 'vue-router';
+import {ref, computed, onMounted, onUnmounted, watch} from 'vue';
+import {useRoute, RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-import RepoNav from '../components/RepoNav.vue';
+import BaseAlert from '../components/BaseAlert.vue';
+import RepoHeader from '../components/RepoHeader.vue';
 import {SvgIcon} from '../../svg.ts';
-import {
-  createRepoBranch, createRepoTag, deleteRepoBranch, deleteRepoTag, getRepo, getRepoBranches, getRepoContents, getRepoTags,
-  getCurrentUser, isRepoStarred, starRepo, unstarRepo, writeRepoFile,
-  renameRepoBranch, renameRepoTag,
-  type Branch, type ContentsResponse, type Repository, type Tag, type User,
-} from '../api/index.ts';
+import {apiBase, appSubUrl} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
 
 const route = useRoute();
-const router = useRouter();
-
 const owner = computed(() => route.params.owner as string);
 const repoName = computed(() => route.params.repo as string);
-const refType = computed(() => route.params.refType as string);
-const branchRef = computed(() => route.params.ref as string);
-const filePath = computed(() => {
-  const pm = route.params.pathMatch;
-  return Array.isArray(pm) ? pm.join('/') : (pm ?? '');
+const refType = computed(() => (route.params.refType as string) || 'branch');
+const branch = computed(() => (route.params.ref as string) || 'main');
+const treePath = computed(() => {
+  const p = route.params.pathMatch ?? route.params.path;
+  return Array.isArray(p) ? p.join('/') : (p || '');
 });
+const pathParts = computed(() => (treePath.value ? treePath.value.split('/') : []));
+const fileName = computed(() => pathParts.value[pathParts.value.length - 1] || '');
 
-const contents = ref<ContentsResponse | ContentsResponse[] | null>(null);
+function authHeaders(): Record<string, string> {
+  const token = getStoredToken();
+  return token ? {Authorization: `token ${token}`} : {};
+}
+
+const entries = ref<any[]>([]);
+const lastCommit = ref<any>(null);
+const fileContent = ref('');
+const fileSize = ref('');
+const downloadUrl = ref('');
+const rawUrl = ref('');
+const isBinary = ref(false);
+const isImage = ref(false);
+const isDir = ref(true);
 const loading = ref(false);
-const error = ref<string | null>(null);
-const repo = ref<Repository | null>(null);
-const currentUser = ref<User | null>(null);
-const starred = ref(false);
-const starLoading = ref(false);
-const branches = ref<Branch[]>([]);
-const tags = ref<Tag[]>([]);
-const selectedRef = ref('');
-const uploadInput = ref<HTMLInputElement | null>(null);
-const editingFile = ref(false);
-const newFileContent = ref('');
-const commitMessage = ref('');
-const savingFile = ref(false);
-const actionError = ref('');
+const flash = ref<{error?: string}>({});
 
-const sortedContents = computed(() => {
-  if (!Array.isArray(contents.value)) return [];
-  return [...contents.value].sort((a, b) => {
-    if (a.type === 'dir' && b.type !== 'dir') return -1;
-    if (a.type !== 'dir' && b.type === 'dir') return 1;
-    return a.name.localeCompare(b.name);
-  });
+const branches = ref<any[]>([]);
+const tags = ref<any[]>([]);
+const branchDropdownOpen = ref(false);
+const branchDropdownEl = ref<HTMLElement | null>(null);
+const branchSearch = ref('');
+
+const filteredBranches = computed(() =>
+  branches.value.filter(b => !branchSearch.value || b.name.toLowerCase().includes(branchSearch.value.toLowerCase())));
+const filteredTags = computed(() =>
+  tags.value.filter(t => !branchSearch.value || t.name.toLowerCase().includes(branchSearch.value.toLowerCase())));
+
+const sortedEntries = computed(() =>
+  [...entries.value].sort((a, b) => {
+    if (a.type === b.type) return a.name.localeCompare(b.name);
+    return a.type === 'dir' ? -1 : 1;
+  }));
+
+const parentPath = computed(() => {
+  if (!pathParts.value.length) return `/${owner.value}/${repoName.value}`;
+  const parent = pathParts.value.slice(0, -1).join('/');
+  return parent
+    ? `/${owner.value}/${repoName.value}/src/${refType.value}/${branch.value}/${parent}`
+    : `/${owner.value}/${repoName.value}`;
 });
 
-const fileContent = computed(() => {
-  if (Array.isArray(contents.value) || !contents.value) return '';
-  try {
-    return atob(contents.value.content.replace(/\s/g, ''));
-  } catch {
-    return contents.value.content;
-  }
-});
-
-const fileLines = computed(() => fileContent.value.split('\n'));
-const currentRefType = computed(() => (selectedRef.value.split(':')[0] || 'branch') as 'branch' | 'tag' | 'commit');
-const currentRefName = computed(() => selectedRef.value.split(':').slice(1).join(':'));
-const refOptions = computed(() => {
-  const options = [
-    ...branches.value.map((branch) => ({value: `branch:${branch.name}`, label: `Branch: ${branch.name}`})),
-    ...tags.value.map((tag) => ({value: `tag:${tag.name}`, label: `Tag: ${tag.name}`})),
-  ];
-  const current = `${refType.value}:${branchRef.value}`;
-  if (!options.some((o) => o.value === current)) {
-    const prefix = refType.value === 'tag' ? 'Tag' : refType.value === 'commit' ? 'Commit' : 'Branch';
-    options.unshift({value: current, label: `${prefix}: ${branchRef.value}`});
-  }
-  return options;
-});
-
-function buildEntryPath(entry: ContentsResponse): string {
-  const base = `/${owner.value}/${repoName.value}/src/${refType.value}/${branchRef.value}`;
-  return entry.path ? `${base}/${entry.path}` : base;
+function entryLink(entry: any): string {
+  const base = `/${owner.value}/${repoName.value}/src/${refType.value}/${branch.value}`;
+  return entry.path ? `${base}/${entry.path}` : `${base}/${entry.name}`;
 }
 
-async function toggleStar() {
-  if (!currentUser.value) return;
-  starLoading.value = true;
-  try {
-    if (starred.value) {
-      await unstarRepo(owner.value, repoName.value);
-    } else {
-      await starRepo(owner.value, repoName.value);
-    }
-    starred.value = !starred.value;
-    if (repo.value) {
-      repo.value = {...repo.value, stars_count: repo.value.stars_count + (starred.value ? 1 : -1)};
-    }
-  } catch {
-    // ignore
-  } finally {
-    starLoading.value = false;
+function toggleBranchDropdown() { branchDropdownOpen.value = !branchDropdownOpen.value; }
+
+function onDocClick(e: MouseEvent) {
+  if (branchDropdownEl.value && !branchDropdownEl.value.contains(e.target as Node)) {
+    branchDropdownOpen.value = false;
   }
 }
 
-async function load() {
-  if (!owner.value || !repoName.value || !branchRef.value) return;
+function formatRelativeDate(d: string): string {
+  if (!d) return '';
+  const diff = Date.now() - new Date(d).getTime();
+  const secs = Math.floor(diff / 1000);
+  if (secs < 60) return `${secs}s ago`;
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  return new Date(d).toLocaleDateString();
+}
+
+async function copyContent() {
+  try { await navigator.clipboard.writeText(fileContent.value); } catch { /* empty */ }
+}
+
+const IMAGE_EXTS = new Set(['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp', 'ico', 'bmp']);
+
+async function loadBranchesAndTags() {
+  try {
+    const [br, tg] = await Promise.all([
+      fetch(`${apiBase}/repos/${owner.value}/${repoName.value}/branches?limit=100`, {headers: authHeaders()}),
+      fetch(`${apiBase}/repos/${owner.value}/${repoName.value}/tags?limit=100`, {headers: authHeaders()}),
+    ]);
+    if (br.ok) branches.value = await br.json();
+    if (tg.ok) tags.value = await tg.json();
+  } catch { /* empty */ }
+}
+
+async function loadLastCommit() {
+  try {
+    const resp = await fetch(
+      `${apiBase}/repos/${owner.value}/${repoName.value}/commits?limit=1&sha=${encodeURIComponent(branch.value)}`,
+      {headers: authHeaders()},
+    );
+    if (resp.ok) {
+      const commits = await resp.json();
+      lastCommit.value = commits[0] ?? null;
+    }
+  } catch { /* empty */ }
+}
+
+async function loadContent() {
   loading.value = true;
-  error.value = null;
-  contents.value = null;
-  selectedRef.value = `${refType.value}:${branchRef.value}`;
+  fileContent.value = '';
+  entries.value = [];
+  isBinary.value = false;
+  isImage.value = false;
+  flash.value = {};
   try {
-    contents.value = await getRepoContents(owner.value, repoName.value, filePath.value, branchRef.value);
-    if (!Array.isArray(contents.value)) {
-      newFileContent.value = fileContent.value;
-      commitMessage.value = `Update ${contents.value.path}`;
+    const path = treePath.value || '';
+    const resp = await fetch(
+      `${apiBase}/repos/${owner.value}/${repoName.value}/contents/${path}?ref=${encodeURIComponent(branch.value)}`,
+      {headers: authHeaders()},
+    );
+    if (!resp.ok) {
+      flash.value.error = resp.status === 404 ? 'Path not found.' : 'Failed to load content.';
+      loading.value = false;
+      return;
     }
-  } catch (e) {
-    error.value = String(e);
+    const data = await resp.json();
+    if (Array.isArray(data)) {
+      isDir.value = true;
+      entries.value = data;
+    } else {
+      isDir.value = false;
+      fileSize.value = data.size > 1048576 ? `${(data.size / 1048576).toFixed(1)} MB` : `${(data.size / 1024).toFixed(1)} KB`;
+      downloadUrl.value = data.download_url || '';
+      rawUrl.value = data.download_url || `${appSubUrl}/${owner.value}/${repoName.value}/raw/${refType.value}/${branch.value}/${path}`;
+
+      const ext = fileName.value.split('.').pop()?.toLowerCase() ?? '';
+      if (IMAGE_EXTS.has(ext)) {
+        isImage.value = true;
+      } else if (data.content) {
+        try {
+          const decoded = atob(data.content.replace(/\n/g, ''));
+          // Check if binary by looking for null bytes
+          if (decoded.includes('\0')) {
+            isBinary.value = true;
+          } else {
+            fileContent.value = decoded;
+          }
+        } catch { isBinary.value = true; }
+      } else if (data.download_url) {
+        const rawResp = await fetch(data.download_url, {headers: authHeaders()});
+        if (rawResp.ok) fileContent.value = await rawResp.text();
+      }
+    }
+  } catch {
+    flash.value.error = 'Failed to load content.';
   } finally {
     loading.value = false;
   }
 }
 
-function toBase64(bytes: Uint8Array): string {
-  return btoa(Array.from(bytes, (byte) => String.fromCharCode(byte)).join(''));
-}
+watch([owner, repoName, branch, treePath], () => { loadContent(); loadLastCommit(); });
 
-async function switchRef() {
-  const [type, ...rest] = selectedRef.value.split(':');
-  const ref = rest.join(':');
-  const path = filePath.value ? `/${filePath.value}` : '';
-  await router.push(`/${owner.value}/${repoName.value}/src/${type}/${encodeURIComponent(ref)}${path}`);
-}
-
-async function createBranchFromCurrent() {
-  const name = window.prompt('New branch name');
-  if (!name?.trim()) return;
-  actionError.value = '';
-  try {
-    await createRepoBranch(owner.value, repoName.value, name.trim(), branchRef.value);
-    await loadRefs();
-  } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to create branch';
-  }
-}
-
-async function createTagFromCurrent() {
-  const name = window.prompt('New tag name');
-  if (!name?.trim()) return;
-  actionError.value = '';
-  try {
-    await createRepoTag(owner.value, repoName.value, name.trim(), branchRef.value);
-    await loadRefs();
-  } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to create tag';
-  }
-}
-
-async function renameCurrentRef() {
-  const type = currentRefType.value;
-  const ref = currentRefName.value;
-  if (!ref || type === 'commit') return;
-  const newName = window.prompt(`Rename ${type}`, ref);
-  if (!newName?.trim() || newName.trim() === ref) return;
-  actionError.value = '';
-  try {
-    if (type === 'branch') {
-      await renameRepoBranch(owner.value, repoName.value, ref, newName.trim());
-    } else {
-      await renameRepoTag(owner.value, repoName.value, ref, newName.trim());
-    }
-    await loadRefs();
-    await router.push(`/${owner.value}/${repoName.value}/src/${type}/${encodeURIComponent(newName.trim())}`);
-  } catch (e) {
-    actionError.value = e instanceof Error ? e.message : `Failed to rename ${type}`;
-  }
-}
-
-async function deleteCurrentRef() {
-  const type = currentRefType.value;
-  const ref = currentRefName.value;
-  if (!ref || type === 'commit') return;
-  if (!window.confirm(`Delete ${type} "${ref}"?`)) return;
-  actionError.value = '';
-  try {
-    if (type === 'branch') {
-      await deleteRepoBranch(owner.value, repoName.value, ref);
-    } else {
-      await deleteRepoTag(owner.value, repoName.value, ref);
-    }
-    await loadRefs();
-    const fallbackBranch = branches.value[0]?.name || repo.value?.default_branch || 'main';
-    await router.push(`/${owner.value}/${repoName.value}/src/branch/${encodeURIComponent(fallbackBranch)}`);
-  } catch (e) {
-    actionError.value = e instanceof Error ? e.message : `Failed to delete ${type}`;
-  }
-}
-
-function triggerUpload() {
-  uploadInput.value?.click();
-}
-
-async function handleUpload(event: Event) {
-  const input = event.target as HTMLInputElement;
-  const file = input.files?.[0];
-  if (!file) return;
-  const targetPath = window.prompt('File path', filePath.value ? `${filePath.value}/${file.name}` : file.name);
-  input.value = '';
-  if (!targetPath?.trim()) return;
-  actionError.value = '';
-  savingFile.value = true;
-  try {
-    const bytes = new Uint8Array(await file.arrayBuffer());
-    const targetBranch = refType.value === 'branch' ? branchRef.value : undefined;
-    const newBranch = refType.value === 'branch' ? undefined : (window.prompt('Target branch for upload', repo.value?.default_branch ?? 'main') ?? undefined);
-    await writeRepoFile(owner.value, repoName.value, targetPath.trim(), {
-      contentBase64: toBase64(bytes),
-      message: `Upload ${file.name}`,
-      branch: targetBranch,
-      new_branch: newBranch,
-    });
-    await loadRefs();
-    await router.push(`/${owner.value}/${repoName.value}/src/branch/${encodeURIComponent(newBranch || targetBranch || repo.value?.default_branch || 'main')}/${targetPath.trim()}`);
-  } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to upload file';
-  } finally {
-    savingFile.value = false;
-  }
-}
-
-async function saveFile() {
-  if (Array.isArray(contents.value) || !contents.value) return;
-  actionError.value = '';
-  savingFile.value = true;
-  try {
-    const targetBranch = refType.value === 'branch' ? branchRef.value : undefined;
-    const newBranch = refType.value === 'branch' ? undefined : (window.prompt('Target branch for edit', repo.value?.default_branch ?? 'main') ?? undefined);
-    await writeRepoFile(owner.value, repoName.value, contents.value.path, {
-      contentBase64: toBase64(new TextEncoder().encode(newFileContent.value)),
-      message: commitMessage.value.trim() || `Update ${contents.value.path}`,
-      branch: targetBranch,
-      new_branch: newBranch,
-    });
-    editingFile.value = false;
-    await loadRefs();
-    if (newBranch) {
-      await router.push(`/${owner.value}/${repoName.value}/src/branch/${encodeURIComponent(newBranch)}/${contents.value.path}`);
-    } else {
-      await load();
-    }
-  } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to save file';
-  } finally {
-    savingFile.value = false;
-  }
-}
-
-async function loadRefs() {
-  [branches.value, tags.value] = await Promise.all([
-    getRepoBranches(owner.value, repoName.value).catch(() => []),
-    getRepoTags(owner.value, repoName.value).catch(() => []),
-  ]);
-  selectedRef.value = `${refType.value}:${branchRef.value}`;
-}
-
-watch([owner, repoName, refType, branchRef, filePath], load);
-onMounted(async () => {
-  [repo.value, currentUser.value] = await Promise.all([
-    getRepo(owner.value, repoName.value).catch(() => null),
-    getCurrentUser(),
-  ]);
-  await loadRefs();
-  if (currentUser.value) {
-    starred.value = await isRepoStarred(owner.value, repoName.value).catch(() => false);
-  }
-  await load();
+onMounted(() => {
+  loadBranchesAndTags();
+  loadContent();
+  loadLastCommit();
+  document.addEventListener('click', onDocClick);
+});
+onUnmounted(() => {
+  document.removeEventListener('click', onDocClick);
 });
 </script>

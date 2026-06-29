@@ -38,7 +38,12 @@ import RepoTagsPage from '../pages/RepoTagsPage.vue';
 import RepoWikiPage from '../pages/RepoWikiPage.vue';
 import RepoActivityPage from '../pages/RepoActivityPage.vue';
 import NotFoundPage from '../pages/NotFoundPage.vue';
+import ServerErrorPage from '../pages/ServerErrorPage.vue';
 import UserSettingsOAuth2EditPage from '../pages/UserSettingsOAuth2EditPage.vue';
+import ExploreUsersPage from '../pages/ExploreUsersPage.vue';
+import ExploreCodePage from '../pages/ExploreCodePage.vue';
+import ExploreOrgsPage from '../pages/ExploreOrgsPage.vue';
+import ForkRepoPage from '../pages/ForkRepoPage.vue';
 
 // ---------------------------------------------------------------------------
 // Auto-detect uninstalled state.
@@ -72,8 +77,9 @@ const routes: RouteRecordRaw[] = [
   // ── Explore ───────────────────────────────────────────────────────────────
   {path: '/explore', redirect: '/explore/repos'},
   {path: '/explore/repos', component: ExplorePage, meta: {title: 'Explore Repositories', tab: 'repos'}},
-  {path: '/explore/users', component: ExplorePage, meta: {title: 'Explore Users', tab: 'users'}},
-  {path: '/explore/organizations', component: ExplorePage, meta: {title: 'Explore Organizations', tab: 'orgs'}},
+  {path: '/explore/users', component: ExploreUsersPage, meta: {title: 'Explore Users', tab: 'users'}},
+  {path: '/explore/organizations', component: ExploreOrgsPage, meta: {title: 'Explore Organizations', tab: 'orgs'}},
+  {path: '/explore/code', component: ExploreCodePage, meta: {title: 'Explore Code', tab: 'code'}},
 
   // ── Auth ──────────────────────────────────────────────────────────────────
   {path: '/user/login', component: LoginPage, meta: {title: 'Sign In', public: true}},
@@ -194,6 +200,9 @@ const routes: RouteRecordRaw[] = [
   {path: '/:owner/:repo/watchers', component: UserCardsPage, meta: {title: 'Watchers'}},
   {path: '/:owner/:repo/stargazers', component: UserCardsPage, meta: {title: 'Stargazers'}},
 
+  // Fork
+  {path: '/:owner/:repo/fork', component: ForkRepoPage, meta: {title: 'Fork Repository'}},
+
   // Actions (CI)
   {path: '/:owner/:repo/actions', component: RepoOverviewPage, meta: {title: 'Actions'}},
   {path: '/:owner/:repo/actions/runs/:runId', component: RepoOverviewPage, meta: {title: 'Action Run'}},
@@ -204,6 +213,11 @@ const routes: RouteRecordRaw[] = [
 
   // ── User / org profile — LAST dynamic single-segment path ─────────────────
   {path: '/:username', component: UserProfilePage, meta: {title: 'Profile', public: true}},
+  {path: '/:username/followers', component: UserCardsPage, meta: {title: 'Followers', public: true}},
+  {path: '/:username/following', component: UserCardsPage, meta: {title: 'Following', public: true}},
+
+  // ── 500 error page ─────────────────────────────────────────────────────────
+  {path: '/500', component: ServerErrorPage, meta: {title: 'Internal Server Error', public: true}},
 
   // ── 404 catch-all ─────────────────────────────────────────────────────────
   {path: '/:pathMatch(.*)*', component: NotFoundPage, meta: {title: 'Page Not Found', public: true}},

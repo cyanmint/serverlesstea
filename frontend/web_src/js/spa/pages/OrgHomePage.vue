@@ -1,93 +1,119 @@
+<!-- Translated from: templates/org/home.tmpl + org/header.tmpl -->
 <template>
-  <AppLayout>
-    <div role="main" class="page-content organization profile">
-      <div v-if="loading" class="ui container tw-py-8">
-        <div class="ui active centered inline loader"/>
-      </div>
-
-      <div v-else-if="error" class="ui container tw-py-6">
-        <div class="ui negative message"><p>{{ error }}</p></div>
-      </div>
-
-      <template v-else-if="org">
-        <!-- Org header -->
-        <div class="ui container tw-flex tw-gap-4 tw-py-4">
-          <div>
-            <img :src="org.avatar_url" :alt="org.login" class="ui avatar image" style="width:100px;height:100px;border-radius:4px">
+  <AppLayout :page-class="'organization profile'" :title="org?.full_name || org?.username || 'Organization'">
+    <div class="ui container">
+      <div class="ui mobile reversed stackable grid">
+        <!-- Main content column -->
+        <div class="ui eleven wide column">
+          <div v-if="org?.description" id="readme_profile" class="render-content markup">{{ org.description }}</div>
+          <SharedRepoSearch v-model:search="keyword" v-model:sort="sort" :loading="loading" @search="loadRepos"/>
+          <div class="divider"></div>
+          <div v-if="!repos.length" class="empty-placeholder tw-text-center tw-py-8">
+            <h2>No repositories</h2>
+            <p>This organization doesn't have any repositories yet.</p>
           </div>
-          <div class="flex-relaxed-list">
-            <div class="ui header tw-m-0">
-              <span class="tw-text-2xl">{{ org.full_name || org.login }}</span>
-            </div>
-            <div v-if="org.description" class="tw-mt-1">{{ org.description }}</div>
-          </div>
+          <SharedRepoList v-else :repos="repos"/>
+          <BasePaginate :total="total" :page="page" :limit="limit" @page-change="changePage"/>
         </div>
-
-        <!-- Repos list -->
-        <div class="ui container">
-          <div class="ui mobile reversed stackable grid">
-            <div class="ui eleven wide column">
-              <h4 class="ui top attached header">Repositories</h4>
-              <div v-if="reposLoading" class="ui active centered inline loader"/>
-              <div v-else-if="!repos.length" class="empty-placeholder">
-                <h2>No repositories</h2>
-                <p>This organization has no public repositories.</p>
-              </div>
-              <div v-else class="repository-list">
-                <div v-for="r in repos" :key="r.id" class="item tw-py-2 tw-border-b last:tw-border-0">
-                  <div class="tw-flex tw-justify-between tw-items-center">
-                    <div>
-                      <RouterLink :to="`/${r.full_name}`" class="tw-font-semibold">{{ r.name }}</RouterLink>
-                      <span v-if="r.private" class="ui mini label tw-ml-1">Private</span>
-                      <span v-if="r.fork" class="ui mini label tw-ml-1">Fork</span>
-                      <p v-if="r.description" class="tw-text-sm tw-text-gray-600 tw-mt-0.5">{{ r.description }}</p>
-                    </div>
-                    <div class="tw-text-sm tw-text-gray-500">
-                      <span v-if="r.language" class="tw-mr-2">{{ r.language }}</span>
-                      ☆ {{ r.stars_count }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="ui five wide column">
-              <RouterLink :to="`/repo/create?org=${org.id}`" class="ui primary button tw-mb-4 tw-block tw-text-center">
-                New Repository
+        <!-- Sidebar -->
+        <div class="ui five wide column">
+          <div v-if="org?.avatar_url" class="tw-text-center tw-mb-4">
+            <img :src="org.avatar_url" class="ui circular image" width="100">
+          </div>
+          <h2>{{ org?.full_name || org?.username }}</h2>
+          <div v-if="org?.location" class="tw-my-2"><i class="octicon-location"></i> {{ org.location }}</div>
+          <div v-if="org?.website" class="tw-my-2"><a :href="org.website" target="_blank" rel="nofollow noopener">{{ org.website }}</a></div>
+          <div class="divider"></div>
+          <div v-if="members.length">
+            <h4 class="ui top attached header flex-left-right">
+              <strong>Members</strong>
+              <RouterLink :to="`/${orgName}/members`" class="tw-text-text-light">{{ members.length }}</RouterLink>
+            </h4>
+            <div class="ui attached segment tw-flex tw-flex-wrap tw-gap-2">
+              <RouterLink v-for="m in members" :key="m.id" :to="`/${m.login}`">
+                <img :src="m.avatar_url" :alt="m.login" width="32" height="32" class="ui circular image" :title="m.login">
               </RouterLink>
             </div>
           </div>
+          <div v-if="teams.length" class="tw-mt-4">
+            <h4 class="ui top attached header flex-left-right">
+              <strong>Teams</strong>
+              <RouterLink :to="`/${orgName}/teams`" class="tw-text-text-light">{{ teams.length }}</RouterLink>
+            </h4>
+            <div class="ui attached segment">
+              <div v-for="t in teams" :key="t.id" class="tw-mb-2">
+                <RouterLink :to="`/${orgName}/teams/${t.name?.toLowerCase()}`"><strong>{{ t.name }}</strong></RouterLink>
+                <p class="tw-text-text-light">{{ t.members_count || 0 }} members · {{ t.repo_count || 0 }} repos</p>
+              </div>
+            </div>
+          </div>
         </div>
-      </template>
+      </div>
     </div>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
 import {ref, onMounted} from 'vue';
-import {RouterLink, useRoute} from 'vue-router';
+import {useRoute, RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-import {getUser, getUserRepos, type User, type Repository} from '../api/index.ts';
+import SharedRepoSearch from '../components/SharedRepoSearch.vue';
+import SharedRepoList from '../components/SharedRepoList.vue';
+import BasePaginate from '../components/BasePaginate.vue';
+import {apiBase} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
 
 const route = useRoute();
-const orgName = route.params['org'] as string;
+const orgName = route.params.orgname as string;
+const token = getStoredToken() ?? '';
+const headers: Record<string, string> = token ? {Authorization: `token ${token}`} : {};
 
-const org = ref<User | null>(null);
-const repos = ref<Repository[]>([]);
-const loading = ref(true);
-const reposLoading = ref(true);
-const error = ref('');
+const org = ref<any>(null);
+const repos = ref<any[]>([]);
+const members = ref<any[]>([]);
+const teams = ref<any[]>([]);
+const keyword = ref('');
+const sort = ref('newest');
+const page = ref(1);
+const limit = ref(20);
+const total = ref(0);
+const loading = ref(false);
+
+async function loadOrg() {
+  try {
+    const resp = await fetch(`${apiBase}/orgs/${orgName}`, {headers});
+    if (resp.ok) org.value = await resp.json();
+  } catch { /* empty */ }
+}
+
+async function loadRepos() {
+  loading.value = true;
+  try {
+    const params = new URLSearchParams({page: String(page.value), limit: String(limit.value), sort: sort.value});
+    if (keyword.value) params.set('q', keyword.value);
+    const resp = await fetch(`${apiBase}/orgs/${orgName}/repos?${params}`, {headers});
+    if (resp.ok) repos.value = await resp.json();
+    total.value = Number(resp.headers.get('x-total-count')) || repos.value.length;
+  } catch { /* empty */ } finally { loading.value = false; }
+}
+
+async function loadMembers() {
+  try {
+    const resp = await fetch(`${apiBase}/orgs/${orgName}/members`, {headers});
+    if (resp.ok) members.value = await resp.json();
+  } catch { /* empty */ }
+}
+
+async function loadTeams() {
+  try {
+    const resp = await fetch(`${apiBase}/orgs/${orgName}/teams`, {headers});
+    if (resp.ok) teams.value = await resp.json();
+  } catch { /* empty */ }
+}
+
+function changePage(p: number) { page.value = p; loadRepos(); }
 
 onMounted(async () => {
-  try {
-    org.value = await getUser(orgName);
-    loading.value = false;
-    repos.value = await getUserRepos(orgName, {limit: 20});
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to load organization';
-    loading.value = false;
-  } finally {
-    reposLoading.value = false;
-  }
+  await Promise.all([loadOrg(), loadRepos(), loadMembers(), loadTeams()]);
 });
 </script>

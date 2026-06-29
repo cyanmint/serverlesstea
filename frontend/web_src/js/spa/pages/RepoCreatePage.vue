@@ -1,62 +1,63 @@
+<!-- Translated from: templates/repo/create.tmpl -->
 <template>
-  <AppLayout>
-    <div role="main" class="page-content repository new-repo">
-      <div class="ui container medium-width">
-        <h3 class="ui top attached header">New Repository</h3>
-        <div class="ui attached segment">
-          <div v-if="error" class="ui negative message"><p>{{ error }}</p></div>
-          <form class="ui form left-right-form new-repo-form" @submit.prevent="handleSubmit">
-            <div class="inline required field" :class="{error: !!error}">
-              <label>Owner</label>
-              <div class="ui selection dropdown" style="min-width:200px">
-                <select v-model="ownerId" class="ui dropdown">
-                  <option v-if="currentUser" :value="currentUser.id">{{ currentUser.login }}</option>
-                  <option v-for="org in orgs" :key="org.id" :value="org.id">{{ org.login }}</option>
-                </select>
-              </div>
+  <AppLayout page-class="repository new-repo" title="New Repository">
+    <div class="ui container medium-width">
+      <h3 class="ui top attached header">New Repository</h3>
+      <div class="ui attached segment">
+        <BaseAlert :flash="flash"/>
+        <form class="ui form left-right-form" @submit.prevent="handleCreate">
+          <div class="inline required field">
+            <label>Owner</label>
+            <select v-model="form.owner" class="ui dropdown">
+              <option v-if="currentUser" :value="currentUser.login">{{ currentUser.login }}</option>
+              <option v-for="o in orgs" :key="o.id" :value="o.username">{{ o.username }}</option>
+            </select>
+          </div>
+          <div class="inline required field">
+            <label for="repo_name">Repository Name</label>
+            <input id="repo_name" v-model="form.name" name="repo_name" autofocus required maxlength="100">
+          </div>
+          <div class="inline field">
+            <label>Visibility</label>
+            <div class="ui checkbox">
+              <input v-model="form.private" type="checkbox">
+              <label>Make this repository private</label>
             </div>
-
-            <div class="inline required field">
-              <label for="repo_name">Repository Name</label>
-              <input id="repo_name" v-model="repoName" name="repo_name" autofocus required maxlength="100">
-              <span class="help">A good name is short and memorable.</span>
+          </div>
+          <div class="inline field">
+            <label for="description">Description</label>
+            <textarea id="description" v-model="form.description" rows="2" maxlength="2048"></textarea>
+          </div>
+          <div class="inline field">
+            <label>Initialize</label>
+            <div class="ui checkbox">
+              <input v-model="form.auto_init" type="checkbox">
+              <label>Initialize this repository with a README</label>
             </div>
-
-            <div class="inline field">
-              <label>Visibility</label>
-              <div class="ui checkbox">
-                <input v-model="isPrivate" name="private" type="checkbox">
-                <label>Make this repository private</label>
-              </div>
-            </div>
-
-            <div class="inline field">
-              <label for="description">Description</label>
-              <textarea id="description" v-model="description" rows="2" name="description" placeholder="Short description (optional)" maxlength="2048"/>
-            </div>
-
-            <div class="inline field">
-              <label>Initialize Repository</label>
-              <div class="ui checkbox">
-                <input v-model="autoInit" name="auto_init" type="checkbox">
-                <label>Initialize this repository</label>
-              </div>
-            </div>
-
-            <div v-if="autoInit" class="inline field">
-              <label for="default_branch">Default Branch</label>
-              <input id="default_branch" v-model="defaultBranch" name="default_branch" placeholder="main">
-            </div>
-
-            <div class="inline field">
-              <label/>
-              <button class="ui primary button" type="submit" :disabled="loading">
-                <span v-if="loading">Creating…</span>
-                <span v-else>Create Repository</span>
-              </button>
-            </div>
-          </form>
-        </div>
+          </div>
+          <div class="inline field">
+            <label for="gitignores">.gitignore</label>
+            <select id="gitignores" v-model="form.gitignores" class="ui dropdown">
+              <option value="">None</option>
+              <option v-for="gi in gitignoreList" :key="gi" :value="gi">{{ gi }}</option>
+            </select>
+          </div>
+          <div class="inline field">
+            <label for="license">License</label>
+            <select id="license" v-model="form.license" class="ui dropdown">
+              <option value="">None</option>
+              <option v-for="l in licenseList" :key="l" :value="l">{{ l }}</option>
+            </select>
+          </div>
+          <div class="inline field">
+            <label for="default_branch">Default Branch</label>
+            <input id="default_branch" v-model="form.default_branch" placeholder="main">
+          </div>
+          <div class="divider"></div>
+          <div class="inline field">
+            <button class="ui primary button" type="submit" :disabled="submitting">Create Repository</button>
+          </div>
+        </form>
       </div>
     </div>
   </AppLayout>
@@ -66,44 +67,76 @@
 import {ref, onMounted} from 'vue';
 import {useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-import {getCurrentUser, getUserOrgs, createRepo, type User} from '../api/index.ts';
+import BaseAlert from '../components/BaseAlert.vue';
+import {apiBase} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
+import {currentUser, initAuth} from '../stores/auth.ts';
 
 const router = useRouter();
-const currentUser = ref<User | null>(null);
-const orgs = ref<User[]>([]);
-const ownerId = ref<number | null>(null);
-const repoName = ref('');
-const description = ref('');
-const isPrivate = ref(false);
-const autoInit = ref(false);
-const defaultBranch = ref('main');
-const loading = ref(false);
-const error = ref('');
+const token = getStoredToken() ?? '';
+const headers = {'Content-Type': 'application/json', Authorization: `token ${token}`};
 
-onMounted(async () => {
-  currentUser.value = await getCurrentUser();
-  if (currentUser.value) {
-    ownerId.value = currentUser.value.id;
-    orgs.value = await getUserOrgs(currentUser.value.login);
-  }
+const orgs = ref<any[]>([]);
+const gitignoreList = ref<string[]>([]);
+const licenseList = ref<string[]>([]);
+const submitting = ref(false);
+const flash = ref<{error?: string}>({});
+const form = ref({
+  owner: '',
+  name: '',
+  private: false,
+  description: '',
+  auto_init: true,
+  gitignores: '',
+  license: '',
+  default_branch: 'main',
 });
 
-async function handleSubmit() {
-  loading.value = true;
-  error.value = '';
+async function loadMeta() {
   try {
-    const repo = await createRepo({
-      name: repoName.value,
-      description: description.value || undefined,
-      private: isPrivate.value,
-      auto_init: autoInit.value || undefined,
-      default_branch: defaultBranch.value || undefined,
+    await initAuth();
+    form.value.owner = currentUser.value?.login || '';
+    const [orgResp, giResp, licResp] = await Promise.all([
+      fetch(`${apiBase}/user/orgs`, {headers: {Authorization: `token ${token}`}}),
+      fetch(`${apiBase}/gitignore/templates`),
+      fetch(`${apiBase}/licenses`),
+    ]);
+    if (orgResp.ok) orgs.value = await orgResp.json();
+    if (giResp.ok) gitignoreList.value = await giResp.json();
+    if (licResp.ok) licenseList.value = (await licResp.json()).map((l: any) => l.name || l);
+  } catch { /* empty */ }
+}
+
+async function handleCreate() {
+  submitting.value = true;
+  flash.value = {};
+  try {
+    const resp = await fetch(`${apiBase}/user/repos`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        name: form.value.name,
+        description: form.value.description,
+        private: form.value.private,
+        auto_init: form.value.auto_init,
+        gitignores: form.value.gitignores,
+        license: form.value.license,
+        default_branch: form.value.default_branch || 'main',
+      }),
     });
-    router.push(`/${repo.full_name}`);
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to create repository';
+    if (resp.ok || resp.status === 201) {
+      const data = await resp.json();
+      router.push(`/${data.full_name}`);
+    } else {
+      const body = await resp.json().catch(() => ({}));
+      flash.value.error = body.message || 'Failed to create repository.';
+    }
+  } catch {
+    flash.value.error = 'Network error.';
   } finally {
-    loading.value = false;
+    submitting.value = false;
   }
 }
+
+onMounted(() => loadMeta());
 </script>

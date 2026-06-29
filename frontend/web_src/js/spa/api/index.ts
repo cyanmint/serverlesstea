@@ -49,6 +49,9 @@ export type User = {
   avatar_url: string;
   html_url: string;
   is_admin: boolean;
+  active?: boolean;
+  restricted?: boolean;
+  can_create_organization?: boolean;
   created: string;
   website?: string;
   location?: string;
@@ -77,6 +80,9 @@ export type Repository = {
   language: string;
   size: number;
   empty?: boolean;
+  topics?: string[];
+  website?: string;
+  permissions?: {admin: boolean; push: boolean; pull: boolean};
 };
 
 export type Issue = {
@@ -198,16 +204,37 @@ export async function login(username: string, password: string): Promise<User> {
   if (!userResp.ok) throw new Error('Invalid username or password.');
   const user: User = await userResp.json();
 
+  // Clean up any previously created SPA tokens to prevent accumulation.
+  try {
+    const listResp = await request(`${apiBase}/users/${encodeURIComponent(user.login)}/tokens`, {
+      method: 'GET',
+      headers: basicHeaders,
+    });
+    if (listResp.ok) {
+      const tokens: Array<{id: number; name: string}> = await listResp.json();
+      await Promise.all(
+        tokens
+          .filter((t) => t.name.startsWith('gitea-spa-'))
+          .map((t) => request(`${apiBase}/users/${encodeURIComponent(user.login)}/tokens/${t.id}`, {
+            method: 'DELETE',
+            headers: basicHeaders,
+          })),
+      );
+    }
+  } catch (err) { console.debug('Token cleanup failed:', err); }
+
   // Create a named API token so future requests use a token instead of password.
-  const tokenResp = await request(`${apiBase}/users/${encodeURIComponent(username)}/tokens`, {
+  // Use user.login (the canonical username) not the raw input which may be an email.
+  const tokenResp = await request(`${apiBase}/users/${encodeURIComponent(user.login)}/tokens`, {
     method: 'POST',
     headers: basicHeaders,
     data: {name: `gitea-spa-${Date.now()}`},
   });
-  if (tokenResp.ok) {
-    const tokenData: {sha1: string} = await tokenResp.json();
-    setStoredToken(tokenData.sha1);
+  if (!tokenResp.ok) {
+    throw new Error('Login failed: could not create an API token. Check that API access is enabled on this Gitea instance.');
   }
+  const tokenData: {sha1: string} = await tokenResp.json();
+  setStoredToken(tokenData.sha1);
 
   return user;
 }

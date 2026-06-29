@@ -1,86 +1,45 @@
+<!-- Translated from: templates/repo/issue/new.tmpl + repo/issue/new_form.tmpl -->
 <template>
-  <AppLayout page-class="repository new issue">
-    <RepoNav
-      :owner="owner"
-      :repo-name="repoName"
-      active-tab="issues"
-      :repo="repo"
-      :current-user="currentUser"
-      :starred="starred"
-      :star-loading="starLoading"
-      @toggle-star="toggleStar"
-    />
+  <AppLayout :page-class="'repository new issue'" :title="`New Issue - ${owner}/${repoName}`">
+    <RepoHeader :owner="owner" :repo-name="repoName"/>
     <div class="ui container">
-      <div v-if="!currentUser" class="ui warning message">
-        <p>You must be signed in to create an issue.</p>
-        <RouterLink to="/user/login" class="ui small primary button tw-mt-2">Sign In</RouterLink>
-      </div>
-
-      <form v-else class="issue-content ui comment form" id="new-issue" @submit.prevent="handleSubmit">
-        <div v-if="errorMessage" class="ui negative message tw-mb-4">
-          <p>{{ errorMessage }}</p>
+      <form class="ui form" @submit.prevent="handleSubmit">
+        <BaseAlert :flash="flash"/>
+        <div class="required field">
+          <label for="issue_title">Title</label>
+          <input id="issue_title" v-model="form.title" type="text" autofocus required placeholder="Title">
         </div>
-
-        <div class="issue-content-left">
-          <div class="ui comments">
-            <div class="comment">
-              <div class="tw-mr-4 not-mobile">
-                <img
-                  v-if="currentUser"
-                  :src="currentUser.avatar_url"
-                  :alt="currentUser.login"
-                  class="ui avatar image"
-                  width="40"
-                  height="40"
-                >
+        <div class="field">
+          <label>Write</label>
+          <textarea v-model="form.body" rows="10" placeholder="Leave a comment"></textarea>
+        </div>
+        <div class="ui grid">
+          <div class="twelve wide column">
+            <button class="ui primary button" type="submit" :disabled="submitting">Submit New Issue</button>
+          </div>
+          <div class="four wide column">
+            <div v-if="labels.length" class="tw-mb-4">
+              <label class="tw-font-bold">Labels</label>
+              <div v-for="label in labels" :key="label.id" class="ui checkbox tw-block tw-my-1">
+                <input v-model="selectedLabels" :value="label.id" type="checkbox">
+                <label :style="{color: '#' + label.color}">{{ label.name }}</label>
               </div>
-              <div class="ui segment content tw-my-0 avatar-content-left-arrow">
-                <div class="field" :class="{error: !!titleError}">
-                  <input
-                    id="issue_title"
-                    v-model="title"
-                    name="title"
-                    type="text"
-                    placeholder="Title"
-                    maxlength="255"
-                    autocomplete="off"
-                    required
-                    @input="titleError = ''"
-                  >
-                  <div v-if="titleError" class="ui pointing red label">{{ titleError }}</div>
-                </div>
-                <div class="field">
-                  <textarea
-                    v-model="body"
-                    class="markdown-text-editor"
-                    rows="10"
-                    placeholder="Leave a comment"
-                  />
-                </div>
-                <div class="flex-text-block tw-justify-end">
-                  <button
-                    type="submit"
-                    class="ui primary button"
-                    :class="{loading: submitting}"
-                    :disabled="submitting || !title.trim()"
-                  >
-                    Submit New Issue
-                  </button>
-                </div>
+            </div>
+            <div v-if="milestones.length" class="tw-mb-4">
+              <label class="tw-font-bold">Milestone</label>
+              <select v-model="form.milestone" class="ui dropdown tw-w-full">
+                <option value="">None</option>
+                <option v-for="m in milestones" :key="m.id" :value="m.id">{{ m.title }}</option>
+              </select>
+            </div>
+            <div v-if="assignees.length" class="tw-mb-4">
+              <label class="tw-font-bold">Assignees</label>
+              <div v-for="a in assignees" :key="a.id" class="ui checkbox tw-block tw-my-1">
+                <input v-model="selectedAssignees" :value="a.login" type="checkbox">
+                <label>{{ a.login }}</label>
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="issue-content-right ui segment">
-          <div class="ui header">Labels</div>
-          <div class="tw-text-placeholder-text tw-text-sm">No labels</div>
-          <div class="divider"/>
-          <div class="ui header">Milestone</div>
-          <div class="tw-text-placeholder-text tw-text-sm">No milestone</div>
-          <div class="divider"/>
-          <div class="ui header">Assignees</div>
-          <div class="tw-text-placeholder-text tw-text-sm">No assignees</div>
         </div>
       </form>
     </div>
@@ -89,71 +48,64 @@
 
 <script setup lang="ts">
 import {ref, onMounted} from 'vue';
-import {RouterLink, useRoute, useRouter} from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-import RepoNav from '../components/RepoNav.vue';
-import {getCurrentUser, getRepo, createIssue, isRepoStarred, starRepo, unstarRepo, type User, type Repository} from '../api/index.ts';
+import BaseAlert from '../components/BaseAlert.vue';
+import RepoHeader from '../components/RepoHeader.vue';
+import {apiBase} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
 
 const route = useRoute();
 const router = useRouter();
+const owner = route.params.owner as string;
+const repoName = route.params.repo as string;
+const token = getStoredToken() ?? '';
+const headers = {'Content-Type': 'application/json', Authorization: `token ${token}`};
 
-const owner = String(route.params.owner);
-const repoName = String(route.params.repo);
-
-const currentUser = ref<User | null>(null);
-const repo = ref<Repository | null>(null);
-const starred = ref(false);
-const starLoading = ref(false);
-const title = ref('');
-const body = ref('');
-const titleError = ref('');
-const errorMessage = ref('');
+const form = ref({title: '', body: '', milestone: ''});
+const labels = ref<any[]>([]);
+const milestones = ref<any[]>([]);
+const assignees = ref<any[]>([]);
+const selectedLabels = ref<number[]>([]);
+const selectedAssignees = ref<string[]>([]);
 const submitting = ref(false);
+const flash = ref<{error?: string}>({});
+
+async function loadMeta() {
+  try {
+    const [labelsResp, msResp, assigneesResp] = await Promise.all([
+      fetch(`${apiBase}/repos/${owner}/${repoName}/labels`, {headers: {Authorization: `token ${token}`}}),
+      fetch(`${apiBase}/repos/${owner}/${repoName}/milestones`, {headers: {Authorization: `token ${token}`}}),
+      fetch(`${apiBase}/repos/${owner}/${repoName}/assignees`, {headers: {Authorization: `token ${token}`}}),
+    ]);
+    if (labelsResp.ok) labels.value = await labelsResp.json();
+    if (msResp.ok) milestones.value = await msResp.json();
+    if (assigneesResp.ok) assignees.value = await assigneesResp.json();
+  } catch { /* empty */ }
+}
 
 async function handleSubmit() {
-  titleError.value = '';
-  errorMessage.value = '';
-
-  if (!title.value.trim()) {
-    titleError.value = 'Title is required.';
-    return;
-  }
-
   submitting.value = true;
+  flash.value = {};
   try {
-    const issue = await createIssue(owner, repoName, {
-      title: title.value.trim(),
-      body: body.value.trim() || undefined,
-    });
-    router.push(`/${owner}/${repoName}/issues/${issue.number}`);
-  } catch (err) {
-    errorMessage.value = err instanceof Error ? err.message : 'Failed to create issue.';
-  } finally {
-    submitting.value = false;
-  }
-}
-
-async function toggleStar() {
-  if (!currentUser.value || starLoading.value) return;
-  starLoading.value = true;
-  try {
-    if (starred.value) {
-      await unstarRepo(owner, repoName);
-      starred.value = false;
+    const body: any = {
+      title: form.value.title,
+      body: form.value.body,
+    };
+    if (selectedLabels.value.length) body.labels = selectedLabels.value;
+    if (form.value.milestone) body.milestone = Number(form.value.milestone);
+    if (selectedAssignees.value.length) body.assignees = selectedAssignees.value;
+    const resp = await fetch(`${apiBase}/repos/${owner}/${repoName}/issues`, {method: 'POST', headers, body: JSON.stringify(body)});
+    if (resp.ok || resp.status === 201) {
+      const issue = await resp.json();
+      router.push(`/${owner}/${repoName}/issues/${issue.number}`);
     } else {
-      await starRepo(owner, repoName);
-      starred.value = true;
+      const data = await resp.json().catch(() => ({}));
+      flash.value.error = data.message || 'Failed to create issue.';
     }
-  } finally {
-    starLoading.value = false;
-  }
+  } catch { flash.value.error = 'Network error.'; }
+  finally { submitting.value = false; }
 }
 
-onMounted(async () => {
-  [currentUser.value, repo.value] = await Promise.all([
-    getCurrentUser(),
-    getRepo(owner, repoName).catch(() => null),
-  ]);
-  isRepoStarred(owner, repoName).then((s) => { starred.value = s; }).catch(() => {});
-});
+onMounted(() => loadMeta());
 </script>

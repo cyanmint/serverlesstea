@@ -1,184 +1,77 @@
+<!-- Translated from: templates/repo/branch/list.tmpl -->
 <template>
-  <AppLayout page-class="ui repository branches">
-    <RepoNav
-      :owner="owner"
-      :repo-name="repoName"
-      active-tab="code"
-      :repo="repo"
-      :current-user="currentUser"
-      :starred="starred"
-      :star-loading="starLoading"
-      @toggle-star="toggleStar"
-    />
-
+  <AppLayout :page-class="'repository branches'" :title="`Branches - ${owner}/${repoName}`">
+    <RepoHeader :owner="owner" :repo-name="repoName"/>
     <div class="ui container">
-      <div v-if="loading" class="tw-py-8">
-        <div class="ui active centered inline loader"/>
-      </div>
-      <div v-else-if="error" class="ui negative message"><p>{{ error }}</p></div>
-      <div v-else class="ui attached table segment">
-        <div v-if="actionError" class="ui negative message"><p>{{ actionError }}</p></div>
-        <div class="tw-mb-4 tw-flex tw-justify-end">
-          <button class="ui primary button" @click="createBranch">New Branch</button>
+      <BaseAlert :flash="flash"/>
+      <h4 class="ui top attached header">Default Branch</h4>
+      <div v-if="defaultBranch" class="ui attached segment">
+        <div class="tw-flex tw-items-center tw-gap-2">
+          <strong>{{ defaultBranch.name }}</strong>
+          <span v-if="defaultBranch.protected" title="Protected">🛡️</span>
         </div>
+      </div>
+
+      <h4 class="ui top attached header tw-mt-4">
+        Branches ({{ branches.length }})
+      </h4>
+      <div class="ui attached segment">
         <table class="ui very basic table">
           <tbody>
-            <tr v-for="branch in branches" :key="branch.name" class="branches-content">
-              <td class="branch-name">
-                <div class="flex-text-block">
-                  <SvgIcon name="octicon-git-branch" :size="16" class="tw-mr-2 tw-text-gray-500"/>
-                  <RouterLink
-                    :to="`/${owner}/${repoName}/src/branch/${branch.name}`"
-                    class="tw-font-mono"
-                  >
-                    {{ branch.name }}
-                  </RouterLink>
-                  <span v-if="branch.name === defaultBranch" class="ui green basic mini label tw-ml-2">default</span>
-                </div>
+            <tr v-for="b in branches" :key="b.name">
+              <td>
+                <RouterLink :to="`/${owner}/${repoName}/src/branch/${b.name}`" class="tw-font-mono">{{ b.name }}</RouterLink>
+                <span v-if="b.protected" class="tw-ml-1" title="Protected">🛡️</span>
               </td>
-              <td class="branch-updated tw-text-right tw-text-sm tw-text-gray-500">
-                {{ branch.commit.committer?.date ? formatDate(branch.commit.committer.date) : '' }}
-              </td>
-              <td class="branch-ops tw-text-right">
-                <RouterLink
-                  :to="`/${owner}/${repoName}/src/branch/${branch.name}`"
-                  class="ui tiny compact basic button"
-                >
-                  Browse
-                </RouterLink>
-                <button class="ui tiny compact basic button" @click="renameBranch(branch.name)">Rename</button>
-                <button class="ui tiny compact red basic button" :disabled="branch.name === defaultBranch" @click="removeBranch(branch.name)">Delete</button>
+              <td class="tw-text-right tw-text-text-light">
+                {{ formatDate(b.commit?.timestamp || b.commit?.committer?.date) }}
               </td>
             </tr>
           </tbody>
         </table>
-      </div>
-
-      <div v-if="branches.length > 0" class="ui pagination menu tw-my-4">
-        <a class="item" :class="{disabled: page <= 1}" @click="page > 1 && changePage(page - 1)">Previous</a>
-        <a class="item active">{{ page }}</a>
-        <a class="item" :class="{disabled: branches.length < pageSize}" @click="branches.length >= pageSize && changePage(page + 1)">Next</a>
       </div>
     </div>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
-import {ref, computed, watch, onMounted} from 'vue';
+import {ref, onMounted} from 'vue';
 import {useRoute, RouterLink} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
-import RepoNav from '../components/RepoNav.vue';
-import {SvgIcon} from '../../svg.ts';
-import {createRepoBranch, deleteRepoBranch, getRepo, getRepoBranches, getCurrentUser, isRepoStarred, renameRepoBranch, starRepo, unstarRepo, type Branch, type Repository, type User} from '../api/index.ts';
+import BaseAlert from '../components/BaseAlert.vue';
+import RepoHeader from '../components/RepoHeader.vue';
+import {apiBase} from '../spaconfig.ts';
+import {getStoredToken} from '../api/index.ts';
 
 const route = useRoute();
-const owner = computed(() => route.params.owner as string);
-const repoName = computed(() => route.params.repo as string);
+const owner = route.params.owner as string;
+const repoName = route.params.repo as string;
+const token = getStoredToken() ?? '';
+const headers: Record<string, string> = token ? {Authorization: `token ${token}`} : {};
 
-const branches = ref<Branch[]>([]);
-const defaultBranch = ref('');
-const loading = ref(false);
-const error = ref<string | null>(null);
-const page = ref(1);
-const pageSize = 20;
-const repo = ref<Repository | null>(null);
-const currentUser = ref<User | null>(null);
-const starred = ref(false);
-const starLoading = ref(false);
-const actionError = ref('');
+const branches = ref<any[]>([]);
+const defaultBranch = ref<any>(null);
+const flash = ref<{error?: string}>({});
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString();
-}
+function formatDate(d: string) { return d ? new Date(d).toLocaleDateString() : ''; }
 
-function changePage(p: number) {
-  page.value = p;
-}
-
-async function toggleStar() {
-  if (!currentUser.value) return;
-  starLoading.value = true;
+async function loadBranches() {
   try {
-    if (starred.value) {
-      await unstarRepo(owner.value, repoName.value);
-    } else {
-      await starRepo(owner.value, repoName.value);
+    const resp = await fetch(`${apiBase}/repos/${owner}/${repoName}/branches`, {headers});
+    if (resp.ok) {
+      const all = await resp.json();
+      // Get repo to know default branch name
+      const repoResp = await fetch(`${apiBase}/repos/${owner}/${repoName}`, {headers});
+      let defName = 'main';
+      if (repoResp.ok) {
+        const repoData = await repoResp.json();
+        defName = repoData.default_branch || 'main';
+      }
+      defaultBranch.value = all.find((b: any) => b.name === defName) || all[0];
+      branches.value = all.filter((b: any) => b.name !== defName);
     }
-    starred.value = !starred.value;
-    if (repo.value) {
-      repo.value = {...repo.value, stars_count: repo.value.stars_count + (starred.value ? 1 : -1)};
-    }
-  } catch {
-    // ignore
-  } finally {
-    starLoading.value = false;
-  }
+  } catch { /* empty */ }
 }
 
-async function load() {
-  if (!owner.value || !repoName.value) return;
-  loading.value = true;
-  error.value = null;
-  try {
-    const branchList = await getRepoBranches(owner.value, repoName.value, {page: page.value, limit: pageSize});
-    branches.value = branchList.sort((a, b) => {
-      if (a.name === defaultBranch.value) return -1;
-      if (b.name === defaultBranch.value) return 1;
-      return a.name.localeCompare(b.name);
-    });
-  } catch (e) {
-    error.value = String(e);
-  } finally {
-    loading.value = false;
-  }
-}
-
-async function createBranch() {
-  const name = window.prompt('New branch name');
-  if (!name?.trim()) return;
-  actionError.value = '';
-  try {
-    await createRepoBranch(owner.value, repoName.value, name.trim(), defaultBranch.value || undefined);
-    await load();
-  } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to create branch';
-  }
-}
-
-async function renameBranch(name: string) {
-  const newName = window.prompt('Rename branch', name);
-  if (!newName?.trim() || newName.trim() === name) return;
-  actionError.value = '';
-  try {
-    await renameRepoBranch(owner.value, repoName.value, name, newName.trim());
-    if (defaultBranch.value === name) defaultBranch.value = newName.trim();
-    await load();
-  } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to rename branch';
-  }
-}
-
-async function removeBranch(name: string) {
-  if (!window.confirm(`Delete branch "${name}"?`)) return;
-  actionError.value = '';
-  try {
-    await deleteRepoBranch(owner.value, repoName.value, name);
-    await load();
-  } catch (e) {
-    actionError.value = e instanceof Error ? e.message : 'Failed to delete branch';
-  }
-}
-
-watch([owner, repoName, page], load);
-onMounted(async () => {
-  [repo.value, currentUser.value] = await Promise.all([
-    getRepo(owner.value, repoName.value).catch(() => null),
-    getCurrentUser(),
-  ]);
-  defaultBranch.value = repo.value?.default_branch ?? '';
-  if (currentUser.value) {
-    starred.value = await isRepoStarred(owner.value, repoName.value).catch(() => false);
-  }
-  await load();
-});
+onMounted(() => loadBranches());
 </script>
