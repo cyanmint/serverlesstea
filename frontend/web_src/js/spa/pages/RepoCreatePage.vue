@@ -69,7 +69,7 @@ import {useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import BaseAlert from '../components/BaseAlert.vue';
 import {apiBase} from '../spaconfig.ts';
-import {getCurrentUser} , getStoredToken} from '../api/index.ts';
+import {getCurrentUser, getStoredToken} from '../api/index.ts';
 
 const router = useRouter();
 const token = getStoredToken() ?? '';
