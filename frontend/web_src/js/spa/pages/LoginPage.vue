@@ -55,7 +55,7 @@ import {RouterLink, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import BaseAlert from '../components/BaseAlert.vue';
 import {login} from '../api/index.ts';
-import {currentUser, authLoading} from '../stores/auth.ts';
+import {currentUser} from '../stores/auth.ts';
 
 const router = useRouter();
 const username = ref('');
@@ -70,7 +70,6 @@ async function handleLogin() {
   try {
     const user = await login(username.value, password.value);
     currentUser.value = user;
-    authLoading.value = false;
     await router.push('/');
   } catch (e) {
     flash.value.error = e instanceof Error ? e.message : 'Login failed. Please check your credentials.';

@@ -61,7 +61,7 @@ import {RouterLink, useRouter} from 'vue-router';
 import AppLayout from '../layouts/AppLayout.vue';
 import BaseAlert from '../components/BaseAlert.vue';
 import {login} from '../api/index.ts';
-import {currentUser, authLoading} from '../stores/auth.ts';
+import {currentUser} from '../stores/auth.ts';
 import {apiBase} from '../spaconfig.ts';
 
 const router = useRouter();
@@ -89,7 +89,6 @@ async function handleRegister() {
       try {
         const user = await login(form.value.username, form.value.password);
         currentUser.value = user;
-        authLoading.value = false;
         await router.push('/');
       } catch {
         successMessage.value = 'Account created! You can now sign in.';
