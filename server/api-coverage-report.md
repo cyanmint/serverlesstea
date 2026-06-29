@@ -1,6 +1,6 @@
 # API Coverage Report
 
-**Total endpoints:** 498 | **Correct:** 63 | **Stub:** 12 | **Malfunction:** 0 | **Missing:** 423
+**Total endpoints:** 498 | **Correct:** 60 | **Stub:** 15 | **Malfunction:** 0 | **Missing:** 423
 
 | Endpoint | Method | Path | Status | Note |
 |----------|--------|------|--------|------|
@@ -476,7 +476,7 @@
 | GET /api/v1/user/teams | `GET` | `/api/v1/user/teams` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/user/times | `GET` | `/api/v1/user/times` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/users/search | `GET` | `/api/v1/users/search` | **correct** | DB/git-backed implementation |
-| GET /api/v1/users/{username} | `GET` | `/api/v1/users/{username}` | **correct** | DB/git-backed implementation |
+| GET /api/v1/users/{username} | `GET` | `/api/v1/users/{username}` | **stub** | No DB/git operations — returns minimal data |
 | GET /api/v1/users/{username}/activities/feeds | `GET` | `/api/v1/users/{username}/activities/feeds` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/users/{username}/followers | `GET` | `/api/v1/users/{username}/followers` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/users/{username}/following | `GET` | `/api/v1/users/{username}/following` | **missing** | Route not registered — returns 404 |
@@ -489,8 +489,8 @@
 | GET /api/v1/users/{username}/repos | `GET` | `/api/v1/users/{username}/repos` | **correct** | DB/git-backed implementation |
 | GET /api/v1/users/{username}/starred | `GET` | `/api/v1/users/{username}/starred` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/users/{username}/subscriptions | `GET` | `/api/v1/users/{username}/subscriptions` | **missing** | Route not registered — returns 404 |
-| GET /api/v1/users/{username}/tokens | `GET` | `/api/v1/users/{username}/tokens` | **correct** | DB/git-backed implementation |
-| POST /api/v1/users/{username}/tokens | `POST` | `/api/v1/users/{username}/tokens` | **correct** | DB/git-backed implementation |
+| GET /api/v1/users/{username}/tokens | `GET` | `/api/v1/users/{username}/tokens` | **stub** | No DB/git operations — returns minimal data |
+| POST /api/v1/users/{username}/tokens | `POST` | `/api/v1/users/{username}/tokens` | **stub** | No DB/git operations — returns minimal data |
 | DELETE /api/v1/users/{username}/tokens/{token} | `DELETE` | `/api/v1/users/{username}/tokens/{token}` | **missing** | Route not registered — returns 404 |
 | GET /api/v1/version | `GET` | `/api/v1/version` | **missing** | Route not registered — returns 404 |
 | POST /api/auth/register | `POST` | `/api/auth/register` | **stub** | No DB/git operations — returns minimal data |

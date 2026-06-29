@@ -1,6 +1,5 @@
 import { Hono } from 'hono'
 import { v1Auth, v1OptionalAuth } from '../middleware/v1auth'
-import { signToken } from '../auth/jwt'
 import { hashPassword } from '../auth/password'
 import { readBlob, listCommits, listDirectory } from '../git/introspect'
 import { commitFileToBranch } from '../git/mutate'
@@ -428,17 +427,21 @@ router.get('/users/:username/tokens', v1Auth, async (c) => {
 
 router.post('/users/:username/tokens', v1Auth, async (c) => {
   const payload = c.get('user' as never) as JWTPayload
+  const { username } = c.req.param()
+  const db = c.env.database
+  const u = await getUser(db, username)
+  if (!u) return c.json({ message: 'User not found' }, 404)
+  if (u.id !== (payload.sub as string) && !payload['isAdmin']) return c.json({ message: 'Forbidden' }, 403)
   const body = await c.req.json<{ name?: string }>().catch(() => ({ name: undefined }))
   const tokenName = body.name ?? 'default'
-  const sha1 = await signToken(
-    { sub: payload.sub, username: payload['username'], email: payload['email'], isAdmin: payload['isAdmin'] },
-    c.env.JWT_SECRET,
-  )
+  // Generate a cryptographically random opaque token (not a JWT so it never expires).
+  const raw = new Uint8Array(32)
+  crypto.getRandomValues(raw)
+  const sha1 = Array.from(raw, (b) => b.toString(16).padStart(2, '0')).join('')
   const id = crypto.randomUUID()
   const lastEight = sha1.slice(-8)
-  const db = c.env.database
   await db.prepare('INSERT INTO access_tokens (id, user_id, name, sha1, last_eight) VALUES (?, ?, ?, ?, ?)')
-    .bind(id, payload.sub, tokenName, sha1, lastEight).run()
+    .bind(id, u.id, tokenName, sha1, lastEight).run()
   return c.json({ id, name: tokenName, sha1, token_last_eight: lastEight }, 201)
 })
 

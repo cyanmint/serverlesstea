@@ -59,6 +59,32 @@ async function resolveAuth(c: Parameters<MiddlewareHandler<{ Bindings: Env }>>[0
 
   if (!token) return null
 
+  // First try to look up the token in the access_tokens table (opaque tokens
+  // created via POST /users/:username/tokens).
+  try {
+    const db = c.env.database
+    const row = await db
+      .prepare(
+        `SELECT at.sha1, u.id, u.username, u.email, u.is_admin
+         FROM access_tokens at JOIN users u ON at.user_id = u.id
+         WHERE at.sha1 = ?`,
+      )
+      .bind(token)
+      .first<{ sha1: string; id: string; username: string; email: string; is_admin: number }>()
+
+    if (row) {
+      return {
+        sub: row.id,
+        username: row.username,
+        email: row.email,
+        isAdmin: row.is_admin === 1,
+      } as V1UserPayload
+    }
+  } catch {
+    // access_tokens table may not exist yet; fall through to JWT verification
+  }
+
+  // Fall back to JWT verification (for short-lived session tokens).
   try {
     const payload = await verifyToken(token, c.env.JWT_SECRET)
     return {

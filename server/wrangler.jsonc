@@ -31,7 +31,8 @@
     {
       "binding": "database",
       "database_name": "git-devel",
-      "database_id": "58a35a6e-1407-478d-a634-3b1ce8f0fe12"
+      "database_id": "58a35a6e-1407-478d-a634-3b1ce8f0fe12",
+      "migrations_dir": "migrations"
     }
   ],
   "send_email": [
