@@ -36,7 +36,7 @@
                 <span>{{ ms.open_issues || 0 }} open / {{ ms.closed_issues || 0 }} closed</span>
               </div>
               <div v-if="ms.open_issues || ms.closed_issues" class="ui progress tw-mt-2">
-                <div class="bar" :style="{width: `${Math.round((ms.closed_issues / (ms.open_issues + ms.closed_issues)) * 100)}%`}"></div>
+                <div class="bar" :style="{width: `${(ms.open_issues + ms.closed_issues) > 0 ? Math.round((ms.closed_issues / (ms.open_issues + ms.closed_issues)) * 100) : 0}%`}"></div>
               </div>
             </div>
             <div v-if="!loading && !milestones.length" class="tw-text-center tw-py-8 tw-text-text-light">No milestones found</div>

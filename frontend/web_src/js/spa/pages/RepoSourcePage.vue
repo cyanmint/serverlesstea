@@ -96,7 +96,7 @@ async function loadContent() {
         isDir.value = false;
         fileSize.value = `${(data.size / 1024).toFixed(1)} KB`;
         if (data.content) {
-          fileContent.value = atob(data.content);
+          try { fileContent.value = atob(data.content); } catch { fileContent.value = data.content; }
         } else if (data.download_url) {
           const rawResp = await fetch(data.download_url);
           if (rawResp.ok) fileContent.value = await rawResp.text();

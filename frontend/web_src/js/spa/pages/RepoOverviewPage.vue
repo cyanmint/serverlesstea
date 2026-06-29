@@ -145,11 +145,11 @@ async function loadLanguages() {
   try {
     const resp = await fetch(`${apiBase}/repos/${owner}/${repoName}/languages`, {headers});
     if (resp.ok) {
-      const data = await resp.json();
-      const total = Object.values(data).reduce((s: number, v: any) => s + v, 0) as number;
+      const data: Record<string, number> = await resp.json();
+      const total = Object.values(data).reduce((s, v) => s + v, 0);
       languages.value = Object.entries(data).map(([name, bytes]) => ({
         name,
-        percentage: total > 0 ? Math.round(((bytes as number) / total) * 100) : 0,
+        percentage: total > 0 ? Math.round((bytes / total) * 100) : 0,
       })).sort((a, b) => b.percentage - a.percentage);
     }
   } catch { /* empty */ }

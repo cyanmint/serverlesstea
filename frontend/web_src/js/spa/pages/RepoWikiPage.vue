@@ -77,7 +77,7 @@ async function loadWikiPage() {
     const resp = await fetch(`${apiBase}/repos/${owner}/${repoName}/wiki/page/${encodeURIComponent(currentPage.value)}`, {headers});
     if (resp.ok) {
       const data = await resp.json();
-      wikiContent.value = data.html_content || data.content_base64 ? atob(data.content_base64 || '') : '';
+      wikiContent.value = data.html_content || (data.content_base64 ? atob(data.content_base64) : '');
       lastCommit.value = data.last_commit?.date || '';
     }
   } catch { /* empty */ } finally { loading.value = false; }

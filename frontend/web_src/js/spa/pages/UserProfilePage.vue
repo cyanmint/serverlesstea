@@ -15,7 +15,7 @@
             <ul class="user-profile-meta">
               <li v-if="user?.location"><i class="octicon-location"></i> {{ user.location }}</li>
               <li v-if="user?.website"><a :href="user.website" target="_blank" rel="nofollow noopener">{{ user.website }}</a></li>
-              <li><i class="octicon-clock"></i> Joined {{ formatDate(user?.created) }}</li>
+              <li><i class="octicon-clock"></i> Joined {{ formatDate(user?.created_at) }}</li>
             </ul>
             <div class="user-profile-follow">
               <RouterLink :to="`/${user?.login}/followers`" class="muted">
